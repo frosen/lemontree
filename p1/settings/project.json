@@ -1,0 +1,30 @@
+{
+  "collision-matrix": [
+    [
+      true
+    ]
+  ],
+  "design-resolution-height": 1600,
+  "design-resolution-width": 900,
+  "excluded-modules": [
+    "Physics",
+    "DragonBones",
+    "Graphics",
+    "Chipmunk",
+    "TiledMap",
+    "Spine Skeleton"
+  ],
+  "fit-height": true,
+  "fit-width": false,
+  "group-list": [
+    "default"
+  ],
+  "simulator-orientation": false,
+  "simulator-resolution": {
+    "height": 640,
+    "width": 960
+  },
+  "start-scene": "current",
+  "use-customize-simulator": false,
+  "use-project-simulator-setting": false
+}
