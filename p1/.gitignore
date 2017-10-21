@@ -76,6 +76,8 @@ xcuserdata/
 #//////////////////////////
 
 *.iml
+build/jsb-default/frameworks/cocos2d-x/cocos/platform/android/libcocos2dx/build
+build/jsb-default/frameworks/runtime-src/proj.android-studio/app/.externalNativeBuild
 
 #//////////////////////////
 # RES
