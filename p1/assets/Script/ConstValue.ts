@@ -2,9 +2,13 @@
 // 常量
 // lly 2017.10.22
 
-export let MyEvent = {
-    beginAcce: "__beginAcce", 
-    endAcce: "__endAcce",
+export enum MyEvent {
+    direction,
+    volecity,
+}
+
+export function MyName(myEvent: MyEvent): string {
+    return 'MyEvent' + myEvent.toString()
 }
 
 export enum Direction {
