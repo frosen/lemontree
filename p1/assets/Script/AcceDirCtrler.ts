@@ -49,6 +49,7 @@ export default class AcceDirCtrler extends cc.Component {
     precision45: number = 0;
     precision67p5: number = 0;
     precision90: number = 0;
+    precisionPause: number = 0;
 
     onLoad() {
         this.setPrecision(5);
@@ -63,10 +64,12 @@ export default class AcceDirCtrler extends cc.Component {
         if (n < 0) n = 0;
         
         this.precison = n;
-        this.precision22p5 = cut22p5 * n;
-        this.precision45 = cut45 * n;
-        this.precision67p5 = cut67p5 * n;
-        this.precision90 = cut90 * n;
+        this.precision22p5 = cut22p5 * n * 2;
+        this.precision45 = cut45 * n * 2;
+        this.precision67p5 = cut67p5 * n * 2;
+        this.precision90 = cut90 * n * 2;
+
+        this.precisionPause = 0.01 * n;
     }
 
     initEvent() {
@@ -99,34 +102,39 @@ export default class AcceDirCtrler extends cc.Component {
                 break;
 
             case AcceState.move:
-                let dx = event.acc.x - this.xOrignal + this.xBuffer;
-                let dy = event.acc.y - this.yOrignal + this.yBuffer;
+                let dx = event.acc.x - this.xOrignal;
+                let dy = event.acc.y - this.yOrignal;
 
-                if (dy == 0) {
-                    if (dx > 0) {
-                        curDirection = Direction.D90;
-                    } else if (dx < 0) {
-                        curDirection = Direction.D270;
+                if (Math.abs(dx) > this.precisionPause || Math.abs(dy) > this.precisionPause) {
+                    dx = dx + this.xBuffer;
+                    dy = dy + this.yBuffer;
+    
+                    if (dy == 0) {
+                        if (dx > 0) {
+                            curDirection = Direction.D90;
+                        } else if (dx < 0) {
+                            curDirection = Direction.D270;
+                        }
+                    } else {
+                        let rate = dx / dy;
+    
+                        if (rate <= DIR_RATE[3].r)
+                            if (rate <= DIR_RATE[1].r)
+                                if (rate <= DIR_RATE[0].r) curDirection = dx > 0 ? DIR_RATE[0].e1 : DIR_RATE[0].e2;
+                                else curDirection = dx > 0 ? DIR_RATE[1].e1 : DIR_RATE[1].e2;
+                            else
+                                if (rate <= DIR_RATE[2].r) curDirection = dx > 0 ? DIR_RATE[2].e1 : DIR_RATE[2].e2;
+                                else curDirection = dx > 0 ? DIR_RATE[3].e1 : DIR_RATE[3].e2;
+                        else
+                            if (rate <= DIR_RATE[6].r)
+                                if (rate <= DIR_RATE[4].r) curDirection = dy > 0 ? DIR_RATE[4].e1 : DIR_RATE[4].e2;
+                                else if (rate <= DIR_RATE[5].r) curDirection = dx > 0 ? DIR_RATE[5].e1 : DIR_RATE[5].e2;
+                                else curDirection = dx > 0 ? DIR_RATE[6].e1 : DIR_RATE[6].e2;
+                            else
+                                if (rate <= DIR_RATE[7].r) curDirection = dx > 0 ? DIR_RATE[7].e1 : DIR_RATE[7].e2;
+                                else curDirection = dx > 0 ? DIR_RATE[8].e1 : DIR_RATE[8].e2;	
                     }
-                } else {
-                    let rate = dx / dy;
-
-                    if (rate <= DIR_RATE[3].r)
-                        if (rate <= DIR_RATE[1].r)
-                            if (rate <= DIR_RATE[0].r) curDirection = dx > 0 ? DIR_RATE[0].e1 : DIR_RATE[0].e2;
-                            else curDirection = dx > 0 ? DIR_RATE[1].e1 : DIR_RATE[1].e2;
-                        else
-                            if (rate <= DIR_RATE[2].r) curDirection = dx > 0 ? DIR_RATE[2].e1 : DIR_RATE[2].e2;
-                            else curDirection = dx > 0 ? DIR_RATE[3].e1 : DIR_RATE[3].e2;
-                    else
-                        if (rate <= DIR_RATE[6].r)
-                            if (rate <= DIR_RATE[4].r) curDirection = dy > 0 ? DIR_RATE[4].e1 : DIR_RATE[4].e2;
-                            else if (rate <= DIR_RATE[5].r) curDirection = dx > 0 ? DIR_RATE[5].e1 : DIR_RATE[5].e2;
-                            else curDirection = dx > 0 ? DIR_RATE[6].e1 : DIR_RATE[6].e2;
-                        else
-                            if (rate <= DIR_RATE[7].r) curDirection = dx > 0 ? DIR_RATE[7].e1 : DIR_RATE[7].e2;
-                            else curDirection = dx > 0 ? DIR_RATE[8].e1 : DIR_RATE[8].e2;	
-                }
+                }        
 
                 this.setBuffer(curDirection);           
                 this.sendEvent(curDirection);

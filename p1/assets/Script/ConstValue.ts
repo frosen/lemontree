@@ -18,3 +18,34 @@ export enum Direction {
 	D270, D292p5, D315, D337p5,
 	Dnone,
 }
+
+const dirVector = [
+    {x: 0, y: 1}, 
+    {x: 0.3827, y: 0.9239}, 
+    {x: 0.7071, y: 0.7071}, 
+    {x: 0.9239, y: 0.3827}, 
+    {x: 1, y: 0}, 
+    {x: 0.9239, y: -0.3827}, 
+    {x: 0.7071, y: -0.7071}, 
+    {x: 0.3827, y: -0.9239}, 
+    {x: 0, y: -1}, 
+    {x: -0.3827, y: -0.9239},  
+    {x: -0.7071, y: -0.7071},
+    {x: -0.9239, y: -0.3827},  
+    {x: -1, y: 0}, 
+    {x: -0.9239, y: 0.3827}, 
+    {x: -0.7071, y: 0.7071}, 
+    {x: -0.3827, y: 0.9239}, 
+    {x: 0, y: 0}, 
+]
+
+export function getDirVector(dir: Direction): {x: number, y: number} {
+    return dirVector[dir.valueOf()];
+}
+
+export enum Velocity {
+    stop,
+    slow,
+    mid,
+    fast,
+}
