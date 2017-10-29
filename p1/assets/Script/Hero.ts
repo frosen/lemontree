@@ -24,7 +24,7 @@ export default class Hero extends cc.Component {
     fastFactor: number = 3
 
     onLoad() {
-        this.initEvent();     
+        this.initEvent();
     }
 
     initEvent() {
@@ -37,6 +37,10 @@ export default class Hero extends cc.Component {
             let dir = e.detail as Direction;
             this.curDirection = dir;
         }, this);
+
+        cc.systemEvent.on(MyName(MyEvent.hurt), this.handleHurt, this);
+        cc.systemEvent.on(MyName(MyEvent.hurtEnd), this.handleHurtEnd, this);
+        cc.systemEvent.on(MyName(MyEvent.dead), this.handleDead, this);
     }
 
     update() {
@@ -81,5 +85,25 @@ export default class Hero extends cc.Component {
 
         // 设置新位置
         this.node.setPosition(newX, newY);
+    }
+
+    hurtAct: cc.Action = null;
+    handleHurt() {
+        this.hurtAct = this.node.runAction(cc.repeatForever(cc.sequence(
+            cc.fadeTo(0.05, 50),
+            cc.fadeIn(0.05),
+        )));
+    }
+
+    handleHurtEnd() {
+        if (this.hurtAct) {
+            this.node.stopAction(this.hurtAct);
+            this.node.opacity = 255;
+            this.hurtAct = null;
+        }
+    }
+
+    handleDead() {
+        cc.log("dead!!");
     }
 }

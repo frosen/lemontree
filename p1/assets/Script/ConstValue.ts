@@ -5,6 +5,11 @@
 export enum MyEvent {
     direction,
     volecity,
+
+    colide,
+    hurt,
+    hurtEnd,
+    dead,
 }
 
 export function MyName(myEvent: MyEvent): string {

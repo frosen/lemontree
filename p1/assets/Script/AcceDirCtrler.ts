@@ -51,6 +51,9 @@ export default class AcceDirCtrler extends cc.Component {
     precision90: number = 0;
     precisionPause: number = 0;
 
+    // 是否是背面朝上
+    isBackUp = false;
+
     onLoad() {
         this.setPrecision(5);
         this.initEvent();
@@ -91,21 +94,28 @@ export default class AcceDirCtrler extends cc.Component {
         cc.systemEvent.off(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
     }
 
-    onDeviceMotionEvent(event) {
-        let curDirection: Direction = Direction.Dnone;
-
+    onDeviceMotionEvent(event) {     
         switch (this.state) {
             case AcceState.begin:
                 this.xOrignal = event.acc.x;
                 this.yOrignal = event.acc.y;
                 this.state = AcceState.move;
+                this.isBackUp = event.acc.z > 0;
                 break;
 
             case AcceState.move:
+                let curDirection: Direction = Direction.Dnone;
+
                 let dx = event.acc.x - this.xOrignal;
                 let dy = event.acc.y - this.yOrignal;
 
                 if (Math.abs(dx) > this.precisionPause || Math.abs(dy) > this.precisionPause) {
+                    
+                    if (this.isBackUp) {
+                        dx *= -1;
+                        dy *= -1;
+                    }
+
                     dx = dx + this.xBuffer;
                     dy = dy + this.yBuffer;
     
@@ -136,12 +146,8 @@ export default class AcceDirCtrler extends cc.Component {
                     }
                 }        
 
-                this.setBuffer(curDirection);           
-                this.sendEvent(curDirection);
-
-                break;
-
-            default:
+                this.setBuffer(curDirection);     
+                this.sendEvent(curDirection);                
                 break;
         }
     }
