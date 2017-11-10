@@ -13,21 +13,19 @@ enum AcceState {
 
 // x和y轴的不同比率下对应的方向
 const DIR_RATE = [
-    {r: -5.0273, e1: Direction.D90,    e2: Direction.D270},
-    {r: -1.4966, e1: Direction.D112p5, e2: Direction.D292p5},
-    {r: -0.6682, e1: Direction.D135,   e2: Direction.D315},
-    {r: -0.1989, e1: Direction.D157p5, e2: Direction.D337p5},
-    {r:  0.1989, e1: Direction.D0,     e2: Direction.D180},
-    {r:  0.6682, e1: Direction.D22p5,  e2: Direction.D202p5},
-    {r:  1.4966, e1: Direction.D45,    e2: Direction.D225},
-    {r:  5.0273, e1: Direction.D67p5,  e2: Direction.D247p5},
-    {r: Number.MAX_VALUE, e1: Direction.D67p5, e2: Direction.D247p5},
+    {r: -2.4142, e1: Direction.D270,   e2: Direction.D90},
+    {r: -0.4142, e1: Direction.D315,   e2: Direction.D135},
+    {r:  0.4142, e1: Direction.D0,     e2: Direction.D180},
+    {r:  2.4142, e1: Direction.D45,    e2: Direction.D225},
+    {r: Number.MAX_VALUE, e1: Direction.D90,    e2: Direction.D270},
 ]
 
-const cut22p5: number = 0.001915
-const cut45: number = 0.003535
-const cut67p5: number = 0.00462
-const cut90: number = 0.005
+const CUT45: number = 0.003535;
+const CUT90: number = 0.005;
+
+const PAUSE_PRECISION_FACTOR: number = 0.01;
+
+const ACCE_PAUSE_VALUE = -100;
 
 @ccclass
 export default class AcceDirCtrler extends cc.Component {
@@ -45,17 +43,16 @@ export default class AcceDirCtrler extends cc.Component {
 
     // 精确值，控制方向对加速器的敏感度
     precison: number = 5;
-    precision22p5: number = 0;
     precision45: number = 0;
-    precision67p5: number = 0;
     precision90: number = 0;
+
     precisionPause: number = 0;
 
     // 是否是背面朝上
     isBackUp = false;
 
     onLoad() {
-        this.setPrecision(5);
+        this.setPrecision(10);
         this.initEvent();
 
         // 开启并设置加速器
@@ -67,12 +64,10 @@ export default class AcceDirCtrler extends cc.Component {
         if (n < 0) n = 0;
         
         this.precison = n;
-        this.precision22p5 = cut22p5 * n * 2;
-        this.precision45 = cut45 * n * 2;
-        this.precision67p5 = cut67p5 * n * 2;
-        this.precision90 = cut90 * n * 2;
+        this.precision45 = CUT45 * n;
+        this.precision90 = CUT90 * n;
 
-        this.precisionPause = 0.01 * n;
+        this.precisionPause = PAUSE_PRECISION_FACTOR * n;
     }
 
     initEvent() {
@@ -108,8 +103,8 @@ export default class AcceDirCtrler extends cc.Component {
 
                 let dx = event.acc.x - this.xOrignal;
                 let dy = event.acc.y - this.yOrignal;
-
-                if (Math.abs(dx) > this.precisionPause || Math.abs(dy) > this.precisionPause) {
+                
+                if (Math.sqrt(dx * dx + dy * dy) > this.precisionPause) {
                     
                     if (this.isBackUp) {
                         dx *= -1;
@@ -119,36 +114,26 @@ export default class AcceDirCtrler extends cc.Component {
                     dx = dx + this.xBuffer;
                     dy = dy + this.yBuffer;
     
-                    if (dy == 0) {
-                        if (dx > 0) {
-                            curDirection = Direction.D90;
-                        } else if (dx < 0) {
-                            curDirection = Direction.D270;
-                        }
-                    } else {
-                        let rate = dx / dy;
-    
-                        if (rate <= DIR_RATE[3].r)
-                            if (rate <= DIR_RATE[1].r)
-                                if (rate <= DIR_RATE[0].r) curDirection = dx > 0 ? DIR_RATE[0].e1 : DIR_RATE[0].e2;
-                                else curDirection = dx > 0 ? DIR_RATE[1].e1 : DIR_RATE[1].e2;
-                            else
-                                if (rate <= DIR_RATE[2].r) curDirection = dx > 0 ? DIR_RATE[2].e1 : DIR_RATE[2].e2;
-                                else curDirection = dx > 0 ? DIR_RATE[3].e1 : DIR_RATE[3].e2;
+                    if (dy == 0) return;
+                    
+                    let rate = dx / dy;                   
+                    if (rate <= DIR_RATE[3].r)
+                        if (rate <= DIR_RATE[1].r)
+                            if (rate <= DIR_RATE[0].r) curDirection = dy > 0 ? DIR_RATE[0].e1 : DIR_RATE[0].e2;
+                            else curDirection = dy > 0 ? DIR_RATE[1].e1 : DIR_RATE[1].e2;
                         else
-                            if (rate <= DIR_RATE[6].r)
-                                if (rate <= DIR_RATE[4].r) curDirection = dy > 0 ? DIR_RATE[4].e1 : DIR_RATE[4].e2;
-                                else if (rate <= DIR_RATE[5].r) curDirection = dx > 0 ? DIR_RATE[5].e1 : DIR_RATE[5].e2;
-                                else curDirection = dx > 0 ? DIR_RATE[6].e1 : DIR_RATE[6].e2;
-                            else
-                                if (rate <= DIR_RATE[7].r) curDirection = dx > 0 ? DIR_RATE[7].e1 : DIR_RATE[7].e2;
-                                else curDirection = dx > 0 ? DIR_RATE[8].e1 : DIR_RATE[8].e2;	
-                    }
+                            if (rate <= DIR_RATE[2].r) curDirection = dy > 0 ? DIR_RATE[2].e1 : DIR_RATE[2].e2;
+                            else curDirection = dy > 0 ? DIR_RATE[3].e1 : DIR_RATE[3].e2;
+                    else
+                        curDirection = dy > 0 ? DIR_RATE[4].e1 : DIR_RATE[4].e2;
                 }        
 
                 this.setBuffer(curDirection);     
-                this.sendEvent(curDirection);                
+                this.sendEvent(curDirection);    
+                this.saveAcceData(dx, dy, curDirection);            
                 break;
+            case AcceState.pause:
+                this.saveAcceData(ACCE_PAUSE_VALUE, ACCE_PAUSE_VALUE, Direction.Dnone);
         }
     }
 
@@ -158,66 +143,42 @@ export default class AcceDirCtrler extends cc.Component {
                 this.xBuffer = 0;
                 this.yBuffer = this.precision90;
                 break;
-            case Direction.D22p5:
-                this.xBuffer = this.precision22p5;
-                this.yBuffer = this.precision67p5;
-                break;
+
             case Direction.D45:
                 this.xBuffer = this.precision45;
                 this.yBuffer = this.precision45;
                 break;
-            case Direction.D67p5:
-                this.xBuffer = this.precision67p5;
-                this.yBuffer = this.precision22p5;
-                break;
+
             case Direction.D90:
                 this.xBuffer = this.precision90;
                 this.yBuffer = 0;
                 break;
-            case Direction.D112p5:
-                this.xBuffer = this.precision67p5;
-                this.yBuffer = -this.precision22p5;
-                break;
+
             case Direction.D135:
                 this.xBuffer = this.precision45;
                 this.yBuffer = -this.precision45;
                 break;
-            case Direction.D157p5:
-                this.xBuffer = this.precision22p5;
-                this.yBuffer = -this.precision67p5;
-                break;
+                
             case Direction.D180:
                 this.xBuffer = 0;
                 this.yBuffer = -this.precision90;
                 break;
-            case Direction.D202p5:
-                this.xBuffer = -this.precision22p5;
-                this.yBuffer = -this.precision67p5;
-                break;
+
             case Direction.D225:
                 this.xBuffer = -this.precision45;
                 this.yBuffer = -this.precision45;
                 break;
-            case Direction.D247p5:
-                this.xBuffer = -this.precision67p5;
-                this.yBuffer = -this.precision22p5;
-                break;
+
             case Direction.D270:
                 this.xBuffer = -this.precision90;
                 this.yBuffer = 0;
                 break;
-            case Direction.D292p5:
-                this.xBuffer = -this.precision67p5;
-                this.yBuffer = this.precision22p5;
-                break;
+
             case Direction.D315:
                 this.xBuffer = -this.precision45;
                 this.yBuffer = this.precision45;
                 break;
-            case Direction.D337p5:
-                this.xBuffer = -this.precision22p5;
-                this.yBuffer = this.precision67p5;
-                break;
+
             case Direction.Dnone:
                 this.xBuffer = 0;
                 this.yBuffer = 0;
@@ -225,6 +186,27 @@ export default class AcceDirCtrler extends cc.Component {
             default:
                 break;
         }
+    }
+
+    curAcceX: number = ACCE_PAUSE_VALUE;
+    curAcceY: number = ACCE_PAUSE_VALUE;
+    curDir: Direction = Direction.Dnone;
+    saveAcceData(dx: number, dy: number, dir: Direction) {
+        this.curAcceX = dx;
+        this.curAcceY = dy;
+        this.curDir = dir;
+    }
+
+    getAcceData(): {x: number, y: number, dir: Direction} {
+        return {
+            x: this.curAcceX,
+            y: this.curAcceY,
+            dir: this.curDir,
+        }
+    }
+
+    getPausePrecision(): number {
+        return this.precisionPause;
     }
 
     sendEvent(dir: Direction) {
