@@ -39,19 +39,19 @@ export default class NewClass extends cc.Component {
 
     // 检测子弹位置
     checkBullet(bx: number, by: number, bw: number, bh: number) {
-        let hx = this.hero.x;
-        let hw = this.heroSize.width;
-        let hy = this.hero.y;
-        let hh = this.heroSize.height;
+        let hx: number = this.hero.x;
+        let hw: number = this.heroSize.width;
+        let hy: number = this.hero.y;
+        let hh: number = this.heroSize.height;
 
-        let contains = !(
+        let isContains: boolean = !(
             bx + bw < hx - hw ||
             bx - bw > hx + hw ||
             by + bh < hy - hh ||
             by - bh > hy + hh
         )
 
-        if (contains) {
+        if (isContains) {
             this.sendHurt();
         }
     }

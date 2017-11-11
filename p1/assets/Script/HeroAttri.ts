@@ -22,6 +22,10 @@ export default class HeroAttri extends cc.Component {
         cc.systemEvent.on(MyName(MyEvent.colide), this.handleColide, this);
     }
 
+    onDestory() {
+        cc.systemEvent.targetOff(this);
+    }
+
     handleColide() {
         if (this.isHurting) return;
         this.isHurting = true;
