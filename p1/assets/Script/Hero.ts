@@ -99,4 +99,15 @@ export default class Hero extends cc.Component {
     handleDead() {
         cc.log("dead!!");
     }
+
+    getAimPosOrNull(): {aimX: number, aimY: number} {
+        if (this.curPos) {
+            return {
+                aimX: this.curPos.x,
+                aimY: this.curPos.y
+            }
+        } else {
+            return null;
+        }       
+    }
 }
