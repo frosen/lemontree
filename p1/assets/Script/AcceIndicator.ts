@@ -81,6 +81,7 @@ export default class AcceIndicator extends cc.Component {
         ))
     }
 
+    lastDir: Direction = Direction.Dnone;
     passTimes: number = 0;
     moveX: number = 0;
     moveY: number = 0;
@@ -91,12 +92,20 @@ export default class AcceIndicator extends cc.Component {
 
         let {x, y, dir} = this.acce.getAcceData();
 
+        if (this.lastDir != dir) {
+            this.coordinate.node.x = x;
+            this.coordinate.node.y = y;
+            this.moveX = 0;
+            this.moveY = 0;
+            this.lastDir = dir;
+            return;
+        }
+        
         if (this.passTimes > 0) {
             this.passTimes -= 1;
             this.moveCoordinate();
             return;
         }
-
         this.passTimes = this.PASS_TIME;
 
         // 坐标不同方向的显示
