@@ -24,6 +24,7 @@ export default class Hero extends cc.Component {
         cc.systemEvent.on(MyName(MyEvent.move), function(e) {
             let {xRate, yRate} = e.detail;
             this.curPos = new cc.Vec2(xRate * this.rangeNode.width, yRate * this.rangeNode.height);
+            cc.log(this.rangeNode.width, this.rangeNode.height, this.curPos);
         }, this);
 
         cc.systemEvent.on(MyName(MyEvent.endMove), function(e) {
