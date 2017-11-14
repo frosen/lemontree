@@ -934,7 +934,16 @@
     "rangeNode": {
       "__id__": 19
     },
-    "speedMax": 8
+    "speedMax": 8,
+    "midFrame": {
+      "__uuid__": "39484fc8-a235-4449-846e-a0a95849bb4c"
+    },
+    "littleLeftFrame": {
+      "__uuid__": "5006e590-f4d2-4b33-b3c9-7309882474a8"
+    },
+    "leftFrame": {
+      "__uuid__": "520ff6b5-4585-4ee3-a672-f0caa05fa942"
+    }
   },
   {
     "__type__": "46bf9jmeq5KWbX7qsgyZf2j",
