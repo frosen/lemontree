@@ -878,8 +878,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 48,
-      "height": 72
+      "width": 72,
+      "height": 108
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -943,7 +943,8 @@
     },
     "leftFrame": {
       "__uuid__": "520ff6b5-4585-4ee3-a672-f0caa05fa942"
-    }
+    },
+    "dirChangeInterval": 80
   },
   {
     "__type__": "46bf9jmeq5KWbX7qsgyZf2j",

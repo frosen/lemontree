@@ -53,7 +53,13 @@ export default class Hero extends cc.Component {
 
     curPos: cc.Vec2 = null;
 
-    curBodyDir: BodyDirection = BodyDirection.mid;
+    curBodyDir: BodyDirection = BodyDirection.mid; // 当前身体方向
+    nextBodyDir: BodyDirection = BodyDirection.mid; // 即将要成为的身体方向
+
+    @property
+    dirChangeInterval: number = 0; // 方向UI变化，每个帧的间隔（毫秒）
+
+    dirChangeEndTime: number = 0; // 方向UI变化，每个帧变化的结束时间戳
 
     onLoad() {
         this.initEvent();
@@ -81,11 +87,8 @@ export default class Hero extends cc.Component {
     update() {
         let {disX, disY, r} = this.updatePosition();
 
-        // 获取移动方向
-        let dir: Direction = this.getDirection(disX, disY, r);
-
         // 根据移动方向，更新身体朝向
-        this.updateBodyDirection(dir);
+        this.updateBodyDirection(disX, disY, r);
     }
 
     updatePosition(): {disX: number, disY: number, r: number} {
@@ -136,12 +139,46 @@ export default class Hero extends cc.Component {
         }
     }
 
+    updateBodyDirection(dx: number, dy: number, r: number) {
+        // 变化过程中不再变化
+        let curTime = (new Date()).valueOf();
+        if (curTime < this.dirChangeEndTime) return;
+
+        // 获取移动方向
+        let dir: Direction = this.getDirection(dx, dy, r);
+        this.nextBodyDir = this.getBodyDirection(dir);
+        
+        if (this.curBodyDir == this.nextBodyDir) return;
+
+        // 执行变化
+        switch(this.curBodyDir) {
+            case BodyDirection.left:        this.onChangeAtLeft(); 		  break;
+            case BodyDirection.littleLeft:  this.onChangeAtLittleLeft();  break;
+            case BodyDirection.mid:         this.onChangeAtMid(); 		  break;   
+            case BodyDirection.littleRight: this.onChangeAtLittleRight(); break;
+            case BodyDirection.right:       this.onChangeAtRight(); 	  break; 
+        }
+
+        // 显示变化后的效果
+        switch(this.curBodyDir) {
+            case BodyDirection.left:        this.onLeft(); 		  break;
+            case BodyDirection.littleLeft:  this.onLittleLeft();  break;
+            case BodyDirection.mid:         this.onMid(); 		  break;   
+            case BodyDirection.littleRight: this.onLittleRight(); break;
+            case BodyDirection.right:       this.onRight(); 	  break; 
+        }
+
+        this.dirChangeEndTime = curTime + this.dirChangeInterval;
+    }
+
     // 缓冲区，为防止方向变化频繁而抖动
     xBuffer: number = 0;
     yBuffer: number = 0;
 
     getDirection(dx: number, dy: number, r: number): Direction {
-        let curDirection: Direction;
+        let curDirection: Direction = Direction.Dnone;
+
+        if (r < this.speedMax) return curDirection;
 
         if (dy == 0) {
             if (dx > 0) curDirection = Direction.D0;
@@ -179,45 +216,103 @@ export default class Hero extends cc.Component {
         }
     }
 
-    updateBodyDirection(dir: Direction) {
-        let nextBodyDir: BodyDirection = BodyDirection.mid;
+    getBodyDirection(dir: Direction): BodyDirection {
+        let curBodyDir;
         switch (dir) {
             case Direction.D0:
             case Direction.D180:
             case Direction.Dnone:
-                nextBodyDir = BodyDirection.mid;
+                curBodyDir = BodyDirection.mid;
                 break;
 
             case Direction.D315:
             case Direction.D225:
-                nextBodyDir = BodyDirection.littleLeft;
+                curBodyDir = BodyDirection.littleLeft;
                 break;
 
             case Direction.D270:
-                nextBodyDir = BodyDirection.left;
+                curBodyDir = BodyDirection.left;
                 break;
 
             case Direction.D45:
             case Direction.D135:
-                nextBodyDir = BodyDirection.littleRight;
+                curBodyDir = BodyDirection.littleRight;
                 break;
 
             case Direction.D90:
-                nextBodyDir = BodyDirection.right;
+                curBodyDir = BodyDirection.right;
                 break;
         }
+        return curBodyDir;
+    }
 
-        if (this.curBodyDir == nextBodyDir) return;  
-        this.curBodyDir = nextBodyDir; 
-        let sp: cc.Sprite = this.node.getComponent(cc.Sprite);
-        switch(nextBodyDir) {
-            case BodyDirection.mid:         sp.spriteFrame = this.midFrame;        this.node.scaleX = 1;  break;
-            case BodyDirection.littleLeft:  sp.spriteFrame = this.littleLeftFrame; this.node.scaleX = 1;  break;
-            case BodyDirection.left:        sp.spriteFrame = this.leftFrame;       this.node.scaleX = 1;  break;
-            case BodyDirection.littleRight: sp.spriteFrame = this.littleLeftFrame; this.node.scaleX = -1; break;
-            case BodyDirection.right:       sp.spriteFrame = this.leftFrame;       this.node.scaleX = -1; break;
+    // ------------------------------------------------------------------------------------------
+
+    onChangeAtLeft() {
+        this.curBodyDir = BodyDirection.littleLeft;
+    }
+
+    onChangeAtLittleLeft() {
+        if (this.nextBodyDir == BodyDirection.left) {
+            this.curBodyDir = BodyDirection.left;
+        } else {
+            this.curBodyDir = BodyDirection.mid;
         }
     }
+
+    onChangeAtMid() {
+        if (this.nextBodyDir == BodyDirection.left || this.nextBodyDir == BodyDirection.littleLeft) {
+            this.curBodyDir = BodyDirection.littleLeft;
+        } else {
+            this.curBodyDir = BodyDirection.littleRight;
+        }
+    }
+
+    onChangeAtLittleRight() {
+        if (this.nextBodyDir == BodyDirection.right) {
+            this.curBodyDir = BodyDirection.right;
+        } else {
+            this.curBodyDir = BodyDirection.mid;
+        }
+    }
+
+    onChangeAtRight() {
+        this.curBodyDir = BodyDirection.littleRight;
+    }
+
+    // ------------------------------------------------------------------------------------------
+
+    onLeft() {
+        let sp: cc.Sprite = this.node.getComponent(cc.Sprite);
+        sp.spriteFrame = this.leftFrame;
+        this.node.scaleX = 1;
+    }
+
+    onLittleLeft() {
+        let sp: cc.Sprite = this.node.getComponent(cc.Sprite);
+        sp.spriteFrame = this.littleLeftFrame;
+        this.node.scaleX = 1;
+    }
+
+    onMid() {
+        let sp: cc.Sprite = this.node.getComponent(cc.Sprite);
+        sp.spriteFrame = this.midFrame;
+        this.node.scaleX = 1;
+    }
+
+    onLittleRight() {
+        let sp: cc.Sprite = this.node.getComponent(cc.Sprite);
+        sp.spriteFrame = this.littleLeftFrame;
+        this.node.scaleX = -1;
+    }
+
+    onRight() {
+        let sp: cc.Sprite = this.node.getComponent(cc.Sprite);
+        sp.spriteFrame = this.leftFrame;
+        this.node.scaleX = -1;
+    }
+
+    // ------------------------------------------------------------------------------------------
 
     hurtAct: cc.Action = null;
     handleHurt() {
