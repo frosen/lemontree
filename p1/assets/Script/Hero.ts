@@ -7,11 +7,7 @@ import {MyEvent, MyName} from './ConstValue'
 
 // 方向
 enum Direction {
-    D0, D45, 
-	D90, D135, 
-	D180, D225, 
-	D270, D315, 
-	Dnone,
+    up, down, left, right, none
 }
 
 enum BodyDirection {
@@ -24,14 +20,10 @@ enum BodyDirection {
 
 // x和y轴的不同比率下对应的方向
 const DIR_RATE = [
-    {r: -2.4142, e1: Direction.D270,   e2: Direction.D90},
-    {r: -0.4142, e1: Direction.D315,   e2: Direction.D135},
-    {r:  0.4142, e1: Direction.D0,     e2: Direction.D180},
-    {r:  2.4142, e1: Direction.D45,    e2: Direction.D225},
-    {r: Number.MAX_VALUE, e1: Direction.D90,    e2: Direction.D270},
+    {r: -1, e1: Direction.left, e2: Direction.right},
+    {r:  1, e1: Direction.up,   e2: Direction.down},
+    {r: Number.MAX_VALUE, e1: Direction.right, e2: Direction.left},
 ]
-const CUT45: number = 0.3535;
-const CUT90: number = 0.5;
 
 @ccclass
 export default class Hero extends cc.Component {
@@ -176,24 +168,20 @@ export default class Hero extends cc.Component {
     yBuffer: number = 0;
 
     getDirection(dx: number, dy: number, r: number): Direction {
-        let curDirection: Direction = Direction.Dnone;
-
-        if (r < this.speedMax) return curDirection;
+        let curDirection: Direction = Direction.none;
 
         if (dy == 0) {
-            if (dx > 0) curDirection = Direction.D0;
-            else if (dx < 0) curDirection = Direction.D180;
+            if (dx > 0) curDirection = Direction.up;
+            else if (dx < 0) curDirection = Direction.down;
         } else {
-            let rate = (dx + r * this.xBuffer) / (dy + r * this.yBuffer);   
-            if (rate <= DIR_RATE[3].r)
-                if (rate <= DIR_RATE[1].r)
-                    if (rate <= DIR_RATE[0].r) curDirection = dy > 0 ? DIR_RATE[0].e1 : DIR_RATE[0].e2;
-                    else curDirection = dy > 0 ? DIR_RATE[1].e1 : DIR_RATE[1].e2;
-                else
-                    if (rate <= DIR_RATE[2].r) curDirection = dy > 0 ? DIR_RATE[2].e1 : DIR_RATE[2].e2;
-                    else curDirection = dy > 0 ? DIR_RATE[3].e1 : DIR_RATE[3].e2;
-            else
-                curDirection = dy > 0 ? DIR_RATE[4].e1 : DIR_RATE[4].e2;
+            let rate = (dx + r * this.xBuffer) / (dy + r * this.yBuffer);
+            if (rate < DIR_RATE[0].r) {
+                curDirection = dy > 0 ? DIR_RATE[0].e1 : DIR_RATE[0].e2;
+            } else if (rate < DIR_RATE[1].r) {
+                curDirection = dy > 0 ? DIR_RATE[1].e1 : DIR_RATE[1].e2;
+            } else {
+                curDirection = dy > 0 ? DIR_RATE[2].e1 : DIR_RATE[2].e2;
+            }
         }
         
         this.setBuffer(curDirection);
@@ -203,43 +191,26 @@ export default class Hero extends cc.Component {
 
     setBuffer(dir: Direction) {
         switch (dir) {
-            case Direction.D0:    this.xBuffer = 0;      this.yBuffer = CUT90;  break;
-            case Direction.D45:   this.xBuffer = CUT45;  this.yBuffer = CUT45;  break;
-            case Direction.D90:   this.xBuffer = CUT90;  this.yBuffer = 0;      break;
-            case Direction.D135:  this.xBuffer = CUT45;  this.yBuffer = -CUT45; break;              
-            case Direction.D180:  this.xBuffer = 0;      this.yBuffer = -CUT90; break;
-            case Direction.D225:  this.xBuffer = -CUT45; this.yBuffer = -CUT45; break;
-            case Direction.D270:  this.xBuffer = -CUT90; this.yBuffer = 0;      break;
-            case Direction.D315:  this.xBuffer = -CUT45; this.yBuffer = CUT45;  break;
-            case Direction.Dnone: this.xBuffer = 0;      this.yBuffer = 0;      break;
-            default: break;
+            case Direction.up:    this.xBuffer = 0;    this.yBuffer = 0.5;  break;
+            case Direction.right: this.xBuffer = 0.5;  this.yBuffer = 0;    break;           
+            case Direction.down:  this.xBuffer = 0;    this.yBuffer = -0.5; break;
+            case Direction.left:  this.xBuffer = -0.5; this.yBuffer = 0;    break;
+            case Direction.none:  this.xBuffer = 0;    this.yBuffer = 0;    break;
         }
     }
 
     getBodyDirection(dir: Direction): BodyDirection {
         let curBodyDir;
         switch (dir) {
-            case Direction.D0:
-            case Direction.D180:
-            case Direction.Dnone:
+            case Direction.up:
+            case Direction.down:
+            case Direction.none:
                 curBodyDir = BodyDirection.mid;
                 break;
-
-            case Direction.D315:
-            case Direction.D225:
-                curBodyDir = BodyDirection.littleLeft;
-                break;
-
-            case Direction.D270:
+            case Direction.left:
                 curBodyDir = BodyDirection.left;
                 break;
-
-            case Direction.D45:
-            case Direction.D135:
-                curBodyDir = BodyDirection.littleRight;
-                break;
-
-            case Direction.D90:
+            case Direction.right:
                 curBodyDir = BodyDirection.right;
                 break;
         }
