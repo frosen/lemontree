@@ -1,0 +1,32 @@
+// CtrlIndicator.ts
+// 控制指示：显示控制器的位置标识和状态
+// lly 2017.12.12
+
+const {ccclass, property, requireComponent} = cc._decorator;
+import HeroController from './HeroController';
+
+@ccclass
+@requireComponent(cc.Sprite)
+export default class CtrlIndicator extends cc.Component {
+
+    @property(HeroController)
+    ctrlr: HeroController = null;
+
+    sp: cc.Sprite = null;
+
+    onLoad() {
+        this.sp = this.node.getComponent(cc.Sprite);
+    }
+
+    update() {
+        let beginPos = this.ctrlr.getBeginPosOrNull();
+
+        if (!beginPos) {
+            this.sp.enabled = false;
+        } else {
+            this.sp.enabled = true;
+            this.node.position = new cc.Vec2(beginPos.x, beginPos.y + 40);
+        }
+    }
+}
+
