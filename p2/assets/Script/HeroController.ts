@@ -9,21 +9,21 @@ const {ccclass, property} = cc._decorator;
 
 import Hero from './Hero';
 
-const disForMove: number = 20;
-const disForModifyX: number = 50;
-const disForDash: number = 60;
+const DisForMove: number = 20;
+const DisForModifyX: number = 50;
+const DisForDash: number = 60;
 
-const speedForDash: number = 30;
-const speedEndDash: number = 10;
+const SpeedForDash: number = 30;
+const SpeedEndDash: number = 10;
 
-const speedForJump: number = 20;
-const speedEndJump: number = -1;
+const SpeedForJump: number = 20;
+const SpeedEndJump: number = -1;
 
-const speedForUse: number = -20;
-const speedEndUse: number = 1;
+const SpeedForUse: number = -20;
+const SpeedEndUse: number = 1;
 
-const marginForDash: number = 20;
-const moveXPerFrame: number = 0.1;
+const MarginForDash: number = 20;
+const MoveXPerFrame: number = 0.1;
 
 @ccclass
 export default class HeroController extends cc.Component {
@@ -32,7 +32,7 @@ export default class HeroController extends cc.Component {
     hero: Hero = null;
 
     // 英雄控制
-    heroTouchId: number = -9999;
+    heroTouchId: number = null;
     heroBeginPos: cc.Vec2 = null;
 
     onLoad() {
@@ -88,13 +88,13 @@ export default class HeroController extends cc.Component {
         let dis = Math.abs(diff);
         let speed = Math.abs(lastPos.x - pos.x);
 
-        if (speed > speedForDash) this.isDashing = true;
-        else if (speed < speedEndDash) this.isDashing = false;
+        if (speed > SpeedForDash) this.isDashing = true;
+        else if (speed < SpeedEndDash) this.isDashing = false;
 
-        if (dis > disForDash && this.isDashing) {
+        if (dis > DisForDash && this.isDashing) {
             this.isDashing = false;
             this.hero.dash(dir); 
-        } else if (dis > disForMove) {
+        } else if (dis > DisForMove) {
             this.hero.move(dir);
         } else {
             this.hero.move(0);
@@ -102,17 +102,17 @@ export default class HeroController extends cc.Component {
         
         // 检测跳跃，跳跃停止，下滑
         let ySpeed = pos.y - lastPos.y;
-        if (ySpeed > speedForJump && !this.isJumping) {
+        if (ySpeed > SpeedForJump && !this.isJumping) {
             this.isJumping = true;
             this.hero.jump();
-        } else if (ySpeed < speedEndJump) {
+        } else if (ySpeed < SpeedEndJump) {
             this.isJumping = false;
         }
 
-        if (ySpeed < speedForUse && !this.isUsing) {
+        if (ySpeed < SpeedForUse && !this.isUsing) {
             this.isUsing = true;
             this.hero.use();
-        } else if (ySpeed > speedEndUse) {
+        } else if (ySpeed > SpeedEndUse) {
             this.isUsing = false;
         }
 
@@ -126,7 +126,7 @@ export default class HeroController extends cc.Component {
 
     onTouchEnd(event: cc.Event.EventTouch) {
         this.heroBeginPos = null;
-        this.heroTouchId = -9999;
+        this.heroTouchId = null;
 
         this.touchPosX = -1;
         this.isDashing = false;
@@ -142,17 +142,17 @@ export default class HeroController extends cc.Component {
     update() {
         if (this.heroBeginPos && this.touchPosX > 0) {
             let dis = this.touchPosX - this.heroBeginPos.x;
-            if (Math.abs(dis) > disForModifyX) {
+            if (Math.abs(dis) > DisForModifyX) {
                 this.moveXPrepauseFrames++;
                 let frame = this.moveXPrepauseFrames - 30;
                 if (frame > 0) {
                     if (dis > 0) {
-                        if (this.heroBeginPos.x < this.node.width - disForDash - marginForDash) {
-                            this.heroBeginPos.x += 0.1 * frame;
+                        if (this.heroBeginPos.x < this.node.width - DisForDash - MarginForDash) {
+                            this.heroBeginPos.x += MoveXPerFrame * frame;
                         }
                     } else {
-                        if (disForDash + marginForDash < this.heroBeginPos.x) {
-                            this.heroBeginPos.x -= moveXPerFrame * frame;
+                        if (DisForDash + MarginForDash < this.heroBeginPos.x) {
+                            this.heroBeginPos.x -= MoveXPerFrame * frame;
                         }
                     }
                 }

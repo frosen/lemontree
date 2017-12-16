@@ -80,7 +80,7 @@ cc.Class({
 
         var selfAabb = self.world.aabb;
         var selfPreAabb = self.world.preAabb.clone();
-
+        cc.log(other.name, other.world.name, other.world.aabb);
         // 2nd step
         // forward x-axis, check whether collision on x-axis
         selfPreAabb.x = selfAabb.x;
