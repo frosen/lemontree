@@ -17,9 +17,15 @@ export default class Collision extends cc.Component {
 
     onLoad() {
         this.terrainMgr = cc.director.getScene().getComponentInChildren(TerrainManager);
-        cc.log("xxx", this.terrainMgr.name);
     }
 
+    start() {
+        cc.log(this.terrainMgr.checkCollideAt(0, 635));
+        cc.log(this.terrainMgr.checkCollideAt(33, 635));
+    }
 
+    update(dt: number) {
+
+    }
 
 }

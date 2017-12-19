@@ -3,6 +3,6 @@
 // lly 2017.12.12
 
 window.EXECUTION_ORDER = {
-    Gravity: 1,
-    Collision: 2
+    Gravity: -1,
+    Collision: 1
 }
