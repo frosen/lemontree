@@ -28,11 +28,13 @@ const MoveXPerFrame: number = 0.1;
 @ccclass
 export default class HeroController extends cc.Component {
 
+    /** 所控制的英雄 */
     @property(Hero)
     hero: Hero = null;
 
-    // 英雄控制
+    /** 控制影响的点击的id */
     heroTouchId: number = null;
+    /** 控制起始点 */
     heroBeginPos: cc.Vec2 = null;
 
     onLoad() {

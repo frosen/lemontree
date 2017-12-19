@@ -9,9 +9,11 @@ import HeroController from './HeroController';
 @requireComponent(cc.Sprite)
 export default class CtrlIndicator extends cc.Component {
 
+    /** 英雄控制器 */
     @property(HeroController)
     ctrlr: HeroController = null;
 
+    /** 标记精灵 */
     sp: cc.Sprite = null;
 
     onLoad() {

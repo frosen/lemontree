@@ -5,12 +5,21 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
+/** 与地形的碰撞 */
+import TerrainManager from './TerrainManager'; 
+
 @ccclass
 @executionOrder(EXECUTION_ORDER.Collision)
 export default class Collision extends cc.Component {
 
+    /** 地图的碰撞检测 */
+    terrainMgr: TerrainManager = null;
+
     onLoad() {
-        
+        this.terrainMgr = cc.director.getScene().getComponentInChildren(TerrainManager);
+        cc.log("xxx", this.terrainMgr.name);
     }
+
+
 
 }

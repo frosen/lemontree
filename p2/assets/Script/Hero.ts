@@ -7,8 +7,10 @@ const {ccclass, property} = cc._decorator;
 
 import HeroAttri from './HeroAttri';
 
-const SpeedMax: number = 2000; // 也是为了避免卡顿时候的穿墙事件
-const JumpSpeed: number = 800; // 起跳速度
+/** 也是为了避免卡顿时候的穿墙事件 */
+const SpeedMax: number = 2000;
+/** 起跳速度 */
+const JumpSpeed: number = 800;
 
 @ccclass
 export default class Hero extends cc.Component {
@@ -22,23 +24,33 @@ export default class Hero extends cc.Component {
     }
 
     // 动作 -------------------------------------------------
-
-    // 移动 dir: 1向右 -1向左 0停止
+ 
+    /**
+     * 移动
+     * @param dir: 1向右 -1向左 0停止
+     */
     move(dir: number) {
         this.direction = dir;
     }
 
-    // 冲刺 dir: 1向右 -1向左
+    /**
+     * 冲刺
+     * @param dir: 1向右 -1向左 不能为0
+     */
     dash(dir: number) {
 
     }
 
-    // 跳跃
+    /**
+     * 跳跃
+     */
     jump() {
         this.node.y += JumpSpeed; // 改变当前帧的y轴位置，通过和上一帧的差值可视为跳跃
     }
 
-    // 使用（拾起药水>进入门>下跳）
+    /**
+     * 使用（拾起药水>进入门>下跳）
+     */
     use() {
 
     }

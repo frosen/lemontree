@@ -5,15 +5,19 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
-const DefaultAccel: number = -2; // 默认重力加速度
-const SpeedMax: number = 35; // 速度最大值（必为正数）
+/** 默认重力加速度 */
+const DefaultAccel: number = -2;
+/** 速度最大值（必为正数） */
+const SpeedMax: number = 35;
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.Gravity)
 export default class Gravity extends cc.Component {
 
-    yAccel: number = DefaultAccel; // 当前重力加速度
-    lastY: number = null; // 上一帧的y分量，和当前的y值差视为重力速度
+    /** 当前重力加速度 */
+    yAccel: number = DefaultAccel;
+    /** 上一帧的y分量，和当前的y值差视为重力速度 */
+    lastY: number = null;
 
     onLoad() {
         this.lastY = this.node.y;
@@ -28,8 +32,4 @@ export default class Gravity extends cc.Component {
         this.node.y += curSpeed;
     }
 
-    // 跳跃 重新设置上一帧的位置，就可以在当前帧计算出新的速度
-    setSpeed(y: number) {
-        this.lastY = this.node.y - y;
-    }
 }
