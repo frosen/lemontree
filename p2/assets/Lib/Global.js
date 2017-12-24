@@ -3,6 +3,6 @@
 // lly 2017.12.12
 
 window.EXECUTION_ORDER = {
-    Gravity: -1,
-    Collision: 1
+    MovableObject: 1,
+    TerrainCollision: 2
 }

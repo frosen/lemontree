@@ -3,19 +3,21 @@
 // 控制影响的动作
 // lly 2017.12.12
 
-const {ccclass, property} = cc._decorator;
+const {ccclass, property, requireComponent} = cc._decorator;
 
+import MovableObject from "./MovableObject";
 import HeroAttri from './HeroAttri';
 
-/** 也是为了避免卡顿时候的穿墙事件 */
-const SpeedMax: number = 2000;
 /** 起跳速度 */
-const JumpSpeed: number = 800;
+const JumpVelocity: number = 100;
 
 @ccclass
+@requireComponent(MovableObject)
 export default class Hero extends cc.Component {
 
-    direction: number = 0;
+    /** x轴移动方向 */
+    xDir: number = 0;
+    /** 英雄属性 */
     heroAttri: HeroAttri = null;
 
     onLoad() {
@@ -30,7 +32,7 @@ export default class Hero extends cc.Component {
      * @param dir: 1向右 -1向左 0停止
      */
     move(dir: number) {
-        this.direction = dir;
+        this.getComponent(MovableObject).setInitialVelocity(dir * this.heroAttri.speed, null);
     }
 
     /**
@@ -45,7 +47,7 @@ export default class Hero extends cc.Component {
      * 跳跃
      */
     jump() {
-        this.node.y += JumpSpeed; // 改变当前帧的y轴位置，通过和上一帧的差值可视为跳跃
+        this.getComponent(MovableObject).setInitialVelocity(null, JumpVelocity);
     }
 
     /**
@@ -53,15 +55,5 @@ export default class Hero extends cc.Component {
      */
     use() {
 
-    }
-
-    // -------------------------------------------------
-
-    update(dt: number) {
-        // 移动
-        if (this.direction != 0) {
-            let xSpeed = this.heroAttri.speed * this.direction;
-            this.node.x += Math.min(xSpeed, SpeedMax) * dt;
-        }
     }
 }
