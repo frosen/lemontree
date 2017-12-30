@@ -8,6 +8,6 @@ export default class HeroAttri {
 
     constructor() {
         this.hp = 100;
-        this.speed = 100;
+        this.speed = 3;
     }
 }

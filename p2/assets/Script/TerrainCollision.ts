@@ -28,9 +28,8 @@ export default class TerrainCollision extends cc.Component {
     }
 
     update(dt: number) {
-
-        // 获取方向
-        let {xDir, yDir} = this.movableObj.getDir();
+        let saveX = this.node.x;       
+        let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
         let size = this.node.getContentSize();
 
         if (xDir != 0) {
@@ -38,26 +37,25 @@ export default class TerrainCollision extends cc.Component {
             let checkY = this.node.y - size.height * 0.5;
             let checkYEnd = checkY + size.height;
             this.curXCollisionType = this.terrainMgr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
-
             if (this.curXCollisionType == 1) { // 有碰撞
                 let distance = this.terrainMgr.getDistanceToTileSide(checkX, xDir);
                 this.node.x -= distance;
+                this.movableObj.setInitialVelocity(0, null);
             }
         }
 
         if (yDir != 0) {
-            let checkDir = xDir >= 0 ? 1 : -1; 
-            let checkX = this.node.x - size.width * 0.5 * checkDir; // 从后往前计算上下的碰撞
-            let checkXEnd = checkX + size.width * checkDir;
+            let checkX = this.node.x - size.width * 0.5; // 从后往前计算上下的碰撞
+            let checkXEnd = checkX + size.width - 1;
 
             let checkY = this.node.y + size.height * 0.5 * yDir;
             
-            // 注意：随着重力checkY会不断往下，但是速度不会超过32也就是一个格的距离，所以不会有问题
             this.curYCollisionType = this.terrainMgr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
-
+            cc.log(this.curYCollisionType);
             if (this.curYCollisionType == 1) { // 有碰撞
                 let distance = this.terrainMgr.getDistanceToTileSide(checkY, yDir);
                 this.node.y -= distance;
+                this.movableObj.setInitialVelocity(null, 0);
 
             } else if (this.curYCollisionType == 2) { // 有只向下而且能越过的碰撞
                 if (yDir < 0) { // 只检测向下
@@ -66,9 +64,22 @@ export default class TerrainCollision extends cc.Component {
                     let {y: lastY} = this.movableObj.getLastPos();
                     if (lastY - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
                         this.node.y = nodeYInMargin;
+                        this.movableObj.setInitialVelocity(null, 0);
                     }
                 }  
-
+            }
+        }
+        
+        // 第一次x碰撞检测可能会因为y轴碰撞未进行而导致误判，
+        // 所以需要在y检测后再检测一次，如果未碰撞则移动到相应位置
+        if (xDir != 0) {
+            let checkX = saveX + size.width * 0.5 * xDir;
+            let checkY = this.node.y - size.height * 0.5;
+            let checkYEnd = checkY + size.height;
+            this.curXCollisionType = this.terrainMgr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
+            if (this.curXCollisionType == 0) {
+                this.node.x = saveX;
+                this.movableObj.setInitialVelocity(0, null);
             }
         }
     }

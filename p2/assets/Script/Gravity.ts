@@ -8,7 +8,7 @@ const {ccclass, property, requireComponent} = cc._decorator;
 import MovableObject from "./MovableObject";
 
 /** 默认重力加速度 */
-const DefaultAccel: number = -100;
+const DefaultAccel: number = -0.25;
 
 @ccclass
 @requireComponent(MovableObject)

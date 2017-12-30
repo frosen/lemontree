@@ -39,6 +39,7 @@ export default class HeroController extends cc.Component {
 
     onLoad() {
         this.initTouchEvents();
+        this.initKeyboardEvents();
     }
 
     initTouchEvents() {
@@ -86,7 +87,7 @@ export default class HeroController extends cc.Component {
 
         // 检测移动和冲刺
         let diff: number = pos.x - this.heroBeginPos.x;
-        let dir: number = diff > 0 ? 1 : 0;
+        let dir: number = diff > 0 ? 1 : -1;
         let dis = Math.abs(diff);
         let speed = Math.abs(lastPos.x - pos.x);
 
@@ -170,5 +171,41 @@ export default class HeroController extends cc.Component {
 
     getBeginPosOrNull(): cc.Vec2 {
         return this.heroBeginPos;
+    }
+
+    // -------------------------------------------------------------------------------------------------------
+
+    // 便于测试使用
+    initKeyboardEvents() {
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+    }
+
+    onKeyDown (event) {
+        switch(event.keyCode) {
+            case cc.KEY.a:
+            case cc.KEY.left:
+                this.hero.move(-1);
+                break;
+            case cc.KEY.d:
+            case cc.KEY.right:
+                this.hero.move(1);
+                break;
+            case cc.KEY.up:
+            case cc.KEY.w:
+                this.hero.jump();
+                break;
+        }
+    }
+
+    onKeyUp (event) {
+        switch(event.keyCode) {
+            case cc.KEY.a:
+            case cc.KEY.left:
+            case cc.KEY.d:
+            case cc.KEY.right:
+                this.hero.move(0);
+                break;
+        }
     }
 }

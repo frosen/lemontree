@@ -6,7 +6,7 @@
 const {ccclass, property, executionOrder} = cc._decorator;
 
 /** 速度最大值（必为正数）不得超过一个tile的宽度 */
-const VelocityMax: number = 30;
+const VelocityMax: number = 28;
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.MovableObject)
@@ -24,16 +24,14 @@ export default class MovableObject extends cc.Component {
 
     update(dt: number) {
         // x
-        this.xVelocity += (this.xAccel * dt);
-        let xVelocityPerFrame = this.xVelocity * dt
-        xVelocityPerFrame = Math.min(Math.max(xVelocityPerFrame, -VelocityMax), VelocityMax);
-        this.node.y += xVelocityPerFrame;
+        this.xVelocity += this.xAccel;
+        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);
+        this.node.x += this.xVelocity;
 
         // y
-        this.yVelocity += (this.yAccel * dt);
-        let yVelocityPerFrame = this.yVelocity * dt
-        yVelocityPerFrame = Math.min(Math.max(yVelocityPerFrame, -VelocityMax), VelocityMax);
-        this.node.y += yVelocityPerFrame;
+        this.yVelocity += this.yAccel;
+        this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);
+        this.node.y += this.yVelocity;
     }
 
     /**
@@ -42,8 +40,8 @@ export default class MovableObject extends cc.Component {
      * @param yVelocity: 每秒钟运动的y像素数量，为null则不设置
      */
     setInitialVelocity(xVelocity: number, yVelocity: number) {
-        if (xVelocity) this.xVelocity = xVelocity;
-        if (yVelocity) this.yVelocity = yVelocity;
+        if (xVelocity != null) this.xVelocity = xVelocity;
+        if (yVelocity != null) this.yVelocity = yVelocity;
     }
 
     /**
