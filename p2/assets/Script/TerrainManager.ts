@@ -112,7 +112,6 @@ export default class TerrainManager extends cc.Component {
             x += TileLength;
             if (x - toX > 0) x = toX;
         }
-        
         return collisionType;
     }
 

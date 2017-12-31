@@ -16,10 +16,10 @@ const DisForDash: number = 60;
 const SpeedForDash: number = 30;
 const SpeedEndDash: number = 10;
 
-const SpeedForJump: number = 20;
+const SpeedForJump: number = 10;
 const SpeedEndJump: number = -1;
 
-const SpeedForUse: number = -20;
+const SpeedForUse: number = -10;
 const SpeedEndUse: number = 1;
 
 const MarginForDash: number = 20;
@@ -194,6 +194,10 @@ export default class HeroController extends cc.Component {
             case cc.KEY.up:
             case cc.KEY.w:
                 this.hero.jump();
+                break;
+            case cc.KEY.down:
+            case cc.KEY.s:
+                this.hero.use();
                 break;
         }
     }

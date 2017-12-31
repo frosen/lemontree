@@ -9,25 +9,29 @@ import MovableObject from "./MovableObject";
 import HeroAttri from './HeroAttri';
 
 /** 起跳速度 */
-const JumpVelocity: number = 5;
+const JumpVelocity: number = 7;
 
 @ccclass
 @requireComponent(MovableObject)
 export default class Hero extends cc.Component {
 
-    /** x轴移动方向 */
-    xDir: number = 0;
     /** 英雄属性 */
     heroAttri: HeroAttri = null;
+    /** 可移动对象组件 */
+    movableObj: MovableObject = null;
+
+    /** x轴移动方向 */
+    xDir: number = 0;
 
     onLoad() {
         // init logic
         this.heroAttri = new HeroAttri();
+        this.movableObj = this.getComponent(MovableObject);
     }
 
     update() {
         // 持续不断的速度，所以放在update中
-        this.getComponent(MovableObject).setInitialVelocity(this.xDir * this.heroAttri.speed, null);
+        this.movableObj.setInitialVelocity(this.xDir * this.heroAttri.speed, null);
     }
 
     // 动作 -------------------------------------------------
@@ -52,13 +56,13 @@ export default class Hero extends cc.Component {
      * 跳跃
      */
     jump() {
-        this.getComponent(MovableObject).setInitialVelocity(null, JumpVelocity);
+        this.movableObj.setInitialVelocity(null, JumpVelocity);
     }
 
     /**
      * 使用（拾起药水>进入门>下跳）
      */
     use() {
-
+        this.node.y -= 2;
     }
 }

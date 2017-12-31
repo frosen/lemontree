@@ -2,9 +2,10 @@
 // 镜头控制器
 // lly 2017.12.30
 
-const {ccclass, property} = cc._decorator;
+const {ccclass, property, executionOrder} = cc._decorator;
 
 @ccclass
+@executionOrder(EXECUTION_ORDER.CameraController)
 export default class CameraController extends cc.Component {
 
     @property(cc.Camera)
@@ -28,10 +29,11 @@ export default class CameraController extends cc.Component {
 
         let mapSize = this.map.getContentSize();
 
-        this.xMin = viewSize.width * 0.5;
-        this.xMax = mapSize.width - viewSize.width * 0.5;
-        this.yMin = viewSize.height * 0.5;
-        this.yMax = mapSize.height - viewSize.height * 0.5;
+        let rate = 0.25
+        this.xMin = viewSize.width * rate;
+        this.xMax = mapSize.width - viewSize.width * rate;
+        this.yMin = viewSize.height * rate;
+        this.yMax = mapSize.height - viewSize.height * rate;
     }
 
     onEnable() {
@@ -48,7 +50,7 @@ export default class CameraController extends cc.Component {
 
         cameraPos.x = Math.min(Math.max(cameraPos.x, this.xMin), this.xMax);
         cameraPos.y = Math.min(Math.max(cameraPos.y, this.yMin), this.yMax);
-
+        
         this.node.position = cameraPos;
     }
 }
