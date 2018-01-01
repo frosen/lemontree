@@ -46,17 +46,17 @@ export default class Hero extends cc.Component {
 
     /**
      * 冲刺
-     * @param dir: 1向右 -1向左 不能为0
      */
-    dash(dir: number) {
+    dash() {
 
     }
 
     /**
-     * 跳跃
+     * 跳跃，通过加速时间不同，可控制跳跃高度
+     * @param begin: true开始跳跃速度，false结束速度开始自由落体
      */
-    jump() {
-        this.movableObj.setInitialVelocity(null, JumpVelocity);
+    jump(begin: boolean) {
+        if (begin) this.movableObj.setInitialVelocity(null, JumpVelocity);
     }
 
     /**

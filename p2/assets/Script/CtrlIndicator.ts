@@ -21,13 +21,13 @@ export default class CtrlIndicator extends cc.Component {
     }
 
     update() {
-        let beginPos = this.ctrlr.getBeginPosOrNull();
+        let beginPos = this.ctrlr.getMoveBeginPosOrNull();
 
         if (!beginPos) {
             this.sp.enabled = false;
         } else {
             this.sp.enabled = true;
-            this.node.position = new cc.Vec2(beginPos.x, beginPos.y + 40);
+            this.node.position = beginPos;
         }
     }
 }
