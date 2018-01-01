@@ -147,8 +147,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 320,
-      "height": 568
+      "width": 568,
+      "height": 320
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -235,8 +235,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 640,
-      "height": 640
+      "width": 3200,
+      "height": 3200
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -287,8 +287,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 640,
-      "height": 640
+      "width": 3200,
+      "height": 3200
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -348,8 +348,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 640,
-      "height": 640
+      "width": 3200,
+      "height": 3200
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -695,7 +695,7 @@
         "__id__": 2
       }
     ],
-    "zoomRatio": 0.7
+    "zoomRatio": 1
   },
   {
     "__type__": "7418fGdkatL6q+Qym2mbIGR",
@@ -734,6 +734,9 @@
         "__id__": 30
       },
       {
+        "__id__": 31
+      },
+      {
         "__id__": 28
       }
     ],
@@ -755,8 +758,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 320,
-      "height": 568
+      "width": 568,
+      "height": 320
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -764,8 +767,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 160,
-      "y": 284
+      "x": 284,
+      "y": 160
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -811,8 +814,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 320,
-      "height": 568
+      "width": 568,
+      "height": 320
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -820,8 +823,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": -160,
-      "y": -284
+      "x": -284,
+      "y": -160
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -973,10 +976,19 @@
     "_enabled": true,
     "_designResolution": {
       "__type__": "cc.Size",
-      "width": 320,
-      "height": 568
+      "width": 568,
+      "height": 320
     },
-    "_fitWidth": false,
-    "_fitHeight": true
+    "_fitWidth": true,
+    "_fitHeight": false
+  },
+  {
+    "__type__": "3e714BCFwhHjr2bPQOQ+3nn",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 23
+    },
+    "_enabled": true
   }
 ]
