@@ -1,8 +1,8 @@
-// HeroAttri.ts
+// AttriForHero.ts
 // 英雄属性
 // lly 2017.12.12
 
-export default class HeroAttri {
+export default class AttriForHero {
     hp: number = 0;
     speed: number = 0;
 
