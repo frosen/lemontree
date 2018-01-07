@@ -19,8 +19,8 @@ export default class TerrainCollision extends cc.Component {
     terrainMgr: TerrainManager = null;
 
     /** 当前碰撞状态 */
-    curXCollisionType: CollisionType = 0;
-    curYCollisionType: CollisionType = 0;
+    curXCollisionType: CollisionType = CollisionType.none;
+    curYCollisionType: CollisionType = CollisionType.none;
 
     onLoad() {
         this.movableObj = this.getComponent(MovableObject);
@@ -60,7 +60,7 @@ export default class TerrainCollision extends cc.Component {
             if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
                 let distance = this.terrainMgr.getDistanceToTileSide(checkY, yDir);
                 this.node.y -= distance;
-                this.movableObj.setInitialVelocity(null, 0);
+                this.movableObj.yVelocity = 0;
 
             } else if (this.curYCollisionType == CollisionType.platform) { // 有只向下而且能越过的碰撞
                 if (yDir < 0) { // 只检测向下
@@ -69,7 +69,7 @@ export default class TerrainCollision extends cc.Component {
                     
                     if (lastY - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
                         this.node.y = nodeYInMargin;
-                        this.movableObj.setInitialVelocity(null, 0);
+                        this.movableObj.yVelocity = 0;
                     }
                 } else {
                     this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
@@ -87,19 +87,8 @@ export default class TerrainCollision extends cc.Component {
             if (this.curXCollisionType == CollisionType.none) {
                 this.node.x = saveX;
             } else {
-                this.movableObj.setInitialVelocity(0, null);
+                this.movableObj.xVelocity = 0;
             }
-        }
-    }
-
-    /**
-     * 获取碰撞状态
-     * @return 0是无碰撞，1是碰撞块，2是只能从上到下碰撞
-     */
-    getCurCollisionType(): {x: CollisionType, y: CollisionType} {
-        return {
-            x: this.curXCollisionType,
-            y: this.curYCollisionType
         }
     }
 }

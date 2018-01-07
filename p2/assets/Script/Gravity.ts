@@ -16,7 +16,7 @@ export default class Gravity extends cc.Component {
 
     onLoad() {
         // 设置重力加速度即可
-        this.getComponent(MovableObject).setAccel(null, DefaultAccel);
+        this.getComponent(MovableObject).yAccel = DefaultAccel;
     }
     
 }

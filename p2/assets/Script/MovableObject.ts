@@ -35,26 +35,6 @@ export default class MovableObject extends cc.Component {
     }
 
     /**
-     * 设置初始速度，随后会按照其速度匀速运动，除非有加速度
-     * @param xVelocity: 每秒钟运动的x像素数量，为null则不设置
-     * @param yVelocity: 每秒钟运动的y像素数量，为null则不设置
-     */
-    setInitialVelocity(xVelocity: number, yVelocity: number) {
-        if (xVelocity != null) this.xVelocity = xVelocity;
-        if (yVelocity != null) this.yVelocity = yVelocity;
-    }
-
-    /**
-     * 设置加速度
-     * @param xAccel: 当前帧中，换算成每秒钟改变x速度的量，为null则不设置
-     * @param yAccel: 当前帧中，换算成每秒钟改变y速度的量，为null则不设置
-     */
-    setAccel(xAccel: number, yAccel: number) {
-        if (xAccel) this.xAccel = xAccel;
-        if (yAccel) this.yAccel = yAccel;
-    }
-
-    /**
      * 获取速度方向
      * @return xDir 1向右 -1向左 0停止；yDir 1向上 -1向下 0停止
      */

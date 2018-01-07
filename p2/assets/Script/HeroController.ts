@@ -123,16 +123,6 @@ export default class HeroController extends cc.Component {
 
     // -------------------------------------------------------------------------------------------------------
 
-    getMoveBeginPosOrNull(): cc.Vec2 {
-        return this.moveBeginPos;
-    }
-
-    getWatchBeginPosOrNull(): cc.Vec2 {
-        return this.watchBeginPos;
-    }
-
-    // -------------------------------------------------------------------------------------------------------
-
     /** 便于测试使用 */
     initKeyboardEvents() {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);

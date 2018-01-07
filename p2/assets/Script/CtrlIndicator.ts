@@ -21,7 +21,7 @@ export default class CtrlIndicator extends cc.Component {
     }
 
     update() {
-        let beginPos = this.ctrlr.getMoveBeginPosOrNull();
+        let beginPos = this.ctrlr.moveBeginPos;
 
         if (!beginPos) {
             this.sp.enabled = false;
