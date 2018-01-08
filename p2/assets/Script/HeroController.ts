@@ -154,9 +154,15 @@ export default class HeroController extends cc.Component {
         switch(event.keyCode) {
             case cc.KEY.a:
             case cc.KEY.left:
+                if (this.hero.xMoveDir < 0) {
+                    this.hero.move(0);
+                }
+                break;
             case cc.KEY.d:
             case cc.KEY.right:
-                this.hero.move(0);
+                if (this.hero.xMoveDir > 0) {
+                    this.hero.move(0);
+                }
                 break;
             case cc.KEY.up:
             case cc.KEY.w:

@@ -32,7 +32,7 @@ export default class Hero extends cc.Component {
     state: StateForHero = null;
 
     /** x轴移动方向 */
-    xDir: number = 0;
+    xMoveDir: number = 0;
 
     onLoad() {
         this.movableObj = this.getComponent(MovableObject);
@@ -59,7 +59,7 @@ export default class Hero extends cc.Component {
      * @param dir: 1向右 -1向左 0停止
      */
     move(dir: number) {
-        this.xDir = dir;
+        this.xMoveDir = dir;
     }
 
     /**

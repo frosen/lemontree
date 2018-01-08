@@ -7,6 +7,8 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class HeroUI extends cc.Component {
 
+    xUIDir: number = 1;
+
     onLoad() {
         
     }
@@ -16,14 +18,26 @@ export default class HeroUI extends cc.Component {
     }
     
     stand() {
-
+        cc.log("ui -------> stand");
     }
 
     jumpUp() {
-
+        cc.log("ui -------> jumpUp");
     }
 
     jumpDown() {
+        cc.log("ui -------> jumpDown");
+    }
 
+    move() {
+        cc.log("ui -------> move");
+    }
+
+    dash() {
+        cc.log("ui -------> dash");
+    }
+
+    hurt() {
+        cc.log("ui -------> hurt");
     }
 }
