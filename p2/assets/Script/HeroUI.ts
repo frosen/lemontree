@@ -4,17 +4,47 @@
 
 const {ccclass, property} = cc._decorator;
 
-@ccclass
-export default class HeroUI extends cc.Component {
+/** 控制UI方向的三个指标 */
+export enum UIDirLvType {
+    move = 0,
+    attack = 1,
+    hurt = 2, //hurt方向指向hurt来源方向
+}
 
-    xUIDir: number = 1;
+@ccclass
+export class HeroUI extends cc.Component {
+
+    xUIDirs: {[key: number]: number;} = {};
 
     onLoad() {
-        
+        this.xUIDirs[UIDirLvType.move] = 1;
+        this.xUIDirs[UIDirLvType.attack] = 0;
+        this.xUIDirs[UIDirLvType.hurt] = 0;
     }
 
-    setDir(dir: number, lv: number) {
+    /**
+     * 设置不同指标的x方向
+     * 此方向有三个指标，当存在hurt时，只使用hurt，否则使用attack的方向，最后才使用move的方向
+     * @param dir: 1向右 -1向左 0停止
+     * @param lv: 指标
+     */
+    setXUIDir(dir: number, lv: UIDirLvType) {
+        if (dir == 0 && lv == UIDirLvType.move) return;
+        this.xUIDirs[lv] = dir;
+    }
 
+    /**
+     * 获取UI方向
+     * 此方向有三个指标，当存在hurt时，只使用hurt，否则使用attack的方向，最后才使用move的方向
+     * @return dir: 1向右 -1向左 0停止
+     */
+    get xUIDir(): number {
+        let hurtDir = this.xUIDirs[UIDirLvType.hurt];
+        if (hurtDir != 0) return hurtDir;
+        
+        let attackDir = this.xUIDirs[UIDirLvType.attack];
+        if (attackDir != 0) return attackDir;
+        else return this.xUIDirs[UIDirLvType.move];
     }
     
     stand() {

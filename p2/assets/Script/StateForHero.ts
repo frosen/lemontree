@@ -6,6 +6,7 @@
 import Hero from "./Hero";
 
 import {CollisionType} from "./TerrainManager";
+import {UIDirLvType} from "./HeroUI";
 
 export enum ActState {
     stand,
@@ -114,7 +115,7 @@ class StateForHeroInStand extends StateForHero {
 }
 
 /** 最大起跳加速时间（秒） */
-const MaxJumpAcceTime: number = 0.5;
+const MaxJumpAcceTime: number = 0.3;
 
 class StateForHeroInJumpAccelerating extends StateForHero {
     time: number = 0;
@@ -214,9 +215,9 @@ class StateForHeroInMove extends StateForHero {
 }
 
 /** 冲刺时间（秒） */
-const DashTime: number = 0.5;
+const DashTime: number = 0.4;
 /** 冲刺速度 像素/帧 */
-const DashSpeed: number = 4;
+const DashSpeed: number = 5;
 
 class StateForHeroInDash extends StateForHero {
     time: number = 0;
@@ -240,11 +241,13 @@ class StateForHeroInDash extends StateForHero {
         this.time = 0;   
 
         // 在开始时就确定方向，之后不可改变
-        this.dashDir = StateForHero.hero.ui.xUIDir;
+        this.dashDir = StateForHero.hero.ui.xUIDirs[UIDirLvType.move];
 
         // 进入不可攻击敌人的状态 todo
 
-        // 暂停y轴的加速度 todo
+        // 暂停y轴的加速度
+        StateForHero.hero.movableObj.yVelocity = 0;
+        StateForHero.hero.movableObj.yCanAccel = false;
     }
 
     update(dt: number) {
@@ -270,7 +273,8 @@ class StateForHeroInDash extends StateForHero {
     end() {
         // 退出不可攻击敌人的状态 todo
 
-        // 开启y轴的加速度 todo
+        // 开启y轴的加速度
+        StateForHero.hero.movableObj.yCanAccel = true;
     }
 }
 
@@ -284,7 +288,7 @@ class StateForHeroInHurt extends StateForHero {
         StateForHero.hero.ui.hurt(); 
 
         // 在开始时就确定方向，之后不可改变；方向与ui方向相反
-        this.hurtDir = StateForHero.hero.ui.xUIDir * -1;
+        this.hurtDir = StateForHero.hero.ui.xUIDirs[UIDirLvType.hurt] * -1;
 
         StateForHero.hero.movableObj.yVelocity = hurtYSpeed;
 

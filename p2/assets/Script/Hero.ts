@@ -9,7 +9,7 @@ import MovableObject from "./MovableObject";
 import TerrainCollision from "./TerrainCollision";
 
 import AttriForHero from "./AttriForHero";
-import HeroUI from "./HeroUI";
+import {HeroUI, UIDirLvType} from "./HeroUI";
 
 import {ActState, StateForHero} from "./StateForHero";
 
@@ -60,6 +60,7 @@ export default class Hero extends cc.Component {
      */
     move(dir: number) {
         this.xMoveDir = dir;
+        this.ui.setXUIDir(dir, UIDirLvType.move);
     }
 
     /**

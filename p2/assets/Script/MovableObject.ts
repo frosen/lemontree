@@ -12,6 +12,9 @@ const VelocityMax: number = 28;
 @executionOrder(EXECUTION_ORDER.MovableObject)
 export default class MovableObject extends cc.Component {
 
+    xCanAccel: boolean = true;
+    yCanAccel: boolean = true;
+
     /** 当前x加速度 */
     xAccel: number = 0;
     /** 当前y加速度 */
@@ -24,12 +27,12 @@ export default class MovableObject extends cc.Component {
 
     update(dt: number) {
         // x
-        this.xVelocity += this.xAccel;
+        if (this.xCanAccel) this.xVelocity += this.xAccel;
         this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);
         this.node.x += this.xVelocity;
 
         // y
-        this.yVelocity += this.yAccel;
+        if (this.yCanAccel) this.yVelocity += this.yAccel;
         this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);
         this.node.y += this.yVelocity;
     }

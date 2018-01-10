@@ -147,6 +147,9 @@ export default class HeroController extends cc.Component {
             case cc.KEY.s:
                 this.hero.use();
                 break;
+            case cc.KEY.space:
+                this.hero.dash();
+                break;
         }
     }
 
