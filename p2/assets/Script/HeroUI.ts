@@ -31,6 +31,12 @@ export class HeroUI extends cc.Component {
     setXUIDir(dir: number, lv: UIDirLvType) {
         if (dir == 0 && lv == UIDirLvType.move) return;
         this.xUIDirs[lv] = dir;
+
+        // 根据三个指标调整ui方向，ui默认朝向右边
+        let realDir = this.xUIDir;
+        if (realDir != 0) {
+            this.node.scaleX = Math.abs(this.node.scaleX) * realDir;
+        }
     }
 
     /**

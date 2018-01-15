@@ -1,7 +1,28 @@
 {
   "collision-matrix": [
     [
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      false,
+      false,
+      true,
       false
+    ],
+    [
+      true,
+      true,
+      true,
+      false
+    ],
+    [
+      true,
+      false,
+      false,
+      true
     ]
   ],
   "design-resolution-height": 568,
@@ -15,7 +36,10 @@
   "fit-height": true,
   "fit-width": false,
   "group-list": [
-    "default"
+    "hero",
+    "heroAtk",
+    "enemy",
+    "enemyAtk"
   ],
   "simulator-orientation": false,
   "simulator-resolution": {

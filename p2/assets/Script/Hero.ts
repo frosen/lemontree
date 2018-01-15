@@ -7,6 +7,7 @@ const {ccclass, property, requireComponent} = cc._decorator;
 
 import MovableObject from "./MovableObject";
 import TerrainCollision from "./TerrainCollision";
+import ObjCollisionForHero from "./ObjCollisionForHero";
 
 import AttriForHero from "./AttriForHero";
 import {HeroUI, UIDirLvType} from "./HeroUI";
@@ -22,6 +23,8 @@ export default class Hero extends cc.Component {
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
     terrainCollision: TerrainCollision = null;
+    /** 对象碰撞组件 */
+    objCollision: ObjCollisionForHero = null;
 
     /** 英雄属性 */
     attri: AttriForHero = null;
@@ -37,6 +40,7 @@ export default class Hero extends cc.Component {
     onLoad() {
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCollision = this.getComponent(TerrainCollision);
+        this.objCollision = this.getComponent(ObjCollisionForHero);
 
         this.attri = new AttriForHero();
         this.ui = this.getComponent(HeroUI);
@@ -92,4 +96,12 @@ export default class Hero extends cc.Component {
     }
 
     // 被状态机调用 ------------------------------------------------------------
+
+    /**
+     * 受伤检测，其实就是检测碰撞
+     * return true为碰撞了
+     */
+    checkHurt(): boolean {
+        return this.objCollision.getIfCollide();
+    }
 }

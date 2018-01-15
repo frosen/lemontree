@@ -1,6 +1,6 @@
 // TerrainCollision.ts
-// 碰撞组件
-// 拥有此组件的单位会进行碰撞检测
+// 地形碰撞组件
+// 拥有此组件的单位会进行与地形形成碰撞
 // lly 2017.12.12
 
 const {ccclass, property, executionOrder, requireComponent} = cc._decorator;
@@ -70,6 +70,8 @@ export default class TerrainCollision extends cc.Component {
                     if (lastY - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
                         this.node.y = nodeYInMargin;
                         this.movableObj.yVelocity = 0;
+                    } else {
+                        this.curYCollisionType = CollisionType.none; // 过了最上一条边后就不可碰撞了
                     }
                 } else {
                     this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞

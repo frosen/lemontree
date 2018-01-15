@@ -8,6 +8,7 @@ import Hero from "./Hero";
 import {CollisionType} from "./TerrainManager";
 import {UIDirLvType} from "./HeroUI";
 
+/** 行动状态 */
 export enum ActState {
     stand,
     jumpAccelerating, // 跳跃加速期，通过控制器控制加速时间可改变跳跃高度
@@ -104,10 +105,12 @@ class StateForHeroInStand extends StateForHero {
     }
 
     check() {
-        // 先检测是否受伤 todo
+        if (StateForHero.hero.checkHurt()) {
+            StateForHero.changeStateTo(ActState.hurt);
 
-        if (StateForHero.hero.terrainCollision.curYCollisionType == CollisionType.none) {
+        } else if (StateForHero.hero.terrainCollision.curYCollisionType == CollisionType.none) {
             StateForHero.changeStateTo(ActState.jump);
+
         } else if (StateForHero.hero.xMoveDir != 0) {   
             StateForHero.changeStateTo(ActState.move);
         }
@@ -147,10 +150,12 @@ class StateForHeroInJumpAccelerating extends StateForHero {
     }
 
     check() {
-        // 先检测是否受伤 todo
+        if (StateForHero.hero.checkHurt()) {
+            StateForHero.changeStateTo(ActState.hurt);
 
-        if (StateForHero.hero.terrainCollision.curYCollisionType != CollisionType.none) {
+        } else if (StateForHero.hero.terrainCollision.curYCollisionType != CollisionType.none) {
             StateForHero.changeStateTo(ActState.jump);
+
         } else if (this.time > MaxJumpAcceTime) {   
             StateForHero.changeStateTo(ActState.jump);
         }
@@ -179,9 +184,10 @@ class StateForHeroInJump extends StateForHero {
     }
 
     check() {
-        // 先检测是否受伤 todo
-        
-        if (StateForHero.hero.terrainCollision.curYCollisionType != CollisionType.none && 
+        if (StateForHero.hero.checkHurt()) {
+            StateForHero.changeStateTo(ActState.hurt);
+
+        } else if (StateForHero.hero.terrainCollision.curYCollisionType != CollisionType.none && 
             StateForHero.hero.movableObj.getDir().yDir <= 0) {
             if (StateForHero.hero.xMoveDir == 0) {
                 StateForHero.changeStateTo(ActState.stand);
@@ -204,9 +210,10 @@ class StateForHeroInMove extends StateForHero {
     }
 
     check() {
-        // 先检测是否受伤 todo
+        if (StateForHero.hero.checkHurt()) {
+            StateForHero.changeStateTo(ActState.hurt);
 
-        if (StateForHero.hero.terrainCollision.curYCollisionType == CollisionType.none) {
+        } else if (StateForHero.hero.terrainCollision.curYCollisionType == CollisionType.none) {
             StateForHero.changeStateTo(ActState.jump);
         } else if (StateForHero.hero.xMoveDir == 0) {
             StateForHero.changeStateTo(ActState.stand);
@@ -257,9 +264,10 @@ class StateForHeroInDash extends StateForHero {
     }
 
     check() {
-        // 先检测是否受伤 todo
+        if (StateForHero.hero.checkHurt()) {
+            StateForHero.changeStateTo(ActState.hurt);
 
-        if (this.time > DashTime) {   
+        } else if (this.time > DashTime) {   
             if (StateForHero.hero.terrainCollision.curYCollisionType == CollisionType.none) {
                 StateForHero.changeStateTo(ActState.jump);
             } else if (StateForHero.hero.xMoveDir == 0) {
@@ -278,25 +286,26 @@ class StateForHeroInDash extends StateForHero {
     }
 }
 
-const hurtXSpeed: number = 1;
-const hurtYSpeed: number = 1;
+const hurtXSpeed: number = 2;
+const hurtYSpeed: number = 2;
 
 class StateForHeroInHurt extends StateForHero {
-    hurtDir: number = 0;
+    hurtMoveDir: number = 0;
 
     begin() {
-        StateForHero.hero.ui.hurt(); 
+        let hero = StateForHero.hero;
 
-        // 在开始时就确定方向，之后不可改变；方向与ui方向相反
-        this.hurtDir = StateForHero.hero.ui.xUIDirs[UIDirLvType.hurt] * -1;
-
-        StateForHero.hero.movableObj.yVelocity = hurtYSpeed;
+        hero.ui.hurt(); 
+        hero.ui.setXUIDir(hero.objCollision.lastCollisionXDir, UIDirLvType.hurt);
+        
+        this.hurtMoveDir = hero.objCollision.lastCollisionXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
+        hero.movableObj.yVelocity = hurtYSpeed;
 
         // 进入不可攻击敌人的状态 todo
     }
 
     update(dt: number) {
-        StateForHero.hero.movableObj.xVelocity = this.hurtDir * hurtXSpeed;       
+        StateForHero.hero.movableObj.xVelocity = this.hurtMoveDir * hurtXSpeed;       
     }
 
     check() {
@@ -311,6 +320,8 @@ class StateForHeroInHurt extends StateForHero {
     }
 
     end() {
+        StateForHero.hero.ui.setXUIDir(0, UIDirLvType.hurt);
+
         // 退出不可攻击敌人的状态 todo
 
         // 进入短暂无敌时间 todo
