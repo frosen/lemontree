@@ -24,6 +24,9 @@ export default class AttriForHero {
     /** 最大冲刺数量 */
     maxDashCount: number = 1;
 
+    /** 受伤无敌时间 */
+    invincibleTimeForHurt: number = 0.5;
+
     constructor() {
         this.hp = 100;
         this.xSpeed = 3;

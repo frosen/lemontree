@@ -13,8 +13,8 @@ export default class ObjCollisionForHero extends cc.Component {
     /** 碰撞数量，大于0表示有碰撞 */
     collidingCount: number = 0;
 
-    /** 最后一次碰撞的X轴方向 */
-    lastCollisionXDir: number = 0
+    /** 最后一次碰撞的节点 */
+    lastCollisionNode: cc.Node = null;
 
     onLoad() {
         cc.director.getCollisionManager().enabled = true;
@@ -24,7 +24,7 @@ export default class ObjCollisionForHero extends cc.Component {
         let group: string = other.node.group;
         if (group == "enemy" || group == "enemyAtk") {
             this.collidingCount += 1;
-            this.lastCollisionXDir = other.node.x >= self.node.x ? 1 : -1;
+            this.lastCollisionNode = other.node;
         }
     }
 
@@ -37,5 +37,9 @@ export default class ObjCollisionForHero extends cc.Component {
 
     getIfCollide(): boolean {
         return this.collidingCount > 0;
+    }
+
+    getCollisionXDir(): number {
+        return this.node.x < this.lastCollisionNode.x ? 1 : -1;
     }
 }

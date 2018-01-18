@@ -20,6 +20,9 @@ export class HeroUI extends cc.Component {
         this.xUIDirs[UIDirLvType.move] = 1;
         this.xUIDirs[UIDirLvType.attack] = 0;
         this.xUIDirs[UIDirLvType.hurt] = 0;
+
+        // 基本设置
+        this.node.setCascadeOpacityEnabled(true);
     }
 
     /**
@@ -33,10 +36,9 @@ export class HeroUI extends cc.Component {
         this.xUIDirs[lv] = dir;
 
         // 根据三个指标调整ui方向，ui默认朝向右边
+        if (dir == 0) return;
         let realDir = this.xUIDir;
-        if (realDir != 0) {
-            this.node.scaleX = Math.abs(this.node.scaleX) * realDir;
-        }
+        this.node.scaleX = Math.abs(this.node.scaleX) * realDir;
     }
 
     /**
@@ -75,5 +77,11 @@ export class HeroUI extends cc.Component {
 
     hurt() {
         cc.log("ui -------> hurt");
+    }
+
+    // ---------------
+
+    setInvincibleEnabled(on: boolean) {
+        this.node.opacity = on ? 100 : 255;
     }
 }
