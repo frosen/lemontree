@@ -24,7 +24,7 @@ export default class CameraController extends cc.Component {
 
     onLoad() {
         // 设置镜头的移动范围
-        let canvas: cc.Node = cc.find('canvas');
+        let canvas: cc.Node = cc.find("canvas");
         let viewSize = canvas.getContentSize();
 
         let mapSize = this.map.getContentSize();

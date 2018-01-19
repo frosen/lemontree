@@ -3,7 +3,7 @@
 // lly 2017.12.12
 
 const {ccclass, property, requireComponent} = cc._decorator;
-import HeroController from './HeroController';
+import HeroController from "./HeroController";
 
 @ccclass
 @requireComponent(cc.Sprite)

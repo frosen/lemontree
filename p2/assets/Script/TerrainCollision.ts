@@ -6,7 +6,7 @@
 const {ccclass, property, executionOrder, requireComponent} = cc._decorator;
 
 import MovableObject from "./MovableObject";
-import {TerrainManager, CollisionType} from './TerrainManager'; 
+import {TerrainManager, CollisionType} from "./TerrainManager"; 
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollision)
