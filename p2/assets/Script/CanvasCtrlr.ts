@@ -1,11 +1,11 @@
-// CanvasController.ts
+// CameraCtrlr.ts
 // 主要用于适配不同的分辨率
 // lly 2018.1.1
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class CameraController extends cc.Component {
+export default class CameraCtrlr extends cc.Component {
 
     onLoad() {
         let canvas: cc.Canvas = this.getComponent(cc.Canvas);

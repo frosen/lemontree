@@ -5,7 +5,7 @@
 
 import Hero from "./Hero";
 
-import {CollisionType} from "./TerrainManager";
+import {CollisionType} from "./TerrainMgr";
 import {UIDirLvType} from "./HeroUI";
 
 /** 行动状态 */
@@ -62,7 +62,7 @@ export class SMForHeroMgr {
     changeStateTo(st: ActState): SMForHero {
         let stMachine = this.stateList[st];
 
-        if (!stMachine.can()) return null;
+        if (!stMachine.can(this)) return null;
 
         this.curStateMachine.end(this);
 
@@ -326,7 +326,7 @@ class SMForHeroInHurt extends SMForHero {
         // 退出不可攻击敌人的状态 todo
 
         // 进入短暂无敌时间
-        mgr.hero.beginInvincibleState(mgr.hero.attri.invincibleTimeForHurt)
+        mgr.hero.beginInvcState(mgr.hero.attri.invcTimeForHurt)
     }
 }
 

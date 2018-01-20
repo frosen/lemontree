@@ -1,12 +1,12 @@
-// CameraController.ts
+// CameraCtrlr.ts
 // 镜头控制器
 // lly 2017.12.30
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
 @ccclass
-@executionOrder(EXECUTION_ORDER.CameraController)
-export default class CameraController extends cc.Component {
+@executionOrder(EXECUTION_ORDER.CameraCtrlr)
+export default class CameraCtrlr extends cc.Component {
 
     @property(cc.Camera)
     camera: cc.Camera = null;
@@ -29,19 +29,11 @@ export default class CameraController extends cc.Component {
 
         let mapSize = this.map.getContentSize();
 
-        let rate = 0.25
+        let rate = 0.25;
         this.xMin = viewSize.width * rate;
         this.xMax = mapSize.width - viewSize.width * rate;
         this.yMin = viewSize.height * rate;
         this.yMax = mapSize.height - viewSize.height * rate;
-    }
-
-    onEnable() {
-        cc.director.getPhysicsManager().attachDebugDrawToCamera(this.camera);
-    }
-
-    onDisable() {
-        cc.director.getPhysicsManager().detachDebugDrawFromCamera(this.camera);
     }
 
     update() {

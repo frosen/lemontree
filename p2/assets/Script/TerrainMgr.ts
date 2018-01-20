@@ -1,4 +1,4 @@
-// TerrainManager.ts
+// TerrainMgr.ts
 // 地形管理器：
 // 控制tiledmap
 // lly 2017.12.18
@@ -19,7 +19,7 @@ export enum CollisionType {
 }
 
 @ccclass
-export class TerrainManager extends cc.Component {
+export class TerrainMgr extends cc.Component {
 
     @property(cc.TiledMap)
     tiledMap: cc.TiledMap = null;

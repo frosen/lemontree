@@ -3,15 +3,15 @@
 // lly 2017.12.12
 
 const {ccclass, property, requireComponent} = cc._decorator;
-import HeroController from "./HeroController";
+import HeroCtrlr from "./HeroCtrlr";
 
 @ccclass
 @requireComponent(cc.Sprite)
 export default class CtrlIndicator extends cc.Component {
 
     /** 英雄控制器 */
-    @property(HeroController)
-    ctrlr: HeroController = null;
+    @property(HeroCtrlr)
+    ctrlr: HeroCtrlr = null;
 
     /** 标记精灵 */
     sp: cc.Sprite = null;

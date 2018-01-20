@@ -110,7 +110,7 @@ export default class Hero extends cc.Component {
         return this.objCollision.getIfCollide();
     }
 
-    beginInvincibleState(time: number) {
+    beginInvcState(time: number) {
         this.smInvc.begin(time);
     }
 }

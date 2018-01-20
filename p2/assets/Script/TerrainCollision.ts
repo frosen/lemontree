@@ -6,7 +6,7 @@
 const {ccclass, property, executionOrder, requireComponent} = cc._decorator;
 
 import MovableObject from "./MovableObject";
-import {TerrainManager, CollisionType} from "./TerrainManager"; 
+import {TerrainMgr, CollisionType} from "./TerrainMgr"; 
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollision)
@@ -16,7 +16,7 @@ export default class TerrainCollision extends cc.Component {
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地图的碰撞检测 */
-    terrainMgr: TerrainManager = null;
+    terrainMgr: TerrainMgr = null;
 
     /** 当前碰撞状态 */
     curXCollisionType: CollisionType = CollisionType.none;
@@ -24,7 +24,7 @@ export default class TerrainCollision extends cc.Component {
 
     onLoad() {
         this.movableObj = this.getComponent(MovableObject);
-        this.terrainMgr = cc.director.getScene().getComponentInChildren(TerrainManager);
+        this.terrainMgr = cc.director.getScene().getComponentInChildren(TerrainMgr);
     }
 
     update(dt: number) {

@@ -3,14 +3,14 @@
 // lly 2017.12.30
 
 const {ccclass, property, executeInEditMode} = cc._decorator;
-import HeroController from "./HeroController";
+import HeroCtrlr from "./HeroCtrlr";
 
 @ccclass
 @executeInEditMode
 export default class ShowCtrlArea extends cc.Component {
 
-    @property(HeroController)
-    ctrl: HeroController = null;
+    @property(HeroCtrlr)
+    ctrl: HeroCtrlr = null;
 
     @property(cc.Node)
     moveArea: cc.Node = null;
