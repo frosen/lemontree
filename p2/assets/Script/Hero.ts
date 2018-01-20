@@ -12,7 +12,7 @@ import ObjCollisionForHero from "./ObjCollisionForHero";
 import AttriForHero from "./AttriForHero";
 import {HeroUI, UIDirLvType} from "./HeroUI";
 
-import {ActState, SMForHero, InvincibleState, InvincibleSM} from "./SMForHero";
+import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
 
 @ccclass
 @requireComponent(MovableObject)
@@ -31,6 +31,11 @@ export default class Hero extends cc.Component {
     /** 英雄UI */
     ui: HeroUI = null;
 
+    /** 英雄状态机 */
+    sm: SMForHeroMgr = null;
+    /** 英雄无敌状态机 */
+    smInvc: SMForHeroInvcMgr = null;
+
     /** x轴移动方向 */
     xMoveDir: number = 0;
 
@@ -42,17 +47,17 @@ export default class Hero extends cc.Component {
         this.attri = new AttriForHero();
         this.ui = this.getComponent(HeroUI);
 
-        SMForHero.init(this, ActState.stand);
-        InvincibleSM.init(this);
+        this.sm = new SMForHeroMgr(this, ActState.stand);
+        this.smInvc = new SMForHeroInvcMgr(this);
     }
 
     update(dt: number) {
-        SMForHero.machineUpdate(dt);
-        InvincibleSM.machineUpdate(dt);
+        this.sm.machineUpdate(dt);
+        this.smInvc.machineUpdate(dt);
     }
 
     lateUpdate() {
-        SMForHero.machineCheck();
+        this.sm.machineCheck();
     }
 
     // 动作 被控制器调用 -------------------------------------------------
@@ -70,7 +75,7 @@ export default class Hero extends cc.Component {
      * 冲刺
      */
     dash() {
-        SMForHero.changeStateTo(ActState.dash);
+        this.sm.changeStateTo(ActState.dash);
     }
 
     /**
@@ -79,10 +84,10 @@ export default class Hero extends cc.Component {
      */
     jump(accelerating: boolean) {
         if (accelerating) {
-            SMForHero.changeStateTo(ActState.jumpAccelerating);
+            this.sm.changeStateTo(ActState.jumpAccelerating);
         } else {
-            if (SMForHero.curState == ActState.jumpAccelerating) {
-                SMForHero.changeStateTo(ActState.jump);
+            if (this.sm.curState == ActState.jumpAccelerating) {
+                this.sm.changeStateTo(ActState.jump);
             }
         }
     }
@@ -101,11 +106,11 @@ export default class Hero extends cc.Component {
      * return true为碰撞了
      */
     checkHurt(): boolean {
-        if (InvincibleSM.state == InvincibleState.on) return false;
+        if (this.smInvc.state == InvcState.on) return false;
         return this.objCollision.getIfCollide();
     }
 
     beginInvincibleState(time: number) {
-        InvincibleSM.begin(time);
+        this.smInvc.begin(time);
     }
 }
