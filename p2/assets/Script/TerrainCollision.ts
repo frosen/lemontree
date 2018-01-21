@@ -6,7 +6,7 @@
 const {ccclass, property, executionOrder, requireComponent} = cc._decorator;
 
 import MovableObject from "./MovableObject";
-import {TerrainMgr, CollisionType} from "./TerrainMgr"; 
+import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr"; 
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollision)
@@ -16,7 +16,7 @@ export default class TerrainCollision extends cc.Component {
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地图的碰撞检测 */
-    terrainMgr: TerrainMgr = null;
+    terrainCtrlr: TerrainCtrlr = null;
 
     /** 当前碰撞状态 */
     curXCollisionType: CollisionType = CollisionType.none;
@@ -24,7 +24,7 @@ export default class TerrainCollision extends cc.Component {
 
     onLoad() {
         this.movableObj = this.getComponent(MovableObject);
-        this.terrainMgr = cc.director.getScene().getComponentInChildren(TerrainMgr);
+        this.terrainCtrlr = cc.director.getScene().getComponentInChildren(TerrainCtrlr);
     }
 
     update(dt: number) {
@@ -37,9 +37,9 @@ export default class TerrainCollision extends cc.Component {
             let checkX = this.node.x + size.width * 0.5 * xDir;
             let checkY = this.node.y - size.height * 0.5;
             let checkYEnd = checkY + size.height;
-            let collisionType: CollisionType = this.terrainMgr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
+            let collisionType: CollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
             if (collisionType == CollisionType.entity) { // 有碰撞
-                let distance = this.terrainMgr.getDistanceToTileSide(checkX, xDir);
+                let distance = this.terrainCtrlr.getDistanceToTileSide(checkX, xDir);
                 let xPos = this.node.x - distance;
 
                 // 第一次检测x碰撞，其后退不可超过上次点的位置，否则会有y轴判断的错误
@@ -56,15 +56,15 @@ export default class TerrainCollision extends cc.Component {
 
             let checkY = this.node.y + size.height * 0.5 * yDir;
             
-            this.curYCollisionType = this.terrainMgr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
+            this.curYCollisionType = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
             if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
-                let distance = this.terrainMgr.getDistanceToTileSide(checkY, yDir);
+                let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
                 this.node.y -= distance;
                 this.movableObj.yVelocity = 0;
 
             } else if (this.curYCollisionType == CollisionType.platform) { // 有只向下而且能越过的碰撞
                 if (yDir < 0) { // 只检测向下
-                    let distance = this.terrainMgr.getDistanceToTileSide(checkY, yDir);
+                    let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
                     let nodeYInMargin = this.node.y - distance;
                     
                     if (lastY - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
@@ -85,7 +85,7 @@ export default class TerrainCollision extends cc.Component {
             let checkX = saveX + size.width * 0.5 * xDir;
             let checkY = this.node.y - size.height * 0.5;
             let checkYEnd = checkY + size.height;
-            this.curXCollisionType = this.terrainMgr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
+            this.curXCollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
             if (this.curXCollisionType == CollisionType.none) {
                 this.node.x = saveX;
             } else {

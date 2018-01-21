@@ -7,7 +7,7 @@ const {ccclass, property, requireComponent} = cc._decorator;
 
 import MovableObject from "./MovableObject";
 import TerrainCollision from "./TerrainCollision";
-import ObjCollisionForHero from "./ObjCollisionForHero";
+import ObjCollision from "./ObjCollision";
 
 import AttriForHero from "./AttriForHero";
 import {HeroUI, UIDirLvType} from "./HeroUI";
@@ -24,7 +24,7 @@ export default class Hero extends cc.Component {
     /** 地形碰撞组件 */
     terrainCollision: TerrainCollision = null;
     /** 对象碰撞组件 */
-    objCollision: ObjCollisionForHero = null;
+    objCollision: ObjCollision = null;
 
     /** 英雄属性 */
     attri: AttriForHero = null;
@@ -42,7 +42,7 @@ export default class Hero extends cc.Component {
     onLoad() {
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCollision = this.getComponent(TerrainCollision);
-        this.objCollision = this.getComponent(ObjCollisionForHero);
+        this.objCollision = this.getComponent(ObjCollision);
 
         this.attri = new AttriForHero();
         this.ui = this.getComponent(HeroUI);

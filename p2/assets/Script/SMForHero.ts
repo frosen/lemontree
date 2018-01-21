@@ -5,7 +5,7 @@
 
 import Hero from "./Hero";
 
-import {CollisionType} from "./TerrainMgr";
+import {CollisionType} from "./TerrainCtrlr";
 import {UIDirLvType} from "./HeroUI";
 
 /** 行动状态 */

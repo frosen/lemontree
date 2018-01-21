@@ -1,4 +1,4 @@
-// ObjCollisionForHero.ts
+// ObjCollision.ts
 // 对象碰撞
 // 对象碰撞就是英雄，敌人以及相应武器法术之间的碰撞
 // lly 2018.1.13
@@ -8,7 +8,7 @@ const {ccclass, property, requireComponent, executionOrder} = cc._decorator;
 @ccclass
 @requireComponent(cc.BoxCollider)
 @executionOrder(EXECUTION_ORDER.ObjCollision) // 在地形碰撞后在检测
-export default class ObjCollisionForHero extends cc.Component {
+export default class ObjCollision extends cc.Component {
 
     /** 碰撞数量，大于0表示有碰撞 */
     collidingCount: number = 0;
