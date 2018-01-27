@@ -3,14 +3,13 @@
 // 拥有此组件的单位会进行与地形形成碰撞
 // lly 2017.12.12
 
-const {ccclass, property, executionOrder, requireComponent} = cc._decorator;
+const {ccclass, property, executionOrder} = cc._decorator;
 
 import MovableObject from "./MovableObject";
 import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr"; 
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollision)
-@requireComponent(MovableObject)
 export default class TerrainCollision extends cc.Component {
 
     /** 可移动对象组件 */
@@ -23,6 +22,8 @@ export default class TerrainCollision extends cc.Component {
     curYCollisionType: CollisionType = CollisionType.none;
 
     onLoad() {
+        requireComponents(this, [MovableObject]);
+
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCtrlr = cc.director.getScene().getComponentInChildren(TerrainCtrlr);
     }

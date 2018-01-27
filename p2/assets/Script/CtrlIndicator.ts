@@ -2,11 +2,10 @@
 // 控制指示：显示控制器的位置标识和状态
 // lly 2017.12.12
 
-const {ccclass, property, requireComponent} = cc._decorator;
+const {ccclass, property} = cc._decorator;
 import HeroCtrlr from "./HeroCtrlr";
 
 @ccclass
-@requireComponent(cc.Sprite)
 export default class CtrlIndicator extends cc.Component {
 
     /** 英雄控制器 */
@@ -17,7 +16,9 @@ export default class CtrlIndicator extends cc.Component {
     sp: cc.Sprite = null;
 
     onLoad() {
-        this.sp = this.node.getComponent(cc.Sprite);
+        requireComponents(this, [cc.Sprite]);
+
+        this.sp = this.node.getComponent(cc.Sprite);       
     }
 
     update() {

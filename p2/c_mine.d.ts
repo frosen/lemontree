@@ -11,3 +11,8 @@ declare namespace EXECUTION_ORDER {
 	let ObjCollision: number
 	let CameraCtrlr: number
 }
+
+/**
+ * 官方还没有对多个组件的需求，所以自己先弄一个
+ */
+declare function requireComponents(obj: Object, components: any[]): void;

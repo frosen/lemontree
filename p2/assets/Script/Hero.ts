@@ -3,20 +3,19 @@
 // 英雄的主类，进行多个组件的交互
 // lly 2017.12.12
 
-const {ccclass, property, requireComponent} = cc._decorator;
+const {ccclass, property} = cc._decorator;
 
 import MovableObject from "./MovableObject";
 import TerrainCollision from "./TerrainCollision";
 import ObjCollision from "./ObjCollision";
-
-import AttriForHero from "./AttriForHero";
 import {HeroUI, UIDirLvType} from "./HeroUI";
 
+import AttriForHero from "./AttriForHero";
 import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
 
+import Attack from "./Attack";
+
 @ccclass
-@requireComponent(MovableObject)
-@requireComponent(TerrainCollision)
 export default class Hero extends cc.Component {
 
     /** 可移动对象组件 */
@@ -40,15 +39,16 @@ export default class Hero extends cc.Component {
     xMoveDir: number = 0;
 
     onLoad() {
+        requireComponents(this, [MovableObject, TerrainCollision, ObjCollision, HeroUI]);
+
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCollision = this.getComponent(TerrainCollision);
         this.objCollision = this.getComponent(ObjCollision);
-
-        this.attri = new AttriForHero();
         this.ui = this.getComponent(HeroUI);
 
+        this.attri = new AttriForHero();
         this.sm = new SMForHeroMgr(this, ActState.stand);
-        this.smInvc = new SMForHeroInvcMgr(this);
+        this.smInvc = new SMForHeroInvcMgr(this);       
     }
 
     update(dt: number) {
@@ -101,13 +101,25 @@ export default class Hero extends cc.Component {
 
     // 被状态机调用 ------------------------------------------------------------
 
+    hurtObj: ObjCollision = null;
+
     /**
      * 受伤检测，其实就是检测碰撞
      * return true为碰撞了
      */
     checkHurt(): boolean {
         if (this.smInvc.state == InvcState.on) return false;
-        return this.objCollision.getIfCollide();
+        for (const clsn of this.objCollision.otherCollisionsInFrame) {
+            if (clsn.node.getComponent(Attack)) {
+                this.hurtObj = clsn;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkHurtDir(): number {
+        return this.node.x < this.hurtObj.node.x ? 1 : -1;;
     }
 
     beginInvcState(time: number) {

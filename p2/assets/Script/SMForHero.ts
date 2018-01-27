@@ -294,7 +294,7 @@ class SMForHeroInHurt extends SMForHero {
 
     begin(mgr: SMForHeroMgr) {
         let hero = mgr.hero;
-        let hurtXDir = hero.objCollision.getCollisionXDir();
+        let hurtXDir = hero.checkHurtDir();
 
         hero.ui.hurt(); 
         hero.ui.setXUIDir(hurtXDir, UIDirLvType.hurt);
