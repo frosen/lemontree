@@ -16,3 +16,8 @@ declare namespace EXECUTION_ORDER {
  * 官方还没有对多个组件的需求，所以自己先弄一个
  */
 declare function requireComponents(obj: Object, components: any[]): void;
+
+/**
+ * 根据字符串查找一个function，字符串用":"区分组件名和函数名
+ */
+declare function getFuncFromString(obj: Object, str: string): function;

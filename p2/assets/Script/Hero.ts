@@ -7,7 +7,7 @@ const {ccclass, property} = cc._decorator;
 
 import MovableObject from "./MovableObject";
 import TerrainCollision from "./TerrainCollision";
-import ObjCollision from "./ObjCollision";
+import {ObjCollision, CollisionData} from "./ObjCollision";
 import {HeroUI, UIDirLvType} from "./HeroUI";
 
 import AttriForHero from "./AttriForHero";
@@ -99,29 +99,54 @@ export default class Hero extends cc.Component {
         this.node.y -= 2;
     }
 
-    // 被状态机调用 ------------------------------------------------------------
+    // 碰撞相关 ------------------------------------------------------------
 
-    hurtObj: ObjCollision = null;
+    /** 当前碰撞到的有伤害的对象 */
+    hurtCollisionData: CollisionData = null;
+
+    /**
+     * 碰撞回调函数
+     * @param collisionDatas: 当前帧碰撞到的对象的碰撞数据
+     */
+    onCollision(collisionDatas: CollisionData[]) {
+        // 敌人碰撞
+        this.hurtCollisionData = null;
+        for (const data of collisionDatas) {
+            cc.log(data.clsn.name);
+            let atk: Attack = data.clsn.node.getComponent(Attack);
+            if (atk) {
+                this.hurtCollisionData = data;
+                break;
+            }
+        }
+
+        // 道具碰撞 todo
+    }
+
+    /**
+     * 获取受伤方向
+     * @return 1从右边受伤，-1从左边受伤
+     */
+    getHurtDir(): number {
+        let hurtNodeCenterX = (this.hurtCollisionData.minX + this.hurtCollisionData.maxX) * 0.5;
+        return this.node.x < hurtNodeCenterX ? 1 : -1;;
+    }
+
+    // 被状态机调用 ------------------------------------------------------------
 
     /**
      * 受伤检测，其实就是检测碰撞
-     * return true为碰撞了
+     * @return true为碰撞了
      */
     checkHurt(): boolean {
         if (this.smInvc.state == InvcState.on) return false;
-        for (const clsn of this.objCollision.otherCollisionsInFrame) {
-            if (clsn.node.getComponent(Attack)) {
-                this.hurtObj = clsn;
-                return true;
-            }
-        }
-        return false;
-    }
+        return this.hurtCollisionData != null;
+    }    
 
-    checkHurtDir(): number {
-        return this.node.x < this.hurtObj.node.x ? 1 : -1;;
-    }
-
+    /**
+     * 开始无敌状态
+     * @param time: 无敌持续时间
+     */
     beginInvcState(time: number) {
         this.smInvc.begin(time);
     }

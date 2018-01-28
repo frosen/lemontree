@@ -5,16 +5,39 @@
 
 const {ccclass, property} = cc._decorator;
 
-@ccclass
-export default class ObjCollision extends cc.Component {
+export class CollisionData {
+    clsn: ObjCollision
+    minX: number
+    maxX: number
+    minY: number
+    maxY: number
+}
 
-    radius: cc.Size = null;
+@ccclass
+export class ObjCollision extends cc.Component {
+
+    /** 回调函数文本 调用当前节点的某个组件名称:组件的函数名 */
+    @property
+    callbackStr: string = "";
+    /** 回调函数 用文本生成 */
+    callback: (collisionDatas: CollisionData[])=>void = null;
+
+    /** 碰撞范围 为空的话则使用node的size*/
+    size: cc.Size = null;
+
+    /** 隐藏碰撞 */
     hide: boolean = false;
 
     /** 以此对象为父对象的次级碰撞对象的列表，次级碰撞对象需要额外计算位置 */
+    @property([ObjCollision])
     subCollisions: ObjCollision[] = [];
+    
     /** 当前帧中，此碰撞对象碰触到的其他碰撞对象的列表 */
-    otherCollisionsInFrame: ObjCollision[] = [];
+    collisionDatas: CollisionData[] = [];
+
+    onLoad() {
+        this.callback = getFuncFromString(this, this.callbackStr);
+    }
 
     /**
      * 获取最大最小x，y
@@ -22,9 +45,9 @@ export default class ObjCollision extends cc.Component {
      * @returns 获取最大最小x，y
      */        
     getMaxMinXY(parentCollision: ObjCollision = null): {minX: number, maxX: number, minY: number, maxY: number} {
-
+        
         let node = this.node;
-        let radius = this.radius || node.getContentSize();
+        let radius = this.size || node.getContentSize();
 
         let minX = -radius.width * node.anchorX;
         let maxX = minX + node.width;
@@ -69,11 +92,21 @@ export default class ObjCollision extends cc.Component {
      * 碰撞回调
      * @param 其他碰撞对象
      */ 
-    onCollisionBy(otherCollision: ObjCollision) {
-        this.otherCollisionsInFrame.push(otherCollision);
+    onCollisionBy(collisionData: CollisionData) {
+        this.collisionDatas.push(collisionData);
     }
 
+    /**
+     * 执行碰撞后的回调
+     */ 
+    excuteCallback() {
+        this.callback(this.collisionDatas);
+    }
+
+    /**
+     * 重置碰撞数据，在刷新数据之前执行
+     */
     reset() {
-        this.otherCollisionsInFrame = [];
+        this.collisionDatas = [];
     }
 }

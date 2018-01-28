@@ -22,3 +22,12 @@ window.requireComponents = function (obj, components) {
     }
     cc.assert(t, "[" + obj.name + "] need component: " + s);
 }
+
+window.getFuncFromString = function (obj, str) {
+    let data = str.split(":");
+    let comp = obj.getComponent(data[0]);
+    cc.assert(comp, obj.name + " wrong component: " + data[0]);
+    let func = comp[data[1]];
+    cc.assert(func && typeof(func) == "function", data[0] + " wrong component function: " + data[1]);
+    return func.bind(comp);
+}

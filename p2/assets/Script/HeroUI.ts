@@ -56,27 +56,27 @@ export class HeroUI extends cc.Component {
     }
     
     stand() {
-        cc.log("ui -------> stand");
+        // cc.log("ui -------> stand");
     }
 
     jumpUp() {
-        cc.log("ui -------> jumpUp");
+        // cc.log("ui -------> jumpUp");
     }
 
     jumpDown() {
-        cc.log("ui -------> jumpDown");
+        // cc.log("ui -------> jumpDown");
     }
 
     move() {
-        cc.log("ui -------> move");
+        // cc.log("ui -------> move");
     }
 
     dash() {
-        cc.log("ui -------> dash");
+        // cc.log("ui -------> dash");
     }
 
     hurt() {
-        cc.log("ui -------> hurt");
+        // cc.log("ui -------> hurt");
     }
 
     // ---------------

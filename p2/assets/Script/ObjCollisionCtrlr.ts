@@ -5,8 +5,9 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
-import ObjCollision from "./ObjCollision";
+import {ObjCollision, CollisionData} from "./ObjCollision";
 
+/** 检测容器最大容量 */
 const CollisionDataMaxLength: number = 1000;
 
 @ccclass
@@ -17,14 +18,15 @@ export default class ObjCollisionCtrlr extends cc.Component {
     @property([cc.Node])
     checkedLayers: cc.Node[] = [];
 
-    /** 检测策略 */
+    /** 检测策略文本 */
     @property
     checkingTacticsString: string = "";
-
+    /** 检测策略 */
     checkingTactics: number[][] = [];
 
-    collisionDatas: {clsn: ObjCollision, minX: number, maxX: number, minY: number, maxY: number}[][] = [];
-    
+    /** 检测数据容器，为了提高效率，减少object生成和销毁，使用一个固定大小的容器，改变其数据而不进行随意的创建销毁 */
+    collisionDatas: CollisionData[][] = [];
+    /** 检测数据容器的当前大小 */
     collisionDataLengths: number[] = [];
 
     onLoad() {
@@ -36,13 +38,9 @@ export default class ObjCollisionCtrlr extends cc.Component {
             let layerId1 = Number(layerIdStrs[0]);
             let layerId2 = Number(layerIdStrs[1]);
 
-            if(typeof(layerId1) == "number" && typeof(layerId2) == "number" &&
-                layerId1 < this.checkedLayers.length && layerId2 < this.checkedLayers.length &&
-                layerId1 >= 0 && layerId2 >= 0) {
-                    cc.log("ObjCollisionCtrlr init suc");
-                } else {
-                    cc.error("ObjCollisionCtrlr init error");
-                }
+            cc.assert(typeof(layerId1) == "number" && typeof(layerId2) == "number", "layer id must be number");
+            cc.assert(0 <= layerId1 && layerId1 < this.checkedLayers.length, "layer id 1 wrong");
+            cc.assert(0 <= layerId2 && layerId2 < this.checkedLayers.length, "layer id 2 wrong");
             
             this.checkingTactics.push([layerId1, layerId2]);
         }
@@ -61,8 +59,10 @@ export default class ObjCollisionCtrlr extends cc.Component {
     update(dt: number) {
         this.createCollsionData();
         this.checkByTictics();
+        this.excuteCollisionCallback();
     }
 
+    /** 遍历检测层，获取相关控件的数据 */
     createCollsionData() {
         for (let i = 0; i < this.checkedLayers.length; ++i) {
             this.collisionDataLengths[i] = 0; // 重置数据
@@ -73,16 +73,16 @@ export default class ObjCollisionCtrlr extends cc.Component {
                 let collision: ObjCollision = child.getComponent(ObjCollision);
                 if (!collision) continue;
 
-                if (!collision.hide) this.saveCollsionData(collision, null, i);
+                if (!collision.hide) this.saveCollsionDataAndResetObj(collision, null, i);
 
                 for (const subCollision of collision.subCollisions) {
-                    if (!subCollision.hide) this.saveCollsionData(subCollision, collision, i);
+                    if (!subCollision.hide) this.saveCollsionDataAndResetObj(subCollision, collision, i);
                 }
             }
         }
     }
 
-    saveCollsionData(collision: ObjCollision, parentCollsion: ObjCollision, i: number) {
+    saveCollsionDataAndResetObj(collision: ObjCollision, parentCollsion: ObjCollision, i: number) {
         let {minX, maxX, minY, maxY}= collision.getMaxMinXY(parentCollsion);
         let data = this.collisionDatas[i][this.collisionDataLengths[i]];
         data.clsn = collision;
@@ -96,6 +96,7 @@ export default class ObjCollisionCtrlr extends cc.Component {
         collision.reset(); // 重置数据
     }
 
+    /** 根据策略，检测碰撞 */
     checkByTictics() {
         for (const checkingIndexs of this.checkingTactics) {
             let index0 = checkingIndexs[0];
@@ -105,21 +106,27 @@ export default class ObjCollisionCtrlr extends cc.Component {
         }
     }
 
-    check(datas1: {clsn: ObjCollision, minX: number, maxX: number, minY: number, maxY: number}[], length1: number,
-        datas2: {clsn: ObjCollision, minX: number, maxX: number, minY: number, maxY: number}[], length2: number) {
-            for (let index1 = 0; index1 < length1; ++index1) {
-                const d1 = datas1[index1];
-                for (let index2 = 0; index2 < length2; ++index2) {
-                    const d2 = datas2[index2];
-                    if (d1.maxX >= d2.minX && d1.minX <= d2.maxX && d1.maxY >= d2.minY && d1.minY <= d2.maxY) {
-                        this.onCollision(d1.clsn, d2.clsn);
-                    }
+    check(datas1: CollisionData[], length1: number, datas2: CollisionData[], length2: number) {
+        for (let index1 = 0; index1 < length1; ++index1) {
+            const d1 = datas1[index1];
+            for (let index2 = 0; index2 < length2; ++index2) {
+                const d2 = datas2[index2];
+                if (d1.maxX >= d2.minX && d1.minX <= d2.maxX && d1.maxY >= d2.minY && d1.minY <= d2.maxY) {
+                    d1.clsn.onCollisionBy(d2);
+                    d2.clsn.onCollisionBy(d1);
                 }
             }
         }
+    }
 
-    onCollision(clsn1: ObjCollision, clsn2: ObjCollision) {
-        clsn1.onCollisionBy(clsn2);
-        clsn2.onCollisionBy(clsn1);
+    excuteCollisionCallback() {
+        for (let i = 0; i < this.collisionDatas.length; i++) {
+            const dataList = this.collisionDatas[i];
+            const l = this.collisionDataLengths[i];
+            for (let j = 0; j < l; j++) {
+                const data = dataList[j];
+                data.clsn.excuteCallback();               
+            }           
+        }
     }
 }
