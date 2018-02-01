@@ -1,4 +1,4 @@
-// ObjCollision.ts
+// ObjCollider.ts
 // 对象碰撞
 // 对象碰撞就是英雄，敌人以及相应武器法术之间的碰撞
 // lly 2018.1.13
@@ -6,15 +6,15 @@
 const {ccclass, property} = cc._decorator;
 
 export class CollisionData {
-    clsn: ObjCollision
-    minX: number
-    maxX: number
-    minY: number
-    maxY: number
+    cldr: ObjCollider = null;
+    minX: number = 0;
+    maxX: number = 0;
+    minY: number = 0;
+    maxY: number = 0;
 }
 
 @ccclass
-export class ObjCollision extends cc.Component {
+export class ObjCollider extends cc.Component {
 
     /** 回调函数文本 调用当前节点的某个组件名称:组件的函数名 */
     @property
@@ -29,8 +29,8 @@ export class ObjCollision extends cc.Component {
     hide: boolean = false;
 
     /** 以此对象为父对象的次级碰撞对象的列表，次级碰撞对象需要额外计算位置 */
-    @property([ObjCollision])
-    subCollisions: ObjCollision[] = [];
+    @property([ObjCollider])
+    subColliders: ObjCollider[] = [];
     
     /** 当前帧中，此碰撞对象碰触到的其他碰撞对象的列表 */
     collisionDatas: CollisionData[] = [];
@@ -44,7 +44,7 @@ export class ObjCollision extends cc.Component {
      * @param 父碰撞对象，只有次级碰撞对象有，默认为空
      * @returns 获取最大最小x，y
      */        
-    getMaxMinXY(parentCollision: ObjCollision = null): {minX: number, maxX: number, minY: number, maxY: number} {
+    getMaxMinXY(parentCollider: ObjCollider = null): {minX: number, maxX: number, minY: number, maxY: number} {
         
         let node = this.node;
         let radius = this.size || node.getContentSize();
@@ -54,7 +54,7 @@ export class ObjCollision extends cc.Component {
         let minY = -radius.height * node.anchorY;
         let maxY = minY + node.height;
 
-        if (!parentCollision) {
+        if (!parentCollider) {
             return {
                 minX: minX + node.x,
                 maxX: maxX + node.x,
@@ -64,7 +64,7 @@ export class ObjCollision extends cc.Component {
         }
 
         // 转换到父碰撞对象的父节点的坐标中，可以让其和父碰撞对象在一个坐标系中
-        let t = node._sgNode.getNodeToParentTransform(parentCollision.node.parent._sgNode);
+        let t = node._sgNode.getNodeToParentTransform(parentCollider.node.parent._sgNode);
 
         let rect = cc.rect(minX, minY, node.width, node.height);
 

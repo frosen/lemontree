@@ -108,7 +108,7 @@ class SMForHeroInStand extends SMForHero {
         if (mgr.hero.checkHurt()) {
             mgr.changeStateTo(ActState.hurt);
 
-        } else if (mgr.hero.terrainCollision.curYCollisionType == CollisionType.none) {
+        } else if (mgr.hero.terrainCollider.curYCollisionType == CollisionType.none) {
             mgr.changeStateTo(ActState.jump);
 
         } else if (mgr.hero.xMoveDir != 0) {   
@@ -153,7 +153,7 @@ class SMForHeroInJumpAccelerating extends SMForHero {
         if (mgr.hero.checkHurt()) {
             mgr.changeStateTo(ActState.hurt);
 
-        } else if (mgr.hero.terrainCollision.curYCollisionType != CollisionType.none) {
+        } else if (mgr.hero.terrainCollider.curYCollisionType != CollisionType.none) {
             mgr.changeStateTo(ActState.jump);
 
         } else if (this.time > MaxJumpAcceTime) {   
@@ -187,7 +187,7 @@ class SMForHeroInJump extends SMForHero {
         if (mgr.hero.checkHurt()) {
             mgr.changeStateTo(ActState.hurt);
 
-        } else if (mgr.hero.terrainCollision.curYCollisionType != CollisionType.none && 
+        } else if (mgr.hero.terrainCollider.curYCollisionType != CollisionType.none && 
             mgr.hero.movableObj.getDir().yDir <= 0) {
             if (mgr.hero.xMoveDir == 0) {
                 mgr.changeStateTo(ActState.stand);
@@ -213,7 +213,7 @@ class SMForHeroInMove extends SMForHero {
         if (mgr.hero.checkHurt()) {
             mgr.changeStateTo(ActState.hurt);
 
-        } else if (mgr.hero.terrainCollision.curYCollisionType == CollisionType.none) {
+        } else if (mgr.hero.terrainCollider.curYCollisionType == CollisionType.none) {
             mgr.changeStateTo(ActState.jump);
         } else if (mgr.hero.xMoveDir == 0) {
             mgr.changeStateTo(ActState.stand);
@@ -268,7 +268,7 @@ class SMForHeroInDash extends SMForHero {
             mgr.changeStateTo(ActState.hurt);
 
         } else if (this.time > DashTime) {   
-            if (mgr.hero.terrainCollision.curYCollisionType == CollisionType.none) {
+            if (mgr.hero.terrainCollider.curYCollisionType == CollisionType.none) {
                 mgr.changeStateTo(ActState.jump);
             } else if (mgr.hero.xMoveDir == 0) {
                 mgr.changeStateTo(ActState.stand);
@@ -310,7 +310,7 @@ class SMForHeroInHurt extends SMForHero {
     }
 
     check(mgr: SMForHeroMgr) {
-        if (mgr.hero.terrainCollision.curYCollisionType != CollisionType.none &&
+        if (mgr.hero.terrainCollider.curYCollisionType != CollisionType.none &&
             mgr.hero.movableObj.getDir().yDir <= 0) {
             if (mgr.hero.xMoveDir == 0) {
                 mgr.changeStateTo(ActState.stand);

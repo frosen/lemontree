@@ -1,4 +1,4 @@
-// TerrainCollision.ts
+// TerrainCollider.ts
 // 地形碰撞组件
 // 拥有此组件的单位会进行与地形形成碰撞
 // lly 2017.12.12
@@ -9,8 +9,8 @@ import MovableObject from "./MovableObject";
 import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr"; 
 
 @ccclass
-@executionOrder(EXECUTION_ORDER.TerrainCollision)
-export default class TerrainCollision extends cc.Component {
+@executionOrder(EXECUTION_ORDER.TerrainCollider)
+export default class TerrainCollider extends cc.Component {
 
     /** 可移动对象组件 */
     movableObj: MovableObject = null;

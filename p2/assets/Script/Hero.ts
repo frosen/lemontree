@@ -6,8 +6,8 @@
 const {ccclass, property} = cc._decorator;
 
 import MovableObject from "./MovableObject";
-import TerrainCollision from "./TerrainCollision";
-import {ObjCollision, CollisionData} from "./ObjCollision";
+import TerrainCollider from "./TerrainCollider";
+import {ObjCollider, CollisionData} from "./ObjCollider";
 import {HeroUI, UIDirLvType} from "./HeroUI";
 
 import AttriForHero from "./AttriForHero";
@@ -21,9 +21,7 @@ export default class Hero extends cc.Component {
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
-    terrainCollision: TerrainCollision = null;
-    /** 对象碰撞组件 */
-    objCollision: ObjCollision = null;
+    terrainCollider: TerrainCollider = null;
 
     /** 英雄属性 */
     attri: AttriForHero = null;
@@ -39,11 +37,10 @@ export default class Hero extends cc.Component {
     xMoveDir: number = 0;
 
     onLoad() {
-        requireComponents(this, [MovableObject, TerrainCollision, ObjCollision, HeroUI]);
+        requireComponents(this, [MovableObject, TerrainCollider, ObjCollider, HeroUI]);
 
         this.movableObj = this.getComponent(MovableObject);
-        this.terrainCollision = this.getComponent(TerrainCollision);
-        this.objCollision = this.getComponent(ObjCollision);
+        this.terrainCollider = this.getComponent(TerrainCollider);
         this.ui = this.getComponent(HeroUI);
 
         this.attri = new AttriForHero();
@@ -112,8 +109,8 @@ export default class Hero extends cc.Component {
         // 敌人碰撞
         this.hurtCollisionData = null;
         for (const data of collisionDatas) {
-            cc.log(data.clsn.name);
-            let atk: Attack = data.clsn.node.getComponent(Attack);
+            cc.log(data.cldr.name);
+            let atk: Attack = data.cldr.node.getComponent(Attack);
             if (atk) {
                 this.hurtCollisionData = data;
                 break;

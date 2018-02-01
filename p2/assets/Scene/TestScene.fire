@@ -581,7 +581,7 @@
     },
     "_enabled": true,
     "callbackStr": "Enemy:onCollision",
-    "subCollisions": []
+    "subColliders": []
   },
   {
     "__type__": "9f661uXsONL36sPsozhGAtf",
@@ -771,7 +771,7 @@
     },
     "_enabled": true,
     "callbackStr": "Enemy:onCollision",
-    "subCollisions": []
+    "subColliders": []
   },
   {
     "__type__": "8f1f8sP5BdKZoOdIU+XIxZe",
@@ -826,7 +826,7 @@
     },
     "_enabled": true,
     "callbackStr": "Enemy:onCollision",
-    "subCollisions": [
+    "subColliders": [
       {
         "__id__": 24
       }
@@ -1112,7 +1112,7 @@
     },
     "_enabled": true,
     "callbackStr": "Hero:onCollision",
-    "subCollisions": []
+    "subColliders": []
   },
   {
     "__type__": "503echVggFCPJZ0uzclfObz",

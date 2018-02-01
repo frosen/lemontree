@@ -5,13 +5,13 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
-import {ObjCollision, CollisionData} from "./ObjCollision";
+import {ObjCollider, CollisionData} from "./ObjCollider";
 
 /** 检测容器最大容量 */
 const CollisionDataMaxLength: number = 1000;
 
 @ccclass
-@executionOrder(EXECUTION_ORDER.ObjCollision) // 在地形碰撞后在检测
+@executionOrder(EXECUTION_ORDER.ObjCollider) // 在地形碰撞后在检测
 export default class ObjCollisionCtrlr extends cc.Component {
 
     /** 被检测的层 */
@@ -47,9 +47,9 @@ export default class ObjCollisionCtrlr extends cc.Component {
 
         // 根据被检测层生成检测数据的容器
         for (let index = 0; index < this.checkedLayers.length; ++index) {
-            let data: {clsn: ObjCollision, minX: number, maxX: number, minY: number, maxY: number}[] = [];
+            let data: CollisionData[] = [];
             for (let j = 0; j < CollisionDataMaxLength; ++j) {
-                data[j] = {clsn: null, minX: 0, maxX: 0, minY: 0, maxY: 0}               
+                data[j] = new CollisionData();               
             }
             this.collisionDatas[index] = data;
             this.collisionDataLengths[index] = 0;
@@ -70,22 +70,22 @@ export default class ObjCollisionCtrlr extends cc.Component {
             let layer = this.checkedLayers[i];
             let children: cc.Node[] = layer.children;
             for (const child of children) {
-                let collision: ObjCollision = child.getComponent(ObjCollision);
-                if (!collision) continue;
+                let collider: ObjCollider = child.getComponent(ObjCollider);
+                if (!collider) continue;
 
-                if (!collision.hide) this.saveCollsionDataAndResetObj(collision, null, i);
+                if (!collider.hide) this.saveCollsionDataAndResetObj(collider, null, i);
 
-                for (const subCollision of collision.subCollisions) {
-                    if (!subCollision.hide) this.saveCollsionDataAndResetObj(subCollision, collision, i);
+                for (const subCollider of collider.subColliders) {
+                    if (!subCollider.hide) this.saveCollsionDataAndResetObj(subCollider, collider, i);
                 }
             }
         }
     }
 
-    saveCollsionDataAndResetObj(collision: ObjCollision, parentCollsion: ObjCollision, i: number) {
-        let {minX, maxX, minY, maxY}= collision.getMaxMinXY(parentCollsion);
+    saveCollsionDataAndResetObj(collider: ObjCollider, parentCollider: ObjCollider, i: number) {
+        let {minX, maxX, minY, maxY}= collider.getMaxMinXY(parentCollider);
         let data = this.collisionDatas[i][this.collisionDataLengths[i]];
-        data.clsn = collision;
+        data.cldr = collider;
         data.minX = minX;
         data.maxX = maxX;
         data.minY = minY;
@@ -93,7 +93,7 @@ export default class ObjCollisionCtrlr extends cc.Component {
 
         ++this.collisionDataLengths[i];
 
-        collision.reset(); // 重置数据
+        collider.reset(); // 重置数据
     }
 
     /** 根据策略，检测碰撞 */
@@ -112,8 +112,8 @@ export default class ObjCollisionCtrlr extends cc.Component {
             for (let index2 = 0; index2 < length2; ++index2) {
                 const d2 = datas2[index2];
                 if (d1.maxX >= d2.minX && d1.minX <= d2.maxX && d1.maxY >= d2.minY && d1.minY <= d2.maxY) {
-                    d1.clsn.onCollisionBy(d2);
-                    d2.clsn.onCollisionBy(d1);
+                    d1.cldr.onCollisionBy(d2);
+                    d2.cldr.onCollisionBy(d1);
                 }
             }
         }
@@ -125,7 +125,7 @@ export default class ObjCollisionCtrlr extends cc.Component {
             const l = this.collisionDataLengths[i];
             for (let j = 0; j < l; j++) {
                 const data = dataList[j];
-                data.clsn.excuteCallback();               
+                data.cldr.excuteCallback();               
             }           
         }
     }

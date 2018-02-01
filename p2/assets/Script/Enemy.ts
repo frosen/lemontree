@@ -6,19 +6,19 @@ const {ccclass, property} = cc._decorator;
 
 import MovableObject from "./MovableObject";
 import Attack from "./Attack";
-import {ObjCollision, CollisionData} from "./ObjCollision";
+import {ObjCollider, CollisionData} from "./ObjCollider";
 
 @ccclass
 export default class Enemy extends cc.Component {
 
     onLoad() {
         // init logic
-        requireComponents(this, [Attack, ObjCollision]);
+        requireComponents(this, [Attack, ObjCollider]);
     }
 
     // 碰撞回调 ------------------------------------------------------------
 
-    onCollision(otherCollisionsInFrame: ObjCollision[]) {
+    onCollision(collisionDatas: CollisionData[]) {
         
     }
 }
