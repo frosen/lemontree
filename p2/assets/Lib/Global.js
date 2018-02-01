@@ -4,8 +4,8 @@
 
 window.EXECUTION_ORDER = {
     MovableObject: 1,
-    TerrainCollision: 2,
-    ObjCollision: 3,
+    TerrainCollider: 2,
+    ObjCollider: 3,
     CameraCtrlr: 4
 }
 

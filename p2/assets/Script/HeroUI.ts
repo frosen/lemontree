@@ -14,6 +14,9 @@ export enum UIDirLvType {
 @ccclass
 export class HeroUI extends cc.Component {
 
+    @property(cc.Sprite)
+    body: cc.Sprite = null;
+
     xUIDirs: {[key: number]: number;} = {};
 
     onLoad() {
@@ -57,26 +60,38 @@ export class HeroUI extends cc.Component {
     
     stand() {
         // cc.log("ui -------> stand");
+        this.node.skewX = 0;
+        this.node.skewY = 0;
     }
 
     jumpUp() {
         // cc.log("ui -------> jumpUp");
+        this.node.skewX = 0;
+        this.node.skewY = 5;
     }
 
     jumpDown() {
         // cc.log("ui -------> jumpDown");
+        this.node.skewX = 0;
+        this.node.skewY = -5;
     }
 
     move() {
         // cc.log("ui -------> move");
+        this.node.skewX = 5;
+        this.node.skewY = 0;
     }
 
     dash() {
         // cc.log("ui -------> dash");
+        this.node.skewX = 15;
+        this.node.skewY = 0;
     }
 
     hurt() {
         // cc.log("ui -------> hurt");
+        this.node.skewX = 0;
+        this.node.skewY = 0;
     }
 
     // ---------------
