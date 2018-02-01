@@ -3,7 +3,7 @@
 // 对象碰撞就是英雄，敌人以及相应武器法术之间的碰撞
 // lly 2018.1.13
 
-const {ccclass, property} = cc._decorator;
+const {ccclass, property, executeInEditMode} = cc._decorator;
 
 export class CollisionData {
     cldr: ObjCollider = null;
@@ -14,6 +14,7 @@ export class CollisionData {
 }
 
 @ccclass
+@executeInEditMode
 export class ObjCollider extends cc.Component {
 
     /** 回调函数文本 调用当前节点的某个组件名称:组件的函数名 */
@@ -23,7 +24,8 @@ export class ObjCollider extends cc.Component {
     callback: (collisionDatas: CollisionData[])=>void = null;
 
     /** 碰撞范围 为空的话则使用node的size*/
-    size: cc.Size = null;
+    @property(cc.Size)
+    size: cc.Size = cc.size(0, 0);
 
     /** 隐藏碰撞 */
     hide: boolean = false;
@@ -36,7 +38,42 @@ export class ObjCollider extends cc.Component {
     collisionDatas: CollisionData[] = [];
 
     onLoad() {
-        this.callback = getFuncFromString(this, this.callbackStr);
+        if (!CC_EDITOR) {
+            this.callback = getFuncFromString(this, this.callbackStr);
+        }       
+    }
+
+    // 这里的update主要用于在编辑器中显示其碰撞范围
+    _debugDrawer: _ccsg.GraphicsNode = null;
+    _debugColor: cc.Color = cc.Color.WHITE;
+    update(dt: number) {
+        if (CC_EDITOR) {
+            if (!this._debugDrawer) {
+                this._debugDrawer = new _ccsg.GraphicsNode();
+                this.node._sgNode.addChild(this._debugDrawer, 99999);
+                this._debugDrawer.strokeColor = this._debugColor;
+            }
+
+            let node = this.node;
+            let w = this.size.width > 0 ? this.size.width : node.width;
+            let h = this.size.height > 0 ? this.size.height : node.height;
+
+            let minX = -w * node.anchorX;
+            let maxX = minX + w;
+            let minY = -h * node.anchorY;
+            let maxY = minY + h;
+
+            this._debugDrawer.clear();
+            this._debugDrawer.moveTo(minX, minY);
+
+            this._debugDrawer.lineTo(minX, maxY);
+            this._debugDrawer.lineTo(maxX, maxY);
+            this._debugDrawer.lineTo(maxX, minY);
+            this._debugDrawer.lineTo(minX, minY);
+
+            this._debugDrawer.close();
+            this._debugDrawer.stroke();            
+        }
     }
 
     /**
@@ -47,12 +84,13 @@ export class ObjCollider extends cc.Component {
     getMaxMinXY(parentCollider: ObjCollider = null): {minX: number, maxX: number, minY: number, maxY: number} {
         
         let node = this.node;
-        let radius = this.size || node.getContentSize();
+        let w = this.size.width > 0 ? this.size.width : node.width;
+        let h = this.size.height > 0 ? this.size.height : node.height;
 
-        let minX = -radius.width * node.anchorX;
-        let maxX = minX + node.width;
-        let minY = -radius.height * node.anchorY;
-        let maxY = minY + node.height;
+        let minX = -w * node.anchorX;
+        let maxX = minX + w;
+        let minY = -h * node.anchorY;
+        let maxY = minY + h;
 
         if (!parentCollider) {
             return {
@@ -66,7 +104,7 @@ export class ObjCollider extends cc.Component {
         // 转换到父碰撞对象的父节点的坐标中，可以让其和父碰撞对象在一个坐标系中
         let t = node._sgNode.getNodeToParentTransform(parentCollider.node.parent._sgNode);
 
-        let rect = cc.rect(minX, minY, node.width, node.height);
+        let rect = cc.rect(minX, minY, w, h);
 
         let wp0 = cc.v2();
         let wp1 = cc.v2();
@@ -75,16 +113,16 @@ export class ObjCollider extends cc.Component {
         
         cc.obbApplyAffineTransform(rect, t, wp0, wp1, wp2, wp3);
 
-        let minXT = Math.min(wp0.x, wp1.x, wp2.x, wp3.x);
-        let maxXT = Math.max(wp0.x, wp1.x, wp2.x, wp3.x);
-        let minYT = Math.min(wp0.y, wp1.y, wp2.y, wp3.y); 
-        let maxYT = Math.max(wp0.y, wp1.y, wp2.y, wp3.y);
+        minX = Math.min(wp0.x, wp1.x, wp2.x, wp3.x);
+        maxX = Math.max(wp0.x, wp1.x, wp2.x, wp3.x);
+        minY = Math.min(wp0.y, wp1.y, wp2.y, wp3.y); 
+        maxY = Math.max(wp0.y, wp1.y, wp2.y, wp3.y);
         
         return {
-            minX: minXT,
-            maxX: maxXT,
-            minY: minYT,
-            maxY: maxYT
+            minX: minX,
+            maxX: maxX,
+            minY: minY,
+            maxY: maxY
         }
     }
 

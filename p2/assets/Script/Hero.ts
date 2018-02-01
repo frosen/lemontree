@@ -129,6 +129,14 @@ export default class Hero extends cc.Component {
         return this.node.x < hurtNodeCenterX ? 1 : -1;;
     }
 
+    // --
+
+    onWatching(collisionDatas: CollisionData[]) {
+        if (collisionDatas.length > 0) {
+            cc.log("yes, i see");
+        }
+    }
+
     // 被状态机调用 ------------------------------------------------------------
 
     /**

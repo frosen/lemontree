@@ -70,14 +70,16 @@ export default class ObjCollisionCtrlr extends cc.Component {
             let layer = this.checkedLayers[i];
             let children: cc.Node[] = layer.children;
             for (const child of children) {
-                let collider: ObjCollider = child.getComponent(ObjCollider);
-                if (!collider) continue;
+                let colliders: ObjCollider[] = child.getComponents(ObjCollider);
+                for (const collider of colliders) {
+                    if (!collider) continue;
 
-                if (!collider.hide) this.saveCollsionDataAndResetObj(collider, null, i);
+                    if (!collider.hide) this.saveCollsionDataAndResetObj(collider, null, i);
 
-                for (const subCollider of collider.subColliders) {
-                    if (!subCollider.hide) this.saveCollsionDataAndResetObj(subCollider, collider, i);
-                }
+                    for (const subCollider of collider.subColliders) {
+                        if (!subCollider.hide) this.saveCollsionDataAndResetObj(subCollider, collider, i);
+                    }
+                }              
             }
         }
     }
