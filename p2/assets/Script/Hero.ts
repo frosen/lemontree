@@ -8,6 +8,7 @@ const {ccclass, property} = cc._decorator;
 import MovableObject from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import {ObjCollider, CollisionData} from "./ObjCollider";
+import ObjColliderForWatch from "./ObjColliderForWatch";
 import {HeroUI, UIDirLvType} from "./HeroUI";
 
 import AttriForHero from "./AttriForHero";
@@ -22,12 +23,16 @@ export default class Hero extends cc.Component {
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
     terrainCollider: TerrainCollider = null;
+    /** 对象碰撞组件 */
+    objCollider: ObjCollider = null;
+    /** 观察区碰撞组件 */
+    watchCollider: ObjColliderForWatch = null;
 
-    /** 英雄属性 */
-    attri: AttriForHero = null;
     /** 英雄UI */
     ui: HeroUI = null;
 
+    /** 英雄属性 */
+    attri: AttriForHero = null;
     /** 英雄状态机 */
     sm: SMForHeroMgr = null;
     /** 英雄无敌状态机 */
@@ -37,15 +42,22 @@ export default class Hero extends cc.Component {
     xMoveDir: number = 0;
 
     onLoad() {
-        requireComponents(this, [MovableObject, TerrainCollider, ObjCollider, HeroUI]);
+        requireComponents(this, [MovableObject, TerrainCollider, ObjCollider, ObjColliderForWatch, HeroUI]);
 
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCollider = this.getComponent(TerrainCollider);
+        this.objCollider = this.getComponent(ObjCollider);
+        this.watchCollider = this.getComponent(ObjColliderForWatch);
+
         this.ui = this.getComponent(HeroUI);
 
         this.attri = new AttriForHero();
         this.sm = new SMForHeroMgr(this, ActState.stand);
-        this.smInvc = new SMForHeroInvcMgr(this);       
+        this.smInvc = new SMForHeroInvcMgr(this);      
+        
+        // 回调
+        this.objCollider.callback = this.onCollision.bind(this);
+        this.watchCollider.callback = this.onWatching.bind(this);
     }
 
     update(dt: number) {
@@ -109,12 +121,13 @@ export default class Hero extends cc.Component {
         // 敌人碰撞
         this.hurtCollisionData = null;
         for (const data of collisionDatas) {
-            cc.log(data.cldr.name);
-            let atk: Attack = data.cldr.node.getComponent(Attack);
-            if (atk) {
-                this.hurtCollisionData = data;
-                break;
-            }
+            if (data.cldr.constructor == ObjCollider) {
+                let atk: Attack = data.cldr.node.getComponent(Attack);
+                if (atk) {
+                    this.hurtCollisionData = data;
+                    break;
+                }
+            }           
         }
 
         // 道具碰撞 todo
@@ -133,7 +146,7 @@ export default class Hero extends cc.Component {
 
     onWatching(collisionDatas: CollisionData[]) {
         if (collisionDatas.length > 0) {
-            cc.log("yes, i see");
+            // cc.log("yes, i see: " + collisionDatas[0].cldr.name);
         }
     }
 

@@ -17,18 +17,12 @@ export class CollisionData {
 @executeInEditMode
 export class ObjCollider extends cc.Component {
 
-    /** 回调函数文本 调用当前节点的某个组件名称:组件的函数名 */
-    @property
-    callbackStr: string = "";
-    /** 回调函数 用文本生成 */
+    /** 回调函数 */
     callback: (collisionDatas: CollisionData[])=>void = null;
 
     /** 碰撞范围 为空的话则使用node的size*/
     @property(cc.Size)
     size: cc.Size = cc.size(0, 0);
-
-    /** 隐藏碰撞 */
-    hide: boolean = false;
 
     /** 以此对象为父对象的次级碰撞对象的列表，次级碰撞对象需要额外计算位置 */
     @property([ObjCollider])
@@ -36,12 +30,6 @@ export class ObjCollider extends cc.Component {
     
     /** 当前帧中，此碰撞对象碰触到的其他碰撞对象的列表 */
     collisionDatas: CollisionData[] = [];
-
-    onLoad() {
-        if (!CC_EDITOR) {
-            this.callback = getFuncFromString(this, this.callbackStr);
-        }       
-    }
 
     // 这里的update主要用于在编辑器中显示其碰撞范围
     _debugDrawer: _ccsg.GraphicsNode = null;
@@ -138,7 +126,7 @@ export class ObjCollider extends cc.Component {
      * 执行碰撞后的回调
      */ 
     excuteCallback() {
-        this.callback(this.collisionDatas);
+        if (this.callback) this.callback(this.collisionDatas);
     }
 
     /**
