@@ -10,6 +10,7 @@ const {ccclass, property} = cc._decorator;
 import Hero from "./Hero";
 
 const DisForMove: number = 20;
+const MinMoveBegin: number = 30;
 
 @ccclass
 export default class HeroCtrlr extends cc.Component {
@@ -72,7 +73,7 @@ export default class HeroCtrlr extends cc.Component {
         if (touchPos.x <= this.moveW) {
             if (touchPos.y < this.moveH) {
                 this.moveTouchId = event.getID();
-                this.moveBeginPos = touchPos;
+                this.moveBeginPos = cc.v2(Math.max(touchPos.x, MinMoveBegin), Math.max(touchPos.y, MinMoveBegin));
             } else {
                 this.watchTouchId = event.getID();
                 this.watchBeginPos = touchPos;
@@ -97,6 +98,8 @@ export default class HeroCtrlr extends cc.Component {
 
             if (dis > DisForMove) {
                 this.hero.move(dir);
+            } else {
+                this.hero.move(0);
             }
 
         } else if (event.getID() == this.watchTouchId) {

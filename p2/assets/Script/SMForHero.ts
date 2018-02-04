@@ -309,19 +309,23 @@ class SMForHeroInHurt extends SMForHero {
         mgr.hero.movableObj.xVelocity = this.hurtMoveDir * hurtXSpeed;       
     }
 
+    lastYDir: number = 0; // 为了防止上方碰头导致跳出状态，需要同时验证下上一帧方向确定是在下落状态
     check(mgr: SMForHeroMgr) {
+        let yDir: number = mgr.hero.movableObj.getDir().yDir;
         if (mgr.hero.terrainCollider.curYCollisionType != CollisionType.none &&
-            mgr.hero.movableObj.getDir().yDir <= 0) {
+            yDir <= 0 && this.lastYDir < 0) {
             if (mgr.hero.xMoveDir == 0) {
                 mgr.changeStateTo(ActState.stand);
             } else {
                 mgr.changeStateTo(ActState.move);
             }
         }
+        this.lastYDir = yDir;
     }
 
     end(mgr: SMForHeroMgr) {
         mgr.hero.ui.setXUIDir(0, UIDirLvType.hurt);
+        mgr.hero.ui.endHurt();
 
         // 退出不可攻击敌人的状态 todo
 

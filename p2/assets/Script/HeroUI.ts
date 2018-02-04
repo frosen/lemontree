@@ -92,6 +92,11 @@ export class HeroUI extends cc.Component {
         // cc.log("ui -------> hurt");
         this.node.skewX = 0;
         this.node.skewY = 0;
+        this.setInvincibleEnabled(true);
+    }
+
+    endHurt() {
+        this.setInvincibleEnabled(false);
     }
 
     // ---------------
