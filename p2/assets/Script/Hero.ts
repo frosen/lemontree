@@ -168,4 +168,10 @@ export default class Hero extends cc.Component {
     beginInvcState(time: number) {
         this.smInvc.begin(time);
     }
+
+    // ------------------------------------------------------------
+
+    test() {
+
+    }
 }
