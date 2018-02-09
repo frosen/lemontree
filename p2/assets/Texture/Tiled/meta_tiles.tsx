@@ -3,12 +3,12 @@
  <image source="meta_tiles.png" width="67" height="34"/>
  <tile id="0">
   <properties>
-   <property name="collidable" type="int" value="1"/>
+   <property name="collidable" type="int" value="2"/>
   </properties>
  </tile>
  <tile id="1">
   <properties>
-   <property name="collidable" type="int" value="2"/>
+   <property name="collidable" type="int" value="1"/>
   </properties>
  </tile>
 </tileset>

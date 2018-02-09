@@ -1,11 +1,11 @@
 // BTNodeAction.ts
-// 行为树节点基类，各种行为树节点行为继承于此类
+// 行为树节点，动作节点
 // 
 // lly 2018.2.5
 
 const {ccclass, property} = cc._decorator;
 
-import BTNode from "./BTNode";
+import {BTNode, BTResult} from "./BTNode";
 
 @ccclass
 export default class BTNodeAction extends BTNode {
@@ -26,8 +26,9 @@ export default class BTNodeAction extends BTNode {
         }
     }
 
-    excute() {
-        
+    excute(): BTResult {
+        this.excuteFunc();
+        return BTResult.suc;
     }
 
     getBTName(): string {

@@ -7,18 +7,23 @@
 
 const {ccclass, property} = cc._decorator;
 
+import {BTNode} from "./BTNode";
+
 @ccclass
 export default class BTBase extends cc.Component {
 
-    onLoad() {
-        // 隐藏其子节点
+    // 在每个子节点执行完其onload后隐藏
+    start() {
         for (const node of this.node.children) {
             node.active = false;
         }
-        
     }
 
     update(dt: number) {
         // 遍历子节点执行其行为
+        for (const node of this.node.children) {
+            let btNode = node.getComponent(BTNode);
+            btNode.excute();
+        }
     }
 }

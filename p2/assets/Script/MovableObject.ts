@@ -12,8 +12,8 @@ const VelocityMax: number = 28;
 @executionOrder(EXECUTION_ORDER.MovableObject)
 export default class MovableObject extends cc.Component {
 
-    xCanAccel: boolean = true;
-    yCanAccel: boolean = true;
+    xAccelEnabled: boolean = true;
+    yAccelEnabled: boolean = true;
 
     /** 当前x加速度 */
     xAccel: number = 0;
@@ -25,15 +25,26 @@ export default class MovableObject extends cc.Component {
     /** y速度，不受加速度影响 */
     yVelocity: number = 0;
 
+    xLastPos: number = 0;
+    yLastPos: number = 0;
+
+    xLastVelocity: number = 0;
+    yLastVelocity: number = 0;
+
     update(dt: number) {
+        this.xLastPos = this.node.x;
+        this.yLastPos = this.node.y;
+        this.xLastVelocity = this.xVelocity;
+        this.yLastVelocity = this.yVelocity;
+
         // x
-        if (this.xCanAccel) this.xVelocity += this.xAccel;
-        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);
+        if (this.xAccelEnabled) this.xVelocity += this.xAccel;
+        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);        
         this.node.x += this.xVelocity;
 
         // y
-        if (this.yCanAccel) this.yVelocity += this.yAccel;
-        this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);
+        if (this.yAccelEnabled) this.yVelocity += this.yAccel;
+        this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);       
         this.node.y += this.yVelocity;
     }
 
@@ -53,17 +64,6 @@ export default class MovableObject extends cc.Component {
         return {
             xDir: x,
             yDir: y
-        }
-    }
-
-    /**
-     * 获取上次点位置
-     * @return 上次点位置
-     */
-    getLastPos(): {x: number, y: number} {
-        return {
-            x: this.node.x - this.xVelocity,
-            y: this.node.y - this.yVelocity
         }
     }
 }

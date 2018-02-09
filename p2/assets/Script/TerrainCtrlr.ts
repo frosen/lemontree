@@ -12,10 +12,10 @@ const TileLength: number = 32;
 export enum CollisionType {
     /** 无碰撞 */
     none = 0,
-    /** 碰撞了实体 */
-    entity = 1,
     /** 碰撞了平台，可下跳 */
-    platform = 2,
+    platform = 1,
+    /** 碰撞了实体 */
+    entity = 2,
 }
 
 @ccclass
@@ -100,29 +100,43 @@ export class TerrainCtrlr extends cc.Component {
 
     /**
      * 检测一条线上是否有碰撞；to必须大于from；
+     * 同时检测是否在边缘，边缘在左返回-1，在右返回1，没有返回0
      * @param fromX: x坐标
      * @param toX: x坐标
      * @param y: y坐标
-     * @return CollisionType
+     * @return {type: CollisionType, edgeDir: number}
      */
-    checkCollideInHorizontalLine(fromX: number, toX: number, y: number): CollisionType {
+    checkCollideInHorizontalLine(fromX: number, toX: number, y: number): {type: CollisionType, edgeDir: number} {
         let collisionType: CollisionType = CollisionType.none;
         let x = fromX;
+        let edgeLeft = null;
+        let edgeRight = null;
         while (true) {
             let t: CollisionType = this.checkCollideAt(x, y);
-            if (t == CollisionType.entity) {
-                collisionType = t;
-                break;
-            } else if (t == CollisionType.platform) {
-                collisionType = t;
-            }
+            if (t > collisionType) collisionType = t;
 
-            if (x - toX > - 1) break;
+            if (edgeLeft == null) edgeLeft = t;
+
+            if (x - toX > - 1) {
+                edgeRight = t;
+                break;
+            }
 
             x += TileLength;
             if (x - toX > 0) x = toX;
         }
-        return collisionType;
+
+        let edgeDir: number = 0;
+        if (edgeLeft == CollisionType.none && edgeRight != CollisionType.none) {
+            edgeDir = -1;
+        } else if (edgeLeft != CollisionType.none && edgeRight == CollisionType.none) {
+            edgeDir = 1;
+        }
+
+        return {
+            type: collisionType,
+            edgeDir: edgeDir
+        }
     }
 
     /**

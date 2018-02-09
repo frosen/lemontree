@@ -5,15 +5,21 @@
 
 const {ccclass, property, executeInEditMode, disallowMultiple} = cc._decorator;
 
+export enum BTResult {
+    suc,
+    fail
+}
+
 @ccclass
 @executeInEditMode
 @disallowMultiple
-export default class BTNode extends cc.Component {
+export class BTNode extends cc.Component {
 
     typeString: string = "";
 
-    excute() {
+    excute(): BTResult {
         cc.error("need inhert");
+        return BTResult.suc;
     }
 
     update() {

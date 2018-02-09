@@ -130,7 +130,6 @@ class SMForHeroInJumpAccelerating extends SMForHero {
             curSt != ActState.jumpAccelerating &&
             curSt != ActState.dash &&
             curSt != ActState.hurt;
-
         let hasAbility = mgr.hero.attri.jumpCount > 0;
         return canChange && hasAbility;
     }
@@ -146,6 +145,7 @@ class SMForHeroInJumpAccelerating extends SMForHero {
 
         let hero = mgr.hero;
         hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed;
+        hero.ui.setXUIDir(hero.xMoveDir, UIDirLvType.move);
         hero.movableObj.yVelocity = hero.attri.ySpeed;
     }
 
@@ -181,15 +181,18 @@ class SMForHeroInJump extends SMForHero {
         } 
    
         hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed;
+        hero.ui.setXUIDir(hero.xMoveDir, UIDirLvType.move);
     }
 
     check(mgr: SMForHeroMgr) {
-        if (mgr.hero.checkHurt()) {
+        let hero = mgr.hero;
+
+        if (hero.checkHurt()) {
             mgr.changeStateTo(ActState.hurt);
 
-        } else if (mgr.hero.terrainCollider.curYCollisionType != CollisionType.none && 
-            mgr.hero.movableObj.getDir().yDir <= 0) {
-            if (mgr.hero.xMoveDir == 0) {
+        } else if (hero.terrainCollider.curYCollisionType != CollisionType.none && 
+            hero.movableObj.getDir().yDir <= 0 && hero.movableObj.yVelocity <= 0) {
+            if (hero.xMoveDir == 0) {
                 mgr.changeStateTo(ActState.stand);
             } else {
                 mgr.changeStateTo(ActState.move);
@@ -200,6 +203,7 @@ class SMForHeroInJump extends SMForHero {
 
 class SMForHeroInMove extends SMForHero {
     begin(mgr: SMForHeroMgr) {
+        cc.log("move");
         mgr.hero.ui.move();   
         mgr.hero.attri.fillJumpAndDashCount();   
     }
@@ -207,6 +211,7 @@ class SMForHeroInMove extends SMForHero {
     update(dt: number, mgr: SMForHeroMgr) {
         let hero = mgr.hero;  
         hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed;
+        hero.ui.setXUIDir(hero.xMoveDir, UIDirLvType.move);
     }
 
     check(mgr: SMForHeroMgr) {
@@ -248,13 +253,14 @@ class SMForHeroInDash extends SMForHero {
         this.time = 0;   
 
         // 在开始时就确定方向，之后不可改变
-        this.dashDir = mgr.hero.ui.xUIDirs[UIDirLvType.move];
+        this.dashDir = mgr.hero.xMoveDir;
+        mgr.hero.ui.setXUIDir(this.dashDir, UIDirLvType.move);
 
         // 进入不可攻击敌人的状态 todo
 
         // 暂停y轴的加速度
         mgr.hero.movableObj.yVelocity = 0;
-        mgr.hero.movableObj.yCanAccel = false;
+        mgr.hero.movableObj.yAccelEnabled = false;
     }
 
     update(dt: number, mgr: SMForHeroMgr) {
@@ -282,7 +288,7 @@ class SMForHeroInDash extends SMForHero {
         // 退出不可攻击敌人的状态 todo
 
         // 开启y轴的加速度
-        mgr.hero.movableObj.yCanAccel = true;
+        mgr.hero.movableObj.yAccelEnabled = true;
     }
 }
 
@@ -309,18 +315,18 @@ class SMForHeroInHurt extends SMForHero {
         mgr.hero.movableObj.xVelocity = this.hurtMoveDir * hurtXSpeed;       
     }
 
-    lastYDir: number = 0; // 为了防止上方碰头导致跳出状态，需要同时验证下上一帧方向确定是在下落状态
     check(mgr: SMForHeroMgr) {
-        let yDir: number = mgr.hero.movableObj.getDir().yDir;
-        if (mgr.hero.terrainCollider.curYCollisionType != CollisionType.none &&
-            yDir <= 0 && this.lastYDir < 0) {
-            if (mgr.hero.xMoveDir == 0) {
+        let hero = mgr.hero;
+        let yDir: number = hero.movableObj.getDir().yDir;
+        let lastYVelocity: number = hero.movableObj.yLastVelocity;
+        if (hero.terrainCollider.curYCollisionType != CollisionType.none &&
+            yDir <= 0 && lastYVelocity <= 0) {
+            if (hero.xMoveDir == 0) {
                 mgr.changeStateTo(ActState.stand);
             } else {
                 mgr.changeStateTo(ActState.move);
             }
         }
-        this.lastYDir = yDir;
     }
 
     end(mgr: SMForHeroMgr) {

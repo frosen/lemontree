@@ -77,7 +77,6 @@ export default class Hero extends cc.Component {
      */
     move(dir: number) {
         this.xMoveDir = dir;
-        this.ui.setXUIDir(dir, UIDirLvType.move);
     }
 
     /**
@@ -172,6 +171,10 @@ export default class Hero extends cc.Component {
     // ------------------------------------------------------------
 
     test() {
+        // cc.log("edge", this.terrainCollider.edgeDir);
+    }
 
+    canSee(): boolean {
+        return this.terrainCollider.edgeDir != 0;
     }
 }
