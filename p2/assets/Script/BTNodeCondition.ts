@@ -12,10 +12,14 @@ export default class BTNodeCondition extends BTNode {
 
     typeString: string = "IF";
 
+    /** 执行节点 用于在编辑器中设置excuteFunc，func可以有返回值 */
     @property(cc.Node) excuteNode: cc.Node = null;
+    /** 执行函数名称 用于在编辑器中设置excuteFunc，func可以有返回值 */
     @property excuteFuncString: string = "";
+    /** 当前行为执行函数 */
     excuteFunc: () => boolean = null;
 
+    /** excuteFunc的返回结果为什么值表示成功 */
     @property
     checkingTrue: boolean = true;
 

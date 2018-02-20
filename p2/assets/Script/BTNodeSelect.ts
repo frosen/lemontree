@@ -13,6 +13,7 @@ export default class BTNodeSelect extends BTNodeSequence {
 
     typeString: string = "Select";
 
+    /** 运行时，是否检测运行节点之前其他节点，和sequence不一样的是，select默认为true */
     checkingAheadInRunning: boolean = true;
 
     excuteInNormal(inputIndex: number = 0): BTResult {

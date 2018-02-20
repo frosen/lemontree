@@ -6,28 +6,19 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
+import BTNodeGroup from "./BTNodeGroup";
 
 @ccclass
-export default class BTNodeSequence extends BTNode {
+export default class BTNodeSequence extends BTNodeGroup {
 
     typeString: string = "Sequence";
 
-    btNodes: BTNode[] = [];
-
-    @property
-    desc: string = "";
-
+    /** 运行时，是否检测运行节点之前其他节点 */
     @property
     checkingAheadInRunning: boolean = false;
 
+    /** 当前运行的节点的索引，-1为没有运行节点 */
     curRunningIndex: number = -1;
-
-    start() {
-        for (const child of this.node.children) {
-            let comp = child.getComponent(BTNode);
-            this.btNodes.push(comp);
-        }
-    }
 
     excute(): BTResult {
         if (!this.isRunning()) {
@@ -79,10 +70,6 @@ export default class BTNodeSequence extends BTNode {
             return this.excuteInNormal(nextIndex);
         }
         return BTResult.running;
-    }
-
-    getBTName(): string {
-        return this.desc;
     }
 
     checkRunningEnd(): boolean {
