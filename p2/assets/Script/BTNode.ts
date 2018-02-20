@@ -7,7 +7,9 @@ const {ccclass, property, executeInEditMode, disallowMultiple} = cc._decorator;
 
 export enum BTResult {
     suc,
-    fail
+    fail,
+    running,
+    noRunning,
 }
 
 @ccclass
@@ -28,5 +30,17 @@ export class BTNode extends cc.Component {
 
     getBTName(): string {
         return "";
+    }
+
+    checkRunningEnd(): boolean {
+        return false;
+    }
+
+    isRunning(): boolean {
+        return false;
+    }
+
+    endRunning() {
+
     }
 }

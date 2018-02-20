@@ -10,13 +10,10 @@ import {BTNode, BTResult} from "./BTNode";
 @ccclass
 export default class BTNodeCondition extends BTNode {
 
-    typeString: string = "Condition";
+    typeString: string = "IF";
 
-    @property(cc.Node)
-    excuteNode: cc.Node = null;
-
-    @property
-    excuteFuncString: string = "";
+    @property(cc.Node) excuteNode: cc.Node = null;
+    @property excuteFuncString: string = "";
     excuteFunc: () => boolean = null;
 
     @property
@@ -34,7 +31,7 @@ export default class BTNodeCondition extends BTNode {
     }
 
     getBTName(): string {
-        return "if " + (this.excuteNode ? this.excuteNode.name : "?") + " >> " + this.excuteFuncString + 
+        return (this.excuteNode ? this.excuteNode.name : "?") + " >> " + this.excuteFuncString + 
             " is " + (this.checkingTrue ? "True" : "False");
             
     }

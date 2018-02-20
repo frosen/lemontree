@@ -170,8 +170,9 @@ export default class Hero extends cc.Component {
 
     // ------------------------------------------------------------
 
-    test() {
+    test(): boolean {
         // cc.log("edge", this.terrainCollider.edgeDir);
+        return true;
     }
 
     canSee(): boolean {

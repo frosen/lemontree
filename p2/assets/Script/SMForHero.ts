@@ -203,7 +203,6 @@ class SMForHeroInJump extends SMForHero {
 
 class SMForHeroInMove extends SMForHero {
     begin(mgr: SMForHeroMgr) {
-        cc.log("move");
         mgr.hero.ui.move();   
         mgr.hero.attri.fillJumpAndDashCount();   
     }
