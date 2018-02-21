@@ -24,6 +24,10 @@ export class ObjCollider extends cc.Component {
     @property(cc.Size)
     size: cc.Size = cc.size(0, 0);
 
+    /** 碰撞范围偏移量 */
+    @property(cc.Vec2)
+    offset: cc.Vec2 = cc.v2(0, 0);
+
     /** 以此对象为父对象的次级碰撞对象的列表，次级碰撞对象需要额外计算位置 */
     @property([ObjCollider])
     subColliders: ObjCollider[] = [];
@@ -46,9 +50,9 @@ export class ObjCollider extends cc.Component {
             let w = this.size.width > 0 ? this.size.width : node.width;
             let h = this.size.height > 0 ? this.size.height : node.height;
 
-            let minX = -w * node.anchorX;
+            let minX = -w * node.anchorX + this.offset.x;
             let maxX = minX + w;
-            let minY = -h * node.anchorY;
+            let minY = -h * node.anchorY + this.offset.y;
             let maxY = minY + h;
 
             this._debugDrawer.clear();
@@ -75,9 +79,9 @@ export class ObjCollider extends cc.Component {
         let w = this.size.width > 0 ? this.size.width : node.width;
         let h = this.size.height > 0 ? this.size.height : node.height;
 
-        let minX = -w * node.anchorX;
+        let minX = -w * node.anchorX + this.offset.x;
         let maxX = minX + w;
-        let minY = -h * node.anchorY;
+        let minY = -h * node.anchorY + this.offset.y;
         let maxY = minY + h;
 
         if (!parentCollider) {

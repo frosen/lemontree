@@ -191,7 +191,7 @@ class SMForHeroInJump extends SMForHero {
             mgr.changeStateTo(ActState.hurt);
 
         } else if (hero.terrainCollider.curYCollisionType != CollisionType.none && 
-            hero.movableObj.getDir().yDir <= 0 && hero.movableObj.yVelocity <= 0) {
+            hero.movableObj.getDir().yDir <= 0 && hero.movableObj.yLastVelocity <= 0) {
             if (hero.xMoveDir == 0) {
                 mgr.changeStateTo(ActState.stand);
             } else {

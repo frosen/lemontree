@@ -35,10 +35,11 @@ export default class TerrainCollider extends cc.Component {
         let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置  
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
         let size = this.node.getContentSize();
+        let anchor = this.node.getAnchorPoint();
 
         if (xDir != 0) {
-            let checkX = this.node.x + size.width * 0.5 * xDir;
-            let checkY = this.node.y - size.height * 0.5;
+            let checkX = this.node.x - size.width * anchor.x + (xDir > 0 ? size.width : 0);
+            let checkY = this.node.y - size.height * anchor.y;
             let checkYEnd = checkY + size.height;
             let collisionType: CollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
             if (collisionType == CollisionType.entity) { // 有碰撞
@@ -54,10 +55,10 @@ export default class TerrainCollider extends cc.Component {
         }
 
         if (yDir != 0) {
-            let checkX = this.node.x - size.width * 0.5; // 从后往前计算上下的碰撞
+            let checkX = this.node.x - size.width * anchor.x; // 从后往前计算上下的碰撞
             let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
 
-            let checkY = this.node.y + size.height * 0.5 * yDir;
+            let checkY = this.node.y - size.height * anchor.y + (yDir > 0 ? size.height : 0);
             
             let {type, edgeDir} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
 
@@ -89,8 +90,8 @@ export default class TerrainCollider extends cc.Component {
         // 第一次x碰撞检测可能会因为y轴碰撞未进行而导致误判，
         // 所以需要在y检测后再检测一次，如果未碰撞则移动到相应位置
         if (xDir != 0) {
-            let checkX = saveX + size.width * 0.5 * xDir;
-            let checkY = this.node.y - size.height * 0.5;
+            let checkX = saveX - size.width * anchor.x + (xDir > 0 ? size.width : 0);
+            let checkY = this.node.y - size.height * anchor.y;
             let checkYEnd = checkY + size.height;
             this.curXCollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
             if (this.curXCollisionType == CollisionType.none) {
