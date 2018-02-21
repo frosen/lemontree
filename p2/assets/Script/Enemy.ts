@@ -4,10 +4,12 @@
 
 const {ccclass, property} = cc._decorator;
 
-import MovableObject from "./MovableObject";
 import Attack from "./Attack";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
+
+import MovableObject from "./MovableObject";
+import TerrainCollider from "./TerrainCollider";
 
 @ccclass
 export default class Enemy extends cc.Component {
@@ -39,5 +41,27 @@ export default class Enemy extends cc.Component {
         if (collisionDatas.length > 0) {
             // cc.log("enemy: yes, i see hero");
         }
+    }
+
+    // 基本行动 ------------------------------------------------------------
+
+    moveForward(): boolean {
+        let movableObj = this.getComponent(MovableObject);
+        movableObj.xVelocity = this.node.scaleX * 1;
+        return true;
+    }
+
+    stopMoving(): boolean {
+        this.getComponent(MovableObject).xVelocity = 0;
+        return false;
+    }
+
+    turnAround(): boolean {
+        this.node.scaleX *= -1;
+        return false;
+    }
+
+    isEdgeForward(): boolean {
+        return this.getComponent(TerrainCollider).edgeDir == this.node.scaleX;
     }
 }

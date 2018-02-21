@@ -1,14 +1,14 @@
 {
   "ver": "1.0.0",
-  "uuid": "6aa0aa6a-ebee-4155-a088-a687a6aadec4",
+  "uuid": "3cc18dc8-21da-4f47-b1fb-10c208542135",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
-    "HelloWorld": {
+    "sword": {
       "ver": "1.0.3",
-      "uuid": "31bc895a-c003-4566-a9f3-2e54ae1c17dc",
-      "rawTextureUuid": "6aa0aa6a-ebee-4155-a088-a687a6aadec4",
+      "uuid": "b09d616f-c7f0-43d7-bea3-70a6afe808ff",
+      "rawTextureUuid": "3cc18dc8-21da-4f47-b1fb-10c208542135",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -16,10 +16,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 195,
-      "height": 270,
-      "rawWidth": 195,
-      "rawHeight": 270,
+      "width": 96,
+      "height": 25,
+      "rawWidth": 96,
+      "rawHeight": 25,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

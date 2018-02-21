@@ -9,6 +9,7 @@ declare namespace EXECUTION_ORDER {
 	let MovableObject: number
 	let TerrainCollider: number
 	let ObjCollider: number
+	let BehaviorTree: number
 	let CameraCtrlr: number
 }
 

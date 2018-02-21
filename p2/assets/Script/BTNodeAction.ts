@@ -14,6 +14,7 @@ import {BTNode, BTResult} from "./BTNode";
 import BTNodeCondition from "./BTNodeCondition";
 import BTNodeActionUntil from "./BTNodeActionUntil";
 import BTNodeActionEnd from "./BTNodeActionEnd";
+import BTBase from "./BTBase";
 
 @ccclass
 export default class BTNodeAction extends BTNode {
@@ -38,6 +39,14 @@ export default class BTNodeAction extends BTNode {
 
     onLoad() {
         if (!CC_EDITOR) {
+            if (!this.excuteNode) {
+                let p: cc.Node = this.node.parent;
+                while (true) {
+                    if (p.getComponent(BTBase)) break;
+                    p = p.parent;
+                }
+                this.excuteNode = p.parent;
+            }
             this.excuteFunc = getFuncFromString(this.excuteNode, this.excuteFuncString);
         }
     }
@@ -68,7 +77,7 @@ export default class BTNodeAction extends BTNode {
     }
 
     getBTName(): string {
-        return (this.excuteNode ? this.excuteNode.name : "?") + " >> " + this.excuteFuncString;
+        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteFuncString;
     }
 
     checkRunningEnd(): boolean {

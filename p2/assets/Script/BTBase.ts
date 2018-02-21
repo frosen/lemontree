@@ -5,11 +5,12 @@
 // 
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const {ccclass, property, executionOrder} = cc._decorator;
 
 import {BTNode} from "./BTNode";
 
 @ccclass
+@executionOrder(EXECUTION_ORDER.BehaviorTree)
 export default class BTBase extends cc.Component {
 
     // 在每个子节点执行完其onload后隐藏

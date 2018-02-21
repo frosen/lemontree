@@ -6,7 +6,8 @@ window.EXECUTION_ORDER = {
     MovableObject: 1,
     TerrainCollider: 2,
     ObjCollider: 3,
-    CameraCtrlr: 4
+    BehaviorTree: 4,
+    CameraCtrlr: 5
 }
 
 window.requireComponents = function (obj, components) {

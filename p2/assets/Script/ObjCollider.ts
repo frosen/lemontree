@@ -31,6 +31,10 @@ export class ObjCollider extends cc.Component {
     /** 以此对象为父对象的次级碰撞对象的列表，次级碰撞对象需要额外计算位置 */
     @property([ObjCollider])
     subColliders: ObjCollider[] = [];
+
+    /** 运行时显示范围，便于测试 */
+    @property
+    showingInRunning: boolean = false;
     
     /** 当前帧中，此碰撞对象碰触到的其他碰撞对象的列表 */
     collisionDatas: CollisionData[] = [];
@@ -39,7 +43,7 @@ export class ObjCollider extends cc.Component {
     _debugDrawer: _ccsg.GraphicsNode = null;
     _debugColor: cc.Color = cc.Color.WHITE;
     update(dt: number) {
-        if (CC_EDITOR) {
+        if (CC_EDITOR || this.showingInRunning) {
             if (!this._debugDrawer) {
                 this._debugDrawer = new _ccsg.GraphicsNode();
                 this.node._sgNode.addChild(this._debugDrawer, 99999);

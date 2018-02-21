@@ -6,6 +6,7 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
+import BTBase from "./BTBase";
 
 @ccclass
 export default class BTNodeCondition extends BTNode {
@@ -25,6 +26,14 @@ export default class BTNodeCondition extends BTNode {
 
     onLoad() {
         if (!CC_EDITOR) {
+            if (!this.excuteNode) {
+                let p: cc.Node = this.node.parent;
+                while (true) {
+                    if (p.getComponent(BTBase)) break;
+                    p = p.parent;
+                }
+                this.excuteNode = p.parent;
+            }
             this.excuteFunc = getFuncFromString(this.excuteNode, this.excuteFuncString);
         }
     }
@@ -35,8 +44,7 @@ export default class BTNodeCondition extends BTNode {
     }
 
     getBTName(): string {
-        return (this.excuteNode ? this.excuteNode.name : "?") + " >> " + this.excuteFuncString + 
-            " is " + (this.checkingTrue ? "True" : "False");
-            
+        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteFuncString + 
+            " is " + (this.checkingTrue ? "True" : "False");           
     }
 }
