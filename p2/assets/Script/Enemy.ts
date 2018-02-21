@@ -11,6 +11,8 @@ import ObjColliderForWatch from "./ObjColliderForWatch";
 import MovableObject from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 
+import Hero from "./Hero";
+
 @ccclass
 export default class Enemy extends cc.Component {
 
@@ -37,10 +39,29 @@ export default class Enemy extends cc.Component {
         
     }
 
+    aim: Hero = null;
+    aimDir: number = 0;
+
     onWatching(collisionDatas: CollisionData[]) {
-        if (collisionDatas.length > 0) {
-            // cc.log("enemy: yes, i see hero");
+        this.aim = null;
+        for (const collisionData of collisionDatas) {
+            let cldr = collisionData.cldr;
+            if (cldr.constructor == ObjColliderForWatch) continue;
+            let hero = cldr.getComponent(Hero);
+            if (hero) {
+                if (!this.aim) {
+                    this.aim = hero;
+                } else {
+                    let d1 = Math.abs(hero.node.x - this.node.x);
+                    let d2 = Math.abs(this.aim.node.x - this.node.x);
+                    if (d1 < d2) {
+                        this.aim = hero;
+                    }
+                }
+            }
         }
+        
+        this.aimDir = this.aim ? (this.aim.node.x - this.node.x > 0 ? 1 : -1) : 0;
     }
 
     // 基本行动 ------------------------------------------------------------
@@ -63,5 +84,18 @@ export default class Enemy extends cc.Component {
 
     isEdgeForward(): boolean {
         return this.getComponent(TerrainCollider).edgeDir == this.node.scaleX;
+    }
+
+    isHasAim(): boolean {
+        return this.aim != null;
+    }
+
+    moveToAim(): boolean {
+        this.node.scaleX = Math.abs(this.node.scaleX) * this.aimDir;
+
+        let movableObj = this.getComponent(MovableObject);
+        movableObj.xVelocity = this.node.scaleX * 2;
+
+        return true;
     }
 }
