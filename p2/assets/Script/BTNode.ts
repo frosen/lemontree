@@ -13,8 +13,8 @@ export enum BTResult {
     fail,
     /** 正在执行，用于action节点 */
     running,
-    /** 并非正在执行，用于action节点 */
-    noRunning,
+    /** 无效果，用于set节点 */
+    continue,
 }
 
 @ccclass
@@ -32,6 +32,10 @@ export class BTNode extends cc.Component {
     excute(): BTResult {
         cc.error("need inhert");
         return BTResult.suc;
+    }
+
+    doAction() {
+
     }
 
     update() {

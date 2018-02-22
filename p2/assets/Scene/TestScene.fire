@@ -1669,7 +1669,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: BT Root >> Enemy:stopMoving",
+    "_name": "SET: BT Root >> Enemy:stopMoving",
     "_objFlags": 0,
     "_parent": {
       "__id__": 47
@@ -1720,7 +1720,7 @@
     "groupIndex": 0
   },
   {
-    "__type__": "137c8vi239Fso50YwIq0Jvy",
+    "__type__": "f7318fi4zFDU7Pwi3VadLd+",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -1728,11 +1728,11 @@
     },
     "_enabled": true,
     "excuteNode": null,
-    "excuteFuncString": "Enemy:stopMoving"
+    "excuteAttriString": "Enemy:stopMoving"
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: BT Root >> Enemy:turnAround",
+    "_name": "SET: BT Root >> Enemy:turnAround",
     "_objFlags": 0,
     "_parent": {
       "__id__": 47
@@ -1783,7 +1783,7 @@
     "groupIndex": 0
   },
   {
-    "__type__": "137c8vi239Fso50YwIq0Jvy",
+    "__type__": "f7318fi4zFDU7Pwi3VadLd+",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -1791,7 +1791,7 @@
     },
     "_enabled": true,
     "excuteNode": null,
-    "excuteFuncString": "Enemy:turnAround"
+    "excuteAttriString": "Enemy:turnAround"
   },
   {
     "__type__": "64a3dNy45lOqJkk+9yJkFLF",

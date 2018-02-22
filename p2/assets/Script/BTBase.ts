@@ -7,7 +7,7 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
-import {BTNode} from "./BTNode";
+import {BTNode, BTResult} from "./BTNode";
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.BehaviorTree)
@@ -24,7 +24,8 @@ export default class BTBase extends cc.Component {
         // 遍历子节点执行其行为
         for (const node of this.node.children) {
             let btNode = node.getComponent(BTNode);
-            btNode.excute();
+            let result = btNode.excute();
+            if (result == BTResult.running) btNode.doAction();
         }
     }
 }

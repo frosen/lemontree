@@ -15,7 +15,8 @@ export default class BTNodeParallel extends BTNodeGroup {
 
     excute(): BTResult {
         for (const btNode of this.btNodes) {
-            btNode.excute();
+            let result = btNode.excute();
+            if (result == BTResult.running) btNode.doAction();
         }
 
         return BTResult.suc;

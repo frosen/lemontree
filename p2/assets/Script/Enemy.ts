@@ -66,20 +66,17 @@ export default class Enemy extends cc.Component {
 
     // 基本行动 ------------------------------------------------------------
 
-    moveForward(): boolean {
+    moveForward() {
         let movableObj = this.getComponent(MovableObject);
         movableObj.xVelocity = this.node.scaleX * 1;
-        return true;
     }
 
-    stopMoving(): boolean {
+    stopMoving() {
         this.getComponent(MovableObject).xVelocity = 0;
-        return false;
     }
 
-    turnAround(): boolean {
+    turnAround() {
         this.node.scaleX *= -1;
-        return false;
     }
 
     isEdgeForward(): boolean {
@@ -90,12 +87,10 @@ export default class Enemy extends cc.Component {
         return this.aim != null;
     }
 
-    moveToAim(): boolean {
+    moveToAim() {
         this.node.scaleX = Math.abs(this.node.scaleX) * this.aimDir;
 
         let movableObj = this.getComponent(MovableObject);
         movableObj.xVelocity = this.node.scaleX * 2;
-
-        return true;
     }
 }

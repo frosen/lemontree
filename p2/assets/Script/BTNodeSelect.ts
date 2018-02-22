@@ -7,6 +7,7 @@ const {ccclass, property} = cc._decorator;
 
 import {BTResult} from "./BTNode";
 import BTNodeSequence from "./BTNodeSequence";
+import BTNodeAction from "./BTNodeAction";
 
 @ccclass
 export default class BTNodeSelect extends BTNodeSequence {
@@ -25,7 +26,7 @@ export default class BTNodeSelect extends BTNodeSequence {
                 return BTResult.suc; // 一旦成功则直接返回而不往后执行
 
             } else if (result == BTResult.running) {
-                this.curRunningIndex = index;
+                this.curRunningBTNode = btNode as BTNodeAction;
                 return BTResult.running; // 一旦进入运行状态，也不往后执行了
             }
         }
@@ -35,8 +36,9 @@ export default class BTNodeSelect extends BTNodeSequence {
 
     excuteInRunning(): BTResult {
         if (this.checkingAheadInRunning) {
-            for (let index = 0; index < this.curRunningIndex; index++) {          
-                let btNode = this.btNodes[index];
+            for (const btNode of this.btNodes) {
+                if (btNode == this.curRunningBTNode) break;
+
                 let result: BTResult = btNode.excute();
     
                 if (result == BTResult.suc) {
@@ -45,14 +47,14 @@ export default class BTNodeSelect extends BTNodeSequence {
     
                 } else if (result == BTResult.running) {
                     this.endRunning();
-                    this.curRunningIndex = index;
+                    this.curRunningBTNode = btNode as BTNodeAction;
                     return BTResult.running; // 一旦进入运行状态，也不往后执行了
                 }
             }
         }
 
         if (this.checkRunningEnd()) {
-            let nextIndex = this.curRunningIndex + 1;
+            let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
             this.endRunning();
 
             return this.excuteInNormal(nextIndex);

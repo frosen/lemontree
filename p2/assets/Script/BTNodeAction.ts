@@ -11,7 +11,6 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
-import BTNodeCondition from "./BTNodeCondition";
 import BTNodeActionUntil from "./BTNodeActionUntil";
 import BTNodeActionEnd from "./BTNodeActionEnd";
 import BTBase from "./BTBase";
@@ -55,13 +54,13 @@ export default class BTNodeAction extends BTNode {
         for (const child of this.node.children) {
             if (child.getComponent(BTNodeActionUntil)) {
                 for (const untilChild of child.children) {
-                    let comp = untilChild.getComponent(BTNodeCondition);
+                    let comp = untilChild.getComponent(BTNode);
                     let func = comp["excute"].bind(comp);
                     this.untilFuncs.push(func);
                 }
             } else if (child.getComponent(BTNodeActionEnd)) {
                 for (const endChild of child.children) {
-                    let comp = endChild.getComponent(BTNodeAction);
+                    let comp = endChild.getComponent(BTNode);
                     let func = comp["excute"].bind(comp);
                     this.endFuncs.push(func);
                 }
@@ -72,8 +71,11 @@ export default class BTNodeAction extends BTNode {
     }
 
     excute(): BTResult {
-        this.running = this.excuteFunc();
-        return this.running ? BTResult.running : BTResult.noRunning;
+        return BTResult.running;
+    }
+
+    doAction() {
+        this.excuteFunc();
     }
 
     getBTName(): string {

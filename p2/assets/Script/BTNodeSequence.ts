@@ -7,6 +7,7 @@ const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
 import BTNodeGroup from "./BTNodeGroup";
+import BTNodeAction from "./BTNodeAction";
 
 @ccclass
 export default class BTNodeSequence extends BTNodeGroup {
@@ -17,8 +18,8 @@ export default class BTNodeSequence extends BTNodeGroup {
     @property
     checkingAheadInRunning: boolean = false;
 
-    /** 当前运行的节点的索引，-1为没有运行节点 */
-    curRunningIndex: number = -1;
+    /** 当前运行的子节点 */
+    curRunningBTNode: BTNodeAction = null;
 
     excute(): BTResult {
         if (!this.isRunning()) {
@@ -37,7 +38,7 @@ export default class BTNodeSequence extends BTNodeGroup {
                 return BTResult.fail; // 一旦有失败则直接返回而不往后执行
 
             } else if (result == BTResult.running) {
-                this.curRunningIndex = index;
+                this.curRunningBTNode = btNode as BTNodeAction;
                 return BTResult.running; // 一旦进入运行状态，也不往后执行了
             }
         }
@@ -47,8 +48,9 @@ export default class BTNodeSequence extends BTNodeGroup {
 
     excuteInRunning(): BTResult {
         if (this.checkingAheadInRunning) {
-            for (let index = 0; index < this.curRunningIndex; index++) {          
-                let btNode = this.btNodes[index];
+            for (const btNode of this.btNodes) {
+                if (btNode == this.curRunningBTNode) break;
+    
                 let result: BTResult = btNode.excute();
     
                 if (result == BTResult.fail) {
@@ -57,14 +59,14 @@ export default class BTNodeSequence extends BTNodeGroup {
     
                 } else if (result == BTResult.running) {
                     this.endRunning();
-                    this.curRunningIndex = index;
+                    this.curRunningBTNode = btNode as BTNodeAction;
                     return BTResult.running; // 一旦进入运行状态，也不往后执行了
                 }
             }
         }
 
-        if (this.checkRunningEnd()) {
-            let nextIndex = this.curRunningIndex + 1;
+        if (this.checkRunningEnd()) {           
+            let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
             this.endRunning();
 
             return this.excuteInNormal(nextIndex);
@@ -72,16 +74,20 @@ export default class BTNodeSequence extends BTNodeGroup {
         return BTResult.running;
     }
 
+    doAction() {
+        this.curRunningBTNode.doAction();
+    }
+
     checkRunningEnd(): boolean {
-        return this.btNodes[this.curRunningIndex].checkRunningEnd();
+        return this.curRunningBTNode.checkRunningEnd();
     }
 
     isRunning(): boolean {
-        return this.curRunningIndex != -1;
+        return this.curRunningBTNode != null;
     }
 
     endRunning() {
-        this.btNodes[this.curRunningIndex].endRunning();
-        this.curRunningIndex = -1;            
+        this.curRunningBTNode.endRunning();
+        this.curRunningBTNode = null;            
     }
 }
