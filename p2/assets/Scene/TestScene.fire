@@ -707,7 +707,7 @@
     },
     "_rotationX": 0,
     "_rotationY": 0,
-    "_scaleX": -1,
+    "_scaleX": 1,
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
@@ -1272,7 +1272,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: BT Root >> Enemy:stopMoving",
+    "_name": "SET: BT Root >> Enemy:stopMoving",
     "_objFlags": 0,
     "_parent": {
       "__id__": 35
@@ -1286,7 +1286,7 @@
       }
     ],
     "_prefab": null,
-    "_id": "20CZ8aPlJDia3MfnKFNi2h",
+    "_id": "3c4ES+gclCgriO+igTSabz",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
@@ -1323,7 +1323,7 @@
     "groupIndex": 0
   },
   {
-    "__type__": "137c8vi239Fso50YwIq0Jvy",
+    "__type__": "f7318fi4zFDU7Pwi3VadLd+",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -1331,7 +1331,7 @@
     },
     "_enabled": true,
     "excuteNode": null,
-    "excuteFuncString": "Enemy:stopMoving"
+    "excuteAttriString": "Enemy:stopMoving"
   },
   {
     "__type__": "64a3dNy45lOqJkk+9yJkFLF",
@@ -2083,8 +2083,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 79,
-      "y": 106
+      "x": 553.8,
+      "y": 235
     },
     "_skewX": 0,
     "_skewY": 0,

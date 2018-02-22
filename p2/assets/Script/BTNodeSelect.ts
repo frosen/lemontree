@@ -53,12 +53,12 @@ export default class BTNodeSelect extends BTNodeSequence {
             }
         }
 
-        if (this.checkRunningEnd()) {
+        if (this.curRunningBTNode.excute() != BTResult.running) {
             let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
             this.endRunning();
-
             return this.excuteInNormal(nextIndex);
         }
+
         return BTResult.running;
     }
 }

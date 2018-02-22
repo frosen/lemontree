@@ -70,23 +70,30 @@ export default class BTNodeAction extends BTNode {
         }
     }
 
+    /** 执行action */
+    goingToAction = false;
+
     excute(): BTResult {
-        return BTResult.running;
+        if (!this.running) {
+            this.running = true;
+            this.goingToAction = true;
+            return BTResult.running;
+        } else {
+            return this.checkRunningEnd() == false ? BTResult.running : BTResult.continue;
+        }
     }
 
     doAction() {
-        this.excuteFunc();
+        if (this.goingToAction) {
+            this.goingToAction = false;
+            if (!this.checkRunningEnd()) {
+                this.excuteFunc();
+            }          
+        }
     }
 
     getBTName(): string {
         return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteFuncString;
-    }
-
-    checkRunningEnd(): boolean {
-        for (const untilFunc of this.untilFuncs) {
-            if (untilFunc() == BTResult.suc) return true;
-        }
-        return false;
     }
 
     isRunning(): boolean {
@@ -98,6 +105,13 @@ export default class BTNodeAction extends BTNode {
         for (const endFunc of this.endFuncs) {
             endFunc();
         }     
+    }
+
+    checkRunningEnd(): boolean {
+        for (const untilFunc of this.untilFuncs) {
+            if (untilFunc() == BTResult.suc) return true;
+        }
+        return false;
     }
     
 }

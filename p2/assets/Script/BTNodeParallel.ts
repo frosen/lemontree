@@ -21,17 +21,4 @@ export default class BTNodeParallel extends BTNodeGroup {
 
         return BTResult.suc;
     }
-
-    checkRunningEnd(): boolean {
-        cc.error("parallel can not enter running state");
-        return false;
-    }
-
-    isRunning(): boolean {
-        return false;
-    }
-
-    endRunning() {
-        cc.error("parallel can not enter running state");           
-    }
 }

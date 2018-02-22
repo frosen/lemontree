@@ -47,10 +47,6 @@ export class BTNode extends cc.Component {
         return "";
     }
 
-    checkRunningEnd(): boolean {
-        return false;
-    }
-
     isRunning(): boolean {
         return false;
     }
