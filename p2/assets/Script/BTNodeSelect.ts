@@ -26,7 +26,7 @@ export default class BTNodeSelect extends BTNodeSequence {
                 return BTResult.suc; // 一旦成功则直接返回而不往后执行
 
             } else if (result == BTResult.running) {
-                this.curRunningBTNode = btNode as BTNodeAction;
+                this.curRunningBTNode = btNode;
                 return BTResult.running; // 一旦进入运行状态，也不往后执行了
             }
         }
@@ -47,7 +47,7 @@ export default class BTNodeSelect extends BTNodeSequence {
     
                 } else if (result == BTResult.running) {
                     this.endRunning();
-                    this.curRunningBTNode = btNode as BTNodeAction;
+                    this.curRunningBTNode = btNode;
                     return BTResult.running; // 一旦进入运行状态，也不往后执行了
                 }
             }
@@ -55,7 +55,7 @@ export default class BTNodeSelect extends BTNodeSequence {
 
         if (this.curRunningBTNode.excute() != BTResult.running) {
             let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
-            this.endRunning();
+            this.curRunningBTNode = null;
             return this.excuteInNormal(nextIndex);
         }
 

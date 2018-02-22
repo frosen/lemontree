@@ -19,7 +19,7 @@ export default class BTNodeSequence extends BTNodeGroup {
     checkingAheadInRunning: boolean = false;
 
     /** 当前运行的子节点 */
-    curRunningBTNode: BTNodeAction = null;
+    curRunningBTNode: BTNode = null;
 
     excute(): BTResult {
         if (!this.isRunning()) {
@@ -38,7 +38,7 @@ export default class BTNodeSequence extends BTNodeGroup {
                 return BTResult.fail; // 一旦有失败则直接返回而不往后执行
 
             } else if (result == BTResult.running) {
-                this.curRunningBTNode = btNode as BTNodeAction;
+                this.curRunningBTNode = btNode;
                 return BTResult.running; // 一旦进入运行状态，也不往后执行了
             }
         }
@@ -59,7 +59,7 @@ export default class BTNodeSequence extends BTNodeGroup {
     
                 } else if (result == BTResult.running) {
                     this.endRunning();
-                    this.curRunningBTNode = btNode as BTNodeAction;
+                    this.curRunningBTNode = btNode;
                     return BTResult.running; // 一旦进入运行状态，也不往后执行了
                 }
             }
@@ -67,7 +67,7 @@ export default class BTNodeSequence extends BTNodeGroup {
 
         if (this.curRunningBTNode.excute() != BTResult.running) {
             let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
-            this.endRunning();
+            this.curRunningBTNode = null;
             return this.excuteInNormal(nextIndex);
         }
 

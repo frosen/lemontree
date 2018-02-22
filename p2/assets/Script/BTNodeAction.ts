@@ -79,7 +79,12 @@ export default class BTNodeAction extends BTNode {
             this.goingToAction = true;
             return BTResult.running;
         } else {
-            return this.checkRunningEnd() == false ? BTResult.running : BTResult.continue;
+            if (this.checkRunningEnd()) {
+                this.endRunning();
+                return BTResult.continue;
+            } else {
+                return BTResult.running;
+            }
         }
     }
 
