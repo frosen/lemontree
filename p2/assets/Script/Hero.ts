@@ -167,15 +167,4 @@ export default class Hero extends cc.Component {
     beginInvcState(time: number) {
         this.smInvc.begin(time);
     }
-
-    // ------------------------------------------------------------
-
-    test(): boolean {
-        // cc.log("edge", this.terrainCollider.edgeDir);
-        return true;
-    }
-
-    canSee(): boolean {
-        return this.terrainCollider.edgeDir != 0;
-    }
 }
