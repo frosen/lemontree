@@ -91,9 +91,7 @@ export default class BTNodeAction extends BTNode {
     doAction() {
         if (this.goingToAction) {
             this.goingToAction = false;
-            if (!this.checkRunningEnd()) {
-                this.excuteFunc();
-            }          
+            this.excuteFunc();          
         }
     }
 
