@@ -38,9 +38,9 @@ export default class ObjCollisionCtrlr extends cc.Component {
             let layerId1 = Number(layerIdStrs[0]);
             let layerId2 = Number(layerIdStrs[1]);
 
-            cc.assert(typeof(layerId1) == "number" && typeof(layerId2) == "number", "layer id must be number");
-            cc.assert(0 <= layerId1 && layerId1 < this.checkedLayers.length, "layer id 1 wrong");
-            cc.assert(0 <= layerId2 && layerId2 < this.checkedLayers.length, "layer id 2 wrong");
+            myAssert(typeof(layerId1) == "number" && typeof(layerId2) == "number", "layer id must be number");
+            myAssert(0 <= layerId1 && layerId1 < this.checkedLayers.length, "layer id 1 wrong");
+            myAssert(0 <= layerId2 && layerId2 < this.checkedLayers.length, "layer id 2 wrong");
             
             this.checkingTactics.push([layerId1, layerId2]);
         }

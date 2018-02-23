@@ -36,10 +36,10 @@ export default class BTNodeActSet extends BTNode {
 
             let data = this.excuteAttriString.split(":");
             this.excuteComp = this.excuteNode.getComponent(data[0]);
-            cc.assert(this.excuteComp, "When get attri: " + this.excuteNode.name + " wrong component: " + data[0]);
+            myAssert(this.excuteComp, "When get attri: " + this.excuteNode.name + " wrong component: " + data[0]);
 
             this.attriString = data[1];
-            cc.assert(this.excuteComp[this.attriString], this.excuteNode.name + " component: " + data[0] + " not have: " + data[1]);
+            myAssert(this.excuteComp[this.attriString], this.excuteNode.name + " component: " + data[0] + " not have: " + data[1]);
         }
     }
 

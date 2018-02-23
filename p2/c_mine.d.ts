@@ -22,3 +22,8 @@ declare function requireComponents(obj: Object, components: any[]): void;
  * 根据字符串查找一个function，字符串用":"区分组件名和函数名
  */
 declare function getFuncFromString(obj: Object, str: string): function;
+
+/**
+ * cc.assert会飘红，用一个新方法替代
+ */
+declare function myAssert(condition: any, log: string): void;

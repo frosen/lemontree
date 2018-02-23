@@ -8,7 +8,7 @@ window.EXECUTION_ORDER = {
     ObjCollider: 3,
     BehaviorTree: 4,
     CameraCtrlr: 5
-}
+};
 
 window.requireComponents = function (obj, components) {
     let t = true;
@@ -22,7 +22,7 @@ window.requireComponents = function (obj, components) {
         }
     }
     cc.assert(t, "[" + obj.name + "] need component: " + s);
-}
+};
 
 window.getFuncFromString = function (obj, str) {
     let data = str.split(":");
@@ -31,4 +31,6 @@ window.getFuncFromString = function (obj, str) {
     let func = comp[data[1]];
     cc.assert(func && typeof(func) == "function", data[0] + " wrong component function: " + data[1]);
     return func.bind(comp);
-}
+};
+
+window.myAssert = cc.assert;

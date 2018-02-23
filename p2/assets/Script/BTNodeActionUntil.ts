@@ -18,7 +18,7 @@ export default class BTNodeActionUntil extends BTNode {
     onLoad() {
         if (!CC_EDITOR) {
             // 检测父节点，子节点正确性
-            cc.assert(this.node.parent.getComponent(BTNodeAction), "BTNodeActionEnd need action parent");
+            myAssert(this.node.parent.getComponent(BTNodeAction), "BTNodeActionEnd need action parent");
         }
     }
 
