@@ -61,4 +61,8 @@ export default class BTNodeSelect extends BTNodeSequence {
 
         return BTResult.running;
     }
+
+    getCheckingAheadInRunningStr(): string {
+        return this.checkingAheadInRunning ? "" : " --- NCA";
+    }
 }

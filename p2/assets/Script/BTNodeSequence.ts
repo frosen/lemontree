@@ -86,4 +86,12 @@ export default class BTNodeSequence extends BTNodeGroup {
         this.curRunningBTNode.endRunning();
         this.curRunningBTNode = null;            
     }
+
+    getBTName(): string {
+        return super.getBTName() + this.getCheckingAheadInRunningStr();
+    }
+
+    getCheckingAheadInRunningStr(): string {
+        return this.checkingAheadInRunning ? " --- CA" : "";
+    }
 }

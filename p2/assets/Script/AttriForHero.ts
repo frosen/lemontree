@@ -3,7 +3,7 @@
 // lly 2017.12.12
 
 /** 起跳速度 像素/帧 */
-const JumpVelocity: number = 4;
+const JumpVelocity: number = 4.5;
 
 export default class AttriForHero {
     /** 血量 */

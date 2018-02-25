@@ -83,8 +83,12 @@ export default class Enemy extends cc.Component {
         return this.getComponent(TerrainCollider).edgeDir == this.node.scaleX;
     }
 
-    isHasAim(): boolean {
-        return this.aim != null;
+    getAimDir(): number {
+        if (this.aim) {
+            return this.aimDir == this.node.scaleX ? 1 : -1;
+        } else {
+            return 0;
+        }
     }
 
     moveToAim() {
