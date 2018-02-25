@@ -68,7 +68,8 @@ export class ObjCollider extends cc.Component {
             this._debugDrawer.lineTo(minX, minY);
 
             this._debugDrawer.close();
-            this._debugDrawer.stroke();            
+            this._debugDrawer.stroke();   
+            
         }
     }
 
