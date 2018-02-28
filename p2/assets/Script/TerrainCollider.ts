@@ -24,6 +24,11 @@ export default class TerrainCollider extends cc.Component {
     /** 边缘方向，只针对y轴向下 */
     edgeDir: number = 0;
 
+    /** x轴方向是否出界 */
+    xOutRangeDir: number = 0;
+    /** y轴方向是否出界 */
+    yOutRangeDir: number = 0;
+
     onLoad() {
         requireComponents(this, [MovableObject]);
 
@@ -99,6 +104,37 @@ export default class TerrainCollider extends cc.Component {
             } else {
                 this.movableObj.xVelocity = 0;
             }
+        }
+
+        // 计算是否出界 // 不可超出范围
+        if (xDir != 0) {
+            let xCenter: number = this.node.x + size.width * (0.5 - anchor.x);
+            if (xCenter < 0) {
+                this.node.x -= xCenter; 
+                this.xOutRangeDir = -1;
+            } else if (this.terrainCtrlr.terrainSize.width < xCenter) {
+                this.node.x -= xCenter - this.terrainCtrlr.terrainSize.width;
+                this.xOutRangeDir = 1;
+            } else {
+                this.xOutRangeDir = 0;
+            }
+        } else {
+            this.xOutRangeDir = 0;
+        }
+
+        if (yDir != 0) {
+            let yCenter: number = this.node.y + size.height * (0.5 - anchor.y);
+            if (yCenter < 0) {
+                this.node.y -= yCenter; 
+                this.yOutRangeDir = -1;
+            } else if (this.terrainCtrlr.terrainSize.height < yCenter) {
+                this.node.y -= yCenter - this.terrainCtrlr.terrainSize.height;
+                this.yOutRangeDir = 1;
+            } else {
+                this.yOutRangeDir = 0;
+            }
+        } else {
+            this.yOutRangeDir = 0;
         }
     }
 }

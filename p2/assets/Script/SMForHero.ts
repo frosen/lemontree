@@ -115,6 +115,10 @@ class SMForHeroInStand extends SMForHero {
             mgr.changeStateTo(ActState.move);
         }
     }
+
+    end(mgr: SMForHeroMgr) {
+        mgr.hero.ui.endStand();
+    }
 }
 
 /** 最大起跳加速时间（秒） */
@@ -160,6 +164,10 @@ class SMForHeroInJumpAccelerating extends SMForHero {
             mgr.changeStateTo(ActState.jump);
         }
     }
+
+    end(mgr: SMForHeroMgr) {
+        mgr.hero.ui.endJumpUp();
+    }
 }
 
 class SMForHeroInJump extends SMForHero {
@@ -199,6 +207,10 @@ class SMForHeroInJump extends SMForHero {
             }
         }
     }
+
+    end(mgr: SMForHeroMgr) {
+        mgr.hero.ui.endJumpDown();
+    }
 }
 
 class SMForHeroInMove extends SMForHero {
@@ -222,6 +234,10 @@ class SMForHeroInMove extends SMForHero {
         } else if (mgr.hero.xMoveDir == 0) {
             mgr.changeStateTo(ActState.stand);
         }
+    }
+
+    end(mgr: SMForHeroMgr) {
+        mgr.hero.ui.endMove();
     }
 }
 
@@ -284,6 +300,8 @@ class SMForHeroInDash extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
+        mgr.hero.ui.endDash();
+
         // 退出不可攻击敌人的状态 todo
 
         // 开启y轴的加速度
@@ -329,8 +347,8 @@ class SMForHeroInHurt extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
-        mgr.hero.ui.setXUIDir(0, UIDirLvType.hurt);
         mgr.hero.ui.endHurt();
+        mgr.hero.ui.setXUIDir(0, UIDirLvType.hurt);
 
         // 退出不可攻击敌人的状态 todo
 

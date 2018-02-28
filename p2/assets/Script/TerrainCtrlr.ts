@@ -24,6 +24,8 @@ export class TerrainCtrlr extends cc.Component {
     @property(cc.TiledMap)
     tiledMap: cc.TiledMap = null;
 
+    /** 地图块数 */
+    tileNumSize: cc.Size = null;
     /** 地形尺寸 */
     terrainSize: cc.Size = null;
     /** 碰撞检测层 */
@@ -34,8 +36,8 @@ export class TerrainCtrlr extends cc.Component {
 
     onLoad() {
         // init logic
-        let tileNumSize: cc.Size = this.tiledMap.getMapSize();
-        this.terrainSize = new cc.Size(tileNumSize.width * TileLength, tileNumSize.height * TileLength);
+        this.tileNumSize = this.tiledMap.getMapSize();
+        this.terrainSize = new cc.Size(this.tileNumSize.width * TileLength, this.tileNumSize.height * TileLength - 0.001);
         this.collidableLayer = this.tiledMap.getLayer("collision");
         
         this.collidableLayer.enabled = false;
@@ -48,16 +50,17 @@ export class TerrainCtrlr extends cc.Component {
      * @return 碰撞类型
      */
     checkCollideAt(x: number, y: number): CollisionType {
-        
+    
+        // 计算在哪个瓦片上
         let tileX = Math.floor(x / TileLength);
-        let tileY = Math.floor((this.terrainSize.height - y - 0.001) / TileLength); // tiledmap与creator的y轴相反
+        let tileY = Math.floor((this.terrainSize.height - y) / TileLength); // tiledmap与creator的y轴相反
 
         // 首先使用缓存
-        let cacheKey = tileX * 100000 + tileY;
+        let cacheKey = tileX * 1000 + tileY;
         let cache = this.collisionCache[cacheKey]
         if (cache) return cache;
 
-        if (tileX < 0 || this.terrainSize.width - 1 < tileX || tileY < 0 || this.terrainSize.height - 1 < tileY) {
+        if (tileX < 0 || this.tileNumSize.width <= tileX || tileY < 0 || this.tileNumSize.height <= tileY) {
             return CollisionType.none; // 超出范围无碰撞
         }
 

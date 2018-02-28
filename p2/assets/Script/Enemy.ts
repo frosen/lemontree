@@ -95,6 +95,6 @@ export default class Enemy extends cc.Component {
         this.node.scaleX = Math.abs(this.node.scaleX) * this.aimDir;
 
         let movableObj = this.getComponent(MovableObject);
-        movableObj.xVelocity = this.node.scaleX * 2;
+        movableObj.xVelocity = this.node.scaleX * 3;
     }
 }

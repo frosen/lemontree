@@ -29,7 +29,7 @@ export default class CameraCtrlr extends cc.Component {
 
         let mapSize = this.map.getContentSize();
 
-        let rate = 0.25;
+        let rate = 0.5;
         this.xMin = viewSize.width * rate;
         this.xMax = mapSize.width - viewSize.width * rate;
         this.yMin = viewSize.height * rate;

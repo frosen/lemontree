@@ -60,38 +60,58 @@ export class HeroUI extends cc.Component {
     
     stand() {
         // cc.log("ui -------> stand");
-        this.node.skewX = 0;
-        this.node.skewY = 0;
+        this.body.node.skewX = 0;
+        this.body.node.skewY = 0;
+    }
+
+    endStand() {
+
     }
 
     jumpUp() {
         // cc.log("ui -------> jumpUp");
-        this.node.skewX = 0;
-        this.node.skewY = 5;
+        this.body.node.skewX = 0;
+        this.body.node.skewY = 5;
+    }
+
+    endJumpUp() {
+
     }
 
     jumpDown() {
         // cc.log("ui -------> jumpDown");
-        this.node.skewX = 0;
-        this.node.skewY = -5;
+        this.body.node.skewX = 0;
+        this.body.node.skewY = -5;
+    }
+
+    endJumpDown() {
+
     }
 
     move() {
         // cc.log("ui -------> move");
-        this.node.skewX = 5;
-        this.node.skewY = 0;
+        this.body.node.skewX = 5;
+        this.body.node.skewY = 0;
+    }
+
+    endMove() {
+
     }
 
     dash() {
         // cc.log("ui -------> dash");
-        this.node.skewX = 15;
-        this.node.skewY = 0;
+        this.body.node.skewX = 15;
+        this.body.node.skewY = 0;
+    }
+
+    endDash() {
+        
     }
 
     hurt() {
         // cc.log("ui -------> hurt");
-        this.node.skewX = 0;
-        this.node.skewY = 0;
+        this.body.node.skewX = 0;
+        this.body.node.skewY = 0;
         this.setInvincibleEnabled(true);
     }
 
