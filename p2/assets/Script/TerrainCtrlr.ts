@@ -20,6 +20,16 @@ export enum CollisionType {
     entity = 3,
 }
 
+export class TileAttris {
+
+}
+
+export class SlopeAttris extends TileAttris {
+    dir: number = 0;
+    x: number = 0;
+    y: number = 0;
+}
+
 @ccclass
 export class TerrainCtrlr extends cc.Component {
 
@@ -37,7 +47,7 @@ export class TerrainCtrlr extends cc.Component {
     collisionCache: {} = {}
 
     /** 碰撞属性的缓存，每一项也是一个object，其属性取于tile */
-    collisionAttriCache: {} = {}
+    collisionAttriCache: {[key: number]: TileAttris;} = {}
 
     onLoad() {
         // init logic
@@ -49,19 +59,36 @@ export class TerrainCtrlr extends cc.Component {
     }
 
     /**
+     * 根据位置，获取图块索引值
+     */
+    _getTileIndex(x: number, y: number): {tileX: number, tileY: number} {
+        let tileX = Math.floor(x / TileLength);
+        let tileY = Math.floor((this.terrainSize.height - y) / TileLength); // tiledmap与creator的y轴相反
+        return {
+            tileX: tileX, 
+            tileY: tileY
+        }
+    }
+
+    /**
+     * 根据图块索引值，获取缓存的key
+     */
+    _getCacheKey(tileX: number, tileY: number): number {
+        return tileX * 1000 + tileY;
+    }
+
+    /**
      * 检测当前creator坐标在当前tiledMap中是否为一个碰撞区块
      * @param x: x坐标
      * @param y: y坐标
      * @return 碰撞类型
      */
-    checkCollideAt(x: number, y: number): CollisionType {
-    
+    checkCollideAt(x: number, y: number): CollisionType {   
         // 计算在哪个瓦片上
-        let tileX = Math.floor(x / TileLength);
-        let tileY = Math.floor((this.terrainSize.height - y) / TileLength); // tiledmap与creator的y轴相反
+        let {tileX, tileY} = this._getTileIndex(x, y);
 
         // 首先使用缓存
-        let cacheKey = tileX * 1000 + tileY;
+        let cacheKey = this._getCacheKey(tileX, tileY);
         let cache = this.collisionCache[cacheKey];
         if (cache) return cache;
 
@@ -80,20 +107,43 @@ export class TerrainCtrlr extends cc.Component {
         this.collisionCache[cacheKey] = collidable;
 
         // 获取图块属性       
-        let attri = {};
+        let attris = null;;
         switch (collidable) {
             case CollisionType.slope:
+                attris = new SlopeAttris()
+
                 let dir: number = parseInt(properties.dir);
-                attri["dir"] = dir;
+                attris.dir = dir;
+
+                // 另需要保存一个位置值（就是左下或者右下的尖角位置），便于计算
+                let x = tileX;
+                let y = tileY;
+                if (dir > 0) x += 1;
+                y = this.tileNumSize.height - y;
+                attris.x = x * TileLength;
+                attris.y = y * TileLength; 
                 break;
         }
-        this.collisionAttriCache[cacheKey] = attri;
+        this.collisionAttriCache[cacheKey] = attris;
 
         return collidable;
     }
 
     /**
-     * 检测一条竖线上是否有碰撞；to必须大于from；检测platform
+     * 获取图块属性，不会检测attri是否存在，需要在外部保证
+     * @param x: x坐标
+     * @param y: y坐标
+     * @return 属性 object
+     */
+    getTileAttris(x: number, y: number): TileAttris {
+        let {tileX, tileY} = this._getTileIndex(x, y);
+        let cacheKey = this._getCacheKey(tileX, tileY);
+        let attri = this.collisionAttriCache[cacheKey]; // attri一定会有的；
+        return attri;
+    }
+
+    /**
+     * 检测一条竖线上是否有碰撞；to必须大于from；
      * @param x: x坐标
      * @param fromY: y坐标
      * @param toY: y坐标
@@ -168,7 +218,73 @@ export class TerrainCtrlr extends cc.Component {
         else return pos % TileLength - TileLength;
     }
 
+    getSlopeAttris(x: number, fromY: number, toY: number): SlopeAttris {
+        let attris: SlopeAttris = null;
+        let y = fromY;
+        while (true) {
+            let t: CollisionType = this.checkCollideAt(x, y);          
+            if (t == CollisionType.slope) {
+                attris = this.getTileAttris(x, y) as SlopeAttris;
+                break;
+            }
+
+            y += TileLength;
+            if (y >= toY) break;
+        }
+
+        // 还要检测下最后一个值
+        if (attris == null) {
+            let t: CollisionType = this.checkCollideAt(x, toY);          
+            if (t == CollisionType.slope) {
+                attris = this.getTileAttris(x, toY) as SlopeAttris;
+            }
+        }
+
+        return attris;
+    }
+
     /**
-     * 获取图块属性
+     * 获取由于斜面导致的y轴偏移量
+     * @param x: x坐标
+     * @param fromY: y坐标
+     * @param toY: y坐标 因为是从上往下找，所以toY一定要小于fromY
+     * @param dir: 碰撞对象的方向
+     * @returns 偏移量 number
      */
+    getSlopeOffset(x: number, fromY: number, toY: number): number {
+        let attris: SlopeAttris = null;
+        let y = fromY;
+        while (true) {
+            let t: CollisionType = this.checkCollideAt(x, y);          
+            if (t == CollisionType.slope) {
+                attris = this.getTileAttris(x, y) as SlopeAttris;
+                break;
+            }
+
+            y += TileLength;
+            if (y >= toY) break;
+        }
+
+        // 还要检测下最后一个值
+        if (attris == null) {
+            let t: CollisionType = this.checkCollideAt(x, toY);          
+            if (t == CollisionType.slope) {
+                attris = this.getTileAttris(x, toY) as SlopeAttris;
+            }
+        }
+
+        if (attris == null) {
+            cc.log(x, fromY, toY);
+            cc.error("wrong slope attris");
+            return 0;
+        }
+        
+        // 计算需要的偏移量
+        let dir = attris.dir;
+        let dis = Math.abs(attris.x - x);
+        let realY = attris.y + dis;
+        let offset = realY - toY;
+        
+        return offset;
+    }
 }
