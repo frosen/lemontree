@@ -45,14 +45,13 @@ export default class TerrainCollider extends cc.Component {
         if (xDir != 0) {
             let checkX = this.node.x - size.width * anchor.x + (xDir > 0 ? size.width : 0);
             let checkY = this.node.y - size.height * anchor.y;
-            let checkYEnd = checkY + size.height;
+            let checkYEnd = checkY + size.height - 1;
             let collisionType: CollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
             if (collisionType == CollisionType.entity) { // 有碰撞
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkX, xDir);
                 let xPos = this.node.x - distance;
-
-                // 第一次检测x碰撞，其后退不可超过上次点的位置，否则会有y轴判断的错误
-                if (xDir > 0) xPos = Math.max(xPos, this.movableObj.xLastPos);
+               
+                if (xDir > 0) xPos = Math.max(xPos, this.movableObj.xLastPos); // 第一次检测x碰撞，其后退不可超过上次点的位置，否则会有y轴判断的错误
                 else xPos = Math.min(xPos, this.movableObj.xLastPos);
 
                 this.node.x = xPos;                  
@@ -60,7 +59,7 @@ export default class TerrainCollider extends cc.Component {
         }
 
         if (yDir != 0) {
-            let checkX = this.node.x - size.width * anchor.x; // 从后往前计算上下的碰撞
+            let checkX = this.node.x - size.width * anchor.x; // 从左往右计算上下的碰撞
             let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
 
             let checkY = this.node.y - size.height * anchor.y + (yDir > 0 ? size.height : 0);

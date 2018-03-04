@@ -14,8 +14,10 @@ export enum CollisionType {
     none = 0,
     /** 碰撞了平台，可下跳 */
     platform = 1,
+    /** 碰撞了斜面，类似实体，根据dir从一边倾斜，优先级高于平台，因此不考虑倾斜面紧挨着平台的情况 */
+    slope = 2,
     /** 碰撞了实体 */
-    entity = 2,
+    entity = 3,
 }
 
 @ccclass
@@ -33,6 +35,9 @@ export class TerrainCtrlr extends cc.Component {
 
     /** 碰撞缓存 不但可以加速，更可以改变某处的碰撞类型*/
     collisionCache: {} = {}
+
+    /** 碰撞属性的缓存，每一项也是一个object，其属性取于tile */
+    collisionAttriCache: {} = {}
 
     onLoad() {
         // init logic
@@ -57,7 +62,7 @@ export class TerrainCtrlr extends cc.Component {
 
         // 首先使用缓存
         let cacheKey = tileX * 1000 + tileY;
-        let cache = this.collisionCache[cacheKey]
+        let cache = this.collisionCache[cacheKey];
         if (cache) return cache;
 
         if (tileX < 0 || this.tileNumSize.width <= tileX || tileY < 0 || this.tileNumSize.height <= tileY) {
@@ -73,12 +78,22 @@ export class TerrainCtrlr extends cc.Component {
         let collidable: CollisionType = parseInt(properties.collidable) as CollisionType;
 
         this.collisionCache[cacheKey] = collidable;
-        
+
+        // 获取图块属性       
+        let attri = {};
+        switch (collidable) {
+            case CollisionType.slope:
+                let dir: number = parseInt(properties.dir);
+                attri["dir"] = dir;
+                break;
+        }
+        this.collisionAttriCache[cacheKey] = attri;
+
         return collidable;
     }
 
     /**
-     * 检测一条线上是否有碰撞；to必须大于from；不检测type2
+     * 检测一条竖线上是否有碰撞；to必须大于from；检测platform
      * @param x: x坐标
      * @param fromY: y坐标
      * @param toY: y坐标
@@ -88,17 +103,16 @@ export class TerrainCtrlr extends cc.Component {
         let collisionType: CollisionType = CollisionType.none;
         let y = fromY;
         while (true) {
-            let t: CollisionType = this.checkCollideAt(x, y);
-            if (t == CollisionType.entity) {
-                collisionType = t;
-                break;
-            }
-
-            if (y > toY - 1) break;
+            let t: CollisionType = this.checkCollideAt(x, y);          
+            if (t > collisionType) collisionType = t; // 数值大意味着优先级高
 
             y += TileLength;
-            if (y > toY) y = toY;
+            if (y >= toY) break;
         }
+
+        // 还要检测下最后一个值
+        let t: CollisionType = this.checkCollideAt(x, toY);           
+        if (t > collisionType) collisionType = t;
         
         return collisionType;
     }
@@ -122,14 +136,13 @@ export class TerrainCtrlr extends cc.Component {
 
             if (edgeLeft == null) edgeLeft = t;
 
-            if (x - toX > - 1) {
-                edgeRight = t;
-                break;
-            }
-
             x += TileLength;
-            if (x - toX > 0) x = toX;
+            if (x >= toX) break;
         }
+
+        let t: CollisionType = this.checkCollideAt(toX, y);           
+        if (t > collisionType) collisionType = t;
+        edgeRight = t;
 
         let edgeDir: number = 0;
         if (edgeLeft == CollisionType.none && edgeRight != CollisionType.none) {
@@ -154,4 +167,8 @@ export class TerrainCtrlr extends cc.Component {
         if (dir > 0) return pos % TileLength;
         else return pos % TileLength - TileLength;
     }
+
+    /**
+     * 获取图块属性
+     */
 }
