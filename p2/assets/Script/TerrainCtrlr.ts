@@ -14,7 +14,10 @@ export enum CollisionType {
     none = 0,
     /** 碰撞了平台，可下跳 */
     platform = 1,
-    /** 碰撞了斜面，类似实体，根据dir从一边倾斜，优先级高于平台，因此不考虑倾斜面紧挨着平台的情况 */
+    /** 碰撞了斜面，类似实体，
+     * 根据dir从一边倾斜，
+     * 只考虑实面挨着足够长（大于obj的宽度）的实体，斜面挨着足够长的none的情况，其他情况可能会有问题 
+    */
     slope = 2,
     /** 碰撞了实体 */
     entity = 3,
@@ -168,42 +171,49 @@ export class TerrainCtrlr extends cc.Component {
     }
 
     /**
-     * 检测一条线上是否有碰撞；to必须大于from；
-     * 同时检测是否在边缘，边缘在左返回-1，在右返回1，没有返回0
+     * 检测一条线上是否有碰撞和是否有边缘；to必须大于from；
+     * 同时检测是否在边缘，沿着运动方向从前向后检索，最后一个边缘块视为其边缘
      * @param fromX: x坐标
      * @param toX: x坐标
      * @param y: y坐标
-     * @return {type: CollisionType, edgeDir: number}
+     * @param dir: 对象运动朝向
+     * @return {type: CollisionType, edgeType: CollisionType}
      */
-    checkCollideInHorizontalLine(fromX: number, toX: number, y: number): {type: CollisionType, edgeDir: number} {
+    checkCollideInHorizontalLine(fromX: number, toX: number, y: number, dir: number): 
+        {type: CollisionType, edgeType: CollisionType} {
         let collisionType: CollisionType = CollisionType.none;
         let x = fromX;
-        let edgeLeft = null;
-        let edgeRight = null;
+
+        let edgeList = [];
+
         while (true) {
             let t: CollisionType = this.checkCollideAt(x, y);
+            edgeList.push(t);
             if (t > collisionType) collisionType = t;
-
-            if (edgeLeft == null) edgeLeft = t;
 
             x += TileLength;
             if (x >= toX) break;
         }
 
-        let t: CollisionType = this.checkCollideAt(toX, y);           
+        let t: CollisionType = this.checkCollideAt(toX, y); 
+        edgeList.push(t);          
         if (t > collisionType) collisionType = t;
-        edgeRight = t;
 
-        let edgeDir: number = 0;
-        if (edgeLeft == CollisionType.none && edgeRight != CollisionType.none) {
-            edgeDir = -1;
-        } else if (edgeLeft != CollisionType.none && edgeRight == CollisionType.none) {
-            edgeDir = 1;
+        let edgeType: CollisionType = null;
+        if (dir != 0) {
+            if (dir > 0) edgeList = edgeList.reverse();
+            for (const edge of edgeList) {
+                if (edge == CollisionType.none || edge == CollisionType.slope) {
+                    edgeType = edge;
+                } else {
+                    break;
+                }
+            }
         }
 
         return {
             type: collisionType,
-            edgeDir: edgeDir
+            edgeType: edgeType
         }
     }
 
@@ -218,72 +228,24 @@ export class TerrainCtrlr extends cc.Component {
         else return pos % TileLength - TileLength;
     }
 
-    getSlopeAttris(x: number, fromY: number, toY: number): SlopeAttris {
-        let attris: SlopeAttris = null;
-        let y = fromY;
-        while (true) {
-            let t: CollisionType = this.checkCollideAt(x, y);          
-            if (t == CollisionType.slope) {
-                attris = this.getTileAttris(x, y) as SlopeAttris;
-                break;
-            }
-
-            y += TileLength;
-            if (y >= toY) break;
-        }
-
-        // 还要检测下最后一个值
-        if (attris == null) {
-            let t: CollisionType = this.checkCollideAt(x, toY);          
-            if (t == CollisionType.slope) {
-                attris = this.getTileAttris(x, toY) as SlopeAttris;
-            }
-        }
-
-        return attris;
-    }
-
     /**
      * 获取由于斜面导致的y轴偏移量
-     * @param x: x坐标
-     * @param fromY: y坐标
-     * @param toY: y坐标 因为是从上往下找，所以toY一定要小于fromY
-     * @param dir: 碰撞对象的方向
+     * @param x number
+     * @param y number
+     * @param checkDir number 需要检测的方向
      * @returns 偏移量 number
      */
-    getSlopeOffset(x: number, fromY: number, toY: number): number {
-        let attris: SlopeAttris = null;
-        let y = fromY;
-        while (true) {
-            let t: CollisionType = this.checkCollideAt(x, y);          
-            if (t == CollisionType.slope) {
-                attris = this.getTileAttris(x, y) as SlopeAttris;
-                break;
-            }
+    getSlopeOffset(x: number, y: number, checkDir: number): number {
+        let t: CollisionType = this.checkCollideAt(x, y);
+        if (t != CollisionType.slope) return null;
 
-            y += TileLength;
-            if (y >= toY) break;
-        }
-
-        // 还要检测下最后一个值
-        if (attris == null) {
-            let t: CollisionType = this.checkCollideAt(x, toY);          
-            if (t == CollisionType.slope) {
-                attris = this.getTileAttris(x, toY) as SlopeAttris;
-            }
-        }
-
-        if (attris == null) {
-            cc.log(x, fromY, toY);
-            cc.error("wrong slope attris");
-            return 0;
-        }
-        
-        // 计算需要的偏移量
+        let attris = this.getTileAttris(x, y) as SlopeAttris;
         let dir = attris.dir;
+        if (dir != checkDir) return null;
+
         let dis = Math.abs(attris.x - x);
         let realY = attris.y + dis;
-        let offset = realY - toY;
+        let offset = realY - y;
         
         return offset;
     }

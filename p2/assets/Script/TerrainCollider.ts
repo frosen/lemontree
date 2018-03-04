@@ -21,8 +21,8 @@ export default class TerrainCollider extends cc.Component {
     curXCollisionType: CollisionType = CollisionType.none;
     curYCollisionType: CollisionType = CollisionType.none;
 
-    /** 边缘方向，只针对y轴向下 */
-    edgeDir: number = 0;
+    /** 边缘类型，可以是none或者slope，不在边缘则为空 */
+    edgeType: CollisionType = null;
 
     /** x轴方向是否出界 */
     xOutRangeDir: number = 0;
@@ -43,14 +43,13 @@ export default class TerrainCollider extends cc.Component {
         let anchor = this.node.getAnchorPoint();
 
         //========================================================
-
+        let preTestXClsnType: CollisionType = CollisionType.none; // 前置测试x类型
         if (xDir != 0) {
             let checkX = this.node.x - size.width * anchor.x + (xDir > 0 ? size.width : 0);
             let checkY = this.node.y - size.height * anchor.y;
             let checkYEnd = checkY + size.height - 1;
-            let collisionType: CollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
-            if (collisionType == CollisionType.entity || 
-                collisionType == CollisionType.slope) { // 有碰撞
+            preTestXClsnType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
+            if (preTestXClsnType == CollisionType.entity) { // 有碰撞
 
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkX, xDir);
                 let xPos = this.node.x - distance;
@@ -63,22 +62,27 @@ export default class TerrainCollider extends cc.Component {
         }
 
         //========================================================
-
-        if (yDir != 0) {
+        {
             let checkX = this.node.x - size.width * anchor.x; // 从左往右计算上下的碰撞
             let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
 
             let checkY = this.node.y - size.height * anchor.y + (yDir > 0 ? size.height : 0);
             
-            let {type, edgeDir} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
+            let {type, edgeType} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY, xDir);
 
             this.curYCollisionType = type;
-            this.edgeDir = yDir < 0 ? edgeDir : 0;
+            this.edgeType = yDir < 0 ? edgeType : null;
 
             if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
                 this.node.y -= distance;
                 this.movableObj.yVelocity = 0;
+
+            } else if (this.curYCollisionType == CollisionType.slope) {
+                if (preTestXClsnType == CollisionType.entity) {
+                    let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
+                    this.node.y -= distance;
+                }
 
             } else if (this.curYCollisionType == CollisionType.platform) { // 有只向下而且能越过的碰撞
                 if (yDir < 0) { // 只检测向下
@@ -96,57 +100,58 @@ export default class TerrainCollider extends cc.Component {
                 }
             }
         }
+        
 
         //========================================================
         
         // 第一次x碰撞检测可能会因为y轴碰撞未进行而导致误判，
         // 所以需要在y检测后再检测一次，如果未碰撞则移动到相应位置
-        let checkXDir = xDir != 0 ? xDir : -1; // xDir为0时，检测其左侧先，所以视为-1；
-        let checkX = saveX - size.width * anchor.x + (checkXDir > 0 ? size.width : 0);
-        let checkY = this.node.y - size.height * anchor.y;
-        let checkYEnd = checkY + size.height - 1;
-        this.curXCollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
-        if (this.curXCollisionType == CollisionType.entity) {
-            this.movableObj.xVelocity = 0;
+        if (xDir != 0) {
+            let checkX = saveX - size.width * anchor.x + (xDir > 0 ? size.width : 0);
+            let checkY = this.node.y - size.height * anchor.y;
+            let checkYEnd = checkY + size.height - 1;
+            this.curXCollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
 
-        } else if (this.curXCollisionType == CollisionType.slope) {
-            this.node.x = saveX;
-
-            let attris: SlopeAttris = this.terrainCtrlr.getSlopeAttris(checkX, checkYEnd, checkY);
-
-            if (checkXDir == attris.dir) { // 方向相同，则表示在厚边方向，先尝试后撤，不行的话上移
-                let distance = this.terrainCtrlr.getDistanceToTileSide(checkX, checkXDir);
-                let xPos = this.node.x - distance;
-
-                if ((checkXDir > 0 && this.movableObj.xLastPos <= xPos) || (checkXDir < 0 && this.movableObj.xLastPos >= xPos)) {
-                    this.node.x = xPos;
-                    this.movableObj.xVelocity = 0;
-                } else {
-                    let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, -1);
-                    this.node.y += distance;
-                    this.movableObj.yVelocity = 0;
+            if (this.curXCollisionType == CollisionType.entity) {
+                this.movableObj.xVelocity = 0;
+    
+            } else {
+                this.node.x = saveX;
+            }
+        }
+        
+        let atSlope: boolean = false;
+        {
+            // 先检测左侧，再检测右侧，反正<需要确保>不会同时有
+            let checkX = saveX - size.width * anchor.x;
+            let checkY = this.node.y - size.height * anchor.y;
+            
+            let yOffset: number = this.terrainCtrlr.getSlopeOffset(checkX, checkY, 1);
+            if (yOffset != null) {
+                if (yOffset > 0) {
+                    this.node.y += yOffset;
+                    atSlope = true;
                 }
 
-            } else { 
-                let yOffset = this.terrainCtrlr.getSlopeOffset(checkX, checkYEnd, checkY);
-                if (yOffset >= 0) {
-                    this.node.y += yOffset;
-                    this.movableObj.yVelocity = 0;
-                }               
+            } else {
+                let checkXEnd = checkX + size.width;
+                let yOffset: number = this.terrainCtrlr.getSlopeOffset(checkXEnd, checkY, -1);
+                if (yOffset != null) {
+                    if (yOffset > 0) {
+                        this.node.y += yOffset;
+                        atSlope = true;
+                    }
+                }
             }
-        
-        } else {
-            this.node.x = saveX;
         }
 
-        // 检测背后是否是斜面
-        checkXDir *= -1;
-        checkX = saveX - size.width * anchor.x + (checkXDir > 0 ? size.width : 0);
-        let backCollisionType = this.terrainCtrlr.checkCollideInVerticalLine(checkX, checkY, checkYEnd);
+        if (atSlope || this.edgeType == CollisionType.slope) {
+            this.movableObj.yVelocity = -15; // 超级重力为了让对象可以沿着斜坡行进
+        }
 
         //========================================================
 
-        // 计算是否出界 // 不可超出范围
+        // 计算是否出界 // X不可超出范围
         if (xDir != 0) {
             let xCenter: number = this.node.x + size.width * (0.5 - anchor.x);
             if (xCenter < 0) {
@@ -165,10 +170,8 @@ export default class TerrainCollider extends cc.Component {
         if (yDir != 0) {
             let yCenter: number = this.node.y + size.height * (0.5 - anchor.y);
             if (yCenter < 0) {
-                this.node.y -= yCenter; 
                 this.yOutRangeDir = -1;
             } else if (this.terrainCtrlr.terrainSize.height < yCenter) {
-                this.node.y -= yCenter - this.terrainCtrlr.terrainSize.height;
                 this.yOutRangeDir = 1;
             } else {
                 this.yOutRangeDir = 0;

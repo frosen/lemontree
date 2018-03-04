@@ -10,6 +10,7 @@ import ObjColliderForWatch from "./ObjColliderForWatch";
 
 import MovableObject from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
+import {CollisionType} from "./TerrainCtrlr";
 
 import Hero from "./Hero";
 
@@ -80,7 +81,7 @@ export default class Enemy extends cc.Component {
     }
 
     isEdgeForward(): boolean {
-        return this.getComponent(TerrainCollider).edgeDir == this.node.scaleX;
+        return this.getComponent(TerrainCollider).edgeType == CollisionType.none;
     }
 
     getAimDir(): number {
