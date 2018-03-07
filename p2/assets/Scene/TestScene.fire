@@ -467,7 +467,7 @@
     },
     "_children": [],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 14
@@ -657,7 +657,7 @@
       }
     ],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 59
@@ -2161,8 +2161,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 92,
-      "y": 63
+      "x": 319,
+      "y": 370
     },
     "_skewX": 0,
     "_skewY": 0,

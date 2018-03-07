@@ -5,7 +5,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import MovableObject from "./MovableObject";
+import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";

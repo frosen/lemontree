@@ -5,7 +5,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import MovableObject from "./MovableObject";
+import {MovableObject} from "./MovableObject";
 
 /** 默认重力加速度 */
 const DefaultAccel: number = -0.25;

@@ -268,8 +268,7 @@ class SMForHeroInDash extends SMForHero {
         this.time = 0;   
 
         // 在开始时就确定方向，之后不可改变
-        this.dashDir = mgr.hero.xMoveDir;
-        mgr.hero.ui.setXUIDir(this.dashDir, UIDirLvType.move);
+        this.dashDir = mgr.hero.ui.xUIDirs[UIDirLvType.move];
 
         // 进入不可攻击敌人的状态 todo
 
@@ -280,7 +279,6 @@ class SMForHeroInDash extends SMForHero {
 
     update(dt: number, mgr: SMForHeroMgr) {
         this.time += dt;
-
         mgr.hero.movableObj.xVelocity = this.dashDir * DashSpeed;       
     }
 

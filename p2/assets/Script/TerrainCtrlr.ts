@@ -122,7 +122,7 @@ export class TerrainCtrlr extends cc.Component {
                 let x = tileX;
                 let y = tileY;
                 if (dir > 0) x += 1;
-                y = this.tileNumSize.height - y;
+                y = this.tileNumSize.height - y - 1;
                 attris.x = x * TileLength;
                 attris.y = y * TileLength; 
                 break;
@@ -233,7 +233,7 @@ export class TerrainCtrlr extends cc.Component {
      * @param x number
      * @param y number
      * @param checkDir number 需要检测的方向
-     * @returns 偏移量 number
+     * @returns 偏移量 number 正数为向下偏移
      */
     getSlopeOffset(x: number, y: number, checkDir: number): number {
         let t: CollisionType = this.checkCollideAt(x, y);
@@ -244,9 +244,8 @@ export class TerrainCtrlr extends cc.Component {
         if (dir != checkDir) return null;
 
         let dis = Math.abs(attris.x - x);
-        let realY = attris.y + dis;
-        let offset = realY - y;
-        
+        let slopeY = attris.y + dis;
+        let offset = slopeY - y;
         return offset;
     }
 }

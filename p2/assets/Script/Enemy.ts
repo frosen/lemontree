@@ -8,7 +8,7 @@ import Attack from "./Attack";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 
-import MovableObject from "./MovableObject";
+import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import {CollisionType} from "./TerrainCtrlr";
 

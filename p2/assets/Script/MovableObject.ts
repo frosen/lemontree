@@ -6,11 +6,11 @@
 const {ccclass, property, executionOrder} = cc._decorator;
 
 /** 速度最大值（必为正数）不得超过一个tile的宽度 */
-const VelocityMax: number = 28;
+export const VelocityMax: number = 15;
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.MovableObject)
-export default class MovableObject extends cc.Component {
+export class MovableObject extends cc.Component {
 
     xAccelEnabled: boolean = true;
     yAccelEnabled: boolean = true;
