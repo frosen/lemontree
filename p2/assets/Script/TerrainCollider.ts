@@ -71,7 +71,7 @@ export default class TerrainCollider extends cc.Component {
             let {type, edgeType} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY, xDir);
 
             this.curYCollisionType = type;
-            this.edgeType = yDir < 0 ? edgeType : null;
+            this.edgeType = (yDir < 0 && type != CollisionType.none) ? edgeType : null;
             
             if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
@@ -113,7 +113,7 @@ export default class TerrainCollider extends cc.Component {
 
             if (this.curXCollisionType == CollisionType.entity) {
                 this.movableObj.xVelocity = 0;
-    
+                this.edgeType = CollisionType.entity;
             } else {
                 this.node.x = saveX;
             }
@@ -131,6 +131,7 @@ export default class TerrainCollider extends cc.Component {
                     this.curYCollisionType = CollisionType.slope;
                 } else {
                     this.curYCollisionType = CollisionType.none;
+                    this.edgeType = null;
                 }
 
             } else {
@@ -142,12 +143,15 @@ export default class TerrainCollider extends cc.Component {
                         this.curYCollisionType = CollisionType.slope;
                     } else {
                         this.curYCollisionType = CollisionType.none;
+                        this.edgeType = null;
                     }
                 }
             }
         }
 
-        if (this.curYCollisionType == CollisionType.slope || this.edgeType == CollisionType.slope) {
+        if (yDir < 0 && this.curYCollisionType == CollisionType.entity && this.edgeType != CollisionType.none ||
+            this.curYCollisionType == CollisionType.slope || 
+            this.edgeType == CollisionType.slope) {
             this.movableObj.yVelocity = -VelocityMax; // 超级重力为了让对象可以沿着斜坡行进
         }
 
