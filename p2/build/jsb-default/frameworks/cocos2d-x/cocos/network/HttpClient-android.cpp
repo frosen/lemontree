@@ -128,7 +128,7 @@ public:
     bool init(HttpRequest* request)
     {
         createHttpURLConnection(request->getUrl());
-        if(!configure())
+        if(!configure(request))
         {
             return false;
         }
@@ -613,7 +613,7 @@ private:
         }
     }
 
-    bool configure()
+    bool configure(HttpRequest* request)
     {   
         if(nullptr == _httpURLConnection)
         {
@@ -625,7 +625,7 @@ private:
             return false;
         }
 
-        setReadAndConnectTimeout(_client->getTimeoutForRead() * 1000, _client->getTimeoutForConnect() * 1000);
+        setReadAndConnectTimeout(request->getTimeout() * 1000, request->getTimeout() * 1000);
 
         setVerifySSL();
 
@@ -864,18 +864,13 @@ void HttpClient::networkThreadAlone(HttpRequest* request, HttpResponse* response
     if (_scheduler != nullptr)
     {
         _scheduler->performFunctionInCocosThread([this, response, request]{
-            const ccHttpRequestCallback& callback = request->getCallback();
-            Ref* pTarget = request->getTarget();
-            SEL_HttpResponse pSelector = request->getSelector();
+            const ccHttpRequestCallback& callback = request->getResponseCallback();
 
             if (callback != nullptr)
             {
                 callback(this, response);
             }
-            else if (pTarget && pSelector)
-            {
-                (pTarget->*pSelector)(this, response);
-            }
+
             response->release();
             // do not release in other thread
             request->release();
@@ -1038,19 +1033,13 @@ void HttpClient::dispatchResponseCallbacks()
     if (response)
     {
         HttpRequest *request = response->getHttpRequest();
-        const ccHttpRequestCallback& callback = request->getCallback();
-        Ref* pTarget = request->getTarget();
-        SEL_HttpResponse pSelector = request->getSelector();
+        const ccHttpRequestCallback& callback = request->getResponseCallback();
 
         if (callback != nullptr)
         {
             callback(this, response);
         }
-        else if (pTarget && pSelector)
-        {
-            (pTarget->*pSelector)(this, response);
-        }
-        
+
         response->release();
         // do not release in other thread
         request->release();

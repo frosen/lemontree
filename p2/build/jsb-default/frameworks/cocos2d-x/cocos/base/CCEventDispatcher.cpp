@@ -191,11 +191,14 @@ void EventDispatcher::EventListenerVector::clear()
 
 EventDispatcher::EventDispatcher()
 : _inDispatch(0)
-, _isEnabled(false)
 , _nodePriorityIndex(0)
+, _isEnabled(false)
 {
     _toAddedListeners.reserve(50);
     _toRemovedListeners.reserve(50);
+
+    memset(_beforeDispatchEventHooks, 0, sizeof(_beforeDispatchEventHooks));
+    memset(_afterDispatchEventHooks, 0, sizeof(_afterDispatchEventHooks));
 
     // fixed #4129: Mark the following listener IDs for internal use.
     // Therefore, internal listeners would not be cleaned when removeAllEventListeners is invoked.
@@ -690,7 +693,10 @@ void EventDispatcher::removeEventListener(EventListener* listener)
 
     if (isFound)
     {
-        releaseListener(listener);
+        if (_inDispatch > 0)
+            CC_SAFE_RELEASE(listener);
+        else
+            releaseListener(listener);
     }
     else
     {
@@ -800,6 +806,13 @@ void EventDispatcher::dispatchEvent(Event* event)
     if (!_isEnabled)
         return;
 
+    DispatchEventHook beforeDispatchHook = _beforeDispatchEventHooks[(int)event->getType()];
+    DispatchEventHook afterDispatchHook = _afterDispatchEventHooks[(int)event->getType()];
+    if (beforeDispatchHook != nullptr)
+    {
+        beforeDispatchHook(event);
+    }
+
     updateDirtyFlagForSceneGraph();
 
     DispatchGuard guard(_inDispatch);
@@ -807,6 +820,11 @@ void EventDispatcher::dispatchEvent(Event* event)
     if (event->getType() == Event::Type::TOUCH)
     {
         dispatchTouchEvent(static_cast<EventTouch*>(event));
+        updateListeners(event);
+        if (afterDispatchHook != nullptr)
+        {
+            afterDispatchHook(event);
+        }
         return;
     }
     
@@ -829,13 +847,19 @@ void EventDispatcher::dispatchEvent(Event* event)
 
         updateListeners(event);
     }
+
+    if (afterDispatchHook != nullptr)
+    {
+        afterDispatchHook(event);
+    }
 }
 
 void EventDispatcher::dispatchCustomEvent(const std::string &eventName, void *optionalUserData)
 {
-    EventCustom ev(eventName);
-    ev.setUserData(optionalUserData);
-    dispatchEvent(&ev);
+    EventCustom* ev = new EventCustom(eventName);
+    ev->setUserData(optionalUserData);
+    dispatchEvent(ev);
+    ev->release();
 }
 
 bool EventDispatcher::hasEventListener(const EventListener::ListenerID& listenerID) const
@@ -867,6 +891,16 @@ bool EventDispatcher::hasEventListener(const EventListener::ListenerID& listener
         }
     }
     return true;
+}
+
+void EventDispatcher::setBeforeDispatchEventHook(Event::Type type, const DispatchEventHook& hook)
+{
+    _beforeDispatchEventHooks[(int)type] = hook;
+}
+
+void EventDispatcher::setAfterDispatchEventHook(Event::Type type, const DispatchEventHook& hook)
+{
+    _afterDispatchEventHooks[(int)type] = hook;
 }
 
 void EventDispatcher::dispatchTouchEvent(EventTouch* event)
@@ -963,13 +997,6 @@ void EventDispatcher::dispatchTouchEvent(EventTouch* event)
                     }
                 }
 
-                // If the event was stopped, return directly.
-                if (event->isStopped())
-                {
-                    updateListeners(event);
-                    return true;
-                }
-
                 CCASSERT((*touchesIter)->getID() == (*mutableTouchesIter)->getID(),
                          "touchesIter ID should be equal to mutableTouchesIter's ID.");
 
@@ -983,15 +1010,20 @@ void EventDispatcher::dispatchTouchEvent(EventTouch* event)
                     return true;
                 }
 
+                if (event->isStopped())
+                {
+                    // TouchOneByOne event is special, touchEvent->stopPropagation() should only affect current touch.
+                    // Therefore, reset it to non-stopped state for next touch event handling and return true to stop
+                    // current touch event propagation.
+                    event->_isStopped = false;
+                    return true;
+                }
+
                 return false;
             };
 
             //
             dispatchEventToListeners(oneByOneListeners, onTouchEvent);
-            if (event->isStopped())
-            {
-                return;
-            }
 
             if (!isSwallowed)
                 ++mutableTouchesIter;
@@ -1046,7 +1078,6 @@ void EventDispatcher::dispatchTouchEvent(EventTouch* event)
             // If the event was stopped, return directly.
             if (event->isStopped())
             {
-                updateListeners(event);
                 return true;
             }
 
@@ -1059,8 +1090,6 @@ void EventDispatcher::dispatchTouchEvent(EventTouch* event)
             return;
         }
     }
-
-    updateListeners(event);
 }
 
 void EventDispatcher::updateListeners(Event* event)

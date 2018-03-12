@@ -1,6 +1,7 @@
 {
   "appKey": "",
   "appSecret": "",
+  "encryptJs": true,
   "excludeScenes": [],
   "includeAnySDK": false,
   "includeSDKBox": false,
@@ -12,7 +13,7 @@
   "oauthLoginServer": "",
   "optimizeHotUpdate": false,
   "orientation": {
-    "landscapeLeft": false,
+    "landscapeLeft": true,
     "landscapeRight": true,
     "portrait": false,
     "upsideDown": false
@@ -22,5 +23,11 @@
   "renderMode": "0",
   "startScene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
   "title": "lemontree",
-  "webOrientation": "auto"
+  "webOrientation": "auto",
+  "wechatgame": {
+    "appid": "wx6ac3f5090a6b99c5",
+    "orientation": "portrait"
+  },
+  "xxteaKey": "fd658258-0dda-44",
+  "zipCompressJs": true
 }

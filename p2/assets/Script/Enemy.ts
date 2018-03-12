@@ -81,7 +81,8 @@ export default class Enemy extends cc.Component {
     }
 
     isEdgeForward(): boolean {
-        return this.getComponent(TerrainCollider).edgeType == CollisionType.none;
+        let edge = this.getComponent(TerrainCollider).edgeType;
+        return edge == CollisionType.none || edge == CollisionType.entity;
     }
 
     getAimDir(): number {

@@ -7,13 +7,17 @@ APP_LDFLAGS := -latomic
 APP_SHORT_COMMANDS := true
 
 ifeq ($(NDK_DEBUG),1)
+  APP_CFLAGS += -DCOCOS2D_DEBUG=1
   APP_CPPFLAGS += -DCOCOS2D_DEBUG=1
   APP_OPTIM := debug
 else
+  APP_CFLAGS += -DNDEBUG
   APP_CPPFLAGS += -DNDEBUG
-  APP_CPPFLAGS += -DCOCOS2D_DEBUG=1
   APP_OPTIM := release
 endif
 
 COCOS_SIMULATOR_BUILD := 1
 USE_ARM_MODE := 1
+
+# Some Android Simulators don't support SSE instruction, so disable it for x86 arch.
+APP_CPPFLAGS += -U__SSE__

@@ -59,11 +59,11 @@ public:
 CC_CONSTRUCTOR_ACCESS:
     /** Constructor */
     Event(Type type);
-public:
+protected:
     /** Destructor.
      */
     virtual ~Event();
-
+public:
     /** Gets the event type.
      *
      * @return The event type.
@@ -86,6 +86,8 @@ public:
      *        It returns 0 when the listener is associated with fixed priority.
      */
     inline Node* getCurrentTarget() { return _currentTarget; };
+
+    virtual void reset();
 
 protected:
     /** Sets current target */

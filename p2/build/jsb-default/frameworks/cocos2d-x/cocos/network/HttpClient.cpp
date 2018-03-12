@@ -145,17 +145,11 @@ void HttpClient::networkThreadAlone(HttpRequest* request, HttpResponse* response
     if (nullptr != _scheduler)
     {
         _scheduler->performFunctionInCocosThread([this, response, request]{
-            const ccHttpRequestCallback& callback = request->getCallback();
-            Ref* pTarget = request->getTarget();
-            SEL_HttpResponse pSelector = request->getSelector();
+            const ccHttpRequestCallback& callback = request->getResponseCallback();
 
             if (callback != nullptr)
             {
                 callback(this, response);
-            }
-            else if (pTarget && pSelector)
-            {
-                (pTarget->*pSelector)(this, response);
             }
             response->release();
             // do not release in other thread
@@ -168,7 +162,7 @@ void HttpClient::networkThreadAlone(HttpRequest* request, HttpResponse* response
 }
 
 //Configure curl's timeout property
-static bool configureCURL(HttpClient* client, CURL* handle, char* errorBuffer)
+static bool configureCURL(HttpClient* client, HttpRequest* request, CURL* handle, char* errorBuffer)
 {
     if (!handle) {
         return false;
@@ -179,11 +173,11 @@ static bool configureCURL(HttpClient* client, CURL* handle, char* errorBuffer)
     if (code != CURLE_OK) {
         return false;
     }
-    code = curl_easy_setopt(handle, CURLOPT_TIMEOUT, HttpClient::getInstance()->getTimeoutForRead());
+    code = curl_easy_setopt(handle, CURLOPT_TIMEOUT, request->getTimeout());
     if (code != CURLE_OK) {
         return false;
     }
-    code = curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, HttpClient::getInstance()->getTimeoutForConnect());
+    code = curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, request->getTimeout());
     if (code != CURLE_OK) {
         return false;
     }
@@ -245,7 +239,7 @@ public:
     {
         if (!_curl)
             return false;
-        if (!configureCURL(client, _curl, errorBuffer))
+        if (!configureCURL(client, request, _curl, errorBuffer))
             return false;
 
         /* get custom header data (if set) */
@@ -488,19 +482,13 @@ void HttpClient::dispatchResponseCallbacks()
     if (response)
     {
         HttpRequest *request = response->getHttpRequest();
-        const ccHttpRequestCallback& callback = request->getCallback();
-        Ref* pTarget = request->getTarget();
-        SEL_HttpResponse pSelector = request->getSelector();
+        const ccHttpRequestCallback& callback = request->getResponseCallback();
 
         if (callback != nullptr)
         {
             callback(this, response);
         }
-        else if (pTarget && pSelector)
-        {
-            (pTarget->*pSelector)(this, response);
-        }
-        
+
         response->release();
         // do not release in other thread
         request->release();

@@ -81,6 +81,7 @@ enum class MATRIX_STACK_TYPE
     MATRIX_STACK_TEXTURE
 };
 
+
 /**
  @brief Class that creates and handles the main Window and manages how
  and when to execute the Scenes.
@@ -244,6 +245,11 @@ public:
 
     /** Returns visible origin coordinate of the OpenGL view in points. */
     Vec2 getVisibleOrigin() const;
+
+    /**
+     * Returns safe area rectangle of the OpenGL view in points.
+     */
+    Rect getSafeAreaRect() const;
 
     /**
      * Converts a screen coordinate to an OpenGL coordinate.
@@ -452,6 +458,11 @@ public:
      * @js NA
      */
     void pushMatrix(MATRIX_STACK_TYPE type);
+    /**
+     * Put a specified type matrix to the top of specified type of matrix stack.
+     * @js NA
+     */
+    void pushMatrix(MATRIX_STACK_TYPE type, const Mat4& mat);
     /** Pops the top matrix of the specified type of matrix stack.
      * @js NA
      */
@@ -499,6 +510,9 @@ public:
     bool isPurgeDirectorInNextLoop() const { return _purgeDirectorInNextLoop; }
     
     bool isValid() const { return !_invalid; }
+    
+    void setCullingEnabled (bool enable) { _isCullingEnabled = enable; }
+    bool isCullingEnabled () const { return _isCullingEnabled; }
 
 protected:
     void reset();
@@ -524,10 +538,7 @@ protected:
     void destroyTextureCache();
 
     void initMatrixStack();
-
-    std::stack<Mat4> _modelViewMatrixStack;
-    std::stack<Mat4> _projectionMatrixStack;
-    std::stack<Mat4> _textureMatrixStack;
+    
 
     /** Scheduler associated with this director
      @since v2.0
@@ -610,9 +621,6 @@ protected:
     /* Renderer for the Director */
     Renderer *_renderer;
 
-    /* Default FrameBufferObject*/
-    experimental::FrameBuffer* _defaultFBO;
-
     /* Console for the director */
     Console *_console;
 
@@ -626,6 +634,31 @@ protected:
 
     // GLView will recreate stats labels to fit visible rect
     friend class GLView;
+    
+    bool _isCullingEnabled;
+    
+private:
+    /**
+     Use std::vector to implement a quick matrix stack.
+     */
+    class MatrixStack
+    {
+    public:
+        MatrixStack();
+        void init();
+        void pop();
+        void push(const Mat4& m);
+        Mat4& top();
+        const Mat4& top() const;
+    protected:
+        std::vector<Mat4> _stack;
+        int _stackTop;
+    };
+    
+    
+    MatrixStack _modelViewMatrixStack;
+    MatrixStack _projectionMatrixStack;
+    MatrixStack _textureMatrixStack;
 };
 
 // end of base group
