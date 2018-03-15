@@ -149,9 +149,7 @@ export default class TerrainCollider extends cc.Component {
             }
         }
 
-        if (yDir < 0 && this.curYCollisionType == CollisionType.entity && this.edgeType != CollisionType.none ||
-            this.curYCollisionType == CollisionType.slope || 
-            this.edgeType == CollisionType.slope) {
+        if (this.curYCollisionType == CollisionType.slope || this.edgeType == CollisionType.slope) {
             this.movableObj.yVelocity = -VelocityMax; // 超级重力为了让对象可以沿着斜坡行进
         }
 

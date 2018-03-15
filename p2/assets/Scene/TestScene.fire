@@ -2284,7 +2284,7 @@
     "_cascadeOpacityEnabled": true,
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.2,
+      "x": 0,
       "y": 0.5
     },
     "_contentSize": {
@@ -2298,8 +2298,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 15.4,
-      "y": 13.8
+      "x": -8,
+      "y": 15
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -2500,7 +2500,7 @@
       "y": -5
     },
     "subColliders": [],
-    "showingInRunning": true
+    "showingInRunning": false
   },
   {
     "__type__": "cc.Animation",
