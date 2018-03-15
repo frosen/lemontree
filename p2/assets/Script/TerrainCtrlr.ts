@@ -58,7 +58,7 @@ export class TerrainCtrlr extends cc.Component {
         this.terrainSize = new cc.Size(this.tileNumSize.width * TileLength, this.tileNumSize.height * TileLength - 0.001);
         this.collidableLayer = this.tiledMap.getLayer("collision");
         
-        this.collidableLayer.enabled = false;
+        this.collidableLayer.node.active = false;
     }
 
     /**

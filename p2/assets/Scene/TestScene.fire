@@ -2161,8 +2161,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 1044,
-      "y": 298
+      "x": 105,
+      "y": 46
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -2500,7 +2500,7 @@
       "y": -5
     },
     "subColliders": [],
-    "showingInRunning": false
+    "showingInRunning": true
   },
   {
     "__type__": "cc.Animation",

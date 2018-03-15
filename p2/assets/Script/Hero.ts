@@ -15,6 +15,7 @@ import AttriForHero from "./AttriForHero";
 import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
 
 import Attack from "./Attack";
+import Enemy from "./Enemy";
 
 @ccclass
 export default class Hero extends cc.Component {
@@ -120,13 +121,11 @@ export default class Hero extends cc.Component {
         // 敌人碰撞
         this.hurtCollisionData = null;
         for (const data of collisionDatas) {
-            if (data.cldr.constructor == ObjCollider) {
-                let atk: Attack = data.cldr.node.getComponent(Attack);
-                if (atk) {
-                    this.hurtCollisionData = data;
-                    break;
-                }
-            }           
+            if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
+            if (data.cldr.node.getComponent(Attack)) { // 如果碰撞对象带有攻击性
+                this.hurtCollisionData = data;
+                break;
+            }         
         }
 
         // 道具碰撞 todo
@@ -141,12 +140,26 @@ export default class Hero extends cc.Component {
         return this.node.x < hurtNodeCenterX ? 1 : -1;;
     }
 
-    // --
+    // 观察到附近的敌人 ------------------------------------------------------------
+
+    /** 当前观察到的敌人碰撞属性 */
+    watchedCollisionData: CollisionData = null;
 
     onWatching(collisionDatas: CollisionData[]) {
-        if (collisionDatas.length > 0) {
-            // cc.log("yes, i see: " + collisionDatas[0].cldr.name);
+        let curWatched: CollisionData = null;
+        for (const data of collisionDatas) {
+            if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
+            if (!data.cldr.node.getComponent(Enemy)) continue; // 如果观察到的是敌人，而不是子弹机关之类的
+            if (this.watchedCollisionData && data.cldr.node == this.watchedCollisionData.cldr.node) { // 上次观察的还在 则还使用上次的
+                curWatched = this.watchedCollisionData;
+                break;
+            }
+            curWatched = data;
         }
+        this.watchedCollisionData = curWatched;
+
+        // 获取正
+        cc.log("yes, i see: " + (this.watchedCollisionData ? this.watchedCollisionData.cldr.name : "xxxx"));
     }
 
     // 被状态机调用 ------------------------------------------------------------

@@ -15,9 +15,13 @@
   "design-resolution-width": 480,
   "excluded-modules": [
     "Spine Skeleton",
+    "Collider",
+    "Graphics",
     "DragonBones",
     "Physics",
-    "Chipmunk"
+    "StudioComponent",
+    "Chipmunk",
+    "Intersection"
   ],
   "fit-height": true,
   "fit-width": false,
@@ -30,5 +34,6 @@
     "width": 960
   },
   "use-customize-simulator": false,
-  "use-project-simulator-setting": false
+  "use-project-simulator-setting": false,
+  "start-scene": "current"
 }
