@@ -146,17 +146,17 @@ export default class Hero extends cc.Component {
     watchedCollisionData: CollisionData = null;
 
     onWatching(collisionDatas: CollisionData[]) {
-        let curWatched: CollisionData = null;
+        // 移动中先检测移动方向目标，停止状态检测面朝方向的目标
+        let curDirIsRight: boolean = (this.xMoveDir != 0 ? this.xMoveDir : this.node.scaleX) > 0;
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
             if (!data.cldr.node.getComponent(Enemy)) continue; // 如果观察到的是敌人，而不是子弹机关之类的
-            if (this.watchedCollisionData && data.cldr.node == this.watchedCollisionData.cldr.node) { // 上次观察的还在 则还使用上次的
-                curWatched = this.watchedCollisionData;
+            this.watchedCollisionData = data;
+            let enmeyDirIsRight = (data.minX + data.maxX) * 0.5 >= this.node.x;
+            if (enmeyDirIsRight == curDirIsRight) {               
                 break;
             }
-            curWatched = data;
         }
-        this.watchedCollisionData = curWatched;
 
         // 获取正
         cc.log("yes, i see: " + (this.watchedCollisionData ? this.watchedCollisionData.cldr.name : "xxxx"));

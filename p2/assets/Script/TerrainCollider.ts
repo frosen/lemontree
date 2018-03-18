@@ -21,8 +21,9 @@ export default class TerrainCollider extends cc.Component {
     curXCollisionType: CollisionType = CollisionType.none;
     curYCollisionType: CollisionType = CollisionType.none;
 
-    /** 边缘类型，可以是none或者slope，不在边缘则为空 */
+    /** 边缘类型，可以是none, entity或者slope，不在边缘则为空 */
     edgeType: CollisionType = null;
+    backEdgeType: CollisionType = null;
 
     /** x轴方向是否出界 */
     xOutRangeDir: number = 0;
@@ -68,10 +69,21 @@ export default class TerrainCollider extends cc.Component {
 
             let checkY = this.node.y - size.height * anchor.y + (yDir > 0 ? size.height : 0);
             
-            let {type, edgeType} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY, xDir);
+            let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
 
             this.curYCollisionType = type;
-            this.edgeType = (yDir < 0 && type != CollisionType.none) ? edgeType : null;
+            if (yDir < 0 && type != CollisionType.none && xDir != 0) {
+                if (xDir > 0) {
+                    this.edgeType = edgeRight;
+                    this.backEdgeType = edgeLeft;
+                } else {
+                    this.edgeType = edgeLeft;
+                    this.backEdgeType = edgeRight;
+                }
+            } else {
+                this.edgeType = null;
+                this.backEdgeType = null;
+            }
             
             if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
@@ -149,7 +161,9 @@ export default class TerrainCollider extends cc.Component {
             }
         }
 
-        if (this.curYCollisionType == CollisionType.slope || this.edgeType == CollisionType.slope) {
+        if (this.curYCollisionType == CollisionType.slope || 
+            this.edgeType == CollisionType.slope ||
+            this.backEdgeType == CollisionType.slope) {
             this.movableObj.yVelocity = -VelocityMax; // 超级重力为了让对象可以沿着斜坡行进
         }
 

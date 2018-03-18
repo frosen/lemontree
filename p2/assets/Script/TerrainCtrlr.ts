@@ -177,43 +177,51 @@ export class TerrainCtrlr extends cc.Component {
      * @param toX: x坐标
      * @param y: y坐标
      * @param dir: 对象运动朝向
-     * @return {type: CollisionType, edgeType: CollisionType}
+     * @return {type: CollisionType, edgeLeft: CollisionType, edgeRight: CollisionType}
      */
-    checkCollideInHorizontalLine(fromX: number, toX: number, y: number, dir: number): 
-        {type: CollisionType, edgeType: CollisionType} {
+    checkCollideInHorizontalLine(fromX: number, toX: number, y: number): 
+        {type: CollisionType, edgeLeft: CollisionType, edgeRight: CollisionType} {
         let collisionType: CollisionType = CollisionType.none;
         let x = fromX;
 
-        let edgeList = [];
+        let edgeLeft: CollisionType = null;
+        let edgeRight: CollisionType = null;
+        let leftBegin: boolean = true;
+        let rightBegin: boolean = false;
 
         while (true) {
             let t: CollisionType = this.checkCollideAt(x, y);
-            edgeList.push(t);
             if (t > collisionType) collisionType = t;
+
+            if (leftBegin) {
+                if (t == CollisionType.none || t == CollisionType.slope) {
+                    edgeLeft = t;
+                } else {
+                    leftBegin = false;
+                }
+            } else if (!rightBegin) {
+                if (t == CollisionType.none || t == CollisionType.slope) {
+                    edgeRight = t;
+                    rightBegin = true;
+                }  
+            }
 
             x += TileLength;
             if (x >= toX) break;
         }
 
-        let t: CollisionType = this.checkCollideAt(toX, y); 
-        edgeList.push(t);          
+        let t: CollisionType = this.checkCollideAt(toX, y);          
         if (t > collisionType) collisionType = t;
 
-        let edgeType: CollisionType = null;
-        if (dir != 0) {
-            if (dir > 0) edgeList = edgeList.reverse();
-            for (const edge of edgeList) {
-                if (edge == CollisionType.none || edge == CollisionType.slope) {
-                    edgeType = edge;
-                } else {
-                    break;
-                }
-            }
+        if (t == CollisionType.none || t == CollisionType.slope) {
+            if (leftBegin) edgeLeft = t;
+            else if (!rightBegin) edgeRight = t;
         }
 
         return {
             type: collisionType,
-            edgeType: edgeType
+            edgeLeft: edgeLeft,
+            edgeRight: edgeRight
         }
     }
 
