@@ -33,7 +33,8 @@ export default class BTNodeCdtion extends BTNode {
     }
 
     excute(): BTResult {
-        return this.doExcuteFunc() ? BTResult.suc : BTResult.fail;
+        let result = this.doExcuteFunc() ? BTResult.suc : BTResult.fail;
+        return result;
     }
 
     getBTName(): string {

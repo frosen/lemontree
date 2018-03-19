@@ -72,8 +72,9 @@ export default class TerrainCollider extends cc.Component {
             let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
 
             this.curYCollisionType = type;
-            if (yDir < 0 && type != CollisionType.none && xDir != 0) {
-                if (xDir > 0) {
+            if (yDir < 0 && type != CollisionType.none) {
+                let dir = xDir != 0 ? xDir : this.node.scaleX; // 移动时检测移动方向，否则检测面朝向
+                if (dir > 0) {
                     this.edgeType = edgeRight;
                     this.backEdgeType = edgeLeft;
                 } else {
@@ -84,7 +85,7 @@ export default class TerrainCollider extends cc.Component {
                 this.edgeType = null;
                 this.backEdgeType = null;
             }
-            
+
             if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
                 this.node.y -= distance;

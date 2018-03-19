@@ -159,7 +159,7 @@ export default class Hero extends cc.Component {
         }
 
         // 获取正
-        cc.log("yes, i see: " + (this.watchedCollisionData ? this.watchedCollisionData.cldr.name : "xxxx"));
+        // cc.log("yes, i see: " + (this.watchedCollisionData ? this.watchedCollisionData.cldr.name : "xxxx"));
     }
 
     // 被状态机调用 ------------------------------------------------------------

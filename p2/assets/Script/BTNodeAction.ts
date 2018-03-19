@@ -77,18 +77,20 @@ export default class BTNodeAction extends BTNode {
     goingToAction = false;
 
     excute(): BTResult {
+        let result: BTResult
         if (!this.running) {
             this.running = true;
             this.goingToAction = true;
-            return BTResult.running;
+            result = BTResult.running;
         } else {
             if (this.checkRunningEnd()) {
                 this.endRunning();
-                return BTResult.continue;
+                result = BTResult.continue;
             } else {
-                return BTResult.running;
+                result = BTResult.running;
             }
         }
+        return result;
     }
 
     doAction() {
