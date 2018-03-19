@@ -13,8 +13,18 @@ import {BTNode, BTResult} from "./BTNode";
 @executionOrder(EXECUTION_ORDER.BehaviorTree)
 export default class BTBase extends cc.Component {
 
-    // 在每个子节点执行完其onload后隐藏
+    /** 记录子节点的BtNode，增加遍历效率 */
+    btNodes: BTNode[] = [];
+   
     start() {
+        // 遍历子节点执行其行为
+        for (const node of this.node.children) {
+            if (node.active == false) continue;
+            let btNode = node.getComponent(BTNode);
+            this.btNodes.push(btNode);
+        }
+
+        // 在每个子节点执行完其onload后隐藏
         for (const node of this.node.children) {
             node.active = false;
         }
@@ -22,8 +32,7 @@ export default class BTBase extends cc.Component {
 
     update(dt: number) {
         // 遍历子节点执行其行为
-        for (const node of this.node.children) {
-            let btNode = node.getComponent(BTNode);
+        for (const btNode of this.btNodes) {
             let result = btNode.excute();
             if (result == BTResult.running) btNode.doAction();
         }

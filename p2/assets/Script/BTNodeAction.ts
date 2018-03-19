@@ -52,14 +52,17 @@ export default class BTNodeAction extends BTNode {
 
     start() {
         for (const child of this.node.children) {
+            if (child.active == false) continue;
             if (child.getComponent(BTNodeActionUntil)) {
                 for (const untilChild of child.children) {
+                    if (untilChild.active == false) continue;
                     let comp = untilChild.getComponent(BTNode);
                     let func = comp["excute"].bind(comp);
                     this.untilFuncs.push(func);
                 }
             } else if (child.getComponent(BTNodeActionEnd)) {
                 for (const endChild of child.children) {
+                    if (endChild.active == false) continue;
                     let comp = endChild.getComponent(BTNode);
                     let func = comp["excute"].bind(comp);
                     this.endFuncs.push(func);

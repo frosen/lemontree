@@ -26,7 +26,7 @@ export class BTNode extends cc.Component {
     typeString: string = "";
 
     /**
-     * 执行每个节点的效果
+     * 执行并获取每个节点的执行结果
      * @return BTResult
      */
     excute(): BTResult {
@@ -34,6 +34,9 @@ export class BTNode extends cc.Component {
         return BTResult.suc;
     }
 
+    /**
+     * 执行每个节点的行动（只有running时有行动）
+     */
     doAction() {
 
     }

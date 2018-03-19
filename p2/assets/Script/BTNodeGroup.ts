@@ -21,6 +21,7 @@ export default class BTNodeGroup extends BTNode {
 
     start() {
         for (const child of this.node.children) {
+            if (child.active == false) continue;
             let comp = child.getComponent(BTNode);
             this.btNodes.push(comp);
         }
