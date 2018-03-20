@@ -128,7 +128,7 @@ export default class Hero extends cc.Component {
             }         
         }
 
-        // 道具碰撞 todo
+        // 道具碰撞 llytodo
     }
 
     /**
@@ -146,20 +146,25 @@ export default class Hero extends cc.Component {
     watchedCollisionData: CollisionData = null;
 
     onWatching(collisionDatas: CollisionData[]) {
-        // 移动中先检测移动方向目标，停止状态检测面朝方向的目标
-        let curDirIsRight: boolean = (this.xMoveDir != 0 ? this.xMoveDir : this.node.scaleX) > 0;
+        if (this.noAtkState) return;
+
+        // 以移动方向的目标作为主目标
+        let curDir: number = this.ui.xUIDirs[UIDirLvType.move];
+        let enmeyDir: number;
+        this.watchedCollisionData = null;
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
             if (!data.cldr.node.getComponent(Enemy)) continue; // 如果观察到的是敌人，而不是子弹机关之类的
             this.watchedCollisionData = data;
-            let enmeyDirIsRight = (data.minX + data.maxX) * 0.5 >= this.node.x;
-            if (enmeyDirIsRight == curDirIsRight) {               
-                break;
-            }
+            enmeyDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
+            if (enmeyDir == curDir) break;              
         }
 
-        // 获取正
-        // cc.log("yes, i see: " + (this.watchedCollisionData ? this.watchedCollisionData.cldr.name : "xxxx"));
+        if (this.watchedCollisionData) {
+            this.ui.attack(enmeyDir);
+        } else {
+            this.ui.endAttack();
+        }       
     }
 
     // 被状态机调用 ------------------------------------------------------------
@@ -179,5 +184,16 @@ export default class Hero extends cc.Component {
      */
     beginInvcState(time: number) {
         this.smInvc.begin(time);
+    }
+
+    /** 不可攻击状态 */
+    noAtkState: boolean = false;
+
+    /**
+     * 进入、退出不可攻击状态
+     */
+    setNoAtkStateEnabled(b: boolean) {
+        if (b) this.ui.endAttack();
+        this.noAtkState = b;
     }
 }

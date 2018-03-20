@@ -35,7 +35,10 @@ export class HeroUI extends cc.Component {
      * @param lv: 指标
      */
     setXUIDir(dir: number, lv: UIDirLvType) {
-        if (dir == 0 && lv == UIDirLvType.move) return;
+        if (dir == 0 && lv == UIDirLvType.move) return; // 移动方向没有0，停止时以上次移动方向为当前方向
+
+        // 攻击方向调整要等一次攻击结束 llytodo
+
         this.xUIDirs[lv] = dir;
 
         // 根据三个指标调整ui方向，ui默认朝向右边
@@ -123,5 +126,15 @@ export class HeroUI extends cc.Component {
 
     setInvincibleEnabled(on: boolean) {
         this.node.opacity = on ? 100 : 255;
+    }
+
+    //========================================================
+
+    attack(dir: number) {
+        this.setXUIDir(dir, UIDirLvType.attack);
+    }
+
+    endAttack() {
+        this.setXUIDir(0, UIDirLvType.attack);
     }
 }

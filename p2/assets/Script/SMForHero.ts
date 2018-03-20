@@ -270,7 +270,11 @@ class SMForHeroInDash extends SMForHero {
         // 在开始时就确定方向，之后不可改变
         this.dashDir = mgr.hero.ui.xUIDirs[UIDirLvType.move];
 
-        // 进入不可攻击敌人的状态 todo
+        // 进入不可攻击敌人的状态
+        mgr.hero.setNoAtkStateEnabled(true);
+
+        // 重置方向
+        mgr.hero.ui.setXUIDir(this.dashDir, UIDirLvType.move);
 
         // 暂停y轴的加速度
         mgr.hero.movableObj.yVelocity = 0;
@@ -300,7 +304,8 @@ class SMForHeroInDash extends SMForHero {
     end(mgr: SMForHeroMgr) {
         mgr.hero.ui.endDash();
 
-        // 退出不可攻击敌人的状态 todo
+        // 退出不可攻击敌人的状态
+        mgr.hero.setNoAtkStateEnabled(false);
 
         // 开启y轴的加速度
         mgr.hero.movableObj.yAccelEnabled = true;
@@ -318,12 +323,11 @@ class SMForHeroInHurt extends SMForHero {
         let hurtXDir = hero.getHurtDir();
 
         hero.ui.hurt(); 
+        mgr.hero.setNoAtkStateEnabled(true); // 进入不可攻击敌人的状态
         hero.ui.setXUIDir(hurtXDir, UIDirLvType.hurt);
         
         this.hurtMoveDir = hurtXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
         hero.movableObj.yVelocity = hurtYSpeed;
-
-        // 进入不可攻击敌人的状态 todo
     }
 
     update(dt: number, mgr: SMForHeroMgr) {
@@ -348,7 +352,8 @@ class SMForHeroInHurt extends SMForHero {
         mgr.hero.ui.endHurt();
         mgr.hero.ui.setXUIDir(0, UIDirLvType.hurt);
 
-        // 退出不可攻击敌人的状态 todo
+        // 退出不可攻击敌人的状态
+        mgr.hero.setNoAtkStateEnabled(false);
 
         // 进入短暂无敌时间
         mgr.hero.beginInvcState(mgr.hero.attri.invcTimeForHurt)
