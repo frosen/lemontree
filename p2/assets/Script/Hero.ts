@@ -52,7 +52,7 @@ export default class Hero extends cc.Component {
 
         this.ui = this.getComponent(HeroUI);
 
-        this.attri = new AttriForHero();
+        this.attri = this.getComponent(AttriForHero);
         this.sm = new SMForHeroMgr(this, ActState.stand);
         this.smInvc = new SMForHeroInvcMgr(this);      
         

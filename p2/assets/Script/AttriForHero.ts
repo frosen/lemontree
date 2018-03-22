@@ -2,10 +2,14 @@
 // 英雄属性
 // lly 2017.12.12
 
+const {ccclass, property} = cc._decorator;
+import Attri from "./Attri";
+
 /** 起跳速度 像素/帧 */
 const JumpVelocity: number = 4.5;
 
-export default class AttriForHero {
+@ccclass
+export default class AttriForHero extends Attri {
     /** 血量 */
     hp: number = 0;
 
@@ -27,7 +31,7 @@ export default class AttriForHero {
     /** 受伤无敌时间 */
     invcTimeForHurt: number = 0.5;
 
-    constructor() {
+    onLoad() {
         this.hp = 100;
         this.xSpeed = 3;
     }
