@@ -7,6 +7,7 @@ import Hero from "./Hero";
 
 import {CollisionType} from "./TerrainCtrlr";
 import {UIDirLvType} from "./HeroUI";
+import Attack from "./Attack";
 
 /** 行动状态 */
 export enum ActState {
@@ -16,6 +17,7 @@ export enum ActState {
     move,
     dash,
     hurt,
+    dead,
 }
 
 export class SMForHeroMgr {
@@ -320,10 +322,31 @@ class SMForHeroInHurt extends SMForHero {
 
     begin(mgr: SMForHeroMgr) {
         let hero = mgr.hero;
+
+        // 受伤属性计算
+        let atk: Attack = hero.getHurtAtk();
+        let dead: boolean = this.calculateHurt(atk);
+        
+        if (dead) {
+            mgr.changeStateTo(ActState.dead);
+        } else {
+            this.hurtBegin(hero);
+        }
+    }
+
+    /**
+     * 计算受伤
+     * @returns 是否死亡
+     */
+    calculateHurt(atk: Attack) {
+        return false;
+    }
+
+    hurtBegin(hero: Hero) {
         let hurtXDir = hero.getHurtDir();
 
         hero.ui.hurt(); 
-        mgr.hero.setNoAtkStateEnabled(true); // 进入不可攻击敌人的状态
+        hero.setNoAtkStateEnabled(true); // 进入不可攻击敌人的状态
         hero.ui.setXUIDir(hurtXDir, UIDirLvType.hurt);
         
         this.hurtMoveDir = hurtXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
@@ -357,6 +380,16 @@ class SMForHeroInHurt extends SMForHero {
 
         // 进入短暂无敌时间
         mgr.hero.beginInvcState(mgr.hero.attri.invcTimeForHurt)
+    }
+}
+
+class SMForHeroInDead extends SMForHero {
+    begin(mgr: SMForHeroMgr) {
+        cc.log("you dead");
+    }
+
+    update(dt: number, mgr: SMForHeroMgr) {
+        cc.log("dead!");
     }
 }
 

@@ -36,9 +36,32 @@ export default class Enemy extends cc.Component {
 
     // 碰撞回调 ------------------------------------------------------------
 
+    /** 受伤碰撞，同种key的伤害存在时不能再接受同种伤害 */
+    hurtCollisionDatas: {[key: number]: CollisionData;} = {}
+
     onCollision(collisionDatas: CollisionData[]) {
-        
+        let newHurt = false;
+        for (const data of collisionDatas) {
+            if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
+            let atk = data.cldr.getComponent(Attack);
+            if (atk) { // 如果碰撞对象带有攻击性
+                let atkIndex = atk.index;
+                if (this.hurtCollisionDatas[atkIndex] == null) {
+                    this.hurtCollisionDatas[atkIndex] = data;
+                    newHurt = true;
+                    // llytodo 开启当前index的倒计时
+                    // llytodo 计算受伤
+                }
+            }         
+        }
+
+        // llytodo 显示受伤
+        if (newHurt) {
+
+        }
     }
+
+    // 观察回调 ========================================================
 
     aim: Hero = null;
     aimDir: number = 0;

@@ -18,7 +18,7 @@ export default class CtrlIndicator extends cc.Component {
     onLoad() {
         requireComponents(this, [cc.Sprite]);
 
-        this.sp = this.node.getComponent(cc.Sprite);       
+        this.sp = this.getComponent(cc.Sprite);       
     }
 
     update() {

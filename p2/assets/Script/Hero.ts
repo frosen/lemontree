@@ -122,7 +122,7 @@ export default class Hero extends cc.Component {
         this.hurtCollisionData = null;
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
-            if (data.cldr.node.getComponent(Attack)) { // 如果碰撞对象带有攻击性
+            if (data.cldr.getComponent(Attack)) { // 如果碰撞对象带有攻击性
                 this.hurtCollisionData = data;
                 break;
             }         
@@ -133,11 +133,21 @@ export default class Hero extends cc.Component {
 
     /**
      * 获取受伤方向
+     * 注意：调用前要确保hurtCollisionData存在
      * @return 1从右边受伤，-1从左边受伤
      */
     getHurtDir(): number {
         let hurtNodeCenterX = (this.hurtCollisionData.minX + this.hurtCollisionData.maxX) * 0.5;
         return this.node.x < hurtNodeCenterX ? 1 : -1;;
+    }
+
+    /**
+     * 获取受伤的攻击类
+     * 注意：调用前要确保hurtCollisionData存在
+     * @return 攻击类
+     */
+    getHurtAtk(): Attack {
+        return this.hurtCollisionData.cldr.getComponent(Attack);
     }
 
     // 观察到附近的敌人 ------------------------------------------------------------
@@ -154,7 +164,7 @@ export default class Hero extends cc.Component {
         this.watchedCollisionData = null;
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
-            if (!data.cldr.node.getComponent(Enemy)) continue; // 如果观察到的是敌人，而不是子弹机关之类的
+            if (!data.cldr.getComponent(Enemy)) continue; // 如果观察到的是敌人，而不是子弹机关之类的
             this.watchedCollisionData = data;
             enmeyDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
             if (enmeyDir == curDir) break;              
@@ -176,7 +186,7 @@ export default class Hero extends cc.Component {
     checkHurt(): boolean {
         if (this.smInvc.state == InvcState.on) return false;
         return this.hurtCollisionData != null;
-    }    
+    }
 
     /**
      * 开始无敌状态
