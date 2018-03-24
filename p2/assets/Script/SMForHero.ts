@@ -316,33 +316,39 @@ class SMForHeroInDash extends SMForHero {
 
 const hurtXSpeed: number = 2;
 const hurtYSpeed: number = 2;
+const evadeInvcTime: number = 0.3;
 
 class SMForHeroInHurt extends SMForHero {
     hurtMoveDir: number = 0;
+
+    can(mgr: SMForHeroMgr): boolean {
+        // 计算闪躲
+        let r = Math.random();
+        if (r < mgr.hero.attri.evade) {
+            // 显示闪躲 llytodo
+           
+            mgr.hero.beginInvcState(evadeInvcTime); // 小无敌
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     begin(mgr: SMForHeroMgr) {
         let hero = mgr.hero;
 
         // 受伤属性计算
         let atk: Attack = hero.getHurtAtk();
-        let dead: boolean = this.calculateHurt(atk);
+        let {dmg, crit} = atk.getDamage();
+
+        hero.attri.hp -= dmg;
         
-        if (dead) {
+        // 死亡
+        if (hero.attri.hp <= 0) { 
             mgr.changeStateTo(ActState.dead);
-        } else {
-            this.hurtBegin(hero);
+            return;
         }
-    }
 
-    /**
-     * 计算受伤
-     * @returns 是否死亡
-     */
-    calculateHurt(atk: Attack) {
-        return false;
-    }
-
-    hurtBegin(hero: Hero) {
         let hurtXDir = hero.getHurtDir();
 
         hero.ui.hurt(); 
@@ -351,6 +357,10 @@ class SMForHeroInHurt extends SMForHero {
         
         this.hurtMoveDir = hurtXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
         hero.movableObj.yVelocity = hurtYSpeed;
+
+        // 显示数字 llytodo
+
+        // 更改ui显示 llytodo
     }
 
     update(dt: number, mgr: SMForHeroMgr) {
@@ -379,7 +389,7 @@ class SMForHeroInHurt extends SMForHero {
         mgr.hero.setNoAtkStateEnabled(false);
 
         // 进入短暂无敌时间
-        mgr.hero.beginInvcState(mgr.hero.attri.invcTimeForHurt)
+        mgr.hero.beginInvcState(mgr.hero.attri.invcTimeForHurt);
     }
 }
 

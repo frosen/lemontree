@@ -17,10 +17,10 @@
         "__id__": 2
       },
       {
-        "__id__": 89
+        "__id__": 91
       },
       {
-        "__id__": 93
+        "__id__": 95
       }
     ],
     "_tag": -1,
@@ -71,10 +71,10 @@
         "__id__": 12
       },
       {
-        "__id__": 67
+        "__id__": 69
       },
       {
-        "__id__": 88
+        "__id__": 90
       }
     ],
     "_tag": -1,
@@ -415,7 +415,7 @@
         "__id__": 13
       },
       {
-        "__id__": 22
+        "__id__": 23
       }
     ],
     "_tag": -1,
@@ -492,6 +492,9 @@
       },
       {
         "__id__": 21
+      },
+      {
+        "__id__": 22
       }
     ],
     "_prefab": null,
@@ -567,6 +570,15 @@
     "_enabled": true
   },
   {
+    "__type__": "4c9bfiKcstLDql4Nw5yQDDU",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 13
+    },
+    "_enabled": true
+  },
+  {
     "__type__": "deb69X28QpAZK/g3dYhcxbs",
     "_name": "",
     "_objFlags": 0,
@@ -574,9 +586,9 @@
       "__id__": 13
     },
     "_enabled": true,
-    "indexNumber": 0,
-    "indexRange": 0,
-    "attri": null
+    "index": 0,
+    "attri": null,
+    "magicAttack": false
   },
   {
     "__type__": "1285aB1AudJHrqNa72cuLP1",
@@ -656,15 +668,12 @@
     },
     "_children": [
       {
-        "__id__": 23
+        "__id__": 24
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
-      {
-        "__id__": 59
-      },
       {
         "__id__": 60
       },
@@ -685,6 +694,12 @@
       },
       {
         "__id__": 66
+      },
+      {
+        "__id__": 67
+      },
+      {
+        "__id__": 68
       }
     ],
     "_prefab": null,
@@ -729,18 +744,18 @@
     "_name": "BTBase",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 22
+      "__id__": 23
     },
     "_children": [
       {
-        "__id__": 24
+        "__id__": 25
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 58
+        "__id__": 59
       }
     ],
     "_prefab": null,
@@ -785,27 +800,27 @@
     "_name": "Select: ",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 23
+      "__id__": 24
     },
     "_children": [
       {
-        "__id__": 25
+        "__id__": 26
       },
       {
-        "__id__": 41
+        "__id__": 42
       },
       {
-        "__id__": 47
+        "__id__": 48
       },
       {
-        "__id__": 53
+        "__id__": 54
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 57
+        "__id__": 58
       }
     ],
     "_prefab": null,
@@ -850,24 +865,24 @@
     "_name": "Sequence: 在边缘",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 24
+      "__id__": 25
     },
     "_children": [
       {
-        "__id__": 26
+        "__id__": 27
       },
       {
-        "__id__": 28
+        "__id__": 29
       },
       {
-        "__id__": 30
+        "__id__": 31
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 40
+        "__id__": 41
       }
     ],
     "_prefab": null,
@@ -912,14 +927,14 @@
     "_name": "IF: BT Root >> Enemy:isEdgeForward is True",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 25
+      "__id__": 26
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 27
+        "__id__": 28
       }
     ],
     "_prefab": null,
@@ -964,7 +979,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 26
+      "__id__": 27
     },
     "_enabled": true,
     "excuteNode": null,
@@ -976,14 +991,14 @@
     "_name": "SET: BT Root >> Enemy:stopMoving",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 25
+      "__id__": 26
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 29
+        "__id__": 30
       }
     ],
     "_prefab": null,
@@ -1028,7 +1043,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 28
+      "__id__": 29
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1039,21 +1054,21 @@
     "_name": "Select: ",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 25
+      "__id__": 26
     },
     "_children": [
       {
-        "__id__": 31
+        "__id__": 32
       },
       {
-        "__id__": 37
+        "__id__": 38
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 39
+        "__id__": 40
       }
     ],
     "_prefab": null,
@@ -1098,21 +1113,21 @@
     "_name": "Sequence: ",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 30
+      "__id__": 31
     },
     "_children": [
       {
-        "__id__": 32
+        "__id__": 33
       },
       {
-        "__id__": 34
+        "__id__": 35
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 36
+        "__id__": 37
       }
     ],
     "_prefab": null,
@@ -1157,14 +1172,14 @@
     "_name": "IF: BT Root >> Enemy:getAimDir is != 1",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 31
+      "__id__": 32
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 33
+        "__id__": 34
       }
     ],
     "_prefab": null,
@@ -1209,7 +1224,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 32
+      "__id__": 33
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1222,14 +1237,14 @@
     "_name": "SET: BT Root >> Enemy:turnAround",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 31
+      "__id__": 32
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 35
+        "__id__": 36
       }
     ],
     "_prefab": null,
@@ -1274,7 +1289,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 34
+      "__id__": 35
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1285,7 +1300,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 31
+      "__id__": 32
     },
     "_enabled": true,
     "desc": "",
@@ -1296,14 +1311,14 @@
     "_name": "Sequence: 什么都不执行",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 30
+      "__id__": 31
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 38
+        "__id__": 39
       }
     ],
     "_prefab": null,
@@ -1348,7 +1363,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 37
+      "__id__": 38
     },
     "_enabled": true,
     "desc": "什么都不执行",
@@ -1359,7 +1374,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 30
+      "__id__": 31
     },
     "_enabled": true,
     "desc": "",
@@ -1370,7 +1385,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 25
+      "__id__": 26
     },
     "_enabled": true,
     "desc": "在边缘",
@@ -1381,21 +1396,21 @@
     "_name": "Sequence: 敌人在身后",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 24
+      "__id__": 25
     },
     "_children": [
       {
-        "__id__": 42
+        "__id__": 43
       },
       {
-        "__id__": 44
+        "__id__": 45
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 46
+        "__id__": 47
       }
     ],
     "_prefab": null,
@@ -1440,14 +1455,14 @@
     "_name": "IF: BT Root >> Enemy:getAimDir is == -1",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 41
+      "__id__": 42
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 43
+        "__id__": 44
       }
     ],
     "_prefab": null,
@@ -1492,7 +1507,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 42
+      "__id__": 43
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1505,14 +1520,14 @@
     "_name": "SET: BT Root >> Enemy:turnAround",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 41
+      "__id__": 42
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 45
+        "__id__": 46
       }
     ],
     "_prefab": null,
@@ -1557,7 +1572,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 44
+      "__id__": 45
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1568,7 +1583,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 41
+      "__id__": 42
     },
     "_enabled": true,
     "desc": "敌人在身后",
@@ -1579,21 +1594,21 @@
     "_name": "Sequence: 敌人在身前 --- CA",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 24
+      "__id__": 25
     },
     "_children": [
       {
-        "__id__": 48
+        "__id__": 49
       },
       {
-        "__id__": 50
+        "__id__": 51
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 52
+        "__id__": 53
       }
     ],
     "_prefab": null,
@@ -1638,14 +1653,14 @@
     "_name": "IF: BT Root >> Enemy:getAimDir is == 1",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 47
+      "__id__": 48
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 49
+        "__id__": 50
       }
     ],
     "_prefab": null,
@@ -1690,7 +1705,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 48
+      "__id__": 49
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1703,14 +1718,14 @@
     "_name": "DO: BT Root >> Enemy:moveToAim",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 47
+      "__id__": 48
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 51
+        "__id__": 52
       }
     ],
     "_prefab": null,
@@ -1755,7 +1770,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 50
+      "__id__": 51
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1766,7 +1781,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 47
+      "__id__": 48
     },
     "_enabled": true,
     "desc": "敌人在身前",
@@ -1777,18 +1792,18 @@
     "_name": "Sequence: 沿地移动",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 24
+      "__id__": 25
     },
     "_children": [
       {
-        "__id__": 54
+        "__id__": 55
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 56
+        "__id__": 57
       }
     ],
     "_prefab": null,
@@ -1833,14 +1848,14 @@
     "_name": "DO: BT Root >> Enemy:moveForward",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 53
+      "__id__": 54
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 55
+        "__id__": 56
       }
     ],
     "_prefab": null,
@@ -1885,7 +1900,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 54
+      "__id__": 55
     },
     "_enabled": true,
     "excuteNode": null,
@@ -1896,7 +1911,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 53
+      "__id__": 54
     },
     "_enabled": true,
     "desc": "沿地移动",
@@ -1907,7 +1922,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 24
+      "__id__": 25
     },
     "_enabled": true,
     "desc": "",
@@ -1918,7 +1933,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 23
+      "__id__": 24
     },
     "_enabled": true
   },
@@ -1927,7 +1942,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 23
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -1949,11 +1964,41 @@
     "_atlas": null
   },
   {
+    "__type__": "8f1f8sP5BdKZoOdIU+XIxZe",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 23
+    },
+    "_enabled": true
+  },
+  {
+    "__type__": "4c9bfiKcstLDql4Nw5yQDDU",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 23
+    },
+    "_enabled": true
+  },
+  {
+    "__type__": "deb69X28QpAZK/g3dYhcxbs",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 23
+    },
+    "_enabled": true,
+    "index": 0,
+    "attri": null,
+    "magicAttack": false
+  },
+  {
     "__type__": "1285aB1AudJHrqNa72cuLP1",
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 23
     },
     "_enabled": true,
     "size": {
@@ -1974,7 +2019,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 23
     },
     "_enabled": true,
     "size": {
@@ -1991,32 +2036,11 @@
     "showingInRunning": false
   },
   {
-    "__type__": "deb69X28QpAZK/g3dYhcxbs",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 22
-    },
-    "_enabled": true,
-    "indexNumber": 0,
-    "indexRange": 0,
-    "attri": null
-  },
-  {
-    "__type__": "8f1f8sP5BdKZoOdIU+XIxZe",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 22
-    },
-    "_enabled": true
-  },
-  {
     "__type__": "dff690rpulIrIGiVCCOJXcp",
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 23
     },
     "_enabled": true
   },
@@ -2025,7 +2049,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 23
     },
     "_enabled": true
   },
@@ -2034,7 +2058,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 23
     },
     "_enabled": true
   },
@@ -2047,14 +2071,14 @@
     },
     "_children": [
       {
-        "__id__": 68
+        "__id__": 70
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 87
+        "__id__": 89
       }
     ],
     "_prefab": null,
@@ -2099,31 +2123,25 @@
     "_name": "hero",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 67
+      "__id__": 69
     },
     "_children": [
       {
-        "__id__": 69
-      },
-      {
-        "__id__": 72
+        "__id__": 71
       },
       {
         "__id__": 74
       },
       {
         "__id__": 76
+      },
+      {
+        "__id__": 78
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
-      {
-        "__id__": 78
-      },
-      {
-        "__id__": 79
-      },
       {
         "__id__": 80
       },
@@ -2144,6 +2162,12 @@
       },
       {
         "__id__": 86
+      },
+      {
+        "__id__": 87
+      },
+      {
+        "__id__": 88
       }
     ],
     "_prefab": null,
@@ -2188,17 +2212,17 @@
     "_name": "attack",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 68
+      "__id__": 70
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 70
+        "__id__": 72
       },
       {
-        "__id__": 71
+        "__id__": 73
       }
     ],
     "_prefab": null,
@@ -2243,7 +2267,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 69
+      "__id__": 71
     },
     "_enabled": true,
     "size": {
@@ -2264,26 +2288,26 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 69
+      "__id__": 71
     },
     "_enabled": true,
-    "indexNumber": 0,
-    "indexRange": 0,
-    "attri": null
+    "index": 0,
+    "attri": null,
+    "magicAttack": false
   },
   {
     "__type__": "cc.Node",
     "_name": "sword_back",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 68
+      "__id__": 70
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 73
+        "__id__": 75
       }
     ],
     "_prefab": null,
@@ -2328,7 +2352,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 72
+      "__id__": 74
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -2354,14 +2378,14 @@
     "_name": "body",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 68
+      "__id__": 70
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 75
+        "__id__": 77
       }
     ],
     "_prefab": null,
@@ -2406,7 +2430,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 74
+      "__id__": 76
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -2432,14 +2456,14 @@
     "_name": "sword_front",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 68
+      "__id__": 70
     },
     "_children": [],
     "_tag": -1,
     "_active": false,
     "_components": [
       {
-        "__id__": 77
+        "__id__": 79
       }
     ],
     "_prefab": null,
@@ -2484,7 +2508,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 76
+      "__id__": 78
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -2510,7 +2534,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true
   },
@@ -2519,7 +2543,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true
   },
@@ -2528,7 +2552,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true
   },
@@ -2537,11 +2561,11 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true,
     "body": {
-      "__id__": 75
+      "__id__": 77
     }
   },
   {
@@ -2549,7 +2573,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true
   },
@@ -2558,7 +2582,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true
   },
@@ -2567,7 +2591,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true,
     "size": {
@@ -2588,7 +2612,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true,
     "size": {
@@ -2609,7 +2633,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 68
+      "__id__": 70
     },
     "_enabled": true,
     "_defaultClip": null,
@@ -2625,18 +2649,18 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 67
+      "__id__": 69
     },
     "_enabled": true,
     "checkedLayers": [
       {
-        "__id__": 67
+        "__id__": 69
       },
       {
         "__id__": 12
       },
       {
-        "__id__": 88
+        "__id__": 90
       }
     ],
     "checkingTacticsString": "0-1;0-2"
@@ -2698,14 +2722,14 @@
     },
     "_children": [
       {
-        "__id__": 90
+        "__id__": 92
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 92
+        "__id__": 94
       }
     ],
     "_prefab": null,
@@ -2750,14 +2774,14 @@
     "_name": "camera",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 89
+      "__id__": 91
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 91
+        "__id__": 93
       }
     ],
     "_prefab": null,
@@ -2802,7 +2826,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 90
+      "__id__": 92
     },
     "_enabled": true,
     "_targets": [
@@ -2817,14 +2841,14 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 89
+      "__id__": 91
     },
     "_enabled": true,
     "camera": {
-      "__id__": 91
+      "__id__": 93
     },
     "target": {
-      "__id__": 68
+      "__id__": 70
     },
     "map": {
       "__id__": 5
@@ -2839,23 +2863,23 @@
     },
     "_children": [
       {
-        "__id__": 94
+        "__id__": 96
       },
       {
-        "__id__": 100
+        "__id__": 102
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 111
+        "__id__": 113
       },
       {
-        "__id__": 112
+        "__id__": 114
       },
       {
-        "__id__": 98
+        "__id__": 100
       }
     ],
     "_prefab": null,
@@ -2900,18 +2924,18 @@
     "_name": "ui",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 93
+      "__id__": 95
     },
     "_children": [
       {
-        "__id__": 95
+        "__id__": 97
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 99
+        "__id__": 101
       }
     ],
     "_prefab": null,
@@ -2956,17 +2980,17 @@
     "_name": "ctrl_indicator",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 94
+      "__id__": 96
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 96
+        "__id__": 98
       },
       {
-        "__id__": 97
+        "__id__": 99
       }
     ],
     "_prefab": null,
@@ -3011,7 +3035,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 95
+      "__id__": 97
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -3037,11 +3061,11 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 95
+      "__id__": 97
     },
     "_enabled": true,
     "ctrlr": {
-      "__id__": 98
+      "__id__": 100
     }
   },
   {
@@ -3049,11 +3073,11 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 93
+      "__id__": 95
     },
     "_enabled": true,
     "hero": {
-      "__id__": 79
+      "__id__": 81
     }
   },
   {
@@ -3061,7 +3085,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 94
+      "__id__": 96
     },
     "_enabled": true,
     "isAlignOnce": true,
@@ -3087,12 +3111,9 @@
     "_name": "show_ctrl_area",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 93
+      "__id__": 95
     },
     "_children": [
-      {
-        "__id__": 101
-      },
       {
         "__id__": 103
       },
@@ -3101,16 +3122,19 @@
       },
       {
         "__id__": 107
+      },
+      {
+        "__id__": 109
       }
     ],
     "_tag": -1,
     "_active": false,
     "_components": [
       {
-        "__id__": 109
+        "__id__": 111
       },
       {
-        "__id__": 110
+        "__id__": 112
       }
     ],
     "_prefab": null,
@@ -3155,14 +3179,14 @@
     "_name": "move_area",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 100
+      "__id__": 102
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 102
+        "__id__": 104
       }
     ],
     "_prefab": null,
@@ -3207,7 +3231,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 101
+      "__id__": 103
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -3233,14 +3257,14 @@
     "_name": "watch_area",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 100
+      "__id__": 102
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 104
+        "__id__": 106
       }
     ],
     "_prefab": null,
@@ -3285,7 +3309,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 103
+      "__id__": 105
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -3311,14 +3335,14 @@
     "_name": "jump_area",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 100
+      "__id__": 102
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 106
+        "__id__": 108
       }
     ],
     "_prefab": null,
@@ -3363,7 +3387,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 105
+      "__id__": 107
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -3389,14 +3413,14 @@
     "_name": "dash_area",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 100
+      "__id__": 102
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 108
+        "__id__": 110
       }
     ],
     "_prefab": null,
@@ -3441,7 +3465,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 107
+      "__id__": 109
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -3467,7 +3491,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 100
+      "__id__": 102
     },
     "_enabled": true,
     "isAlignOnce": true,
@@ -3493,23 +3517,23 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 100
+      "__id__": 102
     },
     "_enabled": true,
     "ctrl": {
-      "__id__": 98
+      "__id__": 100
     },
     "moveArea": {
-      "__id__": 101
-    },
-    "watchArea": {
       "__id__": 103
     },
-    "jumpArea": {
+    "watchArea": {
       "__id__": 105
     },
-    "dashArea": {
+    "jumpArea": {
       "__id__": 107
+    },
+    "dashArea": {
+      "__id__": 109
     }
   },
   {
@@ -3517,7 +3541,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 93
+      "__id__": 95
     },
     "_enabled": true,
     "_designResolution": {
@@ -3533,7 +3557,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 93
+      "__id__": 95
     },
     "_enabled": true
   }

@@ -11,22 +11,18 @@ export default class Attack extends cc.Component {
     /** 索引，用于区分不同的攻击 
      * 目前只是敌人的攻击需要，同种攻击在一定时间内不会伤害第二次，
      * hero被攻击有无敌时间所以不需要
-     * 索引由indexNumber和indexRange组成
     */
+    @property 
     index: number = 0;
-
-    /** 索引数字，用于组成索引 */
-    @property indexNumber: number = 0;
-    /** 索引范围，索引可以在这个范围内变化，不能超过9 */
-    @property indexRange: number = 0;
 
     /** 对象属性，攻击计算需要 */
     @property(Attri)
     attri: Attri = null;
 
-    onLoad() {
-        this.index = this.indexNumber * 10;
-        
+    @property
+    magicAttack: boolean = false;
+
+    onLoad() {        
         if (this.attri == null) {
             let n = this.node;
             while (true) {
@@ -40,5 +36,36 @@ export default class Attack extends cc.Component {
             }
         }
         myAssert(this.attri != null, "attack need attri");
+    }
+
+    // 计算基础伤害
+    getDamage(): {dmg: number, crit: boolean} {
+        let r = Math.random();
+        let dmg: number;
+        let crit: boolean = false;
+        if (this.magicAttack) {
+            dmg = this.attri.magicDmg;
+            crit = r < this.attri.magicCritRate;
+            if (crit) dmg *= this.attri.magicCritDmgRate;
+        } else {
+            dmg = this.attri.atkDmg
+            crit = r < this.attri.critRate;
+            if (crit) dmg *= this.attri.critDmgRate;
+        }
+
+        // 伤害从0.8到1.2浮动
+        let r2 = Math.random();
+        let rate = 0.8 + r2 * 0.4;
+        dmg *= rate;
+
+        return {
+            dmg: dmg,
+            crit: crit
+        }
+    }
+
+    changeIndex() {
+        this.index += 10000;
+        if (this.index > 100000) this.index = this.index % 1000;
     }
 }

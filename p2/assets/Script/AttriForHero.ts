@@ -10,13 +10,9 @@ const JumpVelocity: number = 4.5;
 
 @ccclass
 export default class AttriForHero extends Attri {
-    /** 血量 */
-    hp: number = 0;
 
-    /** x方向速度 */
-    xSpeed: number = 0;
-    /** y方向速度 */
-    ySpeed: number = JumpVelocity;
+    /** 闪躲率 */
+    evade: number = 0;
 
     /** 剩余跳跃数量 */
     jumpCount: number = 1;
@@ -33,7 +29,16 @@ export default class AttriForHero extends Attri {
 
     onLoad() {
         this.hp = 100;
+        this.hpMax = 100;
         this.xSpeed = 3;
+        this.ySpeed = JumpVelocity;
+
+        // test
+        this.critRate = 0.03;
+        this.critDmgRate = 1.5;
+
+        this.atkDmg = 20;
+        this.magicDmg = 20;
     }
 
     fillJumpAndDashCount() {
