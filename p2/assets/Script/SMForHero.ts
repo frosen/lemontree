@@ -8,6 +8,7 @@ import Hero from "./Hero";
 import {CollisionType} from "./TerrainCtrlr";
 import {UIDirLvType} from "./HeroUI";
 import Attack from "./Attack";
+import FigureDisplay from "./FigureDisplay";
 
 /** 行动状态 */
 export enum ActState {
@@ -45,6 +46,7 @@ export class SMForHeroMgr {
         this.stateList[ActState.move] = new SMForHeroInMove();
         this.stateList[ActState.dash] = new SMForHeroInDash();
         this.stateList[ActState.hurt] = new SMForHeroInHurt();
+        this.stateList[ActState.dead] = new SMForHeroInDead();
 
         // 最开始的状态
         this._setState(st);
@@ -316,17 +318,28 @@ class SMForHeroInDash extends SMForHero {
 
 const hurtXSpeed: number = 2;
 const hurtYSpeed: number = 2;
-const evadeInvcTime: number = 0.3;
+const evadeInvcTime: number = 0.4;
 
 class SMForHeroInHurt extends SMForHero {
     hurtMoveDir: number = 0;
+
+    figureDisplay: FigureDisplay = null;
+
+    constructor() {
+        super();
+        this.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
+        myAssert(this.figureDisplay, "need figure display");
+    }
 
     can(mgr: SMForHeroMgr): boolean {
         // 计算闪躲
         let r = Math.random();
         if (r < mgr.hero.attri.evade) {
             // 显示闪躲 llytodo
-           
+            let node = mgr.hero.node;  
+            let xCenter = node.x + node.width * (0.5 - node.anchorX);
+            let yCenter = node.y + node.height * (0.5 - node.anchorY);
+            this.figureDisplay.showEvade(cc.v2(xCenter, yCenter));
             mgr.hero.beginInvcState(evadeInvcTime); // 小无敌
             return false;
         } else {
@@ -342,6 +355,8 @@ class SMForHeroInHurt extends SMForHero {
         let {dmg, crit} = atk.getDamage();
 
         hero.attri.hp -= dmg;
+
+        atk.excuteHitCallback(hero.node);
         
         // 死亡
         if (hero.attri.hp <= 0) { 
@@ -358,7 +373,11 @@ class SMForHeroInHurt extends SMForHero {
         this.hurtMoveDir = hurtXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
         hero.movableObj.yVelocity = hurtYSpeed;
 
-        // 显示数字 llytodo
+        // 显示数字   
+        let node = hero.node;  
+        let xCenter = node.x + node.width * (0.5 - node.anchorX);
+        let yCenter = node.y + node.height * (0.5 - node.anchorY);
+        this.figureDisplay.showFigure(cc.v2(xCenter, yCenter), dmg, crit, atk.magicAttack);
 
         // 更改ui显示 llytodo
     }

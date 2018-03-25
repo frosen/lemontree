@@ -12,7 +12,7 @@ export default class AttriForEnemy extends Attri {
         this.hp = 100;
         this.hpMax = 100;
 
-        this.critRate = 0.03;
+        this.critRate = 0.02;
         this.critDmgRate = 1.5;
 
         this.atkDmg = 20;

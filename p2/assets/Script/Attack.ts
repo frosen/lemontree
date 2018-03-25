@@ -48,7 +48,7 @@ export default class Attack extends cc.Component {
             crit = r < this.attri.magicCritRate;
             if (crit) dmg *= this.attri.magicCritDmgRate;
         } else {
-            dmg = this.attri.atkDmg
+            dmg = this.attri.atkDmg;
             crit = r < this.attri.critRate;
             if (crit) dmg *= this.attri.critDmgRate;
         }
@@ -67,5 +67,9 @@ export default class Attack extends cc.Component {
     changeIndex() {
         this.index += 10000;
         if (this.index > 100000) this.index = this.index % 1000;
+    }
+
+    excuteHitCallback(node: cc.Node) {
+        // llytodo
     }
 }

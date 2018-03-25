@@ -28,7 +28,7 @@ export default class AttriForHero extends Attri {
     invcTimeForHurt: number = 0.5;
 
     onLoad() {
-        this.hp = 100;
+        this.hp = 1000;
         this.hpMax = 100;
         this.xSpeed = 3;
         this.ySpeed = JumpVelocity;
