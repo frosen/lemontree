@@ -4,15 +4,14 @@
 
 const {ccclass, property} = cc._decorator;
 
+import AttriForEnemy from "./AttriForEnemy";
 import Attack from "./Attack";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 
-import {MovableObject} from "./MovableObject";
-import TerrainCollider from "./TerrainCollider";
-import {CollisionType} from "./TerrainCtrlr";
-
 import Hero from "./Hero";
+import FigureDisplay from "./FigureDisplay";
+import DeathEffectDisplay from "./DeathEffectDisplay";
 
 /** 敌人对于一种伤害的无敌时间（毫秒） */
 const InvcTime: number = 1000;
@@ -20,17 +19,26 @@ const InvcTime: number = 1000;
 @ccclass
 export default class Enemy extends cc.Component {
 
+    /** 属性 */
+    attri: AttriForEnemy = null;
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;
     /** 观察区碰撞组件 */
     watchCollider: ObjColliderForWatch = null;
 
+    figureDisplay: FigureDisplay = null;
+    deathDisplay: DeathEffectDisplay = null;
+
     onLoad() {
         // init logic
-        requireComponents(this, [Attack, ObjCollider, ObjColliderForWatch]);
+        requireComponents(this, [AttriForEnemy, Attack, ObjCollider, ObjColliderForWatch]);
 
+        this.attri = this.getComponent(AttriForEnemy);
         this.objCollider = this.getComponent(ObjCollider);
         this.watchCollider = this.getComponent(ObjColliderForWatch);
+
+        this.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
+        this.deathDisplay = cc.find("main/enemy_layer").getComponent(DeathEffectDisplay);
 
         // 回调
         this.objCollider.callback = this.onCollision.bind(this);
@@ -59,8 +67,40 @@ export default class Enemy extends cc.Component {
     }
 
     doHurtLogic(atk: Attack) {
-        // llytodo 计算受伤
-        // llytodo 显示受伤
+        // 计算受伤
+        let {dmg, crit} = atk.getDamage();
+        this.attri.hp -= dmg;
+        atk.excuteHitCallback(this.node);
+
+        if (this.attri.hp <= 0) { 
+            this.dead();
+            return;
+        }
+
+        // 显示受伤
+        let pos: cc.Vec2 = this.getCenterPos();
+        this.figureDisplay.showFigure(pos, dmg, crit, atk.magicAttack);
+
+        // 用于子类
+        this.onHurtCallback(dmg, crit);
+    }
+
+    getCenterPos(): cc.Vec2 {
+        let node = this.node;  
+        let xCenter = node.x + node.width * (0.5 - node.anchorX);
+        let yCenter = node.y + node.height * (0.5 - node.anchorY);
+        return cc.v2(xCenter, yCenter);
+    }
+
+    // 用于子类
+    onHurtCallback(dmg: number, crit: boolean) {
+
+    }
+
+    dead() {
+        let pos: cc.Vec2 = this.getCenterPos();
+        this.deathDisplay.showDeathEffect(pos); 
+        this.node.removeFromParent();
     }
 
     // 观察回调 ========================================================
@@ -90,38 +130,7 @@ export default class Enemy extends cc.Component {
         this.aimDir = this.aim ? (this.aim.node.x - this.node.x > 0 ? 1 : -1) : 0;
     }
 
+    // UI相关 ========================================================
+
     // 基本行动 ------------------------------------------------------------
-
-    moveForward() {
-        let movableObj = this.getComponent(MovableObject);
-        movableObj.xVelocity = this.node.scaleX * 1;
-    }
-
-    stopMoving() {
-        this.getComponent(MovableObject).xVelocity = 0;
-    }
-
-    turnAround() {
-        this.node.scaleX *= -1;
-    }
-
-    isEdgeForward(): boolean {
-        let edge = this.getComponent(TerrainCollider).edgeType;
-        return edge == CollisionType.none || edge == CollisionType.entity;
-    }
-
-    getAimDir(): number {
-        if (this.aim) {
-            return this.aimDir == this.node.scaleX ? 1 : -1;
-        } else {
-            return 0;
-        }
-    }
-
-    moveToAim() {
-        this.node.scaleX = Math.abs(this.node.scaleX) * this.aimDir;
-
-        let movableObj = this.getComponent(MovableObject);
-        movableObj.xVelocity = this.node.scaleX * 3;
-    }
 }

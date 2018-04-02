@@ -73,8 +73,6 @@ export default class ObjCollisionCtrlr extends cc.Component {
                 if (!child.activeInHierarchy) continue;
                 let colliders: ObjCollider[] = child.getComponents(ObjCollider);
                 for (const collider of colliders) {
-                    if (!collider) continue;
-
                     if (collider.enabled) this.saveCollsionDataAndResetObj(collider, null, i);
 
                     for (const subCollider of collider.subColliders) {
