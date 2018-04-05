@@ -21,10 +21,7 @@ const CompareType = cc.Enum({
 })
 
 @ccclass
-export default class BTNodeCdtionNum extends BTNodeCdtion {
-
-    /** 当前行为执行函数 */
-    excuteFunc: () => number = null;
+export default class BTNodeCdtionNum extends BTNodeCdtion<() => number> {
 
     /** 比较类型 */
     @property({
@@ -35,10 +32,6 @@ export default class BTNodeCdtionNum extends BTNodeCdtion {
     /** excuteFunc的返回结果比较的数字 */
     @property
     compareNum: number = 0;
-
-    createExcuteFunc(node: cc.Node, funcStr: string) {
-        this.excuteFunc = getFuncFromString(node, funcStr);
-    }
 
     doExcuteFunc(): boolean {
         let result: number = this.excuteFunc();

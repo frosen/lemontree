@@ -5,32 +5,14 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {BTNode, BTResult} from "./BTNode";
+import {BTResult} from "./BTNode";
+import BTNodeWithFunc from "./BTNodeWithFunc";
 import BTBase from "./BTBase";
 
 @ccclass
-export default class BTNodeCdtion extends BTNode {
+export default class BTNodeCdtion<FUNC_TYPE> extends BTNodeWithFunc<FUNC_TYPE> {
 
     typeString: string = "IF";
-
-    /** 执行节点 用于在编辑器中设置excuteFunc，func可以有返回值 */
-    @property(cc.Node) excuteNode: cc.Node = null;
-    /** 执行函数名称 用于在编辑器中设置excuteFunc，func可以有返回值 */
-    @property excuteFuncString: string = "";
-
-    onLoad() {
-        if (!CC_EDITOR) {
-            if (!this.excuteNode) {
-                let p: cc.Node = this.node.parent;
-                while (true) {
-                    if (p.getComponent(BTBase)) break;
-                    p = p.parent;
-                }
-                this.excuteNode = p.parent;
-            }
-            this.createExcuteFunc(this.excuteNode, this.excuteFuncString);
-        }
-    }
 
     excute(): BTResult {
         let result = this.doExcuteFunc() ? BTResult.suc : BTResult.fail;
@@ -38,7 +20,7 @@ export default class BTNodeCdtion extends BTNode {
     }
 
     getBTName(): string {
-        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteFuncString + 
+        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteString + 
             " is " + this.getExcuteResStr();           
     }
 

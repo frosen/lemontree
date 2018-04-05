@@ -41,7 +41,7 @@ export class BTNode extends cc.Component {
 
     }
 
-    update() {
+    update(dt: number) {
         this.node.name = this.typeString + ": " + this.getBTName();
     }
 

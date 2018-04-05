@@ -130,6 +130,18 @@ export default class Enemy extends cc.Component {
         this.aimDir = this.aim ? (this.aim.node.x - this.node.x > 0 ? 1 : -1) : 0;
     }
 
+    /**
+     * 目标位置
+     * @returns 1为在身前，2为在身后，没有目标为0
+     */
+    getAimDir(): number {
+        if (this.aim) {
+            return this.aimDir == this.node.scaleX ? 1 : -1;
+        } else {
+            return 0;
+        }
+    }
+
     // UI相关 ========================================================
 
     // 基本行动 ------------------------------------------------------------

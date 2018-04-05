@@ -5,43 +5,14 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {BTNode, BTResult} from "./BTNode";
+import {BTResult} from "./BTNode";
+import BTNodeWithFunc from "./BTNodeWithFunc";
 import BTBase from "./BTBase";
 
 @ccclass
-export default class BTNodeActSet extends BTNode {
+export default class BTNodeActSet extends BTNodeWithFunc<() => void> {
 
     typeString: string = "SET";
-
-    /** 执行节点 用于在编辑器中设置excuteAttr */
-    @property(cc.Node) excuteNode: cc.Node = null;
-    /** 执行属性名称 用于在编辑器中设置excuteAttri */
-    @property excuteAttriString: string = "";
-
-    /** 当前行为执行组件 */
-    excuteComp: cc.Component = null;
-    /** 当前行为属性名称 */
-    attriString: string = "";
-
-    onLoad() {
-        if (!CC_EDITOR) {
-            if (!this.excuteNode) {
-                let p: cc.Node = this.node.parent;
-                while (true) {
-                    if (p.getComponent(BTBase)) break;
-                    p = p.parent;
-                }
-                this.excuteNode = p.parent;
-            }
-
-            let data = this.excuteAttriString.split(":");
-            this.excuteComp = this.excuteNode.getComponent(data[0]);
-            myAssert(this.excuteComp, "When get attri: " + this.excuteNode.name + " wrong component: " + data[0]);
-
-            this.attriString = data[1];
-            myAssert(this.excuteComp[this.attriString], this.excuteNode.name + " component: " + data[0] + " not have: " + data[1]);
-        }
-    }
 
     excute(): BTResult {
         this.doSet();
@@ -49,10 +20,10 @@ export default class BTNodeActSet extends BTNode {
     }
 
     doSet() {
-        this.excuteComp[this.attriString]();
+        this.excuteFunc();
     }
 
     getBTName(): string {
-        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteAttriString;           
+        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteString;           
     }
 }

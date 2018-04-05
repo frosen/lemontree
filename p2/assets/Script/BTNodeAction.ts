@@ -11,22 +11,16 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
+import BTNodeWithFunc from "./BTNodeWithFunc";
 import BTNodeActionUntil from "./BTNodeActionUntil";
 import BTNodeActionEnd from "./BTNodeActionEnd";
 import BTBase from "./BTBase";
 
 @ccclass
-export default class BTNodeAction extends BTNode {
+export default class BTNodeAction extends BTNodeWithFunc<() => void> {
 
     /** 类型名称，用于在层级管理器中显示 */
-    typeString: string = "DO";
-
-    /** 执行节点 用于在编辑器中设置excuteFunc，func可以有返回值 */
-    @property(cc.Node) excuteNode: cc.Node = null;
-    /** 执行函数名称 用于在编辑器中设置excuteFunc，func可以有返回值 */
-    @property excuteFuncString: string = "";
-    /** 当前行为执行函数，若函数返回true，则表示需要进入running状态 */
-    excuteFunc: () => boolean = null;
+    typeString: string = "DO"; 
 
     /** 直到函数组，遍历其子until节点获得 */
     untilFuncs: (() => BTResult)[] = [];
@@ -35,20 +29,6 @@ export default class BTNodeAction extends BTNode {
 
     /** 是否处于running状态 */
     running: boolean = false;
-
-    onLoad() {
-        if (!CC_EDITOR) {
-            if (!this.excuteNode) {
-                let p: cc.Node = this.node.parent;
-                while (true) {
-                    if (p.getComponent(BTBase)) break;
-                    p = p.parent;
-                }
-                this.excuteNode = p.parent;
-            }
-            this.excuteFunc = getFuncFromString(this.excuteNode, this.excuteFuncString);
-        }
-    }
 
     start() {
         for (const child of this.node.children) {
@@ -101,7 +81,7 @@ export default class BTNodeAction extends BTNode {
     }
 
     getBTName(): string {
-        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteFuncString;
+        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteString;
     }
 
     isRunning(): boolean {
@@ -121,5 +101,4 @@ export default class BTNodeAction extends BTNode {
         }
         return false;
     }
-    
 }

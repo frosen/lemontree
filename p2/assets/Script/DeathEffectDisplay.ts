@@ -16,9 +16,20 @@ export default class DeathEffectDisplay extends cc.Component {
         this.pool = new cc.NodePool();
         let initCount = 20;
         for (let i = 0; i < initCount; ++i) {
-            let labelNode = cc.instantiate(this.deathPrefab); // 创建节点
+            let labelNode = this.creatDeathNode(); // 创建节点
             this.pool.put(labelNode); // 通过 putInPool 接口放入对象池
         }
+    }
+
+    creatDeathNode(): cc.Node {
+        let labelNode = cc.instantiate(this.deathPrefab); // 创建节点
+        let anim = labelNode.getComponent(cc.Animation);
+        anim.on("finished", (event: Event) => {
+            cc.log("finished");
+            this.pool.put(labelNode);
+        });
+
+        return labelNode;
     }
 
     showDeathEffect(pos: cc.Vec2) {
@@ -37,7 +48,7 @@ export default class DeathEffectDisplay extends cc.Component {
         if (this.pool.size() > 0) {
             effectNode = this.pool.get();
         } else {
-            effectNode = cc.instantiate(this.deathPrefab);
+            effectNode = this.creatDeathNode();
             this.pool.put(effectNode);
         }
         effectNode.parent = this.node;
@@ -45,6 +56,7 @@ export default class DeathEffectDisplay extends cc.Component {
     }
 
     _doAction(effectNode: cc.Node) {
-
+        let anim = effectNode.getComponent(cc.Animation);
+        anim.play();
     }
 }

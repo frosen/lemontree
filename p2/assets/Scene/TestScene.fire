@@ -869,7 +869,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Sequence: 在边缘",
+    "_name": "Sequence: 在边缘，先停止移动",
     "_objFlags": 0,
     "_parent": {
       "__id__": 25
@@ -931,7 +931,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: BT Root >> Enemy:isEdgeForward is True",
+    "_name": "IF: e2 >> EnemyFighter:isEdgeForward is True",
     "_objFlags": 0,
     "_parent": {
       "__id__": 26
@@ -989,13 +989,15 @@
       "__id__": 27
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteFuncString": "Enemy:isEdgeForward",
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:isEdgeForward",
     "checkingTrue": true
   },
   {
     "__type__": "cc.Node",
-    "_name": "SET: BT Root >> Enemy:stopMoving",
+    "_name": "SET: e2 >> EnemyFighter:stopMoving",
     "_objFlags": 0,
     "_parent": {
       "__id__": 26
@@ -1053,12 +1055,14 @@
       "__id__": 29
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteAttriString": "Enemy:stopMoving"
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:stopMoving"
   },
   {
     "__type__": "cc.Node",
-    "_name": "Select: ",
+    "_name": "Select: 若前方无敌人则转向",
     "_objFlags": 0,
     "_parent": {
       "__id__": 26
@@ -1176,7 +1180,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: BT Root >> Enemy:getAimDir is != 1",
+    "_name": "IF: e2 >> EnemyFighter:getAimDir is != 1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 32
@@ -1234,14 +1238,16 @@
       "__id__": 33
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteFuncString": "Enemy:getAimDir",
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:getAimDir",
     "compareType": 1,
     "compareNum": 1
   },
   {
     "__type__": "cc.Node",
-    "_name": "SET: BT Root >> Enemy:turnAround",
+    "_name": "SET: e2 >> EnemyFighter:turnAround",
     "_objFlags": 0,
     "_parent": {
       "__id__": 32
@@ -1299,8 +1305,10 @@
       "__id__": 35
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteAttriString": "Enemy:turnAround"
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:turnAround"
   },
   {
     "__type__": "bb04fd0MwVDvale+mlaqRf/",
@@ -1384,7 +1392,7 @@
       "__id__": 31
     },
     "_enabled": true,
-    "desc": "",
+    "desc": "若前方无敌人则转向",
     "checkingAheadInRunning": true
   },
   {
@@ -1395,7 +1403,7 @@
       "__id__": 26
     },
     "_enabled": true,
-    "desc": "在边缘",
+    "desc": "在边缘，先停止移动",
     "checkingAheadInRunning": false
   },
   {
@@ -1459,7 +1467,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: BT Root >> Enemy:getAimDir is == -1",
+    "_name": "IF: e2 >> EnemyFighter:getAimDir is == -1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 42
@@ -1517,14 +1525,16 @@
       "__id__": 43
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteFuncString": "Enemy:getAimDir",
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:getAimDir",
     "compareType": 0,
     "compareNum": -1
   },
   {
     "__type__": "cc.Node",
-    "_name": "SET: BT Root >> Enemy:turnAround",
+    "_name": "SET: e2 >> EnemyFighter:turnAround",
     "_objFlags": 0,
     "_parent": {
       "__id__": 42
@@ -1582,8 +1592,10 @@
       "__id__": 45
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteAttriString": "Enemy:turnAround"
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:turnAround"
   },
   {
     "__type__": "bb04fd0MwVDvale+mlaqRf/",
@@ -1657,7 +1669,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: BT Root >> Enemy:getAimDir is == 1",
+    "_name": "IF: e2 >> EnemyFighter:getAimDir is == 1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 48
@@ -1715,14 +1727,16 @@
       "__id__": 49
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteFuncString": "Enemy:getAimDir",
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:getAimDir",
     "compareType": 0,
     "compareNum": 1
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: BT Root >> Enemy:moveToAim",
+    "_name": "DO: e2 >> EnemyFighter:moveToAim",
     "_objFlags": 0,
     "_parent": {
       "__id__": 48
@@ -1780,8 +1794,10 @@
       "__id__": 51
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteFuncString": "Enemy:moveToAim"
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:moveToAim"
   },
   {
     "__type__": "bb04fd0MwVDvale+mlaqRf/",
@@ -1852,7 +1868,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: BT Root >> Enemy:moveForward",
+    "_name": "DO: e2 >> EnemyFighter:moveForward",
     "_objFlags": 0,
     "_parent": {
       "__id__": 54
@@ -1910,8 +1926,10 @@
       "__id__": 55
     },
     "_enabled": true,
-    "excuteNode": null,
-    "excuteFuncString": "Enemy:moveForward"
+    "excuteNode": {
+      "__id__": 23
+    },
+    "excuteString": "EnemyFighter:moveForward"
   },
   {
     "__type__": "bb04fd0MwVDvale+mlaqRf/",
@@ -1971,7 +1989,7 @@
     "_atlas": null
   },
   {
-    "__type__": "8f1f8sP5BdKZoOdIU+XIxZe",
+    "__type__": "76bbe1nb8NGZY9pncG/ZMwd",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -2077,8 +2095,9 @@
       "__id__": 12
     },
     "_enabled": true,
-    "label": null,
-    "text": "hello"
+    "deathPrefab": {
+      "__uuid__": "9e58de96-1b0a-4fdb-aded-2ac4d63b530d"
+    }
   },
   {
     "__type__": "cc.Node",
@@ -2270,7 +2289,7 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 45,
+      "x": 35,
       "y": 15
     },
     "_skewX": 0,
@@ -2290,8 +2309,8 @@
     "_enabled": true,
     "size": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 150
+      "width": 80,
+      "height": 130
     },
     "offset": {
       "__type__": "cc.Vec2",

@@ -30,23 +30,17 @@ export default class EnemyFighter extends Enemy {
         this.node.scaleX *= -1;
     }
 
-    isEdgeForward(): boolean {
-        let edge = this.getComponent(TerrainCollider).edgeType;
-        return edge == CollisionType.none || edge == CollisionType.entity;
-    }
-
-    getAimDir(): number {
-        if (this.aim) {
-            return this.aimDir == this.node.scaleX ? 1 : -1;
-        } else {
-            return 0;
-        }
-    }
-
     moveToAim() {
         this.node.scaleX = Math.abs(this.node.scaleX) * this.aimDir;
 
         let movableObj = this.getComponent(MovableObject);
         movableObj.xVelocity = this.node.scaleX * 3;
+    }
+
+    // 对于行为树的判断 ========================================================
+
+    isEdgeForward(): boolean {
+        let edge = this.getComponent(TerrainCollider).edgeType;
+        return edge == CollisionType.none || edge == CollisionType.entity;
     }
 }
