@@ -595,7 +595,8 @@
     "_enabled": true,
     "index": 0,
     "attri": null,
-    "magicAttack": false
+    "magicAttack": false,
+    "hidingAtBeginning": false
   },
   {
     "__type__": "1285aB1AudJHrqNa72cuLP1",
@@ -1109,7 +1110,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "AFTER: 2seconds ago",
+    "_name": "AFTER: 2 seconds ago",
     "_objFlags": 0,
     "_parent": {
       "__id__": 30
@@ -2147,7 +2148,8 @@
     "_enabled": true,
     "index": 0,
     "attri": null,
-    "magicAttack": false
+    "magicAttack": false,
+    "hidingAtBeginning": false
   },
   {
     "__type__": "1285aB1AudJHrqNa72cuLP1",
@@ -2461,7 +2463,8 @@
     "_enabled": true,
     "index": 0,
     "attri": null,
-    "magicAttack": false
+    "magicAttack": false,
+    "hidingAtBeginning": true
   },
   {
     "__type__": "cc.Node",
@@ -2734,6 +2737,9 @@
     "_enabled": true,
     "body": {
       "__id__": 82
+    },
+    "sword": {
+      "__id__": 80
     }
   },
   {
@@ -2808,7 +2814,9 @@
       "__id__": 75
     },
     "_enabled": true,
-    "_defaultClip": null,
+    "_defaultClip": {
+      "__uuid__": "a5d1223f-62c5-4a92-b286-2a97037706b7"
+    },
     "_clips": [
       {
         "__uuid__": "a5d1223f-62c5-4a92-b286-2a97037706b7"

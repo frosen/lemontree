@@ -63,7 +63,7 @@ export default class Enemy extends cc.Component {
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
             let atk = data.cldr.getComponent(Attack);
-            if (atk) { // 如果碰撞对象带有攻击性
+            if (atk && atk.enabled) { // 如果碰撞对象带有攻击性
                 let atkIndex = atk.index;
                 let curTime = (new Date()).getTime();
                 let beginTime = this.invcTimeBegin[atkIndex]
@@ -99,7 +99,6 @@ export default class Enemy extends cc.Component {
     }
 
     showHurtColor() {
-        cc.log(">>", "xxxx");
         for (const spNode of this.allSpNodes) {
             spNode.color = cc.color(255, 80, 80, 255);
         }

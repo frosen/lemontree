@@ -31,6 +31,8 @@ export default class Hero extends cc.Component {
 
     /** 英雄UI */
     ui: HeroUI = null;
+    /** 攻击范围 */
+    attack: Attack = null;
 
     /** 英雄属性 */
     attri: AttriForHero = null;
@@ -51,6 +53,7 @@ export default class Hero extends cc.Component {
         this.watchCollider = this.getComponent(ObjColliderForWatch);
 
         this.ui = this.getComponent(HeroUI);
+        this.attack = this.getComponentInChildren(Attack);
 
         this.attri = this.getComponent(AttriForHero);
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
@@ -122,7 +125,8 @@ export default class Hero extends cc.Component {
         this.hurtCollisionData = null;
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
-            if (data.cldr.getComponent(Attack)) { // 如果碰撞对象带有攻击性
+            let atk = data.cldr.getComponent(Attack)
+            if (atk && atk.enabled) { // 如果碰撞对象带有攻击性
                 this.hurtCollisionData = data;
                 break;
             }         
@@ -158,6 +162,8 @@ export default class Hero extends cc.Component {
     onWatching(collisionDatas: CollisionData[]) {
         if (this.noAtkState) return;
 
+        let havingDataBefore: boolean = (this.watchedCollisionData != null);
+
         // 以移动方向的目标作为主目标
         let curDir: number = this.ui.xUIDirs[UIDirLvType.move];
         let enmeyDir: number;
@@ -172,9 +178,19 @@ export default class Hero extends cc.Component {
 
         if (this.watchedCollisionData) {
             this.ui.attack(enmeyDir);
-        } else {
+        } else if (havingDataBefore) {
             this.ui.endAttack();
         }       
+    }
+
+    /** 调用attack组件，进行一次攻击 */
+    doAttackLogic() {
+        this.attack.enabled = true;
+        this.attack.changeIndex();
+    }
+
+    stopAttackLogic() {
+        this.attack.enabled = false;
     }
 
     // 被状态机调用 ------------------------------------------------------------
@@ -205,5 +221,6 @@ export default class Hero extends cc.Component {
     setNoAtkStateEnabled(b: boolean) {
         if (b) this.ui.endAttack();
         this.noAtkState = b;
+        this.ui.endAttackAtOnce();
     }
 }

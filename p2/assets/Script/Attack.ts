@@ -22,6 +22,9 @@ export default class Attack extends cc.Component {
     @property
     magicAttack: boolean = false;
 
+    @property
+    hidingAtBeginning : boolean = false;
+
     onLoad() {        
         if (this.attri == null) {
             let n = this.node;
@@ -36,6 +39,8 @@ export default class Attack extends cc.Component {
             }
         }
         myAssert(this.attri != null, "attack need attri");
+
+        if (this.hidingAtBeginning) this.enabled = false;
     }
 
     // 计算基础伤害

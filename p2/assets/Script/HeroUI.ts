@@ -4,6 +4,8 @@
 
 const {ccclass, property} = cc._decorator;
 
+import Hero from "./Hero";
+
 /** 控制UI方向的三个指标 */
 export enum UIDirLvType {
     move = 0,
@@ -17,15 +19,28 @@ export class HeroUI extends cc.Component {
     @property(cc.Sprite)
     body: cc.Sprite = null;
 
+    @property(cc.Sprite)
+    sword: cc.Sprite = null;
+
+    hero: Hero = null;
+
+    /** 方向列表 */
     xUIDirs: {[key: number]: number;} = {};
 
+    /** 攻击动画 */
+    atkAnim: cc.Animation = null;
+
     onLoad() {
+        this.hero = this.getComponent(Hero);
+
         this.xUIDirs[UIDirLvType.move] = 1;
         this.xUIDirs[UIDirLvType.attack] = 0;
         this.xUIDirs[UIDirLvType.hurt] = 0;
 
+        this.atkAnim = this.getComponent(cc.Animation);
+
         // 基本设置
-        this.node.setCascadeOpacityEnabled(true);
+        this.node.setCascadeOpacityEnabled(true);       
     }
 
     /**
@@ -130,11 +145,53 @@ export class HeroUI extends cc.Component {
 
     //========================================================
 
-    attack(dir: number) {
-        this.setXUIDir(dir, UIDirLvType.attack);
+    /** 攻击状态中 */
+    attacking: boolean = false;
+    goingToEndAtk: boolean = false;
+    goingToTurnDir: number = 0;
+
+    attack(dir: number) {       
+        if (!this.attacking) {
+            this.attacking = true;           
+            this.atkAnim.play();
+            this.goingToEndAtk = false;
+            this.setXUIDir(dir, UIDirLvType.attack);
+        }
+
+        this.goingToTurnDir = dir;
     }
 
     endAttack() {
+        if (this.attacking) this.goingToEndAtk = true;
+    }
+
+    endAttackAtOnce() {
+        this.goingToEndAtk = false;
         this.setXUIDir(0, UIDirLvType.attack);
+        this.atkAnim.stop();
+        this.recoveryNoAtkUI();               
+        this.attacking = false;
+    }
+
+    /**
+     * 接收从动画过来的回调，每次攻击时调用
+     * @param type: 1为向下坎 2为向上坎 0为停止
+     */
+    onUIAttack(t: number) {
+        if (t == 0) {
+            this.hero.stopAttackLogic();
+        } else {
+            if (this.goingToEndAtk) {
+                this.endAttackAtOnce();
+            } else {
+                this.setXUIDir(this.goingToTurnDir, UIDirLvType.attack);
+                this.hero.doAttackLogic();
+            } 
+        }   
+    }  
+
+    recoveryNoAtkUI() {
+        this.sword.node.position = cc.v2(-8, 15);
+        this.sword.node.rotation = 0;
     }
 }
