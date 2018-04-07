@@ -29,6 +29,9 @@ export default class Enemy extends cc.Component {
     figureDisplay: FigureDisplay = null;
     deathDisplay: DeathEffectDisplay = null;
 
+    /** 所有带有精灵的节点，用于显示受伤 */
+    allSpNodes: cc.Node[] = [];
+
     onLoad() {
         // init logic
         requireComponents(this, [AttriForEnemy, Attack, ObjCollider, ObjColliderForWatch]);
@@ -43,6 +46,12 @@ export default class Enemy extends cc.Component {
         // 回调
         this.objCollider.callback = this.onCollision.bind(this);
         this.watchCollider.callback = this.onWatching.bind(this);
+
+        // 获取精灵节点
+        let allSps = this.getComponents(cc.Sprite);
+        for (const sp of allSps) {
+            this.allSpNodes.push(sp.node);
+        }
     }
 
     // 碰撞回调 ------------------------------------------------------------
@@ -77,12 +86,29 @@ export default class Enemy extends cc.Component {
             return;
         }
 
-        // 显示受伤
+        // 显示受伤，所有ui变红
+        this.showHurtColor();
+        this.scheduleOnce(this.recoveryHurtColor.bind(this), 0.1);
+
+        // 显示受伤数字
         let pos: cc.Vec2 = this.getCenterPos();
         this.figureDisplay.showFigure(pos, dmg, crit, atk.magicAttack);
 
         // 用于子类
         this.onHurtCallback(dmg, crit);
+    }
+
+    showHurtColor() {
+        cc.log(">>", "xxxx");
+        for (const spNode of this.allSpNodes) {
+            spNode.color = cc.color(255, 80, 80, 255);
+        }
+    }
+
+    recoveryHurtColor() {
+        for (const spNode of this.allSpNodes) {
+            spNode.color = cc.Color.WHITE;
+        }
     }
 
     getCenterPos(): cc.Vec2 {

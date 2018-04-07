@@ -19,7 +19,7 @@ export default class BTNodeGroup extends BTNode {
     @property
     desc: string = "";
 
-    start() {
+    onLoad() {
         for (const child of this.node.children) {
             if (child.active == false) continue;
             let comp = child.getComponent(BTNode);

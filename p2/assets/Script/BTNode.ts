@@ -42,6 +42,7 @@ export class BTNode extends cc.Component {
     }
 
     update(dt: number) {
+        if (!CC_EDITOR) return;
         this.node.name = this.typeString + ": " + this.getBTName();
     }
 

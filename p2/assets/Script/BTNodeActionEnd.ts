@@ -16,10 +16,8 @@ export default class BTNodeActionEnd extends BTNode {
     typeString: string = "End Excuting";
 
     onLoad() {
-        if (!CC_EDITOR) {
-            // 检测父节点，子节点正确性
-            myAssert(this.node.parent.getComponent(BTNodeAction), "BTNodeActionEnd need action parent");
-        }
+        // 检测父节点，子节点正确性
+        myAssert(this.node.parent.getComponent(BTNodeAction), "BTNodeActionEnd need action parent");
     }
 
     getBTName(): string {

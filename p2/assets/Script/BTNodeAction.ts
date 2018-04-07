@@ -30,7 +30,9 @@ export default class BTNodeAction extends BTNodeWithFunc<() => void> {
     /** 是否处于running状态 */
     running: boolean = false;
 
-    start() {
+    onLoad() {
+        super.onLoad();
+
         for (const child of this.node.children) {
             if (child.active == false) continue;
             if (child.getComponent(BTNodeActionUntil)) {
@@ -76,7 +78,8 @@ export default class BTNodeAction extends BTNodeWithFunc<() => void> {
     doAction() {
         if (this.goingToAction) {
             this.goingToAction = false;
-            this.excuteFunc();          
+            this.excuteFunc();
+            this.node.emit("BTActionBegin");
         }
     }
 
@@ -92,7 +95,8 @@ export default class BTNodeAction extends BTNodeWithFunc<() => void> {
         this.running = false;
         for (const endFunc of this.endFuncs) {
             endFunc();
-        }     
+        }
+        this.node.emit("BTActionEnd");
     }
 
     checkRunningEnd(): boolean {

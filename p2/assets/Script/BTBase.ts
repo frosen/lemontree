@@ -31,6 +31,10 @@ export default class BTBase extends cc.Component {
     }
 
     update(dt: number) {
+        this.node.emit("BTUpdate", {
+            dt: dt
+        });
+
         // 遍历子节点执行其行为
         for (const btNode of this.btNodes) {
             let result = btNode.excute();
