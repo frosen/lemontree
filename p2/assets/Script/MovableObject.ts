@@ -12,9 +12,6 @@ export const VelocityMax: number = 15;
 @executionOrder(EXECUTION_ORDER.MovableObject)
 export class MovableObject extends cc.Component {
 
-    xAccelEnabled: boolean = true;
-    yAccelEnabled: boolean = true;
-
     /** 当前x加速度 */
     xAccel: number = 0;
     /** 当前y加速度 */
@@ -31,6 +28,9 @@ export class MovableObject extends cc.Component {
     xLastVelocity: number = 0;
     yLastVelocity: number = 0;
 
+    xVelocityEnabled: boolean = true;
+    yVelocityEnabled: boolean = true;
+
     update(dt: number) {
         this.xLastPos = this.node.x;
         this.yLastPos = this.node.y;
@@ -38,14 +38,22 @@ export class MovableObject extends cc.Component {
         this.yLastVelocity = this.yVelocity;
 
         // x
-        if (this.xAccelEnabled) this.xVelocity += this.xAccel;
-        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);        
-        this.node.x += this.xVelocity;
+        if (this.xVelocityEnabled) {
+            this.xVelocity += this.xAccel;
+            this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);        
+            this.node.x += this.xVelocity;
+        } else {
+            this.xVelocity = 0;
+        }
 
         // y
-        if (this.yAccelEnabled) this.yVelocity += this.yAccel;
-        this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);       
-        this.node.y += this.yVelocity;
+        if (this.yVelocityEnabled) {
+            this.yVelocity += this.yAccel;
+            this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);       
+            this.node.y += this.yVelocity;
+        } else {
+            this.yVelocity = 0;
+        }
     }
 
     /**

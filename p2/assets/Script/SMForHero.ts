@@ -224,9 +224,8 @@ class SMForHeroInDash extends SMForHero {
         // 重置方向
         mgr.smObj.ui.setXUIDir(this.dashDir, UIDirLvType.move);
 
-        // 暂停y轴的加速度
-        mgr.smObj.movableObj.yVelocity = 0;
-        mgr.smObj.movableObj.yAccelEnabled = false;
+        // 暂停y轴的速度
+        mgr.smObj.movableObj.yVelocityEnabled = false;
     }
 
     update(dt: number, mgr: SMForHeroMgr) {
@@ -255,8 +254,8 @@ class SMForHeroInDash extends SMForHero {
         // 退出不可攻击敌人的状态
         mgr.smObj.setNoAtkStateEnabled(false);
 
-        // 开启y轴的加速度
-        mgr.smObj.movableObj.yAccelEnabled = true;
+        // 开启y轴的速度
+        mgr.smObj.movableObj.yVelocityEnabled = true;
     }
 }
 

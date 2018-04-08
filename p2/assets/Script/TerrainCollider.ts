@@ -112,8 +112,12 @@ export default class TerrainCollider extends cc.Component {
                     this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
                 }
             }
+        } else { // yDir为0就是平移，重置所有的碰撞类型
+            this.curYCollisionType = CollisionType.none;
+            this.edgeType = null;
+            this.backEdgeType = null;
         }
-        
+
         //========================================================
         
         // 第一次x碰撞检测可能会因为y轴碰撞未进行而导致误判，
