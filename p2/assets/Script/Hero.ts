@@ -16,6 +16,7 @@ import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
 
 import Attack from "./Attack";
 import Enemy from "./Enemy";
+import Item from "./Item";
 
 @ccclass
 export default class Hero extends cc.Component {
@@ -121,18 +122,21 @@ export default class Hero extends cc.Component {
      * @param collisionDatas: 当前帧碰撞到的对象的碰撞数据
      */
     onCollision(collisionDatas: CollisionData[]) {
-        // 敌人碰撞
+
         this.hurtCollisionData = null;
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
+
             let atk = data.cldr.getComponent(Attack)
             if (atk && atk.enabled) { // 如果碰撞对象带有攻击性
                 this.hurtCollisionData = data;
-                break;
-            }         
-        }
+            }
 
-        // 道具碰撞 llytodo
+            let item = data.cldr.getComponent(Item); // 道具碰撞
+            if (item) {
+                cc.log(">>", "item");
+            }
+        }
     }
 
     /**

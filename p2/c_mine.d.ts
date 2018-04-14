@@ -6,7 +6,7 @@
  * 碰撞组件要在所有之后，因为要计算最终位置的碰撞
  */
 declare namespace EXECUTION_ORDER {
-	let MovableObject: number
+	let MovableObject: number // = 1
 	let TerrainCollider: number
 	let ObjCollider: number
 	let BehaviorTree: number

@@ -63,59 +63,53 @@ export default class TerrainCollider extends cc.Component {
         }
 
         //========================================================
-        if (yDir != 0) {
-            let checkX = this.node.x - size.width * anchor.x; // 从左往右计算上下的碰撞
-            let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
+        let checkX = this.node.x - size.width * anchor.x; // 从左往右计算上下的碰撞
+        let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
 
-            let checkY = this.node.y - size.height * anchor.y + (yDir > 0 ? size.height : 0);
-            
-            let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
+        let checkY = this.node.y - size.height * anchor.y + (yDir > 0 ? size.height : 0);
+        
+        let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
 
-            this.curYCollisionType = type;
-            if (yDir < 0 && type != CollisionType.none) {
-                let dir = xDir != 0 ? xDir : this.node.scaleX; // 移动时检测移动方向，否则检测面朝向
-                if (dir > 0) {
-                    this.edgeType = edgeRight;
-                    this.backEdgeType = edgeLeft;
-                } else {
-                    this.edgeType = edgeLeft;
-                    this.backEdgeType = edgeRight;
-                }
+        this.curYCollisionType = type;
+        if (yDir < 0 && type != CollisionType.none) {
+            let dir = xDir != 0 ? xDir : this.node.scaleX; // 移动时检测移动方向，否则检测面朝向
+            if (dir > 0) {
+                this.edgeType = edgeRight;
+                this.backEdgeType = edgeLeft;
             } else {
-                this.edgeType = null;
-                this.backEdgeType = null;
+                this.edgeType = edgeLeft;
+                this.backEdgeType = edgeRight;
             }
-
-            if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
-                let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
-                this.node.y -= distance;
-                this.movableObj.yVelocity = 0;
-
-            } else if (this.curYCollisionType == CollisionType.slope) {
-                if (preTestXClsnType == CollisionType.entity) {
-                    let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
-                    this.node.y -= distance;
-                }
-
-            } else if (this.curYCollisionType == CollisionType.platform) { // 有只向下而且能越过的碰撞
-                if (yDir < 0) { // 只检测向下
-                    let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
-                    let nodeYInMargin = this.node.y - distance;
-                    
-                    if (this.movableObj.yLastPos - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
-                        this.node.y = nodeYInMargin;
-                        this.movableObj.yVelocity = 0;
-                    } else {
-                        this.curYCollisionType = CollisionType.none; // 过了最上一条边后就不可碰撞了
-                    }
-                } else {
-                    this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
-                }
-            }
-        } else { // yDir为0就是平移，重置所有的碰撞类型
-            this.curYCollisionType = CollisionType.none;
+        } else {
             this.edgeType = null;
             this.backEdgeType = null;
+        }
+
+        if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
+            let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
+            this.node.y -= distance;
+            this.movableObj.yVelocity = 0;
+
+        } else if (this.curYCollisionType == CollisionType.slope) {
+            if (preTestXClsnType == CollisionType.entity) {
+                let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
+                this.node.y -= distance;
+            }
+
+        } else if (this.curYCollisionType == CollisionType.platform) { // 有只向下而且能越过的碰撞
+            if (yDir < 0) { // 只检测向下
+                let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
+                let nodeYInMargin = this.node.y - distance;
+                
+                if (this.movableObj.yLastPos - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
+                    this.node.y = nodeYInMargin;
+                    this.movableObj.yVelocity = 0;
+                } else {
+                    this.curYCollisionType = CollisionType.none; // 过了最上一条边后就不可碰撞了
+                }
+            } else {
+                this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
+            }
         }
 
         //========================================================
@@ -134,8 +128,10 @@ export default class TerrainCollider extends cc.Component {
             } else {
                 this.node.x = saveX;
             }
+        } else {
+            this.curXCollisionType = CollisionType.none;
         }
-        
+
         {
             // 先检测左侧，再检测右侧，反正<需要确保>不会同时有
             let checkX = this.node.x - size.width * anchor.x;
