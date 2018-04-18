@@ -63,10 +63,7 @@ export default class Attack extends cc.Component {
         let rate = 0.8 + r2 * 0.4;
         dmg *= rate;
 
-        return {
-            dmg: dmg,
-            crit: crit
-        }
+        return {dmg, crit};
     }
 
     changeIndex() {

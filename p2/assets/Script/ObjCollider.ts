@@ -94,7 +94,7 @@ export class ObjCollider extends cc.Component {
                 maxX: maxX + node.x,
                 minY: minY + node.y,
                 maxY: maxY + node.y
-            }
+            };
         }
 
         // 转换到父碰撞对象的父节点的坐标中，可以让其和父碰撞对象在一个坐标系中
@@ -114,12 +114,7 @@ export class ObjCollider extends cc.Component {
         minY = Math.min(wp0.y, wp1.y, wp2.y, wp3.y); 
         maxY = Math.max(wp0.y, wp1.y, wp2.y, wp3.y);
         
-        return {
-            minX: minX,
-            maxX: maxX,
-            minY: minY,
-            maxY: maxY
-        }
+        return {minX, maxX, minY, maxY};
     }
 
     /**

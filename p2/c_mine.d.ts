@@ -29,6 +29,11 @@ declare function requireComponents(obj: Object, components: any[]): void;
 declare function myAssert(condition: any, log: string): void;
 
 /**
+ * 获取一个类的名字
+ */
+declare function getClassName(type: {new()}): string;
+
+/**
  * 获取当前位置的行数，函数名等调试信息的字符串
  */
 declare function curLineInfo(): string;

@@ -16,7 +16,11 @@ import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
 
 import Attack from "./Attack";
 import Enemy from "./Enemy";
+
+import ItemComp from "./ItemComp";
 import Item from "./Item";
+import {ItemExp} from "./ItemExp";
+import ItemEfc from "./ItemEfc";
 
 @ccclass
 export default class Hero extends cc.Component {
@@ -132,11 +136,30 @@ export default class Hero extends cc.Component {
                 this.hurtCollisionData = data;
             }
 
-            let item = data.cldr.getComponent(Item); // 道具碰撞
-            if (item) {
-                cc.log(">>", "item");
+            let itemComp = data.cldr.getComponent(ItemComp); // 道具碰撞
+            if (itemComp) {
+                this.onCollisionWithItem(itemComp);
             }
         }
+    }
+
+    // 区分是exp还是efc，exp直接获取，efc显示获取按钮
+    onCollisionWithItem(itemComp: ItemComp) {
+        let item: Item = itemComp.itemCore;
+        if (item instanceof ItemExp) {
+            this.onCollisionWithItemExp(item as ItemExp);
+
+        } else if (item instanceof ItemEfc) {
+            this.onCollisionWithItemEfc(item as ItemEfc);
+        }
+    }
+
+    onCollisionWithItemExp(item: ItemExp) {
+        
+    }
+
+    onCollisionWithItemEfc(item: ItemEfc) {
+
     }
 
     /**

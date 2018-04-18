@@ -61,18 +61,15 @@ export class MovableObject extends cc.Component {
      * @return xDir 1向右 -1向左 0停止；yDir 1向上 -1向下 0停止
      */
     getDir(): {xDir: number, yDir: number} {
-        let x = 0;
-        if (this.xVelocity > 0.001) x = 1;
-        else if (this.xVelocity < -0.001) x = -1;
+        let xDir = 0;
+        if (this.xVelocity > 0.001) xDir = 1;
+        else if (this.xVelocity < -0.001) xDir = -1;
 
-        let y = 0;
-        if (this.yVelocity > 0.001) y = 1;
-        else if (this.yVelocity < -0.001) y = -1;
+        let yDir = 0;
+        if (this.yVelocity > 0.001) yDir = 1;
+        else if (this.yVelocity < -0.001) yDir = -1;
 
-        return {
-            xDir: x,
-            yDir: y
-        }
+        return {xDir, yDir};
     }
 }
 

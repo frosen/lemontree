@@ -16,7 +16,7 @@ export default class FigureDisplay extends cc.Component {
 
     onLoad() {        
         this.pool = new cc.NodePool();
-        let initCount = 20;
+        let initCount: number = 20;
         for (let i = 0; i < initCount; ++i) {
             let labelNode = cc.instantiate(this.labelPrefab); // 创建节点
             this.pool.put(labelNode); // 通过 putInPool 接口放入对象池

@@ -1,14 +1,14 @@
 {
   "ver": "1.0.0",
-  "uuid": "c134e1ea-3d00-46c5-ac32-9490d8f287cd",
+  "uuid": "9480d7de-a524-4d58-b7f4-4275050ea46a",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
-    "coin2": {
+    "ItemExp1_3": {
       "ver": "1.0.3",
-      "uuid": "a9aa6cc4-cad3-428a-ba9a-e881f3e35a9e",
-      "rawTextureUuid": "c134e1ea-3d00-46c5-ac32-9490d8f287cd",
+      "uuid": "57e05bc8-73ed-4b3f-a648-6d6164f31e21",
+      "rawTextureUuid": "9480d7de-a524-4d58-b7f4-4275050ea46a",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

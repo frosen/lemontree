@@ -35,6 +35,10 @@ window.requireComponents = function (obj, components) {
 
 window.myAssert = cc.assert;
 
+window.getClassName = function (func) {
+    return func.name;
+}
+
 window.curLineInfo = function () {
     try {
         throw new Error();

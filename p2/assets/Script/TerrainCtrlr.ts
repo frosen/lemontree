@@ -47,10 +47,10 @@ export class TerrainCtrlr extends cc.Component {
     collidableLayer: cc.TiledLayer = null;
 
     /** 碰撞缓存 不但可以加速，更可以改变某处的碰撞类型*/
-    collisionCache: {} = {}
+    collisionCache: {} = {};
 
     /** 碰撞属性的缓存，每一项也是一个object，其属性取于tile */
-    collisionAttriCache: {[key: number]: TileAttris;} = {}
+    collisionAttriCache: {[key: number]: TileAttris;} = {};
 
     onLoad() {
         // init logic
@@ -67,10 +67,7 @@ export class TerrainCtrlr extends cc.Component {
     _getTileIndex(x: number, y: number): {tileX: number, tileY: number} {
         let tileX = Math.floor(x / TileLength);
         let tileY = Math.floor((this.terrainSize.height - y) / TileLength); // tiledmap与creator的y轴相反
-        return {
-            tileX: tileX, 
-            tileY: tileY
-        }
+        return {tileX, tileY};
     }
 
     /**
@@ -181,7 +178,7 @@ export class TerrainCtrlr extends cc.Component {
      */
     checkCollideInHorizontalLine(fromX: number, toX: number, y: number): 
         {type: CollisionType, edgeLeft: CollisionType, edgeRight: CollisionType} {
-        let collisionType: CollisionType = CollisionType.none;
+        let type: CollisionType = CollisionType.none;
         let x = fromX;
 
         let edgeLeft: CollisionType = null;
@@ -191,7 +188,7 @@ export class TerrainCtrlr extends cc.Component {
 
         while (true) {
             let t: CollisionType = this.checkCollideAt(x, y);
-            if (t > collisionType) collisionType = t;
+            if (t > type) type = t;
 
             if (leftBegin) {
                 if (t == CollisionType.none || t == CollisionType.slope) {
@@ -211,18 +208,14 @@ export class TerrainCtrlr extends cc.Component {
         }
 
         let t: CollisionType = this.checkCollideAt(toX, y);          
-        if (t > collisionType) collisionType = t;
+        if (t > type) type = t;
 
         if (t == CollisionType.none || t == CollisionType.slope) {
             if (leftBegin) edgeLeft = t;
             else if (!rightBegin) edgeRight = t;
         }
 
-        return {
-            type: collisionType,
-            edgeLeft: edgeLeft,
-            edgeRight: edgeRight
-        }
+        return {type, edgeLeft, edgeRight};
     }
 
     /**
