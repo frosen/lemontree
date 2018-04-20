@@ -4,6 +4,8 @@
 
 const {ccclass, property,} = cc._decorator;
 
+import { MovableObject } from "./MovableObject";
+
 import ItemComp from "./ItemComp";
 import Item from "./Item";
 
@@ -35,11 +37,11 @@ export default class ItemCtrlr extends cc.Component {
         this.pool = new cc.NodePool();
         let initCount: number = 20;
         for (let i = 0; i < initCount; ++i) {
-             this.createNewItemNode();
+             this._createNewItemNode();
         }
 
         // 加载所有的道具
-        this.pushItemIntoInfo(ItemExp1);
+        this._pushItemIntoInfo(ItemExp1);
 
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir("items", cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
@@ -47,25 +49,26 @@ export default class ItemCtrlr extends cc.Component {
                 cc.log(`Wrong in load res dir: ${error.message}`);
                 return;
             }
-            this.onGotFrames(frames)
+            this._onGotFrames(frames)
         });
     }
 
-    createNewItemNode(): cc.Node {
+    _createNewItemNode(): {node: cc.Node, itemComp: ItemComp} {
         let node = new cc.Node();
-        node.addComponent(ItemComp);
+        let itemComp = node.addComponent(ItemComp);
+        itemComp.itemCtrlr = this;
         this.pool.put(node);
-        return node;
+        return {node, itemComp};
     }
 
-    pushItemIntoInfo(itemType: {new()}) {
+    _pushItemIntoInfo(itemType: {new()}) {
         this.itemInfos[getClassName(itemType)] = new ItemInfo(new itemType());
     }
 
     /**
      * 获得纹理后，进行解析
      */
-    onGotFrames(frames: cc.SpriteFrame[]) {
+    _onGotFrames(frames: cc.SpriteFrame[]) {
         for (const key in this.itemInfos) {
             const itemInfo = this.itemInfos[key];
             let frameInfo = itemInfo.item.getFrameInfos();
@@ -81,5 +84,48 @@ export default class ItemCtrlr extends cc.Component {
 
             myAssert(itemInfo.frames.length == itemInfo.times.length, "maybe wrong item name in png");
         }
+    }
+
+    _beginItemNode(itemName: string, pos: cc.Vec2, moveX: number, moveY: number) {
+        let node: cc.Node;
+        let itemComp: ItemComp;
+        if (this.pool.size() > 0) {
+            node = this.pool.get();
+            itemComp = node.getComponent(ItemComp);
+        } else {
+            let {node, itemComp} = this._createNewItemNode();
+        }
+
+        node.parent = this.node;
+        node.position = pos;
+
+        let {item, frames, times} = this.itemInfos[itemName];
+        itemComp.setData(item, frames, times);
+
+        itemComp.move(moveX, moveY);
+    }
+
+    // 生成道具 ========================================================
+
+    createItem(pos: cc.Vec2) {
+        // 计算有几个道具，分别是什么
+        let itemNames = ["ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1"];
+
+        // 开始节点
+        let xNum = 0;
+        let xDirIsLeft = true;
+        for (const name of itemNames) {
+            let x = xNum * (xDirIsLeft ? -1 : 1);
+            let y = 7 + Math.random() * 0.5;
+            let node = this._beginItemNode(name, pos, x, y);
+
+            xNum = 0.1 + Math.random() * 0.8;
+            xDirIsLeft = !xDirIsLeft;
+        }
+    }
+
+    removeItem(itemComp: ItemComp) {
+        let node: cc.Node = itemComp.node;
+        this.pool.put(node);
     }
 }

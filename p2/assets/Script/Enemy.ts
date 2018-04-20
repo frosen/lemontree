@@ -12,6 +12,7 @@ import ObjColliderForWatch from "./ObjColliderForWatch";
 import Hero from "./Hero";
 import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
+import ItemCtrlr from "./ItemCtrlr";
 
 /** 敌人对于一种伤害的无敌时间（毫秒） */
 const InvcTime: number = 1000;
@@ -28,6 +29,7 @@ export default class Enemy extends cc.Component {
 
     figureDisplay: FigureDisplay = null;
     deathDisplay: DeathEffectDisplay = null;
+    itemCtrlr: ItemCtrlr = null;
 
     /** 所有带有精灵的节点，用于显示受伤 */
     allSpNodes: cc.Node[] = [];
@@ -42,6 +44,7 @@ export default class Enemy extends cc.Component {
 
         this.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
         this.deathDisplay = cc.find("main/enemy_layer").getComponent(DeathEffectDisplay);
+        this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
 
         // 回调
         this.objCollider.callback = this.onCollision.bind(this);
@@ -124,7 +127,8 @@ export default class Enemy extends cc.Component {
 
     dead() {
         let pos: cc.Vec2 = this.getCenterPos();
-        this.deathDisplay.showDeathEffect(pos); 
+        this.deathDisplay.showDeathEffect(pos);
+        this.itemCtrlr.createItem(pos);
         this.node.removeFromParent();
     }
 

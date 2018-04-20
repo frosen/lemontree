@@ -5,9 +5,11 @@
 const {ccclass, property} = cc._decorator;
 
 import Item from "./Item";
+import ItemCtrlr from "./ItemCtrlr";
 
 import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
+import {CollisionType} from "./TerrainCtrlr";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import Gravity from "./Gravity";
 
@@ -15,6 +17,8 @@ import Gravity from "./Gravity";
 export default class ItemComp extends cc.Component {
 
     itemCore: Item = null;
+
+    itemCtrlr: ItemCtrlr = null;
 
     sp: cc.Sprite = null;
     /** 可移动对象组件 */
@@ -36,22 +40,55 @@ export default class ItemComp extends cc.Component {
     /** 当前时间，毫秒 */
     curTime: number = 0;
 
-    onLoad() {
-        this.sp = this.createComp(cc.Sprite);
-        this.movableObj = this.createComp(MovableObject);
-        this.terrainCollider = this.createComp(TerrainCollider);
-        this.objCollider = this.createComp(ObjCollider);
-        this.createComp(Gravity);
+    jumping: boolean = false;
 
-        this.setEnabled(false);
+    onLoad() {
+        this.sp = this._createComp(cc.Sprite);
+        this.movableObj = this._createComp(MovableObject);
+        this.terrainCollider = this._createComp(TerrainCollider);
+        this.objCollider = this._createComp(ObjCollider);
+        this._createComp(Gravity);
     }
 
-    createComp<T extends cc.Component>(type: {new(): T}): T {
+    _createComp<T extends cc.Component>(type: {new(): T}): T {
         let comp = this.getComponent(type);
         if (comp) {
             return comp;
         } else {
             return this.addComponent(type);
+        }
+    }
+
+    update(dt: number) {
+        this.curTime += (dt * 1000);
+        let duration = this.itemFrameDisplayTimes[this.curFrameIndex];
+        if (this.curTime >= duration) {
+            this.curFrameIndex++;
+            if (this.curFrameIndex >= this.itemFrames.length) this.curFrameIndex = 0;
+            this.curTime = 0;
+
+            this.sp.spriteFrame = this.itemFrames[this.curFrameIndex];
+        }
+    }
+
+    lateUpdate() {
+        if (!this.jumping) return;
+        if (this.terrainCollider.curYCollisionType != CollisionType.none && 
+            this.movableObj.getDir().yDir <= 0 && this.movableObj.yLastVelocity <= 0) {    
+                
+            // 反弹 
+            let yV = this.movableObj.yLastVelocity;
+            if (yV < -1) {
+                this.movableObj.yVelocity = this.movableObj.yLastVelocity * (-0.5);
+            } else {
+                this.movableObj.xVelocity = 0;
+                this.jumping = false;
+            }
+
+            // 斜面
+            if (this.terrainCollider.edgeType== CollisionType.slope) {
+                this.movableObj.xVelocity /= 2;
+            }
         }
     }
 
@@ -65,27 +102,12 @@ export default class ItemComp extends cc.Component {
 
         this.sp.spriteFrame = this.itemFrames[this.curFrameIndex];
         this.sp.sizeMode = cc.Sprite.SizeMode.RAW;
-
-        this.setEnabled(true);
     }
 
-    setEnabled(b: boolean) {
-        this.enabled = b;
-        this.movableObj.enabled = b;
-        this.terrainCollider.enabled = b;
-        this.objCollider.enabled = b;
-    }
-
-    update(dt: number) {
-        this.curTime += (dt * 1000);
-        let duration = this.itemFrameDisplayTimes[this.curFrameIndex];
-        if (this.curTime >= duration) {
-            this.curFrameIndex++;
-            if (this.curFrameIndex >= this.itemFrames.length) this.curFrameIndex = 0;
-            this.curTime = 0;
-
-            this.sp.spriteFrame = this.itemFrames[this.curFrameIndex];
-        }
+    move(x: number, y: number) {
+        this.movableObj.xVelocity = x;
+        this.movableObj.yVelocity = y;
+        this.jumping = true;
     }
 
     onCollision() {

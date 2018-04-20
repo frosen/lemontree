@@ -5,7 +5,7 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
-import {MovableObject, VelocityMax} from "./MovableObject";
+import {MovableObject} from "./MovableObject";
 import {TerrainCtrlr, CollisionType, SlopeAttris} from "./TerrainCtrlr"; 
 
 @ccclass
@@ -162,22 +162,14 @@ export default class TerrainCollider extends cc.Component {
             }
         }
 
-        if (this.curYCollisionType == CollisionType.slope || 
-            this.edgeType == CollisionType.slope ||
-            this.backEdgeType == CollisionType.slope) {
-            this.movableObj.yVelocity = -VelocityMax; // 超级重力为了让对象可以沿着斜坡行进
-        }
-
         //========================================================
 
-        // 计算是否出界 // X不可超出范围
+        // 计算是否出界
         if (xDir != 0) {
             let xCenter: number = this.node.x + size.width * (0.5 - anchor.x);
             if (xCenter < 0) {
-                this.node.x -= xCenter; 
                 this.xOutRangeDir = -1;
             } else if (this.terrainCtrlr.terrainSize.width < xCenter) {
-                this.node.x -= xCenter - this.terrainCtrlr.terrainSize.width;
                 this.xOutRangeDir = 1;
             } else {
                 this.xOutRangeDir = 0;
