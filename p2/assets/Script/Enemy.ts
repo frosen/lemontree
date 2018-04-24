@@ -84,6 +84,10 @@ export default class Enemy extends cc.Component {
         this.attri.hp -= dmg;
         atk.excuteHitCallback(this.node);
 
+        // 显示受伤数字
+        let pos: cc.Vec2 = this.getCenterPos();
+        this.figureDisplay.showFigure(pos, dmg, crit, atk.magicAttack);
+
         if (this.attri.hp <= 0) { 
             this.dead();
             return;
@@ -92,10 +96,6 @@ export default class Enemy extends cc.Component {
         // 显示受伤，所有ui变红
         this.showHurtColor();
         this.scheduleOnce(this.recoveryHurtColor.bind(this), 0.1);
-
-        // 显示受伤数字
-        let pos: cc.Vec2 = this.getCenterPos();
-        this.figureDisplay.showFigure(pos, dmg, crit, atk.magicAttack);
 
         // 用于子类
         this.onHurtCallback(dmg, crit);

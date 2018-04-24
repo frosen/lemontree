@@ -143,13 +143,14 @@ export default class Hero extends cc.Component {
         }
     }
 
-    // 区分是exp还是efc，exp直接获取，efc显示获取按钮
     onCollisionWithItem(itemComp: ItemComp) {
+        itemComp.onCollision();
+
         let item: Item = itemComp.itemCore;
         if (item instanceof ItemExp) {
             this.onCollisionWithItemExp(item as ItemExp);
 
-        } else if (item instanceof ItemEfc) {
+        } else { // 不是exp就是efc
             this.onCollisionWithItemEfc(item as ItemEfc);
         }
     }

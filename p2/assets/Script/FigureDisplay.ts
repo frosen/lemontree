@@ -1,3 +1,5 @@
+import MyNodePool from "./MyNodePool";
+
 // FigureDisplay.ts
 // 数字展示器，把数字和相关内容显示到当前节点的相应位置
 // 可以展示伤害数字和闪躲标识
@@ -12,20 +14,17 @@ export default class FigureDisplay extends cc.Component {
     @property(cc.Prefab)
     labelPrefab: cc.Prefab = null;
 
-    pool: cc.NodePool = null;
+    pool: MyNodePool = null;
 
     onLoad() {        
-        this.pool = new cc.NodePool();
-        let initCount: number = 20;
-        for (let i = 0; i < initCount; ++i) {
-            let labelNode = cc.instantiate(this.labelPrefab); // 创建节点
-            this.pool.put(labelNode); // 通过 putInPool 接口放入对象池
-        }
+        this.pool = new MyNodePool((): cc.Node => {
+            return cc.instantiate(this.labelPrefab);
+        }, 20, "FigureDisplay", this.node);
     }
 
     showFigure(pos: cc.Vec2, figure: number, crit: boolean, magic: boolean) {
         // 获取或者生成label
-        let labelNode: cc.Node = this._getLabelNode();
+        let labelNode: cc.Node = this.pool.get();
 
         // 配置属性
         labelNode.position = pos;
@@ -43,7 +42,7 @@ export default class FigureDisplay extends cc.Component {
     }
 
     showEvade(pos: cc.Vec2) {
-        let labelNode: cc.Node = this._getLabelNode();
+        let labelNode: cc.Node = this.pool.get();
 
         labelNode.position = pos;
         this._resetLabel(
@@ -52,18 +51,6 @@ export default class FigureDisplay extends cc.Component {
             "Evade"
         )
         this._doAction(labelNode);
-    }
-
-    _getLabelNode(): cc.Node {
-        let labelNode: cc.Node;
-        if (this.pool.size() > 0) {
-            labelNode = this.pool.get();
-        } else {
-            labelNode = cc.instantiate(this.labelPrefab);
-            this.pool.put(labelNode);
-        }
-        labelNode.parent = this.node;
-        return labelNode;
     }
 
     _resetLabel(labelNode: cc.Node, color: cc.Color, str: string) {
@@ -81,7 +68,7 @@ export default class FigureDisplay extends cc.Component {
             cc.delayTime(0.4),
             cc.fadeOut(0.1),
             cc.callFunc(() => {
-                this.pool.put(labelNode);
+                this.pool.reclaim(labelNode);
             })
         ))
     }

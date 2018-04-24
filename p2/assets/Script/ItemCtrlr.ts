@@ -4,12 +4,14 @@
 
 const {ccclass, property,} = cc._decorator;
 
-import { MovableObject } from "./MovableObject";
+import {MovableObject} from "./MovableObject";
+import MyNodePool from "./MyNodePool";
 
 import ItemComp from "./ItemComp";
 import Item from "./Item";
 
-import { ItemExp1 } from "./ItemExp";
+import {ItemExp1} from "./ItemExp";
+
 
 class ItemInfo {
     item: Item = null;
@@ -28,17 +30,18 @@ class ItemInfo {
 @ccclass
 export default class ItemCtrlr extends cc.Component {
 
-    pool: cc.NodePool = null;
+    pool: MyNodePool = null;
 
     itemInfos: {[key: string]: ItemInfo;} = {};
 
     onLoad() {
         // 生成节点池
-        this.pool = new cc.NodePool();
-        let initCount: number = 20;
-        for (let i = 0; i < initCount; ++i) {
-             this._createNewItemNode();
-        }
+        this.pool = new MyNodePool((): cc.Node => {
+            let node = new cc.Node();
+            let itemComp = node.addComponent(ItemComp);
+            itemComp.itemCtrlr = this;
+            return node;
+        }, 20, "item", this.node);
 
         // 加载所有的道具
         this._pushItemIntoInfo(ItemExp1);
@@ -51,14 +54,6 @@ export default class ItemCtrlr extends cc.Component {
             }
             this._onGotFrames(frames)
         });
-    }
-
-    _createNewItemNode(): {node: cc.Node, itemComp: ItemComp} {
-        let node = new cc.Node();
-        let itemComp = node.addComponent(ItemComp);
-        itemComp.itemCtrlr = this;
-        this.pool.put(node);
-        return {node, itemComp};
     }
 
     _pushItemIntoInfo(itemType: {new()}) {
@@ -87,21 +82,13 @@ export default class ItemCtrlr extends cc.Component {
     }
 
     _beginItemNode(itemName: string, pos: cc.Vec2, moveX: number, moveY: number) {
-        let node: cc.Node;
-        let itemComp: ItemComp;
-        if (this.pool.size() > 0) {
-            node = this.pool.get();
-            itemComp = node.getComponent(ItemComp);
-        } else {
-            let {node, itemComp} = this._createNewItemNode();
-        }
-
-        node.parent = this.node;
-        node.position = pos;
+        let node: cc.Node = this.pool.get();
+        let itemComp: ItemComp = node.getComponent(ItemComp);     
 
         let {item, frames, times} = this.itemInfos[itemName];
         itemComp.setData(item, frames, times);
 
+        node.position = pos;
         itemComp.move(moveX, moveY);
     }
 
@@ -126,6 +113,6 @@ export default class ItemCtrlr extends cc.Component {
 
     removeItem(itemComp: ItemComp) {
         let node: cc.Node = itemComp.node;
-        this.pool.put(node);
+        this.pool.reclaim(node);
     }
 }

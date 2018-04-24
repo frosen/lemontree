@@ -111,6 +111,22 @@ export default class ItemComp extends cc.Component {
     }
 
     onCollision() {
-        
+        // 此时的item不能再被碰到
+        this.movableObj.enabled = false;
+        this.terrainCollider.enabled = false;
+        this.objCollider.enabled = false;
+
+        // 动效
+        this.node.runAction(cc.sequence(
+            cc.moveBy(0.3, 0, 100).easing(cc.easeSineOut()),
+            cc.delayTime(0.5),
+            cc.callFunc(() => {
+                this.movableObj.enabled = true;
+                this.terrainCollider.enabled = true;
+                this.objCollider.enabled = true;
+
+                this.itemCtrlr.removeItem(this);
+            })
+        ))
     }
 }
