@@ -37,7 +37,7 @@ export default class TerrainCollider extends cc.Component {
         this.terrainCtrlr = cc.director.getScene().getComponentInChildren(TerrainCtrlr);
     }
 
-    update(dt: number) {
+    update(_: number) {
         let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置  
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
         let size = this.node.getContentSize();

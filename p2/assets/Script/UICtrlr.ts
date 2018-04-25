@@ -1,0 +1,34 @@
+// UICtrlr.ts
+// 监听Hero的相关属性，控制整个UI界面的显示
+// lly 2018.4.12
+
+const {ccclass, property} = cc._decorator;
+
+import Hero from "./Hero";
+import AttriForHero from "./AttriForHero";
+
+@ccclass
+export default class UICtrlr extends cc.Component {
+
+    /** 英雄 */
+    @property(Hero)
+    hero: Hero = null;
+
+    attri: AttriForHero = null;
+
+    /** exp 显示 */
+    @property(cc.Label)
+    expLbl: cc.Label = null;
+    expNum: number = 0;
+
+    onLoad() {
+        this.attri = this.hero.attri;
+    }
+
+    update(_: number) {
+        if (this.expNum != this.attri.exp) {
+            this.expNum = this.attri.exp;
+            this.expLbl.string = this.expNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+        }       
+    }
+}

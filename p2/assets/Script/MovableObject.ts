@@ -31,7 +31,7 @@ export class MovableObject extends cc.Component {
     xVelocityEnabled: boolean = true;
     yVelocityEnabled: boolean = true;
 
-    update(dt: number) {
+    update(_: number) {
         this.xLastPos = this.node.x;
         this.yLastPos = this.node.y;
         this.xLastVelocity = this.xVelocity;

@@ -4,6 +4,7 @@
 // lly 2017.12.12
 
 const {ccclass, property} = cc._decorator;
+const sch = cc.director.getScheduler();
 
 import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
@@ -70,8 +71,9 @@ export default class Hero extends cc.Component {
     }
 
     update(dt: number) {
-        this.sm.machineUpdate(dt);
-        this.smInvc.machineUpdate(dt);
+        let realDt = dt * sch.getTimeScale();
+        this.sm.machineUpdate(realDt);
+        this.smInvc.machineUpdate(realDt);
     }
 
     lateUpdate() {
@@ -156,7 +158,8 @@ export default class Hero extends cc.Component {
     }
 
     onCollisionWithItemExp(item: ItemExp) {
-        
+        let exp = item.getExp();
+        this.attri.exp += exp;
     }
 
     onCollisionWithItemEfc(item: ItemEfc) {

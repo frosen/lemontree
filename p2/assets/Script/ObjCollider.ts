@@ -42,7 +42,7 @@ export class ObjCollider extends cc.Component {
     // 这里的update主要用于在编辑器中显示其碰撞范围
     _debugDrawer: _ccsg.GraphicsNode = null;
     _debugColor: cc.Color = cc.Color.WHITE;
-    update(dt: number) {
+    update(_: number) {
         if (CC_EDITOR || this.showingInRunning) {
             if (!this._debugDrawer) {
                 this._debugDrawer = new _ccsg.GraphicsNode();

@@ -28,7 +28,7 @@ export default class BTNodeGroup extends BTNode {
     }
 
     excute(): BTResult {
-        cc.error("need inhert");
+        cc.error("need inherit");
         return BTResult.suc;
     }
 

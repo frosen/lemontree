@@ -30,7 +30,7 @@ export class BTNode extends cc.Component {
      * @return BTResult
      */
     excute(): BTResult {
-        cc.error("need inhert");
+        cc.error("need inherit");
         return BTResult.suc;
     }
 
@@ -41,13 +41,13 @@ export class BTNode extends cc.Component {
 
     }
 
-    update(dt: number) {
+    update(_: number) {
         if (!CC_EDITOR) return;
         this.node.name = this.typeString + ": " + this.getBTName();
     }
 
     getBTName(): string {
-        cc.error("need inhert");
+        cc.error("need inherit");
         return "";
     }
 

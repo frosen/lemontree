@@ -56,7 +56,7 @@ export default class ObjCollisionCtrlr extends cc.Component {
         }
     }
 
-    update(dt: number) {
+    update(_: number) {
         this.createCollsionData();
         this.checkByTictics();
         this.excuteCollisionCallback();

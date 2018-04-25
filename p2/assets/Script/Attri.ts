@@ -30,4 +30,7 @@ export default class Attri extends cc.Component {
     xSpeed: number = 0;
     /** y方向速度 */
     ySpeed: number = 0;
+
+    /** 经验值 */
+    exp: number = 0;
 }

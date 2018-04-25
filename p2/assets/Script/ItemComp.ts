@@ -3,6 +3,7 @@
 // lly 2018.4.12
 
 const {ccclass, property} = cc._decorator;
+const sch = cc.director.getScheduler();
 
 import Item from "./Item";
 import ItemCtrlr from "./ItemCtrlr";
@@ -60,7 +61,7 @@ export default class ItemComp extends cc.Component {
     }
 
     update(dt: number) {
-        this.curTime += (dt * 1000);
+        this.curTime += dt * sch.getTimeScale() * 1000;
         let duration = this.itemFrameDisplayTimes[this.curFrameIndex];
         if (this.curTime >= duration) {
             this.curFrameIndex++;
