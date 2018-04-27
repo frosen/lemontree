@@ -1,4 +1,4 @@
-// HeroCtrlr.ts
+// HeroOperator.ts
 // 英雄控制器：
 // 下半部分：左右滑动移动，上滑动跳起，下滑动下跳，快速左右滑动为冲刺
 // 上半部分：滑动移动视野
@@ -13,7 +13,7 @@ const DisForMove: number = 20;
 const MinMoveBegin: number = 30;
 
 @ccclass
-export default class HeroCtrlr extends cc.Component {
+export default class HeroOperator extends cc.Component {
 
     /** 所控制的英雄 */
     @property(Hero)

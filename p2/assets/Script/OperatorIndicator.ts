@@ -1,16 +1,16 @@
-// CtrlIndicator.ts
+// OperatorIndicator.ts
 // 控制指示：显示控制器的位置标识和状态
 // lly 2017.12.12
 
 const {ccclass, property} = cc._decorator;
-import HeroCtrlr from "./HeroCtrlr";
+import HeroOperator from "./HeroOperator";
 
 @ccclass
-export default class CtrlIndicator extends cc.Component {
+export default class OperatorIndicator extends cc.Component {
 
     /** 英雄控制器 */
-    @property(HeroCtrlr)
-    ctrlr: HeroCtrlr = null;
+    @property(HeroOperator)
+    operator: HeroOperator = null;
 
     /** 标记精灵 */
     sp: cc.Sprite = null;
@@ -22,7 +22,7 @@ export default class CtrlIndicator extends cc.Component {
     }
 
     update(_: number) {
-        let beginPos = this.ctrlr.moveBeginPos;
+        let beginPos = this.operator.moveBeginPos;
 
         if (!beginPos) {
             this.sp.enabled = false;

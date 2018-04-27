@@ -10,10 +10,12 @@ import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
-import {HeroUI, UIDirLvType} from "./HeroUI";
+import {HeroLooks, HeroDirLv} from "./HeroLooks";
 
 import AttriForHero from "./AttriForHero";
 import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
+
+import UICtrlr from "./UICtrlr";
 
 import Attack from "./Attack";
 import Enemy from "./Enemy";
@@ -22,6 +24,7 @@ import ItemComp from "./ItemComp";
 import Item from "./Item";
 import {ItemExp} from "./ItemExp";
 import ItemEfc from "./ItemEfc";
+
 
 @ccclass
 export default class Hero extends cc.Component {
@@ -36,7 +39,7 @@ export default class Hero extends cc.Component {
     watchCollider: ObjColliderForWatch = null;
 
     /** 英雄UI */
-    ui: HeroUI = null;
+    looks: HeroLooks = null;
     /** 攻击范围 */
     attack: Attack = null;
 
@@ -47,23 +50,27 @@ export default class Hero extends cc.Component {
     /** 英雄无敌状态机 */
     smInvc: SMForHeroInvcMgr = null;
 
+    ui: UICtrlr = null;
+
     /** x轴移动方向 */
     xMoveDir: number = 0;
 
     onLoad() {
-        requireComponents(this, [MovableObject, TerrainCollider, ObjCollider, ObjColliderForWatch, HeroUI]);
+        requireComponents(this, [MovableObject, TerrainCollider, ObjCollider, ObjColliderForWatch, HeroLooks]);
 
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCollider = this.getComponent(TerrainCollider);
         this.objCollider = this.getComponent(ObjCollider);
         this.watchCollider = this.getComponent(ObjColliderForWatch);
 
-        this.ui = this.getComponent(HeroUI);
+        this.looks = this.getComponent(HeroLooks);
         this.attack = this.getComponentInChildren(Attack);
 
         this.attri = this.getComponent(AttriForHero);
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
-        this.smInvc = new SMForHeroInvcMgr(this);      
+        this.smInvc = new SMForHeroInvcMgr(this);    
+        
+        this.ui = cc.find("canvas/ui").getComponent(UICtrlr);
         
         // 回调
         this.objCollider.callback = this.onCollision.bind(this);
@@ -163,7 +170,7 @@ export default class Hero extends cc.Component {
     }
 
     onCollisionWithItemEfc(item: ItemEfc) {
-
+        
     }
 
     /**
@@ -196,7 +203,7 @@ export default class Hero extends cc.Component {
         let havingDataBefore: boolean = (this.watchedCollisionData != null);
 
         // 以移动方向的目标作为主目标
-        let curDir: number = this.ui.xUIDirs[UIDirLvType.move];
+        let curDir: number = this.looks.xUIDirs[HeroDirLv.move];
         let enmeyDir: number;
         this.watchedCollisionData = null;
         for (const data of collisionDatas) {
@@ -208,9 +215,9 @@ export default class Hero extends cc.Component {
         }
 
         if (this.watchedCollisionData) {
-            this.ui.attack(enmeyDir);
+            this.looks.attack(enmeyDir);
         } else if (havingDataBefore) {
-            this.ui.endAttack();
+            this.looks.endAttack();
         }       
     }
 
@@ -250,8 +257,8 @@ export default class Hero extends cc.Component {
      * 进入、退出不可攻击状态
      */
     setNoAtkStateEnabled(b: boolean) {
-        if (b) this.ui.endAttack();
+        if (b) this.looks.endAttack();
         this.noAtkState = b;
-        this.ui.endAttackAtOnce();
+        this.looks.endAttackAtOnce();
     }
 }

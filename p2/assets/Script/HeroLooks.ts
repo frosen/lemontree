@@ -1,4 +1,4 @@
-// HeroUI.ts
+// HeroLooks.ts
 // 表现hero动作UI的类
 // lly 2018.1.7
 
@@ -7,14 +7,14 @@ const {ccclass, property} = cc._decorator;
 import Hero from "./Hero";
 
 /** 控制UI方向的三个指标 */
-export enum UIDirLvType {
+export enum HeroDirLv {
     move = 0,
     attack = 1,
     hurt = 2, //hurt方向指向hurt来源方向
 }
 
 @ccclass
-export class HeroUI extends cc.Component {
+export class HeroLooks extends cc.Component {
 
     @property(cc.Sprite)
     body: cc.Sprite = null;
@@ -33,9 +33,9 @@ export class HeroUI extends cc.Component {
     onLoad() {
         this.hero = this.getComponent(Hero);
 
-        this.xUIDirs[UIDirLvType.move] = 1;
-        this.xUIDirs[UIDirLvType.attack] = 0;
-        this.xUIDirs[UIDirLvType.hurt] = 0;
+        this.xUIDirs[HeroDirLv.move] = 1;
+        this.xUIDirs[HeroDirLv.attack] = 0;
+        this.xUIDirs[HeroDirLv.hurt] = 0;
 
         this.atkAnim = this.getComponent(cc.Animation);
 
@@ -49,8 +49,8 @@ export class HeroUI extends cc.Component {
      * @param dir: 1向右 -1向左 0停止
      * @param lv: 指标
      */
-    setXUIDir(dir: number, lv: UIDirLvType) {
-        if (dir == 0 && lv == UIDirLvType.move) return; // 移动方向没有0，停止时以上次移动方向为当前方向
+    setXUIDir(dir: number, lv: HeroDirLv) {
+        if (dir == 0 && lv == HeroDirLv.move) return; // 移动方向没有0，停止时以上次移动方向为当前方向
 
         // 攻击方向调整要等一次攻击结束 llytodo
 
@@ -68,12 +68,12 @@ export class HeroUI extends cc.Component {
      * @return dir: 1向右 -1向左 0停止
      */
     get xUIDir(): number {
-        let hurtDir = this.xUIDirs[UIDirLvType.hurt];
+        let hurtDir = this.xUIDirs[HeroDirLv.hurt];
         if (hurtDir != 0) return hurtDir;
         
-        let attackDir = this.xUIDirs[UIDirLvType.attack];
+        let attackDir = this.xUIDirs[HeroDirLv.attack];
         if (attackDir != 0) return attackDir;
-        else return this.xUIDirs[UIDirLvType.move];
+        else return this.xUIDirs[HeroDirLv.move];
     }
     
     stand() {
@@ -155,7 +155,7 @@ export class HeroUI extends cc.Component {
             this.attacking = true;           
             this.atkAnim.play();
             this.goingToEndAtk = false;
-            this.setXUIDir(dir, UIDirLvType.attack);
+            this.setXUIDir(dir, HeroDirLv.attack);
         }
 
         this.goingToTurnDir = dir;
@@ -167,7 +167,7 @@ export class HeroUI extends cc.Component {
 
     endAttackAtOnce() {
         this.goingToEndAtk = false;
-        this.setXUIDir(0, UIDirLvType.attack);
+        this.setXUIDir(0, HeroDirLv.attack);
         this.atkAnim.stop();
         this.recoveryNoAtkUI();               
         this.attacking = false;
@@ -184,7 +184,7 @@ export class HeroUI extends cc.Component {
             if (this.goingToEndAtk) {
                 this.endAttackAtOnce();
             } else {
-                this.setXUIDir(this.goingToTurnDir, UIDirLvType.attack);
+                this.setXUIDir(this.goingToTurnDir, HeroDirLv.attack);
                 this.hero.doAttackLogic();
             } 
         }   

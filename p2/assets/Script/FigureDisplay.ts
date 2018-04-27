@@ -37,8 +37,6 @@ export default class FigureDisplay extends cc.Component {
         // 执行动画       
         this._doAction(labelNode);
         if (crit) this._doCritAction(labelNode);  
-        
-        cc.log(">>", "show figure");
     }
 
     showEvade(pos: cc.Vec2) {

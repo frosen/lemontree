@@ -16,6 +16,11 @@ export default class UICtrlr extends cc.Component {
 
     attri: AttriForHero = null;
 
+    /** hp 显示 */
+    @property(cc.Label)
+    hpLbl: cc.Label = null;
+    hpNum: number = 0;
+
     /** exp 显示 */
     @property(cc.Label)
     expLbl: cc.Label = null;
@@ -26,6 +31,11 @@ export default class UICtrlr extends cc.Component {
     }
 
     update(_: number) {
+        if (this.hpNum != this.attri.hp) {
+            this.hpNum = this.attri.hp;           
+            this.hpLbl.string = Math.floor(this.hpNum).toString();
+        } 
+
         if (this.expNum != this.attri.exp) {
             this.expNum = this.attri.exp;
             this.expLbl.string = this.expNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');

@@ -36,7 +36,7 @@ export default class CameraCtrlr extends cc.Component {
         this.yMax = mapSize.height - viewSize.height * rate;
     }
 
-    update() {
+    update(_: number) {
         let targetPos = this.target.parent.convertToWorldSpaceAR(this.target.position);
         let cameraPos = this.node.parent.convertToNodeSpaceAR(targetPos);
 

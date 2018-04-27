@@ -6,7 +6,7 @@
 import Hero from "./Hero";
 
 import {CollisionType} from "./TerrainCtrlr";
-import {UIDirLvType} from "./HeroUI";
+import {HeroDirLv} from "./HeroLooks";
 import Attack from "./Attack";
 import FigureDisplay from "./FigureDisplay";
 import {SMMgr, SM} from "./SMBase";
@@ -47,7 +47,7 @@ class SMForHero extends SM<Hero> {
 
 class SMForHeroInStand extends SMForHero {
     begin(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.stand();
+        mgr.smObj.looks.stand();
         mgr.smObj.attri.fillJumpAndDashCount();
         mgr.smObj.movableObj.xVelocity = 0;
     }
@@ -65,7 +65,7 @@ class SMForHeroInStand extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.endStand();
+        mgr.smObj.looks.endStand();
     }
 }
 
@@ -87,7 +87,7 @@ class SMForHeroInJumpAccelerating extends SMForHero {
     }
 
     begin(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.jumpUp();
+        mgr.smObj.looks.jumpUp();
         mgr.smObj.attri.jumpCount -= 1;
         this.time = 0;
     }
@@ -97,7 +97,7 @@ class SMForHeroInJumpAccelerating extends SMForHero {
 
         let hero = mgr.smObj;
         hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed;
-        hero.ui.setXUIDir(hero.xMoveDir, UIDirLvType.move);
+        hero.looks.setXUIDir(hero.xMoveDir, HeroDirLv.move);
         hero.movableObj.yVelocity = hero.attri.ySpeed;
     }
 
@@ -114,16 +114,16 @@ class SMForHeroInJumpAccelerating extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.endJumpUp();
+        mgr.smObj.looks.endJumpUp();
     }
 }
 
 class SMForHeroInJump extends SMForHero {
     begin(mgr: SMForHeroMgr) {
         if (mgr.smObj.movableObj.getDir().yDir >= 0) {
-            mgr.smObj.ui.jumpUp();
+            mgr.smObj.looks.jumpUp();
         } else {
-            mgr.smObj.ui.jumpDown();
+            mgr.smObj.looks.jumpDown();
         }       
     }
 
@@ -131,13 +131,13 @@ class SMForHeroInJump extends SMForHero {
         let hero = mgr.smObj;
 
         if (hero.movableObj.getDir().yDir >= 0) {
-            hero.ui.jumpUp();
+            hero.looks.jumpUp();
         } else {
-            hero.ui.jumpDown();
+            hero.looks.jumpDown();
         } 
    
         hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed;
-        hero.ui.setXUIDir(hero.xMoveDir, UIDirLvType.move);
+        hero.looks.setXUIDir(hero.xMoveDir, HeroDirLv.move);
     }
 
     check(mgr: SMForHeroMgr) {
@@ -157,20 +157,20 @@ class SMForHeroInJump extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.endJumpDown();
+        mgr.smObj.looks.endJumpDown();
     }
 }
 
 class SMForHeroInMove extends SMForHero {
     begin(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.move();   
+        mgr.smObj.looks.move();   
         mgr.smObj.attri.fillJumpAndDashCount();   
     }
 
     update(dt: number, mgr: SMForHeroMgr) {
         let hero = mgr.smObj;  
         hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed;
-        hero.ui.setXUIDir(hero.xMoveDir, UIDirLvType.move);
+        hero.looks.setXUIDir(hero.xMoveDir, HeroDirLv.move);
     }
 
     check(mgr: SMForHeroMgr) {
@@ -185,7 +185,7 @@ class SMForHeroInMove extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.endMove();
+        mgr.smObj.looks.endMove();
     }
 }
 
@@ -211,18 +211,18 @@ class SMForHeroInDash extends SMForHero {
     }
 
     begin(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.dash();
+        mgr.smObj.looks.dash();
         mgr.smObj.attri.dashCount -= 1;
         this.time = 0;   
 
         // 在开始时就确定方向，之后不可改变
-        this.dashDir = mgr.smObj.ui.xUIDirs[UIDirLvType.move];
+        this.dashDir = mgr.smObj.looks.xUIDirs[HeroDirLv.move];
 
         // 进入不可攻击敌人的状态
         mgr.smObj.setNoAtkStateEnabled(true);
 
         // 重置方向
-        mgr.smObj.ui.setXUIDir(this.dashDir, UIDirLvType.move);
+        mgr.smObj.looks.setXUIDir(this.dashDir, HeroDirLv.move);
 
         // 暂停y轴的速度
         mgr.smObj.movableObj.yVelocityEnabled = false;
@@ -249,7 +249,7 @@ class SMForHeroInDash extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.endDash();
+        mgr.smObj.looks.endDash();
 
         // 退出不可攻击敌人的状态
         mgr.smObj.setNoAtkStateEnabled(false);
@@ -309,9 +309,9 @@ class SMForHeroInHurt extends SMForHero {
 
         let hurtXDir = hero.getHurtDir();
 
-        hero.ui.hurt(); 
+        hero.looks.hurt(); 
         hero.setNoAtkStateEnabled(true); // 进入不可攻击敌人的状态
-        hero.ui.setXUIDir(hurtXDir, UIDirLvType.hurt);
+        hero.looks.setXUIDir(hurtXDir, HeroDirLv.hurt);
         
         this.hurtMoveDir = hurtXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
         hero.movableObj.yVelocity = hurtYSpeed;
@@ -344,8 +344,8 @@ class SMForHeroInHurt extends SMForHero {
     }
 
     end(mgr: SMForHeroMgr) {
-        mgr.smObj.ui.endHurt();
-        mgr.smObj.ui.setXUIDir(0, UIDirLvType.hurt);
+        mgr.smObj.looks.endHurt();
+        mgr.smObj.looks.setXUIDir(0, HeroDirLv.hurt);
 
         // 退出不可攻击敌人的状态
         mgr.smObj.setNoAtkStateEnabled(false);
@@ -402,7 +402,7 @@ export class SMForHeroInvcMgr {
         this.time = 0;
         this.totalTime = time;
 
-        this.hero.ui.setInvincibleEnabled(true);
+        this.hero.looks.setInvincibleEnabled(true);
     }
 
     /**
@@ -418,7 +418,7 @@ export class SMForHeroInvcMgr {
 
     end() {
         this.state = InvcState.off;
-        this.hero.ui.setInvincibleEnabled(false);
+        this.hero.looks.setInvincibleEnabled(false);
     }
 }
 

@@ -3,14 +3,14 @@
 // lly 2017.12.30
 
 const {ccclass, property, executeInEditMode} = cc._decorator;
-import HeroCtrlr from "./HeroCtrlr";
+import HeroOperator from "./HeroOperator";
 
 @ccclass
 @executeInEditMode
 export default class ShowCtrlArea extends cc.Component {
 
-    @property(HeroCtrlr)
-    ctrl: HeroCtrlr = null;
+    @property(HeroOperator)
+    operator: HeroOperator = null;
 
     @property(cc.Node)
     moveArea: cc.Node = null;
@@ -28,15 +28,15 @@ export default class ShowCtrlArea extends cc.Component {
         let size = cc.find("canvas").getContentSize();
 
         this.moveArea.setPosition(0, 0);
-        this.moveArea.setContentSize(size.width * this.ctrl.moveWRate, size.height * this.ctrl.moveHRate);
+        this.moveArea.setContentSize(size.width * this.operator.moveWRate, size.height * this.operator.moveHRate);
 
-        this.watchArea.setPosition(0, size.height * this.ctrl.moveHRate);
-        this.watchArea.setContentSize(size.width * this.ctrl.moveWRate, size.height * (1 - this.ctrl.moveHRate));
+        this.watchArea.setPosition(0, size.height * this.operator.moveHRate);
+        this.watchArea.setContentSize(size.width * this.operator.moveWRate, size.height * (1 - this.operator.moveHRate));
 
         this.jumpArea.setPosition(size.width, 0);
-        this.jumpArea.setContentSize(size.width * (1 - this.ctrl.jumpXRate), size.height * this.ctrl.jumpHRate);
+        this.jumpArea.setContentSize(size.width * (1 - this.operator.jumpXRate), size.height * this.operator.jumpHRate);
 
-        this.dashArea.setPosition(size.width, size.height * this.ctrl.jumpHRate);
-        this.dashArea.setContentSize(size.width * (1 - this.ctrl.jumpXRate), size.height * (1 - this.ctrl.jumpHRate));
+        this.dashArea.setPosition(size.width, size.height * this.operator.jumpHRate);
+        this.dashArea.setContentSize(size.width * (1 - this.operator.jumpXRate), size.height * (1 - this.operator.jumpHRate));
     }
 }
