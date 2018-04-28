@@ -10,7 +10,7 @@ import BTNodeWithFunc from "./BTNodeWithFunc";
 import BTBase from "./BTBase";
 
 @ccclass
-export default class BTNodeCdtion<FUNC_TYPE> extends BTNodeWithFunc<FUNC_TYPE> {
+export default abstract class BTNodeCdtion<FUNC_TYPE> extends BTNodeWithFunc<FUNC_TYPE> {
 
     typeString: string = "IF";
 
@@ -24,14 +24,7 @@ export default class BTNodeCdtion<FUNC_TYPE> extends BTNodeWithFunc<FUNC_TYPE> {
             " is " + this.getExcuteResStr();           
     }
 
-    createExcuteFunc(node: cc.Node, funcStr: string) {
-        cc.error("need inherit");
-    }
-
-    doExcuteFunc(): boolean {
-        cc.error("need inherit");
-        return false;
-    }
+    abstract doExcuteFunc(): boolean;
 
     getExcuteResStr(): string {
         return "";

@@ -4,11 +4,8 @@
 
 import Item from "./Item";
 
-export class ItemExp extends Item {
-    getExp(): number {
-        cc.error("need inherit");
-        return 0;
-    }
+export abstract class ItemExp extends Item {
+    abstract getExp(): number;
 }
 
 export class ItemExp1 extends ItemExp {

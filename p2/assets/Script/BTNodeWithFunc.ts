@@ -5,12 +5,10 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
-import BTNodeActionUntil from "./BTNodeActionUntil";
-import BTNodeActionEnd from "./BTNodeActionEnd";
 import BTBase from "./BTBase";
 
 @ccclass
-export default class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
+export default abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
 
     /** 执行节点 用于在编辑器中设置excuteFunc，func可以有返回值 */
     @property(cc.Node) excuteNode: cc.Node = null;

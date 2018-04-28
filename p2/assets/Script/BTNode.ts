@@ -20,7 +20,7 @@ export enum BTResult {
 @ccclass
 @executeInEditMode
 @disallowMultiple
-export class BTNode extends cc.Component {
+export abstract class BTNode extends cc.Component {
 
     /** 类型名称，用于在层级管理器中显示 */
     typeString: string = "";
@@ -29,10 +29,7 @@ export class BTNode extends cc.Component {
      * 执行并获取每个节点的执行结果
      * @return BTResult
      */
-    excute(): BTResult {
-        cc.error("need inherit");
-        return BTResult.suc;
-    }
+    abstract excute(): BTResult;
 
     /**
      * 执行每个节点的行动（只有running时有行动）
@@ -46,10 +43,7 @@ export class BTNode extends cc.Component {
         this.node.name = this.typeString + ": " + this.getBTName();
     }
 
-    getBTName(): string {
-        cc.error("need inherit");
-        return "";
-    }
+    abstract getBTName(): string;
 
     isRunning(): boolean {
         return false;

@@ -20,6 +20,11 @@ export default class BTNodeActionEnd extends BTNode {
         myAssert(this.node.parent.getComponent(BTNodeAction), "BTNodeActionEnd need action parent");
     }
 
+    excute(): BTResult {
+        cc.error("never use");
+        return BTResult.running;
+    }
+
     getBTName(): string {
         return "";
     }

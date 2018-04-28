@@ -4,6 +4,6 @@
 
 import Item from "./Item";
 
-export default class ItemEfc extends Item {
+export default abstract class ItemEfc extends Item {
 
 }

@@ -8,7 +8,7 @@ const {ccclass, property} = cc._decorator;
 import {BTNode, BTResult} from "./BTNode";
 
 @ccclass
-export default class BTNodeGroup extends BTNode {
+export default abstract class BTNodeGroup extends BTNode {
 
     typeString: string = "Composite";
 
@@ -25,11 +25,6 @@ export default class BTNodeGroup extends BTNode {
             let comp = child.getComponent(BTNode);
             this.btNodes.push(comp);
         }
-    }
-
-    excute(): BTResult {
-        cc.error("need inherit");
-        return BTResult.suc;
     }
 
     getBTName(): string {
