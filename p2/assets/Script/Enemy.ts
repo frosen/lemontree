@@ -9,7 +9,7 @@ import Attack from "./Attack";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 
-import Hero from "./Hero";
+import {Hero} from "./Hero";
 import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
 import ItemCtrlr from "./ItemCtrlr";

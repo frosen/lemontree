@@ -4,6 +4,14 @@
 
 import Item from "./Item";
 
-export default abstract class ItemEfc extends Item {
+export abstract class ItemEfc extends Item {
 
+}
+
+export class ItemHealthPot extends ItemEfc {
+    getFrameInfos(): {frameName: string, time: number}[] {
+        return [
+            {frameName: "ItemHealthPot_1", time: 1000},
+        ];
+    }
 }

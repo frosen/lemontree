@@ -4,7 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import Hero from "./Hero";
+import {Hero} from "./Hero";
 
 /** 控制UI方向的三个指标 */
 export enum HeroDirLv {

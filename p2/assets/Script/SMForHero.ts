@@ -3,7 +3,7 @@
 // 
 // lly 2018.1.5
 
-import Hero from "./Hero";
+import {Hero} from "./Hero";
 
 import {CollisionType} from "./TerrainCtrlr";
 import {HeroDirLv} from "./HeroLooks";

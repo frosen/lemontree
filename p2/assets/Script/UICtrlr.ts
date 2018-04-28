@@ -4,7 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import Hero from "./Hero";
+import {Hero, HeroUsingType} from "./Hero";
 import AttriForHero from "./AttriForHero";
 
 @ccclass
@@ -40,5 +40,9 @@ export default class UICtrlr extends cc.Component {
             this.expNum = this.attri.exp;
             this.expLbl.string = this.expNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
         }       
+    }
+
+    showUsingButton(t: HeroUsingType, b: boolean) {
+        
     }
 }

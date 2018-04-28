@@ -8,6 +8,7 @@ const sch = cc.director.getScheduler();
 
 import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
+import {CollisionType} from "./TerrainCtrlr";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 import {HeroLooks, HeroDirLv} from "./HeroLooks";
@@ -23,11 +24,16 @@ import Enemy from "./Enemy";
 import ItemComp from "./ItemComp";
 import Item from "./Item";
 import {ItemExp} from "./ItemExp";
-import ItemEfc from "./ItemEfc";
+import {ItemEfc} from "./ItemEfc";
 
+export enum HeroUsingType {
+    pickUp,
+    trigger,
+    jumpDown,
+}
 
 @ccclass
-export default class Hero extends cc.Component {
+export class Hero extends cc.Component {
 
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
@@ -85,6 +91,9 @@ export default class Hero extends cc.Component {
 
     lateUpdate() {
         this.sm.machineCheck();
+
+        // 如果处于platform上，显示下跳按钮
+        this.ui.showUsingButton(HeroUsingType.jumpDown, this.terrainCollider.curYCollisionType == CollisionType.platform);
     }
 
     // 动作 被控制器调用 -------------------------------------------------
@@ -130,6 +139,8 @@ export default class Hero extends cc.Component {
     /** 当前碰撞到的有伤害的对象 */
     hurtCollisionData: CollisionData = null;
 
+    efcItems: ItemEfc[] = [];
+
     /**
      * 碰撞回调函数
      * @param collisionDatas: 当前帧碰撞到的对象的碰撞数据
@@ -137,6 +148,8 @@ export default class Hero extends cc.Component {
     onCollision(collisionDatas: CollisionData[]) {
 
         this.hurtCollisionData = null;
+        this.efcItems = [];
+        
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
 
@@ -146,31 +159,19 @@ export default class Hero extends cc.Component {
             }
 
             let itemComp = data.cldr.getComponent(ItemComp); // 道具碰撞
-            if (itemComp) {
-                this.onCollisionWithItem(itemComp);
+            let item: Item = itemComp.itemCore;
+            if (item instanceof ItemExp) {
+                let exp = (<ItemExp>item).getExp();
+                this.attri.exp += exp;
+                itemComp.onCollision();
+
+            } else { // 不是exp就是efc
+                this.efcItems.push(<ItemEfc>item);
             }
         }
-    }
 
-    onCollisionWithItem(itemComp: ItemComp) {
-        itemComp.onCollision();
-
-        let item: Item = itemComp.itemCore;
-        if (item instanceof ItemExp) {
-            this.onCollisionWithItemExp(item as ItemExp);
-
-        } else { // 不是exp就是efc
-            this.onCollisionWithItemEfc(item as ItemEfc);
-        }
-    }
-
-    onCollisionWithItemExp(item: ItemExp) {
-        let exp = item.getExp();
-        this.attri.exp += exp;
-    }
-
-    onCollisionWithItemEfc(item: ItemEfc) {
-        
+        // 触碰到了道具，则显示按钮
+        this.ui.showUsingButton(HeroUsingType.pickUp, this.efcItems.length > 0);
     }
 
     /**

@@ -11,7 +11,7 @@ import ItemComp from "./ItemComp";
 import Item from "./Item";
 
 import {ItemExp1} from "./ItemExp";
-
+import {ItemHealthPot} from "./ItemEfc";
 
 class ItemInfo {
     item: Item = null;
@@ -45,6 +45,8 @@ export default class ItemCtrlr extends cc.Component {
 
         // 加载所有的道具
         this._pushItemIntoInfo(ItemExp1);
+
+        this._pushItemIntoInfo(ItemHealthPot);
 
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir("items", cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
@@ -96,7 +98,7 @@ export default class ItemCtrlr extends cc.Component {
 
     createItem(pos: cc.Vec2) {
         // 计算有几个道具，分别是什么
-        let itemNames = ["ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1"];
+        let itemNames = ["ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1", "ItemHealthPot"];
 
         // 开始节点
         let xNum = 0;

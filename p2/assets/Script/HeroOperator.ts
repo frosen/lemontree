@@ -7,7 +7,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import Hero from "./Hero";
+import {Hero} from "./Hero";
 
 const DisForMove: number = 20;
 const MinMoveBegin: number = 30;
