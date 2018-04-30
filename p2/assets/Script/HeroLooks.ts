@@ -147,12 +147,14 @@ export class HeroLooks extends cc.Component {
 
     /** 攻击状态中 */
     attacking: boolean = false;
+    atkTimes: number = 0; // 挥动次数
     goingToEndAtk: boolean = false;
     goingToTurnDir: number = 0;
 
     attack(dir: number) {       
         if (!this.attacking) {
-            this.attacking = true;           
+            this.attacking = true;
+            this.atkTimes = 0;        
             this.atkAnim.play();
             this.goingToEndAtk = false;
             this.setXUIDir(dir, HeroDirLv.attack);
@@ -181,8 +183,9 @@ export class HeroLooks extends cc.Component {
         if (t == 0) {
             this.hero.stopAttackLogic();
         } else {
+            this.atkTimes++;
             if (this.goingToEndAtk) {
-                this.endAttackAtOnce();
+                if (this.atkTimes > 1) this.endAttackAtOnce(); // 第一次挥动不会停止
             } else {
                 this.setXUIDir(this.goingToTurnDir, HeroDirLv.attack);
                 this.hero.doAttackLogic();

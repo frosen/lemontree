@@ -26,6 +26,13 @@ export default class UICtrlr extends cc.Component {
     expLbl: cc.Label = null;
     expNum: number = 0;
 
+    /** 下方按钮 */
+    @property(cc.Button) pickUpBtn: cc.Button = null;
+    @property(cc.Button) triggerBtn: cc.Button = null;
+    @property(cc.Button) jumpDownBtn: cc.Button = null;
+
+    curUsingType: HeroUsingType = null;
+
     onLoad() {
         this.attri = this.hero.attri;
     }
@@ -42,7 +49,34 @@ export default class UICtrlr extends cc.Component {
         }       
     }
 
-    showUsingButton(t: HeroUsingType, b: boolean) {
-        
+    showUsingButton(t: HeroUsingType) {
+        if (this.curUsingType == t) return;
+
+        if (this.curUsingType != null) {
+            let curBtn = this._getUsingBtnByType(this.curUsingType);
+            curBtn.node.runAction(cc.moveTo(0.2, 0, 0).easing(cc.easeCubicActionIn()));
+        }
+
+        this.curUsingType = t;
+
+        if (this.curUsingType != null) {
+            let nextBtn = this._getUsingBtnByType(this.curUsingType);
+            nextBtn.node.runAction(cc.moveTo(0.2, 0, 60).easing(cc.easeCubicActionOut()));
+        }
+    }
+
+    _getUsingBtnByType(t: HeroUsingType): cc.Button {
+        switch (t) {
+            case HeroUsingType.pickUp: return this.pickUpBtn;
+            case HeroUsingType.trigger: return this.triggerBtn;
+            case HeroUsingType.jumpDown: return this.jumpDownBtn;
+        }
+        return null;
+    }
+
+    // 按钮回调
+
+    use() {
+        this.hero.use();
     }
 }

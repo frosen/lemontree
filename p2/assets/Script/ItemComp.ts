@@ -95,6 +95,7 @@ export default class ItemComp extends cc.Component {
 
     setData(core: Item, frames: cc.SpriteFrame[], displayTimes: number[]) {
         this.itemCore = core;
+        core.comp = this;
         this.itemFrames = frames;
         this.itemFrameDisplayTimes = displayTimes;
 
@@ -112,6 +113,7 @@ export default class ItemComp extends cc.Component {
     }
 
     onCollision() {
+        cc.log(">>", "on collision");
         // 此时的item不能再被碰到
         this.movableObj.enabled = false;
         this.terrainCollider.enabled = false;

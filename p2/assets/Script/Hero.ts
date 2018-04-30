@@ -93,7 +93,7 @@ export class Hero extends cc.Component {
         this.sm.machineCheck();
 
         // 如果处于platform上，显示下跳按钮
-        this.ui.showUsingButton(HeroUsingType.jumpDown, this.terrainCollider.curYCollisionType == CollisionType.platform);
+        this.setUsingType(HeroUsingType.jumpDown, this.terrainCollider.curYCollisionType == CollisionType.platform);
     }
 
     // 动作 被控制器调用 -------------------------------------------------
@@ -127,11 +127,52 @@ export class Hero extends cc.Component {
         }
     }
 
+    /** 当前点击使用按钮会触发的类型 */
+    curUsingTypeStates: [boolean, boolean, boolean] = [false, false, false];
+    curUsingType: HeroUsingType = null;
+
     /**
-     * 使用（拾起药水>进入门>下跳）
+     * 使用（捡起道具 > 触发机关（进入门之类的） > 下跳）
      */
     use() {
+        switch (this.curUsingType) {
+            case HeroUsingType.pickUp: this.pickUp(); break;
+            case HeroUsingType.trigger: this.trigger(); break;
+            case HeroUsingType.jumpDown: this.jumpDown(); break;
+        }
+    }
+
+    pickUp() {
+        cc.log(">>", "pick up");
+        let item: ItemEfc = this.efcItems[0];
+
+        let comp = item.comp;
+
+        comp.onCollision();
+    }
+
+    trigger() {
+
+    }
+
+    jumpDown() {
         this.node.y -= 2;
+    }
+
+    setUsingType(t: HeroUsingType, b: boolean) {
+        this.curUsingTypeStates[t] = b;
+        
+        if (this.curUsingTypeStates[HeroUsingType.pickUp]) {
+            this.curUsingType = HeroUsingType.pickUp;
+        } else if (this.curUsingTypeStates[HeroUsingType.trigger]) {
+            this.curUsingType = HeroUsingType.trigger;
+        } else if (this.curUsingTypeStates[HeroUsingType.jumpDown]) {
+            this.curUsingType = HeroUsingType.jumpDown;
+        } else {
+            this.curUsingType = null;
+        }
+
+        this.ui.showUsingButton(this.curUsingType);
     }
 
     // 碰撞相关 ------------------------------------------------------------
@@ -171,7 +212,7 @@ export class Hero extends cc.Component {
         }
 
         // 触碰到了道具，则显示按钮
-        this.ui.showUsingButton(HeroUsingType.pickUp, this.efcItems.length > 0);
+        this.setUsingType(HeroUsingType.pickUp, this.efcItems.length > 0);
     }
 
     /**
