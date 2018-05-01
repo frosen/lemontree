@@ -5,7 +5,5 @@
 import ItemComp from "./ItemComp";
 
 export default abstract class Item {
-    comp: ItemComp = null;
-
     abstract getFrameInfos(): {frameName: string, time: number}[];
 }

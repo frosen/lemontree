@@ -143,11 +143,7 @@ export class Hero extends cc.Component {
     }
 
     pickUp() {
-        cc.log(">>", "pick up");
-        let item: ItemEfc = this.efcItems[0];
-
-        let comp = item.comp;
-
+        let comp: ItemComp = this.efcItemComps[0];
         comp.onCollision();
     }
 
@@ -180,7 +176,7 @@ export class Hero extends cc.Component {
     /** 当前碰撞到的有伤害的对象 */
     hurtCollisionData: CollisionData = null;
 
-    efcItems: ItemEfc[] = [];
+    efcItemComps: ItemComp[] = [];
 
     /**
      * 碰撞回调函数
@@ -189,7 +185,7 @@ export class Hero extends cc.Component {
     onCollision(collisionDatas: CollisionData[]) {
 
         this.hurtCollisionData = null;
-        this.efcItems = [];
+        this.efcItemComps = [];
         
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
@@ -207,12 +203,12 @@ export class Hero extends cc.Component {
                 itemComp.onCollision();
 
             } else { // 不是exp就是efc
-                this.efcItems.push(<ItemEfc>item);
+                this.efcItemComps.push(itemComp);
             }
         }
 
         // 触碰到了道具，则显示按钮
-        this.setUsingType(HeroUsingType.pickUp, this.efcItems.length > 0);
+        this.setUsingType(HeroUsingType.pickUp, this.efcItemComps.length > 0);
     }
 
     /**
