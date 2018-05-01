@@ -120,16 +120,18 @@ export class ObjCollider extends cc.Component {
     /**
      * 碰撞回调
      * @param 其他碰撞对象
+     * 之所以要this.enabled是因为有可能在前面的碰撞结果中将其关闭
      */ 
     onCollisionBy(collisionData: CollisionData) {
-        this.collisionDatas.push(collisionData);
+        if (this.enabled) this.collisionDatas.push(collisionData);
     }
 
     /**
      * 执行碰撞后的回调
+     * 之所以要this.enabled是因为有可能在前面的碰撞结果中将其关闭
      */ 
     excuteCallback() {
-        if (this.callback) this.callback(this.collisionDatas);
+        if (this.callback && this.enabled) this.callback(this.collisionDatas);
     }
 
     /**

@@ -12,7 +12,10 @@ import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import {CollisionType} from "./TerrainCtrlr";
 import {ObjCollider, CollisionData} from "./ObjCollider";
+import ObjColliderForWatch from "./ObjColliderForWatch";
 import Gravity from "./Gravity";
+
+import {Hero} from "./Hero";
 
 @ccclass
 export default class ItemComp extends cc.Component {
@@ -28,6 +31,8 @@ export default class ItemComp extends cc.Component {
     terrainCollider: TerrainCollider = null;
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;
+    /** 观察者组件 */
+    watchCollider: ObjColliderForWatch = null;
 
     /** 道具的纹理 */
     @property([cc.SpriteFrame])
@@ -43,12 +48,23 @@ export default class ItemComp extends cc.Component {
 
     jumping: boolean = false;
 
+    /** 是否进行观察（自动收集） */
+    watching: boolean = false;
+    /** 飞向的目标节点 */
+    aim: cc.Node = null;
+    /** 飞行速度 */
+    flySpeed: number = 1;
+
     onLoad() {
         this.sp = this._createComp(cc.Sprite);
         this.movableObj = this._createComp(MovableObject);
         this.terrainCollider = this._createComp(TerrainCollider);
         this.objCollider = this._createComp(ObjCollider);
+        this.watchCollider = this._createComp(ObjColliderForWatch);
         this._createComp(Gravity);
+
+        this.watchCollider.size = cc.size(270, 270);
+        this.watchCollider.callback = this.onWatching.bind(this);
     }
 
     _createComp<T extends cc.Component>(type: {new(): T}): T {
@@ -73,6 +89,11 @@ export default class ItemComp extends cc.Component {
     }
 
     lateUpdate() {
+        if (this.aim) {
+            this._flyToAim();
+            return;
+        }
+
         if (!this.jumping) return;
         if (this.terrainCollider.curYCollisionType != CollisionType.none && 
             this.movableObj.getDir().yDir <= 0 && this.movableObj.yLastVelocity <= 0) {    
@@ -93,6 +114,19 @@ export default class ItemComp extends cc.Component {
         }
     }
 
+    _flyToAim() {
+        let x = this.aim.x - this.node.x;
+        let y = this.aim.y - this.node.y;
+        let l = Math.sqrt(x * x + y * y);
+        let lr = this.flySpeed * 0.5;
+        this.flySpeed++;
+        let rate = lr / l;
+        let xr = x * rate;
+        let yr = y * rate;
+        this.node.x += xr;
+        this.node.y += yr;
+    }
+
     setData(core: Item, frames: cc.SpriteFrame[], displayTimes: number[]) {
         this.itemCore = core;
         this.itemFrames = frames;
@@ -105,13 +139,32 @@ export default class ItemComp extends cc.Component {
         this.sp.sizeMode = cc.Sprite.SizeMode.RAW;
 
         let oSize = this.sp.spriteFrame.getOriginalSize();
-        this.terrainCollider.size = cc.size(oSize.width - 4, oSize.height);
+        this.terrainCollider.size = cc.size(oSize.width - 4, oSize.height); // 碰撞的两边稍微往里，为的是在斜面上不会看起来浮空
     }
 
     move(x: number, y: number) {
         this.movableObj.xVelocity = x;
         this.movableObj.yVelocity = y;
         this.jumping = true;
+
+        this.movableObj.enabled = true;
+        this.terrainCollider.enabled = true;
+
+        this.objCollider.enabled = false;
+        this.watchCollider.enabled = false;
+
+        this.node.stopAllActions();
+        this.node.runAction(cc.sequence(
+            cc.delayTime(0.5),
+            cc.callFunc(() => {
+                this.objCollider.enabled = true;
+
+                // 检测是否需要观察
+                if (this.watching) {
+                    this.watchCollider.enabled = true;
+                }
+            })
+        ));
     }
 
     onCollision() {
@@ -119,18 +172,33 @@ export default class ItemComp extends cc.Component {
         this.movableObj.enabled = false;
         this.terrainCollider.enabled = false;
         this.objCollider.enabled = false;
+        this.watchCollider.enabled = false;
+        this.aim = null;
 
         // 动效
+        this.node.stopAllActions();
         this.node.runAction(cc.sequence(
             cc.moveBy(0.3, 0, 100).easing(cc.easeSineOut()),
             cc.delayTime(0.5),
             cc.callFunc(() => {
-                this.movableObj.enabled = true;
-                this.terrainCollider.enabled = true;
-                this.objCollider.enabled = true;
-
                 this.itemCtrlr.removeItem(this);
             })
         ))
+    }
+
+    // 开启自动收集后，只要观察到hero，会直接飞向hero，不会停止
+    onWatching(collisionDatas: CollisionData[]) {
+        if (this.aim == null) {
+            for (const collisionData of collisionDatas) {
+                let cldr = collisionData.cldr;
+                if (cldr.constructor == ObjColliderForWatch) continue;
+                let hero = cldr.getComponent(Hero);
+                if (hero) {
+                    this.aim = cldr.node;
+                    this.flySpeed = 1;
+                    this.terrainCollider.enabled = false;
+                }   
+            }            
+        }    
     }
 }
