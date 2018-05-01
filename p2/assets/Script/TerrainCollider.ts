@@ -30,6 +30,9 @@ export default class TerrainCollider extends cc.Component {
     /** y轴方向是否出界 */
     yOutRangeDir: number = 0;
 
+    /** 碰撞范围 为空的话则使用node的size*/
+    size: cc.Size = null;
+
     onLoad() {
         requireComponents(this, [MovableObject]);
 
@@ -40,7 +43,7 @@ export default class TerrainCollider extends cc.Component {
     update(_: number) {
         let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置  
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
-        let size = this.node.getContentSize();
+        let size = this.size || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
 
         //========================================================
@@ -142,6 +145,8 @@ export default class TerrainCollider extends cc.Component {
                 if (yOffset >= -0.01) {
                     this.node.y += yOffset;
                     this.curYCollisionType = CollisionType.slope;
+                    if (xDir <= 0) this.edgeType = CollisionType.slope;
+                    else this.backEdgeType = CollisionType.slope;
                 } else {
                     this.curYCollisionType = CollisionType.none;
                     this.edgeType = null;
@@ -154,6 +159,8 @@ export default class TerrainCollider extends cc.Component {
                     if (yOffset > -0.01) {
                         this.node.y += yOffset;
                         this.curYCollisionType = CollisionType.slope;
+                        if (xDir >= 0) this.edgeType = CollisionType.slope;
+                        else this.backEdgeType = CollisionType.slope;
                     } else {
                         this.curYCollisionType = CollisionType.none;
                         this.edgeType = null;

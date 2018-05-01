@@ -103,6 +103,9 @@ export default class ItemComp extends cc.Component {
 
         this.sp.spriteFrame = this.itemFrames[this.curFrameIndex];
         this.sp.sizeMode = cc.Sprite.SizeMode.RAW;
+
+        let oSize = this.sp.spriteFrame.getOriginalSize();
+        this.terrainCollider.size = cc.size(oSize.width - 4, oSize.height);
     }
 
     move(x: number, y: number) {
