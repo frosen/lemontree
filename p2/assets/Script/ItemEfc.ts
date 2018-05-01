@@ -3,9 +3,14 @@
 // lly 2018.4.12
 
 import Item from "./Item";
+import ItemCtrlr from "./ItemCtrlr";
 
 export abstract class ItemEfc extends Item {
+    abstract doEffect();
 
+    getCtrlr(): ItemCtrlr {
+        return cc.find("main/item_layer").getComponent(ItemCtrlr);
+    }
 }
 
 export class ItemHealthPot extends ItemEfc {
@@ -13,5 +18,10 @@ export class ItemHealthPot extends ItemEfc {
         return [
             {frameName: "ItemHealthPot_1", time: 1000},
         ];
+    }
+
+    doEffect() {
+        let attri = this.getCtrlr().hero.attri;
+        attri.hp += attri.hpMax * 0.1;
     }
 }

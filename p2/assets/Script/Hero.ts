@@ -145,6 +145,8 @@ export class Hero extends cc.Component {
     pickUp() {
         let comp: ItemComp = this.efcItemComps[0];
         comp.onCollision();
+        let itemEfc: ItemEfc = <ItemEfc>(comp.itemCore);
+        itemEfc.doEffect();
     }
 
     trigger() {
@@ -196,14 +198,16 @@ export class Hero extends cc.Component {
             }
 
             let itemComp = data.cldr.getComponent(ItemComp); // 道具碰撞
-            let item: Item = itemComp.itemCore;
-            if (item instanceof ItemExp) {
-                let exp = (<ItemExp>item).getExp();
-                this.attri.exp += exp;
-                itemComp.onCollision();
+            if (itemComp) {
+                let item: Item = itemComp.itemCore;
+                if (item instanceof ItemExp) {
+                    let exp = (<ItemExp>item).getExp();
+                    this.attri.exp += exp;
+                    itemComp.onCollision();
 
-            } else { // 不是exp就是efc
-                this.efcItemComps.push(itemComp);
+                } else { // 不是exp就是efc
+                    this.efcItemComps.push(itemComp);
+                }
             }
         }
 

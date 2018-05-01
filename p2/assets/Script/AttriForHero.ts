@@ -11,6 +11,25 @@ const JumpVelocity: number = 4.5;
 @ccclass
 export default class AttriForHero extends Attri {
 
+    _hp: number = 0;
+    set hp(value: number) {
+        this._hp = Math.max(Math.min(value, this.hpMax), 0);
+    }
+    get hp(): number {
+        return this._hp;
+    }
+
+    _hpMax: number = 0;
+    set hpMax(value: number) {
+        this._hpMax = value;
+        this.hp = value;
+    }
+    get hpMax(): number {
+        return this._hpMax;
+    }
+
+    // 额外属性 ========================================================
+
     /** 闪躲率 */
     evade: number = 0;
 
@@ -28,7 +47,6 @@ export default class AttriForHero extends Attri {
     invcTimeForHurt: number = 0.5;
 
     onLoad() {
-        this.hp = 1000;
         this.hpMax = 100;
         this.xSpeed = 3;
         this.ySpeed = JumpVelocity;

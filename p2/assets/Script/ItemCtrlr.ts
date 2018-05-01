@@ -2,8 +2,9 @@
 // 道具控制器，负责持有和生成道具：
 // lly 2018.4.12
 
-const {ccclass, property,} = cc._decorator;
+const {ccclass, property} = cc._decorator;
 
+import {Hero} from "./Hero";
 import {MovableObject} from "./MovableObject";
 import MyNodePool from "./MyNodePool";
 
@@ -29,6 +30,12 @@ class ItemInfo {
 
 @ccclass
 export default class ItemCtrlr extends cc.Component {
+
+    @property(Hero)
+    hero: Hero = null;
+
+    @property([cc.Node])
+    showingItems: cc.Node[] = [];
 
     pool: MyNodePool = null;
 
@@ -80,6 +87,15 @@ export default class ItemCtrlr extends cc.Component {
             }
 
             myAssert(itemInfo.frames.length == itemInfo.times.length, "maybe wrong item name in png");
+        }
+
+        // 如果有需要直接安置的item，在此生成
+        for (const itemNode of this.showingItems) {
+            let itemComp = itemNode.addComponent(ItemComp);
+            itemComp.itemCtrlr = this;
+
+            let {item, frames, times} = this.itemInfos[itemNode.name];
+            itemComp.setData(item, frames, times);
         }
     }
 

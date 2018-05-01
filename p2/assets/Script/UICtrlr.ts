@@ -54,6 +54,7 @@ export default class UICtrlr extends cc.Component {
 
         if (this.curUsingType != null) {
             let curBtn = this._getUsingBtnByType(this.curUsingType);
+            curBtn.node.stopAllActions();
             curBtn.node.runAction(cc.moveTo(0.2, 0, 0).easing(cc.easeCubicActionIn()));
         }
 
@@ -61,6 +62,7 @@ export default class UICtrlr extends cc.Component {
 
         if (this.curUsingType != null) {
             let nextBtn = this._getUsingBtnByType(this.curUsingType);
+            nextBtn.node.stopAllActions();
             nextBtn.node.runAction(cc.moveTo(0.2, 0, 60).easing(cc.easeCubicActionOut()));
         }
     }
