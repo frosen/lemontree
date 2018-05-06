@@ -1,5 +1,5 @@
-// Item.ts
-// 道具：
+// ItemComp.ts
+// 道具组件，因为item为道具核心，所以组件叫做道具组件：
 // lly 2018.4.12
 
 const {ccclass, property} = cc._decorator;
@@ -45,9 +45,8 @@ export default class ItemComp extends cc.Component {
     curFrameIndex: number = 0;
     /** 当前时间，毫秒 */
     curTime: number = 0;
-
+    /** 是否在跳跃（触地反弹）中 */
     jumping: boolean = false;
-
     /** 是否进行观察（自动收集） */
     watching: boolean = false;
     /** 飞向的目标节点 */
