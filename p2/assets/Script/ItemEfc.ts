@@ -3,14 +3,9 @@
 // lly 2018.4.12
 
 import Item from "./Item";
-import {Hero} from "./Hero"
 
 export abstract class ItemEfc extends Item {
     abstract doEffect();
-
-    static getHero(): Hero {
-        return cc.find("main/hero_layer/hero").getComponent(Hero);
-    }
 }
 
 export class ItemHealthPot extends ItemEfc {
@@ -21,7 +16,7 @@ export class ItemHealthPot extends ItemEfc {
     }
 
     doEffect() {
-        let attri = ItemEfc.getHero().attri;
+        let attri = cc.find("main/hero_layer/hero").getComponent("Hero").attri;
         attri.hp += attri.hpMax * 0.1;
     }
 }

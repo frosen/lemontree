@@ -15,8 +15,6 @@ import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 import Gravity from "./Gravity";
 
-import {Hero} from "./Hero";
-
 @ccclass
 export default class ItemComp extends cc.Component {
 
@@ -191,7 +189,7 @@ export default class ItemComp extends cc.Component {
             for (const collisionData of collisionDatas) {
                 let cldr = collisionData.cldr;
                 if (cldr.constructor == ObjColliderForWatch) continue;
-                let hero = cldr.getComponent(Hero);
+                let hero = cldr.getComponent("Hero");
                 if (hero) {
                     this.aim = cldr.node;
                     this.flySpeed = 1;

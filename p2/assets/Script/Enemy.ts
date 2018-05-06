@@ -75,7 +75,7 @@ export default class Enemy extends Destroyee {
         for (const collisionData of collisionDatas) {
             let cldr = collisionData.cldr;
             if (cldr.constructor == ObjColliderForWatch) continue;
-            let hero = cldr.getComponent(Hero);
+            let hero = cldr.getComponent("Hero");
             if (hero) {
                 if (!this.aim) {
                     this.aim = hero;

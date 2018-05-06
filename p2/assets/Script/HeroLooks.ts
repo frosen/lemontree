@@ -31,7 +31,7 @@ export class HeroLooks extends cc.Component {
     atkAnim: cc.Animation = null;
 
     onLoad() {
-        this.hero = this.getComponent(Hero);
+        this.hero = this.getComponent("Hero");
 
         this.xUIDirs[HeroDirLv.move] = 1;
         this.xUIDirs[HeroDirLv.attack] = 0;
@@ -177,7 +177,7 @@ export class HeroLooks extends cc.Component {
 
     /**
      * 接收从动画过来的回调，每次攻击时调用
-     * @param type: 1为向下坎 2为向上坎 0为停止
+     * @param type: -1为向下坎 1为向上坎 0为停止
      */
     onUIAttack(t: number) {
         if (t == 0) {

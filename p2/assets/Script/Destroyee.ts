@@ -31,8 +31,7 @@ export default abstract class Destroyee extends cc.Component {
         this.objCollider.callback = this.onCollision.bind(this);
         if (CC_EDITOR) return;
 
-        // 应该是循环引用的问题，此处直接用类型会报错
-        this.itemCtrlr = cc.find("main/item_layer").getComponent("ItemCtrlr"); 
+        this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr); 
     }
 
     start() {
