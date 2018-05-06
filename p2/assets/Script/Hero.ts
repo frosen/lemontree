@@ -19,6 +19,7 @@ import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
 import UICtrlr from "./UICtrlr";
 
 import Attack from "./Attack";
+import Destroyee from "./Destroyee";
 import Enemy from "./Enemy";
 
 import ItemComp from "./ItemComp";
@@ -246,18 +247,31 @@ export class Hero extends cc.Component {
 
         // 以移动方向的目标作为主目标
         let curDir: number = this.looks.xUIDirs[HeroDirLv.move];
-        let enmeyDir: number;
+        let enemyDir: number = 0;
+        let potDir: number = 0;
         this.watchedCollisionData = null;
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
-            if (!data.cldr.getComponent(Enemy)) continue; // 如果观察到的是敌人，而不是子弹机关之类的
-            this.watchedCollisionData = data;
-            enmeyDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
-            if (enmeyDir == curDir) break;              
+
+            let destroyee = data.cldr.getComponent(Destroyee);
+            if (destroyee) {
+                this.watchedCollisionData = data;
+                
+                if (destroyee instanceof Enemy) {
+                    if (enemyDir != curDir) {
+                        enemyDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
+                    }
+                } else {
+                    if (potDir != curDir) {
+                        potDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
+                    }
+                }
+            }                                 
         }
 
         if (this.watchedCollisionData) {
-            this.looks.attack(enmeyDir);
+            let dir = enemyDir != 0 ? enemyDir : potDir;
+            this.looks.attack(dir);
         } else if (havingDataBefore) {
             this.looks.endAttack();
         }       

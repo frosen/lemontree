@@ -5,11 +5,11 @@
 const {ccclass, property, executeInEditMode} = cc._decorator;
 
 import {ObjCollider, CollisionData} from "./ObjCollider";
-import ItemCtrlr from "./ItemCtrlr";
 import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import Gravity from "./Gravity";
 import Attack from "./Attack";
+import ItemCtrlr from "./ItemCtrlr";
 
 /** 敌人对于一种伤害的无敌时间（毫秒） */
 const InvcTime: number = 1000;
@@ -21,17 +21,18 @@ export default abstract class Destroyee extends cc.Component {
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;
 
-    itemCtrlr: ItemCtrlr = null;
-
     /** 所有带有精灵的节点，用于显示受伤 */
     allSpNodes: cc.Node[] = [];
+
+    itemCtrlr: ItemCtrlr = null;
 
     onLoad() {
         this.objCollider = this._createComp(ObjCollider);
         this.objCollider.callback = this.onCollision.bind(this);
         if (CC_EDITOR) return;
 
-        this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
+        // 应该是循环引用的问题，此处直接用类型会报错
+        this.itemCtrlr = cc.find("main/item_layer").getComponent("ItemCtrlr"); 
     }
 
     start() {

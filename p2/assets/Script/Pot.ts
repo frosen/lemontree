@@ -27,9 +27,10 @@ export default class Pot extends Destroyee {
         this._createComp(MovableObject);
         this._createComp(TerrainCollider);
         this._createComp(Gravity);
+        this._createComp(cc.Sprite);
 
         if (CC_EDITOR) return;
-        
+
         this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3 
     }
 

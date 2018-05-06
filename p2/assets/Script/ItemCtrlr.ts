@@ -4,7 +4,6 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {Hero} from "./Hero";
 import {MovableObject} from "./MovableObject";
 import MyNodePool from "./MyNodePool";
 
@@ -30,9 +29,6 @@ class ItemInfo {
 
 @ccclass
 export default class ItemCtrlr extends cc.Component {
-
-    @property(Hero)
-    hero: Hero = null;
 
     @property([cc.Node])
     showingItems: cc.Node[] = [];

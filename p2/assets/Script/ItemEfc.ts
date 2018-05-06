@@ -3,13 +3,13 @@
 // lly 2018.4.12
 
 import Item from "./Item";
-import ItemCtrlr from "./ItemCtrlr";
+import {Hero} from "./Hero"
 
 export abstract class ItemEfc extends Item {
     abstract doEffect();
 
-    getCtrlr(): ItemCtrlr {
-        return cc.find("main/item_layer").getComponent(ItemCtrlr);
+    static getHero(): Hero {
+        return cc.find("main/hero_layer/hero").getComponent(Hero);
     }
 }
 
@@ -21,7 +21,7 @@ export class ItemHealthPot extends ItemEfc {
     }
 
     doEffect() {
-        let attri = this.getCtrlr().hero.attri;
+        let attri = ItemEfc.getHero().attri;
         attri.hp += attri.hpMax * 0.1;
     }
 }

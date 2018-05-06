@@ -15,14 +15,11 @@ import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
 import ItemCtrlr from "./ItemCtrlr";
 
-
 @ccclass
 export default class Enemy extends Destroyee {
 
     /** 属性 */
     attri: AttriForEnemy = null;
-    /** 对象碰撞组件 */
-    objCollider: ObjCollider = null;
     /** 观察区碰撞组件 */
     watchCollider: ObjColliderForWatch = null;
 
