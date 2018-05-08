@@ -5,21 +5,21 @@
 const {ccclass, property, executeInEditMode} = cc._decorator;
 
 import Destroyee from "./Destroyee";
-import {ObjCollider, CollisionData} from "./ObjCollider";
-import ItemCtrlr from "./ItemCtrlr";
+import PotFragmentCtrlr from "./PotFragmentCtrlr";
+
 import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import Gravity from "./Gravity";
-import Attack from "./Attack";
 
-/** 敌人对于一种伤害的无敌时间（毫秒） */
-const InvcTime: number = 1000;
+import Attack from "./Attack";
 
 @ccclass
 @executeInEditMode
 export default class Pot extends Destroyee {
 
     hp: number = 0;
+
+    ctrlr: PotFragmentCtrlr = null;
 
     onLoad() {
         super.onLoad();
@@ -30,6 +30,8 @@ export default class Pot extends Destroyee {
         this._createComp(cc.Sprite);
 
         if (CC_EDITOR) return;
+
+        this.ctrlr = cc.find("main/fragment_layer").getComponent(PotFragmentCtrlr);
 
         this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3 
     }
@@ -47,7 +49,7 @@ export default class Pot extends Destroyee {
     }
 
     _dead(pos: cc.Vec2) {
-        
+        this.ctrlr.showFragments(pos, cc.Color.RED, cc.Color.WHITE);
     }
 }
 
