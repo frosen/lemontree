@@ -3,7 +3,6 @@
 // lly 2018.4.12
 
 const {ccclass, property} = cc._decorator;
-const sch = cc.director.getScheduler();
 
 import Item from "./Item";
 import ItemCtrlr from "./ItemCtrlr";
@@ -74,7 +73,7 @@ export default class ItemComp extends cc.Component {
     }
 
     update(dt: number) {
-        this.curTime += dt * sch.getTimeScale() * 1000;
+        this.curTime += dt * 1000;
         let duration = this.itemFrameDisplayTimes[this.curFrameIndex];
         if (this.curTime >= duration) {
             this.curFrameIndex++;
@@ -136,7 +135,7 @@ export default class ItemComp extends cc.Component {
         this.sp.sizeMode = cc.Sprite.SizeMode.RAW;
 
         let oSize = this.sp.spriteFrame.getOriginalSize();
-        this.terrainCollider.size = cc.size(oSize.width - 4, oSize.height); // 碰撞的两边稍微往里，为的是在斜面上不会看起来浮空
+        this.terrainCollider.size = cc.size(oSize.width - 2, oSize.height); // 碰撞的两边稍微往里，为的是在斜面上不会看起来浮空
     }
 
     move(x: number, y: number) {

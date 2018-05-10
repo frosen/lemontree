@@ -6,7 +6,6 @@
 // lly 2018.2.5
 
 const {ccclass, property, executionOrder} = cc._decorator;
-const sch = cc.director.getScheduler();
 
 import {BTNode, BTResult} from "./BTNode";
 
@@ -32,9 +31,7 @@ export default class BTBase extends cc.Component {
     }
 
     update(dt: number) {
-        this.node.emit("BTUpdate", {
-            dt: dt * sch.getTimeScale()
-        });
+        this.node.emit("BTUpdate", {dt: dt});
 
         // 遍历子节点执行其行为
         for (const btNode of this.btNodes) {

@@ -13,8 +13,8 @@ const fragDirs: number[][] = [
     [0, -1], [-0.7, -0.7], [-1, 0], [-0.7, 0.7],
     [0, 1], [1, 0], [-1, 0], [0, -1]
 ];
-const speedRate: number = 1;
-const initYSpeed: number = 0.2;
+const speedRate: number = 3;
+const initYSpeed: number = 1;
 
 @ccclass
 export default class PotFragmentCtrlr extends cc.Component {
@@ -40,11 +40,14 @@ export default class PotFragmentCtrlr extends cc.Component {
      */
     showFragments(pos: cc.Vec2, color1: cc.Color, color2: cc.Color) {
         let fragCount = Math.floor(Math.random() * 4) + 8;
-
+        
         let flip: number = 1;
         for (let index = 0; index < fragCount; index++) {
             let typeNum = Math.random();
-            let type = typeNum < 0.4 ? 0 : (typeNum < 0.75 ? 1 : 2);
+            let type = 
+                typeNum < 0.15 ? 0 : 
+                (typeNum < 0.5 ? 1 :
+                (typeNum < 0.8 ? 2 : 3));
 
             let colorNum = Math.random();
             let color = colorNum < 0.75 ? color1 : color2;
@@ -53,7 +56,8 @@ export default class PotFragmentCtrlr extends cc.Component {
             let x = (dirInfo[0] + Math.random()) * speedRate;
             let y = (dirInfo[1] + Math.random()) * speedRate + initYSpeed;
 
-            let r = (3600 + index * 300) * flip;
+            let r = index * 30;
+            let rt = (2400 + index * 100) * flip;
             flip *= -1;
 
             // 生成
@@ -68,8 +72,10 @@ export default class PotFragmentCtrlr extends cc.Component {
             mobj.xVelocity = x;
             mobj.yVelocity = y;
 
+            node.rotation = r;
+
             node.runAction(cc.sequence(
-                cc.rotateBy(4, r),
+                cc.rotateBy(4, rt),
                 cc.callFunc(() => {
                     this.pool.reclaim(node);
                 })

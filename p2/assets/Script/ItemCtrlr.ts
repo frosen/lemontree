@@ -57,7 +57,7 @@ export default class ItemCtrlr extends cc.Component {
                 cc.log(`Wrong in load res dir: ${error.message}`);
                 return;
             }
-            this._onGotFrames(frames)
+            this._onGotFrames(frames);
         });
     }
 

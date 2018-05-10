@@ -21,19 +21,35 @@ export default class Pot extends Destroyee {
 
     ctrlr: PotFragmentCtrlr = null;
 
+    terrainCollider: TerrainCollider = null;
+    sp: cc.Sprite = null;
+
+    /** 爆炸时碎片的颜色 */
+    c1: cc.Color = null;
+    /** 爆炸时碎片的颜色 副颜色 */
+    c2: cc.Color = null;
+
     onLoad() {
         super.onLoad();
 
         this._createComp(MovableObject);
-        this._createComp(TerrainCollider);
+        this.terrainCollider = this._createComp(TerrainCollider);
         this._createComp(Gravity);
-        this._createComp(cc.Sprite);
+        this.sp = this._createComp(cc.Sprite);
 
         if (CC_EDITOR) return;
 
         this.ctrlr = cc.find("main/fragment_layer").getComponent(PotFragmentCtrlr);
 
         this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3 
+    }
+
+    setData(f: cc.SpriteFrame, c1: cc.Color, c2: cc.Color, w: number) {
+        this.sp.spriteFrame = f;
+        this.c1 = c1;
+        this.c2 = c2;
+        let oSize = this.sp.spriteFrame.getOriginalSize();
+        this.terrainCollider.size = cc.size(w, oSize.height); 
     }
 
     // 碰撞回调 ------------------------------------------------------------
@@ -49,7 +65,7 @@ export default class Pot extends Destroyee {
     }
 
     _dead(pos: cc.Vec2) {
-        this.ctrlr.showFragments(pos, cc.Color.RED, cc.Color.WHITE);
+        this.ctrlr.showFragments(pos, this.c1, this.c2);
     }
 }
 

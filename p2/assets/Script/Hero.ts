@@ -4,7 +4,6 @@
 // lly 2017.12.12
 
 const {ccclass, property} = cc._decorator;
-const sch = cc.director.getScheduler();
 
 import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
@@ -85,9 +84,8 @@ export class Hero extends cc.Component {
     }
 
     update(dt: number) {
-        let realDt = dt * sch.getTimeScale();
-        this.sm.machineUpdate(realDt);
-        this.smInvc.machineUpdate(realDt);
+        this.sm.machineUpdate(dt);
+        this.smInvc.machineUpdate(dt);
     }
 
     lateUpdate() {
