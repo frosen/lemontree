@@ -3,6 +3,7 @@
 // lly 2018.4.12
 
 import Item from "./Item";
+import AttriForHero from "./AttriForHero";
 
 export abstract class ItemEfc extends Item {
     abstract doEffect();
@@ -16,7 +17,7 @@ export class ItemHealthPot extends ItemEfc {
     }
 
     doEffect() {
-        let attri = cc.find("main/hero_layer/hero").getComponent("Hero").attri;
-        attri.hp += attri.hpMax * 0.1;
+        let attri: AttriForHero = cc.find("main/hero_layer/hero").getComponent("Hero").attri;
+        attri.setHp(attri.getHp() + attri.getHpMax() * 0.1);
     }
 }

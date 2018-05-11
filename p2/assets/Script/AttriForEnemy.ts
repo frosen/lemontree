@@ -3,19 +3,17 @@
 // lly 2017.4.4
 
 const {ccclass, property} = cc._decorator;
-import Attri from "./Attri";
+import {Attri} from "./Attri";
 
 @ccclass
 export default class AttriForEnemy extends Attri {
 
     onLoad() {
-        this.hp = 50;
-        this.hpMax = 100;
-
-        this.critRate = 0.02;
-        this.critDmgRate = 1.5;
-
-        this.atkDmg = 20;
-        this.magicDmg = 20;
+        this.setHp(100);
+        this.setHpMax(100);
+        this.setCritRate(0.03);
+        this.setCritDmgRate(1.5);
+        this.setAtkDmg(20);
+        this.setMagicDmg(20);
     }
 }

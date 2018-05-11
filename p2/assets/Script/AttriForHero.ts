@@ -3,7 +3,7 @@
 // lly 2017.12.12
 
 const {ccclass, property} = cc._decorator;
-import Attri from "./Attri";
+import {MagicNum, Attri} from "./Attri";
 
 /** 起跳速度 像素/帧 */
 const JumpVelocity: number = 4.5;
@@ -11,56 +11,69 @@ const JumpVelocity: number = 4.5;
 @ccclass
 export default class AttriForHero extends Attri {
 
-    _hp: number = 0;
-    set hp(value: number) {
-        this._hp = Math.max(Math.min(value, this.hpMax), 0);
-    }
-    get hp(): number {
-        return this._hp;
+    setHp(value: number) {
+        super.setHp(Math.max(Math.min(value, this.getHpMax()), 0));
     }
 
-    _hpMax: number = 0;
-    set hpMax(value: number) {
-        this._hpMax = value;
-        this.hp = value;
-    }
-    get hpMax(): number {
-        return this._hpMax;
+    setHpMax(value: number) {
+        super.setHpMax(value);
+        this.setHp(value);
     }
 
     // 额外属性 ========================================================
 
     /** 闪躲率 */
-    evade: number = 0;
+    _evade: number = MagicNum;
+    setEvade(value: number) {this._evade = MagicNum - value;}
+    getEvade(): number {return MagicNum - this._evade;}
 
     /** 剩余跳跃数量 */
-    jumpCount: number = 1;
+    _jumpCount: number = MagicNum;
+    setJumpCount(value: number) {this._jumpCount = MagicNum - value;}
+    getJumpCount(): number {return MagicNum - this._jumpCount;}
     /** 最大跳跃数量 */
-    maxJumpCount: number = 2;
+    _maxJumpCount: number = MagicNum;
+    setMaxJumpCount(value: number) {this._maxJumpCount = MagicNum - value;}
+    getMaxJumpCount(): number {return MagicNum - this._maxJumpCount;}
 
     /** 剩余冲刺数量 */
-    dashCount: number = 1;
+    _dashCount: number = MagicNum;
+    setDashCount(value: number) {this._dashCount = MagicNum - value;}
+    getDashCount(): number {return MagicNum - this._dashCount;}
     /** 最大冲刺数量 */
-    maxDashCount: number = 1;
+    _maxDashCount: number = MagicNum;
+    setMaxDashCount(value: number) {this._maxDashCount = MagicNum - value;}
+    getMaxDashCount(): number {return MagicNum - this._maxDashCount;}
 
     /** 受伤无敌时间 */
-    invcTimeForHurt: number = 0.5;
+    _invcTimeForHurt: number = 0;
+    setInvcTimeForHurt(value: number) {this._invcTimeForHurt = MagicNum - value;}
+    getInvcTimeForHurt(): number {return MagicNum - this._invcTimeForHurt;}
 
     onLoad() {
-        this.hpMax = 100;
-        this.xSpeed = 3;
-        this.ySpeed = JumpVelocity;
+        super.onLoad();
+
+        this.setEvade(0);
+        this.setJumpCount(1);
+        this.setMaxJumpCount(1);
+        this.setDashCount(1);
+        this.setMaxDashCount(1);
+        this.setInvcTimeForHurt(0.5);
+
+        this.setHpMax(100);
+        this.setXSpeed(3);
+        this.setYSpeed(JumpVelocity);
 
         // test
-        this.critRate = 0.03;
-        this.critDmgRate = 1.5;
-
-        this.atkDmg = 20;
-        this.magicDmg = 20;
+        this.setCritRate(0.03);
+        this.setCritDmgRate(1.5);
+        this.setAtkDmg(20);
+        this.setMagicDmg(20);
+        this.setMaxJumpCount(2);
     }
 
     fillJumpAndDashCount() {
-        this.jumpCount = this.maxJumpCount;
-        this.dashCount = this.maxDashCount;
+        this.setJumpCount(this.getMaxJumpCount());
+        this.setDashCount(this.getMaxDashCount());
     }
 }

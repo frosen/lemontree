@@ -38,13 +38,13 @@ export default class UICtrlr extends cc.Component {
     }
 
     update(_: number) {
-        if (this.hpNum != this.attri.hp) {
-            this.hpNum = this.attri.hp;           
+        if (this.hpNum != this.attri.getHp()) {
+            this.hpNum = this.attri.getHp();           
             this.hpLbl.string = Math.floor(this.hpNum).toString();
         } 
 
-        if (this.expNum != this.attri.exp) {
-            this.expNum = this.attri.exp;
+        if (this.expNum != this.attri.getExp()) {
+            this.expNum = this.attri.getExp();
             this.expLbl.string = this.expNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
         }       
     }

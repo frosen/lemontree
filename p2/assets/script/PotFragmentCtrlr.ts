@@ -13,8 +13,8 @@ const fragDirs: number[][] = [
     [0, -1], [-0.7, -0.7], [-1, 0], [-0.7, 0.7],
     [0, 1], [1, 0], [-1, 0], [0, -1]
 ];
-const speedRate: number = 3;
-const initYSpeed: number = 1;
+const speedRate: number = 3.5;
+const initYSpeed: number = 2;
 
 @ccclass
 export default class PotFragmentCtrlr extends cc.Component {
@@ -34,6 +34,15 @@ export default class PotFragmentCtrlr extends cc.Component {
             return node;
         }, 60, "fragment", this.node);
     }
+
+    // t: number = 1;
+    // update(dt: number) {
+    //     this.t += dt;
+    //     if (this.t > 3) {
+    //         this.t-= 3;
+    //         this.showFragments(cc.v2(200, 200), cc.hexToColor("96412A"), cc.hexToColor("632518"));
+    //     }
+    // }
 
     /**
      * 在相应位置显示场景破坏物打碎碎片的效果

@@ -3,7 +3,7 @@
 // lly 2018.1.27
 
 const {ccclass, property} = cc._decorator;
-import Attri from "./Attri";
+import {Attri} from "./Attri";
 
 @ccclass
 export default class Attack extends cc.Component {
@@ -49,13 +49,13 @@ export default class Attack extends cc.Component {
         let dmg: number;
         let crit: boolean = false;
         if (this.magicAttack) {
-            dmg = this.attri.magicDmg;
-            crit = r < this.attri.magicCritRate;
-            if (crit) dmg *= this.attri.magicCritDmgRate;
+            dmg = this.attri.getMagicDmg();
+            crit = r < this.attri.getMagicCritRate();
+            if (crit) dmg *= this.attri.getMagicCritDmgRate();
         } else {
-            dmg = this.attri.atkDmg;
-            crit = r < this.attri.critRate;
-            if (crit) dmg *= this.attri.critDmgRate;
+            dmg = this.attri.getAtkDmg();
+            crit = r < this.attri.getCritRate();
+            if (crit) dmg *= this.attri.getCritDmgRate();
         }
 
         // 伤害从0.8到1.2浮动

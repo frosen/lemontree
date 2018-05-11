@@ -43,9 +43,9 @@ export default class Enemy extends Destroyee {
 
     _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {
         let {dmg, crit} = atk.getDamage();
-        this.attri.hp -= dmg;       
+        this.attri.setHp(this.attri.getHp() - dmg);       
 
-        let death = this.attri.hp <= 0;
+        let death = this.attri.getHp() <= 0;
         return {death, dmg, crit};
     }
 
