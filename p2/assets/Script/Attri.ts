@@ -4,76 +4,86 @@
 
 const {ccclass, property} = cc._decorator;
 
-export const MagicNum = Math.floor(Math.random() * 10000);
+const MagicNum = Math.floor(Math.random() * 10000);
+
+// 加密数据
+export class EcNumber {
+    _v: number = 0;
+    _onSetList: ((v: number) => number)[] = [];
+    _afterSetList: ((v: number) => void)[] = [];
+    _onGetList: ((v: number) => number)[] = [];
+
+    constructor(v: number) {
+        this.set(v);
+    }
+
+    _set(v: number) {
+        this._v = MagicNum - v;
+    }
+
+    _get() {
+        return MagicNum - this._v;
+    }
+
+    set(v: number) {
+        for (const call of this._onSetList) {
+            v = call(v);
+        }
+        this._set(v);
+        for (const call of this._afterSetList) {
+            call(v);
+        }
+    }
+
+    get(): number {
+        let v = this._get();
+        for (const call of this._onGetList) {
+            v = call(v);
+        }
+        return v;
+    }
+
+    add(v: number) {
+        this.set(this._get() + v);
+    }
+
+    addSetCallback(c: (v: number) => number) {
+        this._onSetList.push(c);
+    }
+
+    addAfterSetCallback(c: (v: number) => void) {
+        this._afterSetList.push(c);
+    }
+
+    addGetCallback(c: (v: number) => number) {
+        this._onGetList.push(c);
+    }
+}
 
 @ccclass
 export class Attri extends cc.Component {
 
     /** 血量 */
-    _hp: number = 0;
-    setHp(value: number) {this._hp = MagicNum - value;}
-    getHp(): number {return MagicNum - this._hp;}
-
+    hp: EcNumber = new EcNumber(0);
     /** 血量上限 */
-    _hpMax: number = 0;
-    setHpMax(value: number) {this._hpMax = MagicNum - value;}
-    getHpMax(): number {return MagicNum - this._hpMax;}
+    maxHp: EcNumber = new EcNumber(0);
 
     /** 物理攻击伤害 */
-    _atkDmg: number = 0;
-    setAtkDmg(value: number) {this._atkDmg = MagicNum - value;}
-    getAtkDmg(): number {return MagicNum - this._atkDmg;}
+    atkDmg: EcNumber = new EcNumber(0);
     /** 暴击率 */
-    _critRate: number = 0;
-    setCritRate(value: number) {this._critRate = MagicNum - value;}
-    getCritRate(): number {return MagicNum - this._critRate;}
+    critRate: EcNumber = new EcNumber(0);
     /** 暴击伤害比率 */
-    _critDmgRate: number = 0;
-    setCritDmgRate(value: number) {this._critDmgRate = MagicNum - value;}
-    getCritDmgRate(): number {return MagicNum - this._critDmgRate;}
+    critDmgRate: EcNumber = new EcNumber(0);
 
     /** 魔法攻击伤害 */
-    _magicDmg: number = 0;
-    setMagicDmg(value: number) {this._magicDmg = MagicNum - value;}
-    getMagicDmg(): number {return MagicNum - this._magicDmg;}
+    magicDmg: EcNumber = new EcNumber(0);
     /** 暴击率 */
-    _magicCritRate: number = 0;
-    setMagicCritRate(value: number) {this._magicCritRate = MagicNum - value;}
-    getMagicCritRate(): number {return MagicNum - this._magicCritRate;}
+    magicCritRate: EcNumber = new EcNumber(0);
     /** 暴击伤害比率 */
-    _magicCritDmgRate: number = 0;
-    setMagicCritDmgRate(value: number) {this._magicCritDmgRate = MagicNum - value;}
-    getMagicCritDmgRate(): number {return MagicNum - this._magicCritDmgRate;}
+    magicCritDmgRate: EcNumber = new EcNumber(0);
     
     /** x方向速度 */
-    _xSpeed: number = 0;
-    setXSpeed(value: number) {this._xSpeed = MagicNum - value;}
-    getXSpeed(): number {return MagicNum - this._xSpeed;}
+    xSpeed: EcNumber = new EcNumber(0);
     /** y方向速度 */
-    _ySpeed: number = 0;
-    setYSpeed(value: number) {this._ySpeed = MagicNum - value;}
-    getYSpeed(): number {return MagicNum - this._ySpeed;}
-
-    /** 经验值 */
-    _exp: number = 0;
-    setExp(value: number) {this._exp = MagicNum - value;}
-    getExp(): number {return MagicNum - this._exp;}
-
-    onLoad() {
-        this.setHp(0);
-        this.setHpMax(0);
-
-        this.setAtkDmg(0);
-        this.setCritRate(0);
-        this.setCritDmgRate(0);
-
-        this.setMagicDmg(0);
-        this.setMagicCritRate(0);
-        this.setMagicCritDmgRate(0);
-
-        this.setXSpeed(0);
-        this.setYSpeed(0);
-
-        this.setExp(0);
-    }
+    ySpeed: EcNumber = new EcNumber(0);
 }

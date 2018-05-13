@@ -82,14 +82,14 @@ class SMForHeroInJumpAccelerating extends SMForHero {
             curSt != ActState.jumpAccelerating &&
             curSt != ActState.dash &&
             curSt != ActState.hurt;
-        let hasAbility = mgr.smObj.attri.getJumpCount() > 0;
+        let hasAbility = mgr.smObj.attri.jumpCount.get() > 0;
         return canChange && hasAbility;
     }
 
     begin(mgr: SMForHeroMgr) {
         let hero: Hero = mgr.smObj;
         hero.looks.jumpUp();
-        hero.attri.setJumpCount(hero.attri.getJumpCount() -1);
+        hero.attri.jumpCount.add(-1);
         this.time = 0;
     }
 
@@ -97,9 +97,9 @@ class SMForHeroInJumpAccelerating extends SMForHero {
         this.time += dt;
 
         let hero = mgr.smObj;
-        hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.getXSpeed();
+        hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed.get();
         hero.looks.setXUIDir(hero.xMoveDir, HeroDirLv.move);
-        hero.movableObj.yVelocity = hero.attri.getYSpeed();
+        hero.movableObj.yVelocity = hero.attri.ySpeed.get();
     }
 
     check(mgr: SMForHeroMgr) {
@@ -137,7 +137,7 @@ class SMForHeroInJump extends SMForHero {
             hero.looks.jumpDown();
         } 
    
-        hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.getXSpeed();
+        hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed.get();
         hero.looks.setXUIDir(hero.xMoveDir, HeroDirLv.move);
     }
 
@@ -171,7 +171,7 @@ class SMForHeroInMove extends SMForHero {
 
     update(dt: number, mgr: SMForHeroMgr) {
         let hero = mgr.smObj;  
-        hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.getXSpeed();
+        hero.movableObj.xVelocity = hero.xMoveDir * hero.attri.xSpeed.get();
         hero.looks.setXUIDir(hero.xMoveDir, HeroDirLv.move);
     }
 
@@ -207,7 +207,7 @@ class SMForHeroInDash extends SMForHero {
             curSt != ActState.dash &&
             curSt != ActState.hurt;
 
-        let hasAbility = mgr.smObj.attri.getDashCount() > 0;
+        let hasAbility = mgr.smObj.attri.dashCount.get() > 0;
 
         return canChange && hasAbility;
     }
@@ -215,7 +215,7 @@ class SMForHeroInDash extends SMForHero {
     begin(mgr: SMForHeroMgr) {
         let hero: Hero = mgr.smObj;
         hero.looks.dash();
-        hero.attri.setDashCount(hero.attri.getDashCount() - 1);
+        hero.attri.dashCount.add(-1);
         this.time = 0;   
 
         // 在开始时就确定方向，之后不可改变
@@ -280,7 +280,7 @@ class SMForHeroInHurt extends SMForHero {
     can(mgr: SMForHeroMgr): boolean {
         // 计算闪躲
         let r = Math.random();
-        if (r < mgr.smObj.attri.getEvade()) {
+        if (r < mgr.smObj.attri.evade.get()) {
             // 显示闪躲 llytodo
             let node = mgr.smObj.node;  
             let xCenter = node.x + node.width * (0.5 - node.anchorX);
@@ -300,12 +300,12 @@ class SMForHeroInHurt extends SMForHero {
         let atk: Attack = hero.getHurtAtk();
         let {dmg, crit} = atk.getDamage();
 
-        hero.attri.setHp(hero.attri.getHp() - dmg);
+        hero.attri.hp.add(-dmg);
 
         atk.excuteHitCallback(hero.node);
         
         // 死亡
-        if (hero.attri.getHp() <= 0) { 
+        if (hero.attri.hp.get() <= 0) { 
             mgr.changeStateTo(ActState.dead);
             return;
         }
@@ -354,7 +354,7 @@ class SMForHeroInHurt extends SMForHero {
         mgr.smObj.setNoAtkStateEnabled(false);
 
         // 进入短暂无敌时间
-        mgr.smObj.beginInvcState(mgr.smObj.attri.getInvcTimeForHurt());
+        mgr.smObj.beginInvcState(mgr.smObj.attri.invcTimeForHurt.get());
     }
 }
 

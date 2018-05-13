@@ -18,6 +18,6 @@ export class ItemHealthPot extends ItemEfc {
 
     doEffect() {
         let attri: AttriForHero = cc.find("main/hero_layer/hero").getComponent("Hero").attri;
-        attri.setHp(attri.getHp() + attri.getHpMax() * 0.1);
+        attri.hp.add(attri.maxHp.get() * 0.1);
     }
 }

@@ -49,13 +49,13 @@ export default class Attack extends cc.Component {
         let dmg: number;
         let crit: boolean = false;
         if (this.magicAttack) {
-            dmg = this.attri.getMagicDmg();
-            crit = r < this.attri.getMagicCritRate();
-            if (crit) dmg *= this.attri.getMagicCritDmgRate();
+            dmg = this.attri.magicDmg.get();
+            crit = r < this.attri.magicCritRate.get();
+            if (crit) dmg *= this.attri.magicCritDmgRate.get();
         } else {
-            dmg = this.attri.getAtkDmg();
-            crit = r < this.attri.getCritRate();
-            if (crit) dmg *= this.attri.getCritDmgRate();
+            dmg = this.attri.atkDmg.get();
+            crit = r < this.attri.critRate.get();
+            if (crit) dmg *= this.attri.critDmgRate.get();
         }
 
         // 伤害从0.8到1.2浮动

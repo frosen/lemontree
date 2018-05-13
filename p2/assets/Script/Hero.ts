@@ -201,7 +201,7 @@ export class Hero extends cc.Component {
                 let item: Item = itemComp.itemCore;
                 if (item instanceof ItemExp) {
                     let exp = (<ItemExp>item).getExp();
-                    this.attri.setExp(this.attri.getExp() + exp);
+                    this.attri.exp.add(exp);
                     itemComp.onCollision();
 
                 } else { // 不是exp就是efc

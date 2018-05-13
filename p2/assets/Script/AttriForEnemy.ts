@@ -9,11 +9,11 @@ import {Attri} from "./Attri";
 export default class AttriForEnemy extends Attri {
 
     onLoad() {
-        this.setHp(100);
-        this.setHpMax(100);
-        this.setCritRate(0.03);
-        this.setCritDmgRate(1.5);
-        this.setAtkDmg(20);
-        this.setMagicDmg(20);
+        this.hp.set(100);
+        this.maxHp.set(100);
+        this.critRate.set(0.03);
+        this.critDmgRate.set(1.5);
+        this.atkDmg.set(20);
+        this.magicDmg.set(20);
     }
 }
