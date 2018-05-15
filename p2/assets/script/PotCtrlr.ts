@@ -37,6 +37,7 @@ export default class PotCtrlr extends cc.Component {
 
     _createShowingPots() {
         for (const node of this.showingPots) {
+            if (node.active == false) continue;
             let pot = node.addComponent(Pot);
             let sp = node.getComponent(cc.Sprite);
             let frame = sp.spriteFrame;

@@ -45,6 +45,7 @@ export default class TerrainCollider extends cc.Component {
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
         let size = this.size || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
+        let realDir = xDir != 0 ? xDir : this.node.scaleX; // 移动时检测移动方向，否则检测面朝向
 
         //========================================================
         let preTestXClsnType: CollisionType = CollisionType.none; // 前置测试x类型
@@ -74,9 +75,8 @@ export default class TerrainCollider extends cc.Component {
         let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
 
         this.curYCollisionType = type;
-        if (yDir < 0 && type != CollisionType.none) {
-            let dir = xDir != 0 ? xDir : this.node.scaleX; // 移动时检测移动方向，否则检测面朝向
-            if (dir > 0) {
+        if (yDir < 0 && type != CollisionType.none) {         
+            if (realDir > 0) {
                 this.edgeType = edgeRight;
                 this.backEdgeType = edgeLeft;
             } else {
@@ -114,7 +114,7 @@ export default class TerrainCollider extends cc.Component {
                 this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
             }
         }
-
+        
         //========================================================
         
         // 第一次x碰撞检测可能会因为y轴碰撞未进行而导致误判，
@@ -145,11 +145,17 @@ export default class TerrainCollider extends cc.Component {
                 if (yOffset >= -0.01) {
                     this.node.y += yOffset;
                     this.curYCollisionType = CollisionType.slope;
-                    if (xDir <= 0) this.edgeType = CollisionType.slope;
-                    else this.backEdgeType = CollisionType.slope;
+                    if (realDir <= 0) {
+                        this.edgeType = CollisionType.slope;
+                        this.backEdgeType = null;
+                    } else {
+                        this.backEdgeType = CollisionType.slope;
+                        this.edgeType = null;
+                    }
                 } else {
                     this.curYCollisionType = CollisionType.none;
                     this.edgeType = null;
+                    this.backEdgeType = null;
                 }
 
             } else {
@@ -159,11 +165,17 @@ export default class TerrainCollider extends cc.Component {
                     if (yOffset > -0.01) {
                         this.node.y += yOffset;
                         this.curYCollisionType = CollisionType.slope;
-                        if (xDir >= 0) this.edgeType = CollisionType.slope;
-                        else this.backEdgeType = CollisionType.slope;
+                        if (realDir >= 0) {
+                            this.edgeType = CollisionType.slope;
+                            this.backEdgeType = null;
+                        } else {
+                            this.backEdgeType = CollisionType.slope;
+                            this.edgeType = null;
+                        }
                     } else {
                         this.curYCollisionType = CollisionType.none;
                         this.edgeType = null;
+                        this.backEdgeType = null;
                     }
                 }
             }

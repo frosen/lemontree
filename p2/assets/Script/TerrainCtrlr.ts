@@ -209,10 +209,13 @@ export class TerrainCtrlr extends cc.Component {
 
         let t: CollisionType = this.checkCollideAt(toX, y);          
         if (t > type) type = t;
-
-        if (t == CollisionType.none || t == CollisionType.slope) {
-            if (leftBegin) edgeLeft = t;
-            else if (!rightBegin) edgeRight = t;
+        
+        // 如果至此leftBegin都没有结束的话，则是一种特殊情况
+        if (leftBegin) {
+            edgeLeft = this.checkCollideAt(fromX, y);
+            edgeRight = t;
+        } else if (!rightBegin && (t == CollisionType.none || t == CollisionType.slope)) {
+            edgeRight = t;
         }
 
         return {type, edgeLeft, edgeRight};
