@@ -78,16 +78,22 @@ export default abstract class Destroyee extends cc.Component {
         atk.excuteHitCallback(this.node);
 
         let {death, dmg, crit} = this._calcHurt(atk);
-        let pos: cc.Vec2 = this._getCenterPos();
+        
         if (!death) {
             this._showHurtColor();
             this.scheduleOnce(this._recoveryHurtColor.bind(this), 0.1);
+            let pos: cc.Vec2 = this._getCenterPos();
             this._hurt(pos, atk, dmg, crit);
         } else {             
-            this._dead(pos);
-            this.itemCtrlr.createItem(pos);
-            this.node.removeFromParent();
+            this.gotoDead();
         }
+    }
+
+    gotoDead() {
+        let pos: cc.Vec2 = this._getCenterPos();
+        this._dead(pos);
+        this.itemCtrlr.createItem(pos);
+        this.node.removeFromParent();
     }
 
     _getCenterPos(): cc.Vec2 {

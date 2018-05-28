@@ -39,6 +39,13 @@ export default class Enemy extends Destroyee {
         this.deathDisplay = cc.find("main/enemy_layer").getComponent(DeathEffectDisplay);
     }
 
+    lateUpdate() {
+        // 超出地形则会死亡
+        if (this.node.y < -1) {
+            this.gotoDead();
+        }
+    }
+
     // 碰撞回调 ------------------------------------------------------------
 
     _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {
