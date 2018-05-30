@@ -71,5 +71,18 @@ export class MovableObject extends cc.Component {
 
         return {xDir, yDir};
     }
+
+    /**
+     * 闪现（瞬移）到某个坐标
+     */
+    blink(x: number, y: number) {
+        let curPos = this.node.position;
+        let disX = x - curPos.x;
+        let disY = y - curPos.y;
+
+        this.node.position = cc.v2(x, y);
+        this.xLastPos += disX;
+        this.yLastPos += disY;
+    }
 }
 
