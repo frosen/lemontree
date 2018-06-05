@@ -6,7 +6,7 @@
 const {ccclass, property, executionOrder} = cc._decorator;
 
 import {MovableObject} from "./MovableObject";
-import {TerrainCtrlr, CollisionType, SlopeAttris} from "./TerrainCtrlr"; 
+import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr"; 
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollider)
@@ -179,6 +179,17 @@ export default class TerrainCollider extends cc.Component {
                     }
                 }
             }
+        }
+
+        //========================================================
+
+        // 检测强制移动
+        {
+            let checkX = this.node.x - size.width * anchor.x + size.width * 0.5;
+            let checkY = this.node.y - size.height * anchor.y - 1;
+            let {vX, vY} = this.terrainCtrlr.getForcedMoveVel(checkX, checkY);
+            this.movableObj.xEnvVelocity = vX; // x轴方向需要进行叠加
+            if (vY) this.movableObj.yVelocity = vY; // y轴方向直接改变当前速度，才可以和重力适配
         }
 
         //========================================================

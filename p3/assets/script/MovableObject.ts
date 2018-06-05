@@ -22,6 +22,11 @@ export class MovableObject extends cc.Component {
     /** y速度，不受加速度影响 */
     yVelocity: number = 0;
 
+    /** x环境速度 */
+    xEnvVelocity: number = 0;
+    /** y环境速度 */
+    yEnvVelocity: number = 0;
+
     xLastPos: number = 0;
     yLastPos: number = 0;
 
@@ -41,7 +46,7 @@ export class MovableObject extends cc.Component {
         if (this.xVelocityEnabled) {
             this.xVelocity += this.xAccel;
             this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);        
-            this.node.x += this.xVelocity;
+            this.node.x += this.xVelocity + this.xEnvVelocity;
         } else {
             this.xVelocity = 0;
         }
@@ -50,7 +55,7 @@ export class MovableObject extends cc.Component {
         if (this.yVelocityEnabled) {
             this.yVelocity += this.yAccel;
             this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);       
-            this.node.y += this.yVelocity;
+            this.node.y += this.yVelocity + this.yEnvVelocity;
         } else {
             this.yVelocity = 0;
         }

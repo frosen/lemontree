@@ -8,6 +8,9 @@ const {ccclass, property} = cc._decorator;
 /** 一个瓦片的标准长度 */
 const TileLength: number = 32;
 
+const ForcedMoveX: number = 2;
+const ForcedMoveY: number = 10;
+
 /** 碰撞类型 */
 export enum CollisionType {
     /** 无碰撞 */
@@ -23,14 +26,10 @@ export enum CollisionType {
     entity = 3,
 }
 
-export class TileAttris {
-
-}
-
-export class SlopeAttris extends TileAttris {
-    dir: number = 0;
-    x: number = 0;
-    y: number = 0;
+enum ForcedMoveType {
+    left,
+    right,
+    up,
 }
 
 @ccclass
@@ -45,12 +44,6 @@ export class TerrainCtrlr extends cc.Component {
     terrainSize: cc.Size = null;
     /** 碰撞检测层 */
     collidableLayer: cc.TiledLayer = null;
-
-    /** 碰撞缓存 不但可以加速，更可以改变某处的碰撞类型*/
-    collisionCache: {} = {};
-
-    /** 碰撞属性的缓存，每一项也是一个object，其属性取于tile */
-    collisionAttriCache: {[key: number]: TileAttris;} = {};
 
     onLoad() {
         // init logic
@@ -71,11 +64,59 @@ export class TerrainCtrlr extends cc.Component {
     }
 
     /**
-     * 根据图块索引值，获取缓存的key
+     * 获取瓦片id
      */
-    _getCacheKey(tileX: number, tileY: number): number {
-        return tileX * 1000 + tileY;
+    _getGid(tileX: number, tileY: number): number {
+        if (tileX < 0 || this.tileNumSize.width <= tileX || tileY < 0 || this.tileNumSize.height <= tileY) {
+            return null; // 超出范围无碰撞
+        }
+
+        let gid = this.collidableLayer.getTileGIDAt(tileX, tileY);
+        return gid;
     }
+
+    // id 转 数据========================================================
+
+    /**
+     * 根据瓦片id，转换成所代表的碰撞类型
+     */
+    _getTypeFromGid(gid: number): CollisionType {
+        switch (gid) {
+            case 1: return CollisionType.platform;
+            case 2: return CollisionType.entity;
+            case 3: return CollisionType.slope;
+            case 4: return CollisionType.slope;
+            case 5: return CollisionType.entity;
+            case 6: return CollisionType.entity;
+            case 7: return CollisionType.entity;
+            case 8: return CollisionType.none;
+                
+            default: return CollisionType.none;
+        }
+    }
+
+    _getSlopeDir(gid: number): number {
+        switch (gid) {
+            case 3: return 1;
+            case 4: return -1;              
+            default: return null;
+        }
+    }
+
+    /**
+     * 获取强制移动速度方向
+     * @returns ForcedMoveType
+     */
+    _getForcedMoveDir(gid: number): ForcedMoveType {
+        switch (gid) {
+            case 5: return ForcedMoveType.right;
+            case 6: return ForcedMoveType.left; 
+            case 7: return ForcedMoveType.up;             
+            default: return null;
+        }
+    }
+
+    // ==================================================================
 
     /**
      * 检测当前creator坐标在当前tiledMap中是否为一个碰撞区块
@@ -83,63 +124,11 @@ export class TerrainCtrlr extends cc.Component {
      * @param y: y坐标
      * @return 碰撞类型
      */
-    checkCollideAt(x: number, y: number): CollisionType {   
-        // 计算在哪个瓦片上
-        let {tileX, tileY} = this._getTileIndex(x, y);
-
-        // 首先使用缓存
-        let cacheKey = this._getCacheKey(tileX, tileY);
-        let cache = this.collisionCache[cacheKey];
-        if (cache) return cache;
-
-        if (tileX < 0 || this.tileNumSize.width <= tileX || tileY < 0 || this.tileNumSize.height <= tileY) {
-            return CollisionType.none; // 超出范围无碰撞
-        }
-
-        let gid = this.collidableLayer.getTileGIDAt(tileX, tileY);
-        if (!gid) return CollisionType.none; // 没有瓦片
-
-        let properties = this.tiledMap.getPropertiesForGID(gid);
-        if (!properties) return CollisionType.none; // null 没有属性
-
-        let collidable: CollisionType = parseInt(properties.collidable) as CollisionType;
-
-        this.collisionCache[cacheKey] = collidable;
-
-        // 获取图块属性       
-        let attris = null;;
-        switch (collidable) {
-            case CollisionType.slope:
-                attris = new SlopeAttris()
-
-                let dir: number = parseInt(properties.dir);
-                attris.dir = dir;
-
-                // 另需要保存一个位置值（就是左下或者右下的尖角位置），便于计算
-                let x = tileX;
-                let y = tileY;
-                if (dir > 0) x += 1;
-                y = this.tileNumSize.height - y - 1;
-                attris.x = x * TileLength;
-                attris.y = y * TileLength; 
-                break;
-        }
-        this.collisionAttriCache[cacheKey] = attris;
-
-        return collidable;
-    }
-
-    /**
-     * 获取图块属性，不会检测attri是否存在，需要在外部保证
-     * @param x: x坐标
-     * @param y: y坐标
-     * @return 属性 object
-     */
-    getTileAttris(x: number, y: number): TileAttris {
-        let {tileX, tileY} = this._getTileIndex(x, y);
-        let cacheKey = this._getCacheKey(tileX, tileY);
-        let attri = this.collisionAttriCache[cacheKey]; // attri一定会有的；
-        return attri;
+    checkCollideAt(x: number, y: number): CollisionType {
+        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let gid = this._getGid(tileX, tileY);
+        if (!gid) return CollisionType.none;
+        return this._getTypeFromGid(gid);
     }
 
     /**
@@ -237,19 +226,45 @@ export class TerrainCtrlr extends cc.Component {
      * @param x number
      * @param y number
      * @param checkDir number 需要检测的方向
-     * @returns 偏移量 number 正数为向下偏移
+     * @returns 偏移量 number 正数为向下偏移 为空表示不是斜面
      */
     getSlopeOffset(x: number, y: number, checkDir: number): number {
-        let t: CollisionType = this.checkCollideAt(x, y);
-        if (t != CollisionType.slope) return null;
+        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let gid = this._getGid(tileX, tileY);
+        if (!gid) return null;
 
-        let attris = this.getTileAttris(x, y) as SlopeAttris;
-        let dir = attris.dir;
+        let dir = this._getSlopeDir(gid);
         if (dir != checkDir) return null;
 
-        let dis = Math.abs(attris.x - x);
-        let slopeY = attris.y + dis;
+        let _x = tileX;
+        let _y = tileY;
+        if (dir > 0) _x += 1;
+        _y = this.tileNumSize.height - _y - 1;
+        _x *= TileLength;
+        _y *= TileLength; 
+
+        let dis = Math.abs(_x - x);
+        let slopeY = _y + dis;
         let offset = slopeY - y;
         return offset;
+    }
+
+    /**
+     * 获取强制移动的各方向速率
+     */
+    getForcedMoveVel(x: number, y: number): {vX: number, vY: number} {
+        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let gid = this._getGid(tileX, tileY);
+        if (!gid) return {vX: 0, vY: 0};
+
+        let dir = this._getForcedMoveDir(gid);
+        if (dir == null) return {vX: 0, vY: 0};
+
+        switch (dir) {
+            case ForcedMoveType.left: return {vX: ForcedMoveX * -1, vY: 0};
+            case ForcedMoveType.right: return {vX: ForcedMoveX , vY: 0};
+            case ForcedMoveType.up: return {vX: 0, vY: ForcedMoveY};
+            default: return {vX: 0, vY: 0};     
+        }
     }
 }

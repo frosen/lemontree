@@ -83,7 +83,11 @@ class SMForHeroInJumpAccelerating extends SMForHero {
             curSt != ActState.dash &&
             curSt != ActState.hurt;
         let hasAbility = mgr.smObj.attri.jumpCount.get() > 0;
-        return canChange && hasAbility;
+
+        // 本身速度比跳跃时产生的速度还快时，就不能执行跳跃
+        let limit = mgr.smObj.movableObj.yVelocity < mgr.smObj.attri.ySpeed.get(); 
+        
+        return canChange && hasAbility && limit;
     }
 
     begin(mgr: SMForHeroMgr) {
