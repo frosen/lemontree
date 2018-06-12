@@ -19,6 +19,6 @@ export default class GameCtrlr extends cc.Component {
     }
 
     hide() {
-        this.sp.node.runAction(cc.moveBy(1, 0, 400));
+        this.sp.node.runAction(cc.moveBy(1, 0, 500));
     }
 }
