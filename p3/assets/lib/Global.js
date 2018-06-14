@@ -19,6 +19,17 @@ window.getFuncFromString = function (obj, str) {
     return func.bind(comp);
 };
 
+window.callList = function (obj, list) {
+    function handle(data = null) {
+        let callInfo = list.shift();
+        if (callInfo) {
+            const [func, ...param] = callInfo;
+            func.call(obj, handle, data, ...param);
+        }
+    }  
+    handle();
+}
+
 window.requireComponents = function (obj, components) {
     let t = true;
     let s = ""

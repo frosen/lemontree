@@ -19,6 +19,11 @@ declare namespace EXECUTION_ORDER {
 declare function getFuncFromString(obj: Object, str: string): function;
 
 /**
+ * 按照list列表依次执行，执行的this是obj
+ */
+declare function callList(obj: any, list: any[])
+
+/**
  * 官方还没有对多个组件的需求，所以自己先弄一个
  */
 declare function requireComponents(obj: Object, components: any[]): void;

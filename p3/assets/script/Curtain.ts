@@ -14,11 +14,13 @@ export default class GameCtrlr extends cc.Component {
         this.sp.node.active = true;
     }
 
-    start() {
-        this.hide();
-    }
-
-    hide() {
+    showScene() {
         this.sp.node.runAction(cc.moveBy(1, 0, 500));
     }
+
+    hideScene() {
+        
+    }
+
+
 }
