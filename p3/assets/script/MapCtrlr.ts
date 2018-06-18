@@ -231,25 +231,31 @@ export default class MapCtrlr extends cc.Component {
         };
     }
 
-    getAnotherGatePos(id: number): {area: number, x: number, y: number} {
+    getGatePos(id: number): 
+        {thisArea: number, thisX: number, thisY: number, otherArea: number, otherX: number, otherY: number} {
         let k = id % 100;
-        let index = id / 100 % 100;
+        let index = Math.floor(id / 100) % 100;
         let gates = this.sceneJsons[this.curSceneIndex].gates;
         let gateList = gates[k][index];
 
+        let thisGateData: TriggerJson;
         let anotherGateData: TriggerJson;
         for (const gateData of gateList) {
-            if (gateData.id != id) {
+            if (gateData.id == id) {
+                thisGateData = gateData;
+            } else {
                 anotherGateData = gateData;
-                break;
             }
         }
 
         return {
-            area: anotherGateData.area,
-            x: anotherGateData.x,
-            y: anotherGateData.y
-        }
+            thisArea: thisGateData.area,
+            thisX: thisGateData.x,
+            thisY: thisGateData.y,
+            otherArea: anotherGateData.area,
+            otherX: anotherGateData.x,
+            otherY: anotherGateData.y
+        };
     }
 
     changeArea(areaIndex: number) {

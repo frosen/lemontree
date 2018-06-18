@@ -41,6 +41,10 @@ export default class TerrainCollider extends cc.Component {
     }
 
     update(_: number) {
+        this.checkCollision();
+    }
+
+    checkCollision() {
         let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置  
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
         let size = this.size || this.node.getContentSize();
@@ -198,8 +202,6 @@ export default class TerrainCollider extends cc.Component {
 
         let xCenter = this.node.x - anchorW + size.width * 0.5;
         let yCenter = this.node.y - anchorH + size.height * 0.5;
-
-        // 检测场景切换
 
         // 计算是否出界
         if (xCenter < 0) {

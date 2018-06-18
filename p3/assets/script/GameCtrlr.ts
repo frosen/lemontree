@@ -37,7 +37,7 @@ export default class GameCtrlr extends cc.Component {
             }],
             [(callNext: () => void, lastData: any) => { // 切换到英雄初始位置
                 let {area, x, y} = this.mapCtrlr.getHeroPos();
-                this.changeArea(area, x, y);
+                this._changeArea(area, x, y);
                 callNext();
             }],
             [(callNext: () => void, lastData: any) => { // 拉开帷幕
@@ -46,13 +46,22 @@ export default class GameCtrlr extends cc.Component {
         ]);
     }
 
-    changeArea(areaIndex: number, x: number, y: number) {
+    enterGate(gateGid: number, lastHeroPos: cc.Vec2) {
+        let {thisArea, thisX, thisY, otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
+        let lastGatePos = this.terrainCtrlr.getPosFromTilePos(thisX, thisY);
+        let diff = cc.pSub(lastHeroPos, lastGatePos);
+        this._changeArea(otherArea, otherX, otherY, diff.x, diff.y);
+    }
+
+    _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
         this.mapCtrlr.changeArea(areaIndex);
 
         let clsnData = this.mapCtrlr.getAreaCollisionData(areaIndex);
         this.terrainCtrlr.setTerrainData(clsnData);
         
         let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
-        this.hero.movableObj.blink(heroPos.x, heroPos.y);
+        this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
     }
+
+
 }

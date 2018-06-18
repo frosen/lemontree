@@ -13,17 +13,23 @@ import {VelocityMax} from "./MovableObject";
 @ccclass
 export default class TerrainColliderForCreature extends TerrainCollider {
 
-    update(dt: number) {
-        super.update(dt);
+    update(_: number) {
+        this.checkCollision();
+        this.checkSuperGravityForSlope();
+        this.checkOutOfRange();
+    }
 
-        // 超级重力为了让对象可以沿着斜坡行进
+    // 超级重力为了让对象可以沿着斜坡行进
+    checkSuperGravityForSlope() {
         if (this.curYCollisionType == CollisionType.slope || 
             this.edgeType == CollisionType.slope ||
             this.backEdgeType == CollisionType.slope) {
             this.movableObj.yVelocity = -VelocityMax; 
         }
+    }
 
-        // 计算是否出界 // X不可超出范围
+    // 计算是否出界 // X不可超出范围
+    checkOutOfRange() {   
         let size = this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let xCenter: number = this.node.x + size.width * (0.5 - anchor.x);

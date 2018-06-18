@@ -132,6 +132,16 @@ export class TerrainCtrlr extends cc.Component {
         }
     }
 
+    /**
+     * 如果是门，则获得门的id（包含其属性），否则获得空
+     */
+    _getGateGid(gid: number): number {
+        let key = Math.floor(gid / 100000);
+        if (key != 1) return null;
+
+        return gid;
+    }
+
     // ==================================================================
 
     /**
@@ -282,5 +292,13 @@ export class TerrainCtrlr extends cc.Component {
             case ForcedMoveType.up: return {vX: 0, vY: ForcedMoveY};
             default: return {vX: 0, vY: 0};     
         }
+    }
+
+    getGateData(x: number, y: number): number {
+        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let gid = this._getGid(tileX, tileY);
+        if (!gid) return;
+
+        return this._getGateGid(gid);
     }
 }

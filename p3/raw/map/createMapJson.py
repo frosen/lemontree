@@ -256,7 +256,7 @@ def saveJsonAndImg(path, oldPath):
     for jsonData in jsonDataList:
         jsonStr = json.dumps(jsonData)
 
-        jsonStr = encode(jsonStr)
+        # jsonStr = encode(jsonStr)
 
         realPath = path + "scene" + str(index) + "/"
         if not os.path.exists(realPath):
