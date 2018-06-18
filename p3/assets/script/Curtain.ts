@@ -21,6 +21,4 @@ export default class GameCtrlr extends cc.Component {
     hideScene() {
         
     }
-
-
 }

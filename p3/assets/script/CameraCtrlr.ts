@@ -4,6 +4,8 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
+import {TerrainCtrlr} from "./TerrainCtrlr";
+
 @ccclass
 @executionOrder(EXECUTION_ORDER.CameraCtrlr)
 export default class CameraCtrlr extends cc.Component {
@@ -14,29 +16,35 @@ export default class CameraCtrlr extends cc.Component {
     @property(cc.Node)
     target: cc.Node = null;
 
-    @property(cc.Node)
-    map: cc.Node = null;
+    @property(TerrainCtrlr)
+    map: TerrainCtrlr = null;
+
+    mapSize: cc.Size = cc.size(0, 0);
 
     xMin: number = null;
     xMax: number = null;
     yMin: number = null;
     yMax: number = null;
 
-    onLoad() {
-        // 设置镜头的移动范围
-        let canvas: cc.Node = cc.find("canvas");
-        let viewSize = canvas.getContentSize();
-
-        let mapSize = this.map.getContentSize();
-
-        let rate = 0.5;
-        this.xMin = viewSize.width * rate;
-        this.xMax = mapSize.width - viewSize.width * rate;
-        this.yMin = viewSize.height * rate;
-        this.yMax = mapSize.height - viewSize.height * rate;
-    }
-
     update(_: number) {
+        
+        // 设置镜头的移动范围
+        let newMapSize = this.map.terrainSize;
+        if (newMapSize.width != this.mapSize.width || newMapSize.height != this.mapSize.height) {
+            this.mapSize = newMapSize;
+
+            
+            let canvas: cc.Node = cc.find("canvas");
+            let viewSize = canvas.getContentSize();
+
+            let rate = 0.5;
+            this.xMin = viewSize.width * rate;
+            this.xMax = this.mapSize.width - viewSize.width * rate;
+            this.yMin = viewSize.height * rate;
+            this.yMax = this.mapSize.height - viewSize.height * rate;
+        }
+
+        // 计算位置
         let targetPos = this.target.parent.convertToWorldSpaceAR(this.target.position);
         let cameraPos = this.node.parent.convertToNodeSpaceAR(targetPos);
 

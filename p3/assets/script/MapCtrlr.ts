@@ -38,8 +38,6 @@ export default class MapCtrlr extends cc.Component {
 
     curAssets: cc.TiledMapAsset[] = [];
 
-    finishCallback: () => void = null;
-
     onLoad() {
         // 生成多个map的节点池
         for (let index = 0; index < 10; index++) {
@@ -50,31 +48,32 @@ export default class MapCtrlr extends cc.Component {
             node.setAnchorPoint(0, 0);
             node.setPosition(0, 0);
 
+            this.node.addChild(node);
+
             node.active = false;
         }
     }
 
-    setFinishCallback(callback: () => void) {
-        this.finishCallback = callback;
-    }
-
     /**
      * 创建场景
+     * @param n 场景序号，从1开始
      */
-    createScene(n: number) {
+    createScene(n: number, finishCallback: () => void) {
         this.curSceneIndex = n;
         callList(this, [
             [this._loadMapJson],
             [this._loadTexture],
             [this._createMapData],
             [this._displayMap],
-            [this._onFinish]
-        ])
+            [(callNext: () => void, lastData: any) => {
+                finishCallback();
+            }]
+        ]);
     }
 
-    _loadMapJson(callback: () => void, lastData: any) {
+    _loadMapJson(callNext: () => void, lastData: any) {
         if (this.sceneJsons[this.curSceneIndex]) {
-            callback();
+            callNext();
             return;
         }
 
@@ -87,7 +86,7 @@ export default class MapCtrlr extends cc.Component {
 
             let decodeStr = MapCtrlr._decodeMapData(data.text);
             this.sceneJsons[this.curSceneIndex] = JSON.parse(decodeStr);
-            callback();
+            callNext();
         });        
     }
 
@@ -108,9 +107,9 @@ export default class MapCtrlr extends cc.Component {
         return res;
     }
 
-    _loadTexture(callback: () => void, lastData: any) {
+    _loadTexture(callNext: () => void, lastData: any) {
         if (this.frames[this.curSceneIndex]) {
-            callback();
+            callNext();
             return;
         }
 
@@ -121,11 +120,11 @@ export default class MapCtrlr extends cc.Component {
                 return;
             }
             this.frames[this.curSceneIndex] = frame;
-            callback();
+            callNext();
         }); 
     }
 
-    _createMapData(callback: () => void, lastData: any) {
+    _createMapData(callNext: () => void, lastData: any) {
         this.curAssets = [];
 
         let areaJsons = this.sceneJsons[this.curSceneIndex].areas;
@@ -148,7 +147,7 @@ export default class MapCtrlr extends cc.Component {
             this.curAssets.push(ourmap);
         }
 
-        callback();
+        callNext();
     }
 
     static _createTMXString(json: AreaJson): string {
@@ -194,17 +193,13 @@ export default class MapCtrlr extends cc.Component {
         return tsxStr;
     }
 
-    _displayMap(callback: () => void, lastData: any) {
+    _displayMap(callNext: () => void, lastData: any) {
         for (let index = 0; index < this.curAssets.length; index++) {
             const asset = this.curAssets[index];
             this.mapPool[index].tmxAsset = asset;           
         }
 
-        callback();
-    }
-
-    _onFinish(callback: () => void, lastData: any) {
-        if (this.finishCallback) this.finishCallback();
+        callNext();
     }
 
     getAreaSize(areaIndex: number): {w: number, h: number} {
@@ -228,7 +223,7 @@ export default class MapCtrlr extends cc.Component {
     }
 
     getHeroPos(): {area: number, x: number, y: number} {
-        let hero = this.sceneJsons[this.curSceneIndex].heros[0];
+        let hero = this.sceneJsons[this.curSceneIndex].heros[0]; // llytodo 不知道以后一个场景里面有多少个hero pos
         return {
             area: hero.area,
             x: hero.x,
@@ -258,6 +253,9 @@ export default class MapCtrlr extends cc.Component {
     }
 
     changeArea(areaIndex: number) {
-        
+        let realAreaIndex = areaIndex - 1;
+        for (let index = 0; index < this.mapPool.length; index++) {
+            this.mapPool[index].node.active = (realAreaIndex == index);           
+        }
     }
 }

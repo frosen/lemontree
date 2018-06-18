@@ -32,20 +32,49 @@ enum ForcedMoveType {
     up,
 }
 
+const GidTypeList = [
+    undefined,
+
+    CollisionType.platform,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.slope, 
+    CollisionType.slope,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity
+]
+
 @ccclass
 export class TerrainCtrlr extends cc.Component {
 
     /** 地图块数 */
-    tileNumSize: cc.Size = null;
+    tileNumSize: cc.Size = cc.Size.ZERO;
     /** 地形尺寸 */
-    terrainSize: cc.Size = null;
+    terrainSize: cc.Size = cc.Size.ZERO;
     /** 碰撞数据 */
     collisionData: number[][] = null;
 
-    setTerrainData(w: number, h: number, clsnData: number[][]) {
+    setTerrainData(clsnData: number[][]) {
         this.collisionData = clsnData;
         this.tileNumSize = cc.size(clsnData[0].length, clsnData.length);
         this.terrainSize = new cc.Size(this.tileNumSize.width * TileLength, this.tileNumSize.height * TileLength - 0.001);
+        this.node.setContentSize(this.terrainSize);
+    }
+
+    /**
+     * 得到一个块的最下的中点
+     */
+    getPosFromTilePos(x: number, y: number): cc.Vec2 {
+        return cc.v2(x * TileLength - TileLength * 0.5, this.terrainSize.height - y * TileLength);
     }
 
     /**
@@ -65,34 +94,27 @@ export class TerrainCtrlr extends cc.Component {
             return null; // 超出范围无碰撞
         }
 
+        if (!this.collisionData) return;
+
         let gid = this.collisionData[tileY][tileX];
         return gid;
     }
 
     // id 转 数据========================================================
 
+    
+
     /**
      * 根据瓦片id，转换成所代表的碰撞类型
      */
     _getTypeFromGid(gid: number): CollisionType {
-        switch (gid) {
-            case 1: return CollisionType.platform;
-            case 2: return CollisionType.entity;
-            case 3: return CollisionType.slope;
-            case 4: return CollisionType.slope;
-            case 5: return CollisionType.entity;
-            case 6: return CollisionType.entity;
-            case 7: return CollisionType.entity;
-            case 8: return CollisionType.none;
-                
-            default: return CollisionType.none;
-        }
+        return GidTypeList[gid] || CollisionType.none;
     }
 
     _getSlopeDir(gid: number): number {
         switch (gid) {
-            case 3: return 1;
-            case 4: return -1;              
+            case 11: return 1;
+            case 12: return -1;              
             default: return null;
         }
     }
@@ -103,9 +125,9 @@ export class TerrainCtrlr extends cc.Component {
      */
     _getForcedMoveDir(gid: number): ForcedMoveType {
         switch (gid) {
-            case 5: return ForcedMoveType.right;
-            case 6: return ForcedMoveType.left; 
-            case 7: return ForcedMoveType.up;             
+            case 13: return ForcedMoveType.right;
+            case 14: return ForcedMoveType.left; 
+            case 15: return ForcedMoveType.up;             
             default: return null;
         }
     }
