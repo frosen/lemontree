@@ -35,23 +35,17 @@ enum ForcedMoveType {
 @ccclass
 export class TerrainCtrlr extends cc.Component {
 
-    @property(cc.TiledMap)
-    tiledMap: cc.TiledMap = null;
-
     /** 地图块数 */
     tileNumSize: cc.Size = null;
     /** 地形尺寸 */
     terrainSize: cc.Size = null;
-    /** 碰撞检测层 */
-    collidableLayer: cc.TiledLayer = null;
+    /** 碰撞数据 */
+    collisionData: number[][] = null;
 
-    onLoad() {
-        // init logic
-        this.tileNumSize = this.tiledMap.getMapSize();
+    setTerrainData(w: number, h: number, clsnData: number[][]) {
+        this.collisionData = clsnData;
+        this.tileNumSize = cc.size(clsnData[0].length, clsnData.length);
         this.terrainSize = new cc.Size(this.tileNumSize.width * TileLength, this.tileNumSize.height * TileLength - 0.001);
-        this.collidableLayer = this.tiledMap.getLayer("collision");
-        
-        this.collidableLayer.node.active = false;
     }
 
     /**
@@ -71,7 +65,7 @@ export class TerrainCtrlr extends cc.Component {
             return null; // 超出范围无碰撞
         }
 
-        let gid = this.collidableLayer.getTileGIDAt(tileX, tileY);
+        let gid = this.collisionData[tileY][tileX];
         return gid;
     }
 

@@ -86,6 +86,9 @@ build/jsb-default/frameworks/runtime-src/proj.android-studio/app/.externalNative
 build/jsb-default/res
 build/jsb-default/src
 
+# self
+raw/map/output
+
 
 
 

@@ -62,18 +62,38 @@ def parseTe(t):
     else:
         return t
 
-doorData = {}
+doorIndexs = {}
+
+heroData = []
+doorData = []
 
 # 解析触发器
-def parseCo(t, lineNum, colNum, w, h):
-    if 32 <= t and t < 48:
+def parseCo(t, lineNum, colNum, w, h, k):
+
+    global heroData
+    global doorData
+    global doorIndexs
+
+    if t == 33:
+        #hero pos
+
+        thisHeroData = {}
+        thisHeroData["x"] = colNum
+        thisHeroData["y"] = lineNum
+        thisHeroData["area"] = k
+        thisHeroData["id"] = t
+        heroData.append(thisHeroData)
+
+        return 0
+
+    elif 34 <= t and t <= 48:
         # 门
         key = 1
 
-        if not doorData.has_key(t):
-            doorData[t] = 1
+        if not doorIndexs.has_key(t):
+            doorIndexs[t] = 1
         else:
-            doorData[t] += 1
+            doorIndexs[t] += 1
 
         orient = 0
         if lineNum == 1:
@@ -87,12 +107,29 @@ def parseCo(t, lineNum, colNum, w, h):
         else:
             raise RuntimeError("Wrong door at line %d, col %d" % lineNum, colNum)
 
-        return key * 100000 + orient * 10000 + doorData[t] * 100 + t
+        newT = key * 100000 + orient * 10000 + doorIndexs[t] * 100 + t
+
+        thisDoorData = {}
+        thisDoorData["x"] = colNum
+        thisDoorData["y"] = lineNum
+        thisDoorData["area"] = k
+        thisDoorData["id"] = newT
+        doorData.append(thisDoorData)
+
+        return newT
     else:
         return t
 
+areaHeroData = []
+areaDoorData = {}
 
-def parse(string):
+def parse(string, k):
+
+    global heroData
+    global doorData
+    global doorIndexs
+    doorIndexs = {}
+
     data = {}
 
     wStr = re.findall(r" width=\"(.+?)\"", string)[0]
@@ -131,7 +168,7 @@ def parse(string):
         for coStr in coData:
             if len(coStr) < 1: continue
             tile = int(coStr)
-            tile = parseCo(tile, lineNum, colNum, w, h)
+            tile = parseCo(tile, lineNum, colNum, w, h, k)
             coLineList.append(tile)
             colNum += 1
 
@@ -141,22 +178,53 @@ def parse(string):
     data["te"] = teList
     data["co"] = coList
 
+    # 把每个area的相关信息汇聚在一起
+    for d in heroData:
+        areaHeroData.append(d)
+        
+    heroData = []
+    
+    for d in doorData:
+        key = d["id"]
+        t = key % 100
+        index = key / 100 % 100
+        if not areaDoorData.has_key(t):
+            areaDoorData[t] = {}
+
+        if not areaDoorData[t].has_key(index):
+            areaDoorData[t][index] = []
+
+        areaDoorData[t][index].append(d)
+
+    doorData = []
+
     return data
 
 def parseData():
+    s = 1
     for scenedata in mapdata:
         if scenedata == 1:
             break
 
         dataList = []
+        k = 1
         for areadata in scenedata:
             if areadata == 1:
                 break
 
-            data = parse(areadata)
+            print "parse scene {} area {}".format(s, k)
+            data = parse(areadata, k)
             dataList.append(data)
+            k = k + 1
 
-        jsonDataList.append(dataList)
+        data = {}
+        data["areas"] = dataList
+        data["heros"] = areaHeroData
+        data["gates"] = areaDoorData
+
+        jsonDataList.append(data)
+
+        s += 1
 
 def encode(jstr):
     res = "{"

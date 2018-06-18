@@ -1,15 +1,29 @@
 // MapCtrlr.ts
 // 地图管理器：
 // 控制tiledmap，Map里面有各个场景（scene）每个场景中有多个区域（area），每个区域是由多个区块（block）和通道组成
+// 场景和区域的序号从1开始
 // lly 2018.6.6
 
 const {ccclass, property} = cc._decorator;
 
-class MapJson {
+class AreaJson {
     te: number[][];
     co: number[][];
     w: number;
     h: number;
+}
+
+class TriggerJson {
+    x: number;
+    y: number;
+    area: number;
+    id: number;
+}
+
+class SceneJson {
+    areas: AreaJson[];
+    heros: TriggerJson[];
+    gates: {[key: number]: {[key: number]: TriggerJson[];};};
 }
 
 @ccclass
@@ -19,10 +33,12 @@ export default class MapCtrlr extends cc.Component {
 
     mapPool: cc.TiledMap[] = [];
 
-    mapJsons: MapJson[][] = [];
+    sceneJsons: SceneJson[] = [];
     frames: cc.SpriteFrame[] = [];
 
     curAssets: cc.TiledMapAsset[] = [];
+
+    finishCallback: () => void = null;
 
     onLoad() {
         // 生成多个map的节点池
@@ -38,6 +54,10 @@ export default class MapCtrlr extends cc.Component {
         }
     }
 
+    setFinishCallback(callback: () => void) {
+        this.finishCallback = callback;
+    }
+
     /**
      * 创建场景
      */
@@ -47,12 +67,13 @@ export default class MapCtrlr extends cc.Component {
             [this._loadMapJson],
             [this._loadTexture],
             [this._createMapData],
-            [this._displayMap]
+            [this._displayMap],
+            [this._onFinish]
         ])
     }
 
     _loadMapJson(callback: () => void, lastData: any) {
-        if (this.mapJsons[this.curSceneIndex]) {
+        if (this.sceneJsons[this.curSceneIndex]) {
             callback();
             return;
         }
@@ -65,7 +86,7 @@ export default class MapCtrlr extends cc.Component {
             }
 
             let decodeStr = MapCtrlr._decodeMapData(data.text);
-            this.mapJsons[this.curSceneIndex] = JSON.parse(decodeStr);
+            this.sceneJsons[this.curSceneIndex] = JSON.parse(decodeStr);
             callback();
         });        
     }
@@ -107,10 +128,10 @@ export default class MapCtrlr extends cc.Component {
     _createMapData(callback: () => void, lastData: any) {
         this.curAssets = [];
 
-        let mapJsons = this.mapJsons[this.curSceneIndex];
+        let areaJsons = this.sceneJsons[this.curSceneIndex].areas;
         let frame = this.frames[this.curSceneIndex];
-        for (let index = 0; index < this.mapJsons.length; index++) {
-            let tmxStr = MapCtrlr._createTMXString(mapJsons[index]);
+        for (let index = 0; index < areaJsons.length; index++) {
+            let tmxStr = MapCtrlr._createTMXString(areaJsons[index]);
             
             let ourmap = new cc.TiledMapAsset();
             ourmap.tmxXmlStr = tmxStr;
@@ -130,7 +151,7 @@ export default class MapCtrlr extends cc.Component {
         callback();
     }
 
-    static _createTMXString(json: MapJson): string {
+    static _createTMXString(json: AreaJson): string {
         let w: number = json.w;
         let h: number = json.h;
 
@@ -178,5 +199,65 @@ export default class MapCtrlr extends cc.Component {
             const asset = this.curAssets[index];
             this.mapPool[index].tmxAsset = asset;           
         }
+
+        callback();
+    }
+
+    _onFinish(callback: () => void, lastData: any) {
+        if (this.finishCallback) this.finishCallback();
+    }
+
+    getAreaSize(areaIndex: number): {w: number, h: number} {
+        let realIndex = areaIndex - 1;
+        let areas = this.sceneJsons[this.curSceneIndex].areas;
+        myAssert(0 <= realIndex && realIndex < areas.length, "wrong area index");
+
+        let areaData = areas[realIndex];
+        
+        return {w: areaData.w, h: areaData.h};
+    }
+
+    getAreaCollisionData(areaIndex: number): number[][] {
+        let realIndex = areaIndex - 1;
+        let areas = this.sceneJsons[this.curSceneIndex].areas;
+        myAssert(0 <= realIndex && realIndex < areas.length, "wrong area index");
+
+        let areaData = areas[realIndex];
+        
+        return areaData.co;
+    }
+
+    getHeroPos(): {area: number, x: number, y: number} {
+        let hero = this.sceneJsons[this.curSceneIndex].heros[0];
+        return {
+            area: hero.area,
+            x: hero.x,
+            y: hero.y
+        };
+    }
+
+    getAnotherGatePos(id: number): {area: number, x: number, y: number} {
+        let k = id % 100;
+        let index = id / 100 % 100;
+        let gates = this.sceneJsons[this.curSceneIndex].gates;
+        let gateList = gates[k][index];
+
+        let anotherGateData: TriggerJson;
+        for (const gateData of gateList) {
+            if (gateData.id != id) {
+                anotherGateData = gateData;
+                break;
+            }
+        }
+
+        return {
+            area: anotherGateData.area,
+            x: anotherGateData.x,
+            y: anotherGateData.y
+        }
+    }
+
+    changeArea(areaIndex: number) {
+        
     }
 }
