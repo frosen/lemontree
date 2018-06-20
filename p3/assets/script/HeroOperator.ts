@@ -153,6 +153,11 @@ export default class HeroOperator extends cc.Component {
             case cc.KEY.space:
                 this.hero.dash();
                 break;
+
+            case cc.KEY.f: // 瞬间平移
+                let dir = this.hero.looks.xUIDir;
+                this.hero.movableObj.blink(this.hero.node.x + dir * 300, this.hero.node.y);
+                break;
         }
     }
 

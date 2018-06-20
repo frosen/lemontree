@@ -7,7 +7,8 @@ window.EXECUTION_ORDER = {
     TerrainCollider: 2,
     ObjCollider: 3,
     BehaviorTree: 4,
-    CameraCtrlr: 5
+    CameraCtrlr: 5,
+    BGCtrlr: 6
 };
 
 window.getFuncFromString = function (obj, str) {

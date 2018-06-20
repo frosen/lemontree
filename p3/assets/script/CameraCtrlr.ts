@@ -33,7 +33,6 @@ export default class CameraCtrlr extends cc.Component {
         if (newMapSize.width != this.mapSize.width || newMapSize.height != this.mapSize.height) {
             this.mapSize = newMapSize;
 
-            
             let canvas: cc.Node = cc.find("canvas");
             let viewSize = canvas.getContentSize();
 

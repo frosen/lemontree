@@ -11,6 +11,7 @@ declare namespace EXECUTION_ORDER {
 	let ObjCollider: number
 	let BehaviorTree: number
 	let CameraCtrlr: number
+	let BGCtrlr: number
 }
 
 /**
