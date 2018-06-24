@@ -206,7 +206,7 @@ export default class TerrainCollider extends cc.Component {
         // 计算是否出界
         if (xCenter < 0) {
             this.xOutRangeDir = -1;
-        } else if (this.terrainCtrlr.terrainSize.width < xCenter) {
+        } else if (this.terrainCtrlr.terrainSize.width <= xCenter) {
             this.xOutRangeDir = 1;
         } else {
             this.xOutRangeDir = 0;
@@ -214,7 +214,7 @@ export default class TerrainCollider extends cc.Component {
 
         if (yCenter < 0) {
             this.yOutRangeDir = -1;
-        } else if (this.terrainCtrlr.terrainSize.height < yCenter) {
+        } else if (this.terrainCtrlr.terrainSize.height <= yCenter) {
             this.yOutRangeDir = 1;
         } else {
             this.yOutRangeDir = 0;
