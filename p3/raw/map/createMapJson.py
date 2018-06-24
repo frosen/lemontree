@@ -226,8 +226,9 @@ def parseData():
 
         s += 1
 
+import random
 def encode(jstr):
-    res = "{"
+    res = ""
     l = len(jstr)
     kl = l % 4
 
@@ -247,9 +248,11 @@ def encode(jstr):
         else:
             res += chr(asc + k)
 
-    res += "}"
-
-    return res
+    mid = int(len(res) / 2)
+    resHead = res[mid:mid + 30]
+    print mid
+    print resHead
+    return resHead + res
 
 def saveJsonAndImg(path, oldPath):
     index = 1

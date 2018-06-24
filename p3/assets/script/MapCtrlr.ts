@@ -91,7 +91,8 @@ export default class MapCtrlr extends cc.Component {
     }
 
     static _decodeMapData(eStr: string): string {
-        let len = eStr.length - 2;
+        let h = 30
+        let len = eStr.length - h;
         let kl = len % 4;
         let res = "";
         for (let index = 0; index < len; index++) {
@@ -100,7 +101,7 @@ export default class MapCtrlr extends cc.Component {
             if (index % 3 == 0) k += 1;
             if (index % 14 < 7) k += 1;
 
-            let code = eStr.charCodeAt(index + 1);
+            let code = eStr.charCodeAt(index + h);
             res += String.fromCharCode(code + k * (code > 75 ? 1 : -1));          
         }
 
