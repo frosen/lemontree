@@ -8,16 +8,15 @@ import Pot from "./Pot";
 import MyNodePool from "./MyNodePool";
 
 class PotInfo {
-    frame: cc.SpriteFrame = null;
-    c1: cc.Color = null;
-    c2: cc.Color = null;
-    width: number = 0;
+    frame: cc.SpriteFrame;
+    c1: cc.Color;
+    c2: cc.Color;
 }
 
 class PotData {
-    pos: cc.Vec2
-    living: boolean
-    info: PotInfo
+    pos: cc.Vec2;
+    living: boolean;
+    info: PotInfo;
 
     constructor(pos: cc.Vec2, info: PotInfo) {
         this.pos = pos;
@@ -64,8 +63,7 @@ export default class PotCtrlr extends cc.Component {
             let name = frame.name;
             let datas = name.split("_");
 
-            pot.setData(null, frame, cc.hexToColor(datas[1]), cc.hexToColor(datas[2]), 
-                frame.getOriginalSize().width - parseInt(datas[3]));
+            pot.setData(null, frame, cc.hexToColor(datas[1]), cc.hexToColor(datas[2]));
         }
     }
 
@@ -96,7 +94,6 @@ export default class PotCtrlr extends cc.Component {
             info.frame = frame;
             info.c1 = cc.hexToColor(datas[1]);
             info.c2 = cc.hexToColor(datas[2]);
-            info.width = frame.getOriginalSize().width - parseInt(datas[3]);
             potInfos.push(info);
         }
 
@@ -129,7 +126,7 @@ export default class PotCtrlr extends cc.Component {
             
             let pot = node.getComponent(Pot);
             let info = data.info;
-            pot.setData(index, info.frame, info.c1, info.c2, info.width);
+            pot.setData(index, info.frame, info.c1, info.c2);
         }
         this.pool.reclaimOtherFrom(index + 1);
     }

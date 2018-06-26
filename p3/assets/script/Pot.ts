@@ -8,10 +8,6 @@ import Destroyee from "./Destroyee";
 import PotCtrlr from "./PotCtrlr";
 import PotFragmentCtrlr from "./PotFragmentCtrlr";
 
-import {MovableObject} from "./MovableObject";
-import TerrainCollider from "./TerrainCollider";
-import Gravity from "./Gravity";
-
 import Attack from "./Attack";
 
 @ccclass
@@ -22,8 +18,6 @@ export default class Pot extends Destroyee {
 
     static potCtrlr: PotCtrlr = null;
     static fragmentCtrlr: PotFragmentCtrlr = null;
-
-    terrainCollider: TerrainCollider = null;
 
     ctrlrIndex: number = null;
     sp: cc.Sprite = null;
@@ -36,9 +30,6 @@ export default class Pot extends Destroyee {
     onLoad() {
         super.onLoad();
 
-        this._createComp(MovableObject);
-        this.terrainCollider = this._createComp(TerrainCollider);
-        this._createComp(Gravity);
         this.sp = this._createComp(cc.Sprite);
 
         if (CC_EDITOR) return;
@@ -52,13 +43,11 @@ export default class Pot extends Destroyee {
         this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3 
     }
 
-    setData(index: number, f: cc.SpriteFrame, c1: cc.Color, c2: cc.Color, w: number) {
+    setData(index: number, f: cc.SpriteFrame, c1: cc.Color, c2: cc.Color) {
         this.ctrlrIndex = index;
         this.sp.spriteFrame = f;
         this.c1 = c1;
         this.c2 = c2;
-        let oSize = this.sp.spriteFrame.getOriginalSize();
-        this.terrainCollider.size = cc.size(w, oSize.height); 
     }
 
     // 碰撞回调 ------------------------------------------------------------
