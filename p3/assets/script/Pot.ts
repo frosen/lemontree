@@ -5,6 +5,7 @@
 const {ccclass, property, executeInEditMode} = cc._decorator;
 
 import Destroyee from "./Destroyee";
+import PotCtrlr from "./PotCtrlr";
 import PotFragmentCtrlr from "./PotFragmentCtrlr";
 
 import {MovableObject} from "./MovableObject";
@@ -19,9 +20,12 @@ export default class Pot extends Destroyee {
 
     hp: number = 0;
 
-    ctrlr: PotFragmentCtrlr = null;
+    static potCtrlr: PotCtrlr = null;
+    static fragmentCtrlr: PotFragmentCtrlr = null;
 
     terrainCollider: TerrainCollider = null;
+
+    ctrlrIndex: number = null;
     sp: cc.Sprite = null;
 
     /** 爆炸时碎片的颜色 */
@@ -39,12 +43,17 @@ export default class Pot extends Destroyee {
 
         if (CC_EDITOR) return;
 
-        this.ctrlr = cc.find("main/fragment_layer").getComponent(PotFragmentCtrlr);
+        if (!Pot.potCtrlr) 
+            Pot.potCtrlr = cc.find("main/enemy_layer").getComponent(PotCtrlr);
+
+        if (!Pot.fragmentCtrlr) 
+            Pot.fragmentCtrlr = cc.find("main/fragment_layer").getComponent(PotFragmentCtrlr);
 
         this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3 
     }
 
-    setData(f: cc.SpriteFrame, c1: cc.Color, c2: cc.Color, w: number) {
+    setData(index: number, f: cc.SpriteFrame, c1: cc.Color, c2: cc.Color, w: number) {
+        this.ctrlrIndex = index;
         this.sp.spriteFrame = f;
         this.c1 = c1;
         this.c2 = c2;
@@ -65,7 +74,8 @@ export default class Pot extends Destroyee {
     }
 
     _dead(pos: cc.Vec2) {
-        this.ctrlr.showFragments(pos, this.c1, this.c2);
+        Pot.fragmentCtrlr.showFragments(pos, this.c1, this.c2);
+        Pot.potCtrlr.killPot(this);
     }
 }
 

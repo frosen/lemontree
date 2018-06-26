@@ -14,6 +14,18 @@ class PotInfo {
     width: number = 0;
 }
 
+class PotData {
+    pos: cc.Vec2
+    living: boolean
+    info: PotInfo
+
+    constructor(pos: cc.Vec2, info: PotInfo) {
+        this.pos = pos;
+        this.living = true;
+        this.info = info;
+    }
+}
+
 @ccclass
 export default class PotCtrlr extends cc.Component {
 
@@ -22,13 +34,20 @@ export default class PotCtrlr extends cc.Component {
 
     pool: MyNodePool = null;
 
-    potInfos: PotInfo[] = [];
+    potInfos: PotInfo[][] = [];
+
+    /** 每个区域的水罐位置 */
+    potDatas: PotData[][] = [];
+
+    curScene: number = 1; //从1开始
+    curArea: number = 1; //从1开始
 
     onLoad() {
         // 生成节点池
         this.pool = new MyNodePool((): cc.Node => {
             let node = new cc.Node();
             node.addComponent(Pot);
+            node.setAnchorPoint(0.5, 0);
             return node;
         }, 30, "pot", this.node); 
 
@@ -38,33 +57,38 @@ export default class PotCtrlr extends cc.Component {
     _createShowingPots() {
         for (const node of this.showingPots) {
             if (node.active == false) continue;
+            node.setAnchorPoint(0.5, 0);
             let pot = node.addComponent(Pot);
             let sp = node.getComponent(cc.Sprite);
             let frame = sp.spriteFrame;
             let name = frame.name;
             let datas = name.split("_");
 
-            pot.setData(frame, cc.hexToColor(datas[1]), cc.hexToColor(datas[2]), 
+            pot.setData(null, frame, cc.hexToColor(datas[1]), cc.hexToColor(datas[2]), 
                 frame.getOriginalSize().width - parseInt(datas[3]));
         }
     }
 
-    loadRes(dir: string) {
+    setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
+        this.curScene = sceneIndex;
+        if (this.potInfos[sceneIndex]) return;
+
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir("pots", cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load res dir: ${error.message}`);
                 return;
             }
-            this._onGotFrames(frames);
+            this._onGotFrames(sceneIndex, frames);
+            finishCallback();
         });
     }
 
     /**
      * 获得纹理后，进行解析
      */
-    _onGotFrames(frames: cc.SpriteFrame[]) {
-        this.potInfos = [];
+    _onGotFrames(sceneIndex: number, frames: cc.SpriteFrame[]) {
+        let potInfos = [];
         for (const frame of frames) {
             let name = frame.name;
             let datas = name.split("_");
@@ -73,9 +97,50 @@ export default class PotCtrlr extends cc.Component {
             info.c1 = cc.hexToColor(datas[1]);
             info.c2 = cc.hexToColor(datas[2]);
             info.width = frame.getOriginalSize().width - parseInt(datas[3]);
-            this.potInfos.push(info);
+            potInfos.push(info);
         }
+
+        this.potInfos[sceneIndex] = potInfos;
     }
 
-    
+    setPotsData(areaIndex: number, poss: cc.Vec2[]) {
+        let data = [];
+        let potInfos = this.potInfos[this.curScene];
+        let len = potInfos.length;
+        for (const pos of poss) {
+            let r = Math.random() * len;
+            let k = Math.floor(r);
+            data.push(new PotData(pos, potInfos[k]));
+        }
+        this.potDatas[areaIndex] = data;
+    }
+
+    changeArea(areaIndex: number) {
+        this.curArea = areaIndex;
+        let potDatas: PotData[] = this.potDatas[areaIndex];
+
+        let index = 0;
+        for (; index < potDatas.length; index++) {  
+            let data = potDatas[index];
+            if (data.living == false) continue;
+
+            let node = this.pool.getByIndex(index);
+            node.setPosition(data.pos);
+            
+            let pot = node.getComponent(Pot);
+            let info = data.info;
+            pot.setData(index, info.frame, info.c1, info.c2, info.width);
+        }
+        this.pool.reclaimOtherFrom(index + 1);
+    }
+
+    killPot(pot: Pot) {
+        let index = pot.ctrlrIndex;
+        if (index) {
+            this.potDatas[this.curArea][index].living = false;
+            this.pool.reclaim(pot.node);
+        } else { // 没有index说明不是从pool中生成的
+            pot.node.removeFromParent();
+        }      
+    }
 }

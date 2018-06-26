@@ -96,13 +96,13 @@ def parseCo(t, lineNum, colNum, w, h, k):
             doorIndexs[t] += 1
 
         orient = 0
-        if lineNum == 1:
+        if lineNum == 0:
             orient = 1
-        elif lineNum == h:
+        elif lineNum == h - 1:
             orient = 2
-        elif colNum == 1:
+        elif colNum == 0:
             orient = 3
-        elif colNum == w:
+        elif colNum == w - 1:
             orient = 4
         else:
             raise RuntimeError("Wrong door at line %d, col %d" % lineNum, colNum)
@@ -159,12 +159,12 @@ def parse(string, k):
     coList = []
     coLineStrs = coStr.split("\n")
 
-    lineNum = 1
+    lineNum = 0
     for line in coLineStrs:
         coData = line.split(",")
         coLineList = []
 
-        colNum = 1
+        colNum = 0
         for coStr in coData:
             if len(coStr) < 1: continue
             tile = int(coStr)

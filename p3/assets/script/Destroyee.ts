@@ -91,9 +91,8 @@ export default abstract class Destroyee extends cc.Component {
 
     gotoDead() {
         let pos: cc.Vec2 = this._getCenterPos();
-        this._dead(pos);
         this.itemCtrlr.createItem(pos);
-        this.node.removeFromParent();
+        this._dead(pos);
     }
 
     _getCenterPos(): cc.Vec2 {

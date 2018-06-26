@@ -73,8 +73,9 @@ export class TerrainCtrlr extends cc.Component {
     /**
      * 得到一个块的最下的中点
      */
-    getPosFromTilePos(x: number, y: number): cc.Vec2 {
-        return cc.v2(x * TileLength - TileLength * 0.5, this.terrainSize.height - y * TileLength);
+    getPosFromTilePos(x: number, y: number, tileNumHeight: number = null): cc.Vec2 {
+        let h = tileNumHeight ? tileNumHeight * TileLength : this.terrainSize.height
+        return cc.v2(x * TileLength + TileLength * 0.5, h - y * TileLength - TileLength);
     }
 
     /**

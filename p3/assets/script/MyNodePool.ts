@@ -76,4 +76,27 @@ export default class MyNodePool {
     reclaim(node: cc.Node) {
         this._setNodeUsing(node, false);
     }
+
+    //========================================================
+
+    getByIndex(index: number): cc.Node {
+        if (index < this.pool.length) {
+            let node = this.pool[index];
+            node.active = true;
+            return node;
+        } else {
+            let n = this.nodeCreateFunc();
+            this._put(n, true);
+            return n;
+        }
+    }
+
+    reclaimOtherFrom(index: number) {
+        let i = index;
+        while (i < this.pool.length) {
+            let node = this.pool[i];
+            node.active = false;
+            i++;
+        }
+    }
 }

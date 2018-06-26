@@ -7,6 +7,10 @@ const {ccclass, property} = cc._decorator;
 import MapCtrlr from "./MapCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 import {Hero} from "./Hero";
+
+import PotCtrlr from "./PotCtrlr";
+
+import ItemCtrlr from "./ItemCtrlr";
 import Curtain from "./Curtain";
 
 @ccclass
@@ -21,33 +25,63 @@ export default class GameCtrlr extends cc.Component {
     @property(Hero)
     hero: Hero = null;
 
+    @property(PotCtrlr)
+    potCtrlr: PotCtrlr = null;
+
+    @property(ItemCtrlr)
+    itemCtrlr: ItemCtrlr = null;
+
     @property(Curtain)
     curtain: Curtain = null;
 
-    start () {
+    curScene: number = 1; // 从1开始
+
+    start() {
         this.changeScene(1);
     }
 
     changeScene(index: number) {
+        this.curScene = index;
         callList(this, [
-            [(callNext: () => void, lastData: any) => { // 生成新场景
-                this.mapCtrlr.createScene(index, () => {
-                    callNext();
-                });
-            }],
-            [(callNext: () => void, lastData: any) => { // 切换到英雄初始位置
-                let {area, x, y} = this.mapCtrlr.getHeroPos();
-                this._changeArea(area, x, y);
-                callNext();
-            }],
-            [(callNext: () => void, lastData: any) => { // 拉开帷幕
-                this.curtain.showScene();
-            }]
+            [this._createScene],
+            [this._loadPotRes],
+            [this._createEnemyAndPot],
+            [this._gotoHeroSpot],
+            [this._showScene]
         ]);
     }
 
+    _createScene(callNext: () => void, lastData: any) {
+        this.mapCtrlr.createScene(this.curScene, () => {
+            callNext();
+        });
+    }
+
+    _loadPotRes(callNext: () => void, lastData: any) {
+        this.potCtrlr.setSceneAndLoadRes(this.curScene, callNext);
+    }
+
+    _createEnemyAndPot(callNext: () => void, lastData: any) {
+        let len = this.mapCtrlr.getAreaCount();
+        for (let index = 1; index <= len; index++) {
+            let poss: cc.Vec2[] = this.mapCtrlr.createRandomGroundPoss(index);
+            this.potCtrlr.setPotsData(index, poss);
+        }
+        callNext();
+    }
+
+    _gotoHeroSpot(callNext: () => void, lastData: any) {
+        let {area, x, y} = this.mapCtrlr.getHeroPos();
+        this._changeArea(area, x, y);
+        callNext();
+    }
+
+    _showScene(callNext: () => void, lastData: any) {
+        this.curtain.showScene();
+    }
+
     enterGate(gateGid: number, lastHeroPos: cc.Vec2) {
-        let {thisArea, thisX, thisY, otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
+        let {thisX, thisY, otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
         let lastGatePos = this.terrainCtrlr.getPosFromTilePos(thisX, thisY);
         let diff = cc.pSub(lastHeroPos, lastGatePos);
         this._changeArea(otherArea, otherX, otherY, diff.x, diff.y);
@@ -56,12 +90,10 @@ export default class GameCtrlr extends cc.Component {
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
         this.mapCtrlr.changeArea(areaIndex);
 
-        let clsnData = this.mapCtrlr.getAreaCollisionData(areaIndex);
-        this.terrainCtrlr.setTerrainData(clsnData);
-        
+        this.potCtrlr.changeArea(areaIndex);
+        this.itemCtrlr.clear();
+
         let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
         this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
     }
-
-
 }

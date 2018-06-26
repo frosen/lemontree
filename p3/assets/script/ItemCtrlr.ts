@@ -129,4 +129,10 @@ export default class ItemCtrlr extends cc.Component {
         let node: cc.Node = itemComp.node;
         this.pool.reclaim(node);
     }
+
+    // ========================================================
+
+    clear() {
+        this.pool.reclaimOtherFrom(0);
+    }
 }
