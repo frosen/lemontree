@@ -8,6 +8,7 @@ const {ccclass, property} = cc._decorator;
 
 import {TerrainCtrlr} from "./TerrainCtrlr";
 
+/** 一个区域的属性 */
 class AreaJson {
     te: number[][];
     co: number[][];
@@ -15,6 +16,7 @@ class AreaJson {
     h: number;
 }
 
+/** 每个区域中触发点的属性 */
 class TriggerJson {
     x: number;
     y: number;
@@ -22,14 +24,25 @@ class TriggerJson {
     id: number;
 }
 
+/** 一个场景的属性 */
 class SceneJson {
     areas: AreaJson[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
 }
 
+/**
+ * 地面信息，用于生成enemy或者pot时候使用，不同属性的地面可以生成的东西不一样
+ * 凡是地面，那么其上面两格必定为空
+ */
+export class GroundInfo {
+    x: number;
+    y: number;
+    wide: boolean;
+}
+
 @ccclass
-export default class MapCtrlr extends cc.Component {
+export class MapCtrlr extends cc.Component {
 
     @property(TerrainCtrlr)
     terrainCtrlr: TerrainCtrlr = null;
@@ -41,9 +54,11 @@ export default class MapCtrlr extends cc.Component {
     sceneJsons: SceneJson[] = [];
     frames: cc.SpriteFrame[] = [];
 
+    /** 当前场景中每个区域对应的地图的列表 */
     curAssets: cc.TiledMapAsset[] = [];
 
-    groundPoss: cc.Vec2[][] = [];
+    /** 每个场景中的地面信息 */
+    groundInfos: GroundInfo[][] = [];
 
     onLoad() {
         // 生成多个map的节点池
@@ -71,7 +86,7 @@ export default class MapCtrlr extends cc.Component {
             [this._loadMapJson],
             [this._loadTexture],
             [this._createMapData],
-            [this._displayMap],
+            [this._holdMapAsset],
             [(callNext: () => void, lastData: any) => {
                 finishCallback();
             }]
@@ -98,21 +113,14 @@ export default class MapCtrlr extends cc.Component {
     }
 
     static _decodeMapData(eStr: string): string {
-        let h = 30
-        let len = eStr.length - h;
-        let kl = len % 4;
-        let res = "";
-        for (let index = 0; index < len; index++) {
-            let k = kl + (index % 5);
-            if (index % 2 == 0) k += 1;
-            if (index % 3 == 0) k += 1;
-            if (index % 14 < 7) k += 1;
-
-            let code = eStr.charCodeAt(index + h);
-            res += String.fromCharCode(code + k * (code > 75 ? 1 : -1));          
+        let begin = 30;
+        let end = 30;
+        let len = eStr.length - begin - end;
+        let a = [];
+        for (let i = 0; i < len; i++) {
+            a[i] = String.fromCharCode(eStr.charCodeAt(i + begin) + (i % 7) + (i % 13));          
         }
-
-        return res;
+        return a.join("");
     }
 
     _loadTexture(callNext: () => void, lastData: any) {
@@ -132,6 +140,7 @@ export default class MapCtrlr extends cc.Component {
         }); 
     }
 
+    /** 根据读取的map信息，按照tilemap规则，生成对应的tilemap数据，然后生成tiledmap */
     _createMapData(callNext: () => void, lastData: any) {
         this.curAssets = [];
 
@@ -158,6 +167,7 @@ export default class MapCtrlr extends cc.Component {
         callNext();
     }
 
+    /** 生成tiledmap所用的地图数据 */
     static _createTMXString(json: AreaJson): string {
         let w: number = json.w;
         let h: number = json.h;
@@ -183,6 +193,7 @@ export default class MapCtrlr extends cc.Component {
         return tmxStr;
     }
 
+    /** 生成tiledmap所用的地图块属性数据 */
     static _createTSXString(size: cc.Size): string {
         let tileLen = 32;
         let {width: w, height: h} = size;
@@ -201,7 +212,7 @@ export default class MapCtrlr extends cc.Component {
         return tsxStr;
     }
 
-    _displayMap(callNext: () => void, lastData: any) {
+    _holdMapAsset(callNext: () => void, lastData: any) {
         for (let index = 0; index < this.curAssets.length; index++) {
             const asset = this.curAssets[index];
             this.mapPool[index].tmxAsset = asset;           
@@ -241,6 +252,7 @@ export default class MapCtrlr extends cc.Component {
         };
     }
 
+    /** 获取场景中不同区域之间的门的信息 */
     getGatePos(id: number): 
         {thisArea: number, thisX: number, thisY: number, otherArea: number, otherX: number, otherY: number} {
         let k = id % 100;
@@ -268,23 +280,35 @@ export default class MapCtrlr extends cc.Component {
         };
     }
 
-    getGrounds(areaIndex: number): cc.Vec2[] {
-        if (this.groundPoss[areaIndex]) return this.groundPoss[areaIndex];
+    /** 检测一个地图块是不是地面 */
+    _isGroundByGid(gid: number) {
+        return gid == 1 || gid == 3;
+    }
 
-        let grounds = [];
+    getGrounds(areaIndex: number): GroundInfo[] {
+        if (this.groundInfos[areaIndex]) return this.groundInfos[areaIndex];
+
+        let grounds: GroundInfo[] = [];
         let areaData = this.getAreaData(areaIndex); 
         let clsnData = areaData.co;
         for (let h = 0; h < areaData.h; h++) {
             let wData = clsnData[h];
             for (let w = 0; w < areaData.w; w++) {
                 let gid = wData[w];
-                if (gid == 1 || gid == 3) {
-                    grounds.push(cc.v2(w, h));
+                if (this._isGroundByGid(gid)) {
+                    let g = new GroundInfo()
+                    g.x = w;
+                    g.y = h;
+
+                    // 计算左右是否是连续的地面
+                    g.wide = this._isGroundByGid(wData[w - 1]) && this._isGroundByGid(wData[w + 1]);
+
+                    grounds.push(g);
                 }
             }        
         }
 
-        this.groundPoss[areaIndex] = grounds;
+        this.groundInfos[areaIndex] = grounds;
         return grounds;
     }
 
@@ -318,10 +342,6 @@ export default class MapCtrlr extends cc.Component {
         } while (usingGroundPoss.length < count);
         
         return usingGroundPoss;
-    }
-
-    createRandomAirPoss() {
-
     }
 
     changeArea(areaIndex: number) {

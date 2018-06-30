@@ -1,4 +1,4 @@
-// EnemyFighter.ts
+// EnemyOfFighter.ts
 // 战士：
 // lly 2018.3.27
 
@@ -11,7 +11,7 @@ import TerrainCollider from "./TerrainCollider";
 import {CollisionType} from "./TerrainCtrlr";
 
 @ccclass
-export default class EnemyFighter extends Enemy {
+export default class EnemyOfFighter extends Enemy {
 
     // UI相关 ========================================================
 

@@ -7,8 +7,18 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class EnemyCtrlr extends cc.Component {
 
-    start () {
+    onLoad() {
+        cc.loader.loadResDir("enemy/scene1", cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
+            if (error) {
+                cc.log(`Wrong in load res dir: ${error.message}`);
+                return;
+            }
 
+            cc.log(">>", "enemey", prefabs.length);
+            for (const prefab of prefabs) {
+                cc.log(">>", "prefab", prefab.name);
+            }
+        });
     }
 
     // update (dt) {}

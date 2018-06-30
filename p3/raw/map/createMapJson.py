@@ -230,29 +230,19 @@ import random
 def encode(jstr):
     res = ""
     l = len(jstr)
-    kl = l % 4
 
     for i in xrange(l):
-        k = kl + (i % 5)
-        if i % 2 == 0:
-            k += 1
-        if i % 3 == 0:
-            k += 1
-        if i % 14 < 7:
-            k += 1
-
+        k = (i % 7) + (i % 13)
         asc = ord(jstr[i])
-
-        if asc > 75:
-            res += chr(asc - k)
-        else:
-            res += chr(asc + k)
+        res += chr(asc - k)
 
     mid = int(len(res) / 2)
-    resHead = res[mid:mid + 30]
+    resHead = res[mid:mid + 28]
     print mid
     print resHead
-    return resHead + res
+    th = int(len(res) / 3)
+    resTh = res[th:th + 30]
+    return "\x06\0" + resHead + res + resTh
 
 def saveJsonAndImg(path, oldPath):
     index = 1

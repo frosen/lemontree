@@ -4,14 +4,16 @@
 
 const {ccclass, property} = cc._decorator;
 
-import MapCtrlr from "./MapCtrlr";
+import {MapCtrlr} from "./MapCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 import {Hero} from "./Hero";
 
+import EnemyCtrlr from "./EnemyCtrlr";
 import PotCtrlr from "./PotCtrlr";
 
 import ItemCtrlr from "./ItemCtrlr";
 import Curtain from "./Curtain";
+
 
 @ccclass
 export default class GameCtrlr extends cc.Component {
@@ -24,6 +26,9 @@ export default class GameCtrlr extends cc.Component {
 
     @property(Hero)
     hero: Hero = null;
+
+    @property(EnemyCtrlr)
+    enemyCtrlr: EnemyCtrlr = null;
 
     @property(PotCtrlr)
     potCtrlr: PotCtrlr = null;
@@ -44,7 +49,7 @@ export default class GameCtrlr extends cc.Component {
         this.curScene = index;
         callList(this, [
             [this._createScene],
-            [this._loadPotRes],
+            [this._loadRes],
             [this._createEnemyAndPot],
             [this._gotoHeroSpot],
             [this._showScene]
@@ -57,7 +62,7 @@ export default class GameCtrlr extends cc.Component {
         });
     }
 
-    _loadPotRes(callNext: () => void, lastData: any) {
+    _loadRes(callNext: () => void, lastData: any) {
         this.potCtrlr.setSceneAndLoadRes(this.curScene, callNext);
     }
 
