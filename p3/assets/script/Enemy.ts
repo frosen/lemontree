@@ -7,13 +7,12 @@ const {ccclass, property} = cc._decorator;
 import Destroyee from "./Destroyee";
 import AttriForEnemy from "./AttriForEnemy";
 import Attack from "./Attack";
-import {ObjCollider, CollisionData} from "./ObjCollider";
+import {CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 
 import {Hero} from "./Hero";
 import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
-import ItemCtrlr from "./ItemCtrlr";
 
 @ccclass
 export default class Enemy extends Destroyee {

@@ -315,12 +315,12 @@ export class MapCtrlr extends cc.Component {
     /**
      * 根据地图上的点，给每个地图生成随机位置，这些位置都在地面上
      */
-    createRandomGroundPoss(areaIndex: number): cc.Vec2[] {
+    createRandomGroundPoss(areaIndex: number): {pos: cc.Vec2, ground: GroundInfo}[] {
         let grounds = this.getGrounds(areaIndex);
 
         let count = Math.floor(grounds.length * 0.1);
 
-        let usingGroundPoss = [];
+        let usingGroundPoss: {pos: cc.Vec2, ground: GroundInfo}[] = [];
         let usingStates = {};
 
         do {
@@ -333,10 +333,10 @@ export class MapCtrlr extends cc.Component {
             if (!state) {
                 let tileNumHeight = this.getAreaData(areaIndex).h;
                 let pos = this.terrainCtrlr.getPosFromTilePos(ground.x, ground.y - 1, tileNumHeight);
-                usingGroundPoss.push(pos);
+                usingGroundPoss.push({pos, ground});
                 usingStates[stKey] = 1;
             } else {
-
+                // llytodo 如果有随机到重复的，在不过多增加计算量的基础上，让随机更平均
             }
 
         } while (usingGroundPoss.length < count);

@@ -9,6 +9,7 @@ import {Attri} from "./Attri";
 export default class AttriForEnemy extends Attri {
 
     onLoad() {
+
         this.hp.set(100);
         this.maxHp.set(100);
         this.critRate.set(0.03);

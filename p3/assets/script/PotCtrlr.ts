@@ -6,6 +6,7 @@ const {ccclass, property} = cc._decorator;
 
 import Pot from "./Pot";
 import MyNodePool from "./MyNodePool";
+import {GroundInfo} from "./MapCtrlr";
 
 class PotInfo {
     frame: cc.SpriteFrame;
@@ -72,7 +73,7 @@ export default class PotCtrlr extends cc.Component {
         if (this.potInfos[sceneIndex]) return;
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir("pots", cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
+        cc.loader.loadResDir(`pots/scene${sceneIndex}`, cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load res dir: ${error.message}`);
                 return;
@@ -100,14 +101,14 @@ export default class PotCtrlr extends cc.Component {
         this.potInfos[sceneIndex] = potInfos;
     }
 
-    setPotsData(areaIndex: number, poss: cc.Vec2[]) {
+    setData(areaIndex: number, poss: {pos: cc.Vec2, ground: GroundInfo}[]) {
         let data = [];
         let potInfos = this.potInfos[this.curScene];
         let len = potInfos.length;
         for (const pos of poss) {
             let r = Math.random() * len;
             let k = Math.floor(r);
-            data.push(new PotData(pos, potInfos[k]));
+            data.push(new PotData(pos.pos, potInfos[k]));
         }
         this.potDatas[areaIndex] = data;
     }

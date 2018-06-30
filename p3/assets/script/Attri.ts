@@ -62,7 +62,6 @@ export class EcNumber {
 
 @ccclass
 export class Attri extends cc.Component {
-
     /** 血量 */
     hp: EcNumber = new EcNumber(0);
     /** 血量上限 */

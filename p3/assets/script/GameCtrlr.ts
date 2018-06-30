@@ -4,7 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {MapCtrlr} from "./MapCtrlr";
+import {MapCtrlr, GroundInfo} from "./MapCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 import {Hero} from "./Hero";
 
@@ -49,7 +49,8 @@ export default class GameCtrlr extends cc.Component {
         this.curScene = index;
         callList(this, [
             [this._createScene],
-            [this._loadRes],
+            [this._loadEnemyRes],
+            [this._loadPotRes],
             [this._createEnemyAndPot],
             [this._gotoHeroSpot],
             [this._showScene]
@@ -62,15 +63,23 @@ export default class GameCtrlr extends cc.Component {
         });
     }
 
-    _loadRes(callNext: () => void, lastData: any) {
+    _loadEnemyRes(callNext: () => void, lastData: any) {
+        this.enemyCtrlr.setSceneAndLoadRes(this.curScene, callNext);
+    }
+
+    _loadPotRes(callNext: () => void, lastData: any) {
         this.potCtrlr.setSceneAndLoadRes(this.curScene, callNext);
     }
 
     _createEnemyAndPot(callNext: () => void, lastData: any) {
         let len = this.mapCtrlr.getAreaCount();
         for (let index = 1; index <= len; index++) {
-            let poss: cc.Vec2[] = this.mapCtrlr.createRandomGroundPoss(index);
-            this.potCtrlr.setPotsData(index, poss);
+            let poss: {pos: cc.Vec2, ground: GroundInfo}[];
+            poss = this.mapCtrlr.createRandomGroundPoss(index);
+            this.enemyCtrlr.setData(index, poss);
+
+            poss = this.mapCtrlr.createRandomGroundPoss(index);
+            this.potCtrlr.setData(index, poss);
         }
         callNext();
     }
