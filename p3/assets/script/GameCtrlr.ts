@@ -104,6 +104,7 @@ export default class GameCtrlr extends cc.Component {
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
         this.mapCtrlr.changeArea(areaIndex);
 
+        this.enemyCtrlr.changeArea(areaIndex);
         this.potCtrlr.changeArea(areaIndex);
         this.itemCtrlr.clear();
 

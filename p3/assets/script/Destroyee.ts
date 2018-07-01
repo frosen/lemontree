@@ -5,9 +5,6 @@
 const {ccclass, property, executeInEditMode} = cc._decorator;
 
 import {ObjCollider, CollisionData} from "./ObjCollider";
-import {MovableObject} from "./MovableObject";
-import TerrainCollider from "./TerrainCollider";
-import Gravity from "./Gravity";
 import Attack from "./Attack";
 import ItemCtrlr from "./ItemCtrlr";
 

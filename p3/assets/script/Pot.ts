@@ -35,7 +35,7 @@ export default class Pot extends Destroyee {
         if (CC_EDITOR) return;
 
         if (!Pot.potCtrlr) 
-            Pot.potCtrlr = cc.find("main/enemy_layer").getComponent(PotCtrlr);
+            Pot.potCtrlr = cc.find("main/pot_layer").getComponent(PotCtrlr);
 
         if (!Pot.fragmentCtrlr) 
             Pot.fragmentCtrlr = cc.find("main/fragment_layer").getComponent(PotFragmentCtrlr);

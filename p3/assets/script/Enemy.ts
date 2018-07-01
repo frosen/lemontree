@@ -45,6 +45,10 @@ export default class Enemy extends Destroyee {
         }
     }
 
+    reset(lv: number) {
+
+    }
+
     // 碰撞回调 ------------------------------------------------------------
 
     _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {

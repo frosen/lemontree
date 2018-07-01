@@ -34,10 +34,10 @@ export default class PotCtrlr extends cc.Component {
 
     pool: MyNodePool = null;
 
-    potInfos: PotInfo[][] = [];
+    infos: PotInfo[][] = [];
 
     /** 每个区域的水罐位置 */
-    potDatas: PotData[][] = [];
+    datas: PotData[][] = [];
 
     curScene: number = 1; //从1开始
     curArea: number = 1; //从1开始
@@ -70,7 +70,7 @@ export default class PotCtrlr extends cc.Component {
 
     setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
         this.curScene = sceneIndex;
-        if (this.potInfos[sceneIndex]) return;
+        if (this.infos[sceneIndex]) return;
 
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir(`pots/scene${sceneIndex}`, cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
@@ -98,24 +98,24 @@ export default class PotCtrlr extends cc.Component {
             potInfos.push(info);
         }
 
-        this.potInfos[sceneIndex] = potInfos;
+        this.infos[sceneIndex] = potInfos;
     }
 
     setData(areaIndex: number, poss: {pos: cc.Vec2, ground: GroundInfo}[]) {
         let data = [];
-        let potInfos = this.potInfos[this.curScene];
+        let potInfos = this.infos[this.curScene];
         let len = potInfos.length;
         for (const pos of poss) {
             let r = Math.random() * len;
             let k = Math.floor(r);
             data.push(new PotData(pos.pos, potInfos[k]));
         }
-        this.potDatas[areaIndex] = data;
+        this.datas[areaIndex] = data;
     }
 
     changeArea(areaIndex: number) {
         this.curArea = areaIndex;
-        let potDatas: PotData[] = this.potDatas[areaIndex];
+        let potDatas: PotData[] = this.datas[areaIndex];
 
         let index = 0;
         for (; index < potDatas.length; index++) {  
@@ -135,7 +135,7 @@ export default class PotCtrlr extends cc.Component {
     killPot(pot: Pot) {
         let index = pot.ctrlrIndex;
         if (index) {
-            this.potDatas[this.curArea][index].living = false;
+            this.datas[this.curArea][index].living = false;
             this.pool.reclaim(pot.node);
         } else { // 没有index说明不是从pool中生成的
             pot.node.removeFromParent();
