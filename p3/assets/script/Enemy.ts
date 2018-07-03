@@ -5,6 +5,8 @@
 const {ccclass, property} = cc._decorator;
 
 import Destroyee from "./Destroyee";
+import EnemyCtrlr from "./EnemyCtrlr";
+
 import AttriForEnemy from "./AttriForEnemy";
 import Attack from "./Attack";
 import {CollisionData} from "./ObjCollider";
@@ -14,16 +16,20 @@ import {Hero} from "./Hero";
 import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
 
+
 @ccclass
 export default class Enemy extends Destroyee {
+
+    static ctrlr: EnemyCtrlr = null;
+    static figureDisplay: FigureDisplay = null;
+    static deathDisplay: DeathEffectDisplay = null;
+
+    ctrlrIndex: number = null;
 
     /** 属性 */
     attri: AttriForEnemy = null;
     /** 观察区碰撞组件 */
     watchCollider: ObjColliderForWatch = null;
-
-    figureDisplay: FigureDisplay = null;
-    deathDisplay: DeathEffectDisplay = null;
 
     onLoad() {
         super.onLoad();
@@ -34,8 +40,12 @@ export default class Enemy extends Destroyee {
 
         if (CC_EDITOR) return;
 
-        this.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
-        this.deathDisplay = cc.find("main/enemy_layer").getComponent(DeathEffectDisplay);
+        if (!Enemy.ctrlr) 
+            Enemy.ctrlr = cc.find("main/enemy_layer").getComponent(EnemyCtrlr);
+        if (!Enemy.figureDisplay) 
+            Enemy.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
+        if (!Enemy.deathDisplay) 
+            Enemy.deathDisplay = cc.find("main/enemy_layer").getComponent(DeathEffectDisplay);
     }
 
     lateUpdate() {
@@ -45,8 +55,15 @@ export default class Enemy extends Destroyee {
         }
     }
 
-    reset(lv: number) {
+    reset(index: number, lv: number) {
+        this.ctrlrIndex = index;
+        this.attri.reset(lv);
+        this._resetAction();
+    }
 
+    /** 需要继承 */
+    _resetAction() {
+        
     }
 
     // 碰撞回调 ------------------------------------------------------------
@@ -63,7 +80,7 @@ export default class Enemy extends Destroyee {
         this.onHurtCallback(dmg, crit);
 
         // 显示受伤数字
-        this.figureDisplay.showFigure(pos, dmg, crit, atk.magicAttack);
+        Enemy.figureDisplay.showFigure(pos, dmg, crit, atk.magicAttack);
     }
 
     // 用于子类
@@ -72,7 +89,8 @@ export default class Enemy extends Destroyee {
     }
 
     _dead(pos: cc.Vec2) {
-        this.deathDisplay.showDeathEffect(pos);
+        Enemy.deathDisplay.showDeathEffect(pos);
+        Enemy.ctrlr.killEnemy(this);
     }
 
     // 观察回调 ========================================================

@@ -17,4 +17,8 @@ export default class AttriForEnemy extends Attri {
         this.atkDmg.set(20);
         this.magicDmg.set(20);
     }
+
+    reset(lv: number) {
+        this.hp.set(this.maxHp.get());
+    }
 }

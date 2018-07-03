@@ -116,33 +116,36 @@ export default class EnemyCtrlr extends cc.Component {
         this.curArea = areaIndex;
         let datas: EnemyData[] = this.datas[areaIndex];
 
-        let indexs = {};
+        let dataIndex = 0;
+        let poolIndexs = {};
 
         for (const data of datas) {
             if (!data.living) continue;
 
             let name = data.name;
 
-            let index = indexs[name];
+            let index = poolIndexs[name];
             if (index == undefined) {
                 index = 0;
             } else {
                 index++;
             }
-            indexs[name] = index;
+            poolIndexs[name] = index;
 
             let enemy: Enemy = this.pool[name][index];
-            enemy.reset(data.lv);
+            enemy.reset(dataIndex, data.lv);
 
             let node = enemy.node;
             node.active = true;
             node.setPosition(data.pos);
+
+            dataIndex++;
         }
 
         // 隐藏不用的节点
         for (const name in this.pool) {
             const enemys: Enemy[] = this.pool[name];
-            let index = indexs[name];
+            let index = poolIndexs[name];
             if (index == undefined) { // 全都没用到，全隐藏
                 for (const enemy of enemys) {
                     enemy.node.active = false;
@@ -154,5 +157,15 @@ export default class EnemyCtrlr extends cc.Component {
                 }
             }
         }
+    }
+
+    killEnemy(enemy: Enemy) {
+        let index = enemy.ctrlrIndex;
+        if (index) {
+            this.datas[this.curArea][index].living = false;
+            enemy.node.active = false;
+        } else { // 没有index说明不是从pool中生成的
+            enemy.node.removeFromParent();
+        } 
     }
 }
