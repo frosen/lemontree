@@ -45,7 +45,7 @@ export default class Enemy extends Destroyee {
         if (!Enemy.figureDisplay) 
             Enemy.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
         if (!Enemy.deathDisplay) 
-            Enemy.deathDisplay = cc.find("main/enemy_layer").getComponent(DeathEffectDisplay);
+            Enemy.deathDisplay = cc.find("main/death_effect_layer").getComponent(DeathEffectDisplay);
     }
 
     lateUpdate() {

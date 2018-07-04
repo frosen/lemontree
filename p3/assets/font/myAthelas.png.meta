@@ -1,0 +1,30 @@
+{
+  "ver": "2.0.0",
+  "uuid": "c9180854-17e0-4119-9510-9f6656eabde5",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "myAthelas": {
+      "ver": "1.0.3",
+      "uuid": "a3130545-79cb-43a8-b99e-577d9bb1b2bf",
+      "rawTextureUuid": "c9180854-17e0-4119-9510-9f6656eabde5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -8.5,
+      "offsetY": 85,
+      "trimX": 6,
+      "trimY": 7,
+      "width": 995,
+      "height": 328,
+      "rawWidth": 1024,
+      "rawHeight": 512,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
