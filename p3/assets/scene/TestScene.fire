@@ -1890,8 +1890,8 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 250,
-      "g": 170,
+      "r": 255,
+      "g": 173,
       "b": 0,
       "a": 255
     },
@@ -1903,17 +1903,17 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 28.13,
+      "width": 90.41,
       "height": 25
     },
     "_rotationX": 0,
     "_rotationY": 0,
     "_scaleX": 1,
-    "_scaleY": 1.2,
+    "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 514,
-      "y": 313
+      "x": 511.65,
+      "y": 318
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -1940,7 +1940,7 @@
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
-    "_N$string": "10",
+    "_N$string": "123 / 456",
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -1958,7 +1958,7 @@
     "_target": null,
     "_alignFlags": 33,
     "_left": 0,
-    "_right": 82.87,
+    "_right": 22.939999999999998,
     "_top": 9,
     "_bottom": 0,
     "_verticalCenter": 0,
@@ -2008,17 +2008,17 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 19.92,
+      "width": 90.41,
       "height": 25
     },
     "_rotationX": 0,
     "_rotationY": 0,
     "_scaleX": 1,
-    "_scaleY": 1.2,
+    "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
       "x": 34,
-      "y": 313
+      "y": 318
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -2045,7 +2045,7 @@
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
-    "_N$string": "0",
+    "_N$string": "123 / 456",
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
