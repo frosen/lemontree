@@ -116,6 +116,7 @@ export default class PotCtrlr extends cc.Component {
     changeArea(areaIndex: number) {
         this.curArea = areaIndex;
         let potDatas: PotData[] = this.datas[areaIndex];
+        if (!potDatas) return;
 
         let index = 0;
         for (; index < potDatas.length; index++) {  

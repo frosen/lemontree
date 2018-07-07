@@ -115,6 +115,7 @@ export default class EnemyCtrlr extends cc.Component {
     changeArea(areaIndex: number) {
         this.curArea = areaIndex;
         let datas: EnemyData[] = this.datas[areaIndex];
+        if (!datas) return;
 
         let dataIndex = 0;
         let poolIndexs = {};

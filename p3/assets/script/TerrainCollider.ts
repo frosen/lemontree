@@ -136,6 +136,7 @@ export default class TerrainCollider extends cc.Component {
                 this.edgeType = CollisionType.entity;
             } else {
                 this.node.x = saveX;
+                this.edgeType = null;
             }
         } else {
             this.curXCollisionType = CollisionType.none;
