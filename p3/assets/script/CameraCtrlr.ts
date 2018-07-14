@@ -26,6 +26,9 @@ export default class CameraCtrlr extends cc.Component {
     yMin: number = null;
     yMax: number = null;
 
+    /** 相对于主角位置的偏差，用于视野移动 */
+    offset: cc.Vec2 = cc.v2(0, 0);
+
     update(_: number) {
         
         // 设置镜头的移动范围
@@ -46,6 +49,8 @@ export default class CameraCtrlr extends cc.Component {
         // 计算位置
         let targetPos = this.target.parent.convertToWorldSpaceAR(this.target.position);
         let cameraPos = this.node.parent.convertToNodeSpaceAR(targetPos);
+
+        cameraPos.addSelf(this.offset);
 
         cameraPos.x = Math.min(Math.max(cameraPos.x, this.xMin), this.xMax);
         cameraPos.y = Math.min(Math.max(cameraPos.y, this.yMin), this.yMax);

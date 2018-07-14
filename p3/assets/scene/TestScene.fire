@@ -1865,6 +1865,9 @@
     "_enabled": true,
     "hero": {
       "__id__": 30
+    },
+    "camera": {
+      "__id__": 9
     }
   },
   {

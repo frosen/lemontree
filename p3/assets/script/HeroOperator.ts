@@ -8,9 +8,13 @@
 const {ccclass, property} = cc._decorator;
 
 import {Hero} from "./Hero";
+import CameraCtrlr from "./CameraCtrlr";
 
 const DisForMove: number = 20;
 const MinMoveBegin: number = 30;
+
+const CameraBackC: number = 0.8;
+const CameraBackP: number = 1;
 
 @ccclass
 export default class HeroOperator extends cc.Component {
@@ -18,6 +22,10 @@ export default class HeroOperator extends cc.Component {
     /** 所控制的英雄 */
     @property(Hero)
     hero: Hero = null;
+
+    /** 控制镜头位置的偏移 */
+    @property(CameraCtrlr)
+    camera: CameraCtrlr = null;
 
     /** 控制区域的屏幕比例 */
     moveWRate: number = 0.4;
@@ -39,10 +47,17 @@ export default class HeroOperator extends cc.Component {
     /** 移动起始点 */
     moveBeginPos: cc.Vec2 = null;
 
-    /** 移动点击的id */
+    /** 镜头移动点击的id */
     watchTouchId: number = null;
-    /** 移动起始点 */
+    /** 镜头移动起始点 */
     watchBeginPos: cc.Vec2 = null;
+    /** 镜头移动的偏移量 */
+    watchOffset: cc.Vec2 = cc.v2(0, 0);
+
+    /** 开启镜头返回 */
+    cameraBack: boolean = false;
+    /** 镜头返回移动方向 */
+    cameraBackDir: cc.Vec2 = cc.v2(0, 0);
 
     /** 移动点击的id */
     jumpTouchId: number = null;
@@ -103,7 +118,14 @@ export default class HeroOperator extends cc.Component {
             }
 
         } else if (event.getID() == this.watchTouchId) {
-            cc.log("watch!");
+            let {x, y} = event.getLocation();
+            x -= this.watchBeginPos.x;
+            y -= this.watchBeginPos.y;
+            x = Math.min(x, 100);
+            y = Math.min(y, 75);
+            this.watchOffset.x = x * 2;
+            this.watchOffset.y = y * 2;
+            this.camera.offset = this.watchOffset;
         } 
     }
 
@@ -115,13 +137,33 @@ export default class HeroOperator extends cc.Component {
             this.hero.move(0);
 
         } else if (id == this.watchTouchId) {
-            this.watchTouchId = null;
-            cc.log("watch! end");
+            this.watchTouchId = null;          
+            if (this.watchOffset.x != 0 || this.watchOffset.y != 0) {
+                this.cameraBack = true;
+                this.cameraBackDir.x = this.watchOffset.x < 0 ? 1 : -1;
+                this.cameraBackDir.y = this.watchOffset.y < 0 ? 1 : -1;
+            }
 
         } else if (id == this.jumpTouchId) {
             this.jumpTouchId = null;
             this.hero.jump(false);
         }
+    }
+
+    update(_: number) {
+        if (!this.cameraBack) return;
+
+        let right = this.cameraBackDir.x == 1;
+        let up = this.cameraBackDir.y == 1;
+
+        this.watchOffset.x = this.watchOffset.x * CameraBackC + (CameraBackP * (right ? 1 : -1));
+        this.watchOffset.y = this.watchOffset.y * CameraBackC + (CameraBackP * (up ? 1 : -1));
+
+        this.watchOffset.x = right ? Math.min(this.watchOffset.x, 0) : Math.max(this.watchOffset.x, 0);
+        this.watchOffset.y = up ? Math.min(this.watchOffset.y, 0) : Math.max(this.watchOffset.y, 0);
+
+        this.camera.offset = this.watchOffset;
+        if (this.watchOffset.x == 0 && this.watchOffset.y == 0) this.cameraBack = false;
     }
 
     // -------------------------------------------------------------------------------------------------------
