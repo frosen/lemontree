@@ -22,6 +22,10 @@ export default class Attack extends cc.Component {
     @property
     magicAttack: boolean = false;
 
+    /** 毒属性的攻击，一种特殊的magic，不能暴击 */
+    @property
+    poisonAttack: boolean = false;
+
     @property
     hidingAtBeginning : boolean = false;
 
@@ -50,8 +54,10 @@ export default class Attack extends cc.Component {
         let crit: boolean = false;
         if (this.magicAttack) {
             dmg = this.attri.magicDmg.get();
-            crit = r < this.attri.magicCritRate.get();
-            if (crit) dmg *= this.attri.magicCritDmgRate.get();
+            if (!this.poisonAttack) {
+                crit = r < this.attri.magicCritRate.get();
+                if (crit) dmg *= this.attri.magicCritDmgRate.get();
+            }          
         } else {
             dmg = this.attri.atkDmg.get();
             crit = r < this.attri.critRate.get();

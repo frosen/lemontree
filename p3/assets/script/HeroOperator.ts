@@ -90,8 +90,10 @@ export default class HeroOperator extends cc.Component {
                 this.moveTouchId = event.getID();
                 this.moveBeginPos = cc.v2(Math.max(touchPos.x, MinMoveBegin), Math.max(touchPos.y, MinMoveBegin));
             } else {
-                this.watchTouchId = event.getID();
-                this.watchBeginPos = touchPos;
+                if (!this.cameraBack) {
+                    this.watchTouchId = event.getID();
+                    this.watchBeginPos = touchPos;
+                } 
             }
             
         } else if (this.jumpX <= touchPos.x) {

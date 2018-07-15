@@ -327,7 +327,7 @@ class SMForHeroInHurt extends SMForHero {
         let node = hero.node;  
         let xCenter = node.x + node.width * (0.5 - node.anchorX);
         let yCenter = node.y + node.height * (0.5 - node.anchorY);
-        this.figureDisplay.showFigure(cc.v2(xCenter, yCenter), dmg, crit, atk.magicAttack);
+        this.figureDisplay.showFigure(cc.v2(xCenter, yCenter), dmg, crit, atk);
 
         // 更改ui显示 llytodo
     }

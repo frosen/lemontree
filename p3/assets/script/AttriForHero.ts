@@ -8,11 +8,46 @@ import {EcNumber, Attri} from "./Attri";
 /** 起跳速度 像素/帧 */
 const JumpVelocity: number = 4.5;
 
+export enum CardType {
+    /** 成功 */
+    suc,
+    /** 失败 */
+    fail,
+    /** 正在执行，用于action节点 */
+    running,
+    /** 无效果，用于set节点 */
+    continue,
+}
+
 @ccclass
 export default class AttriForHero extends Attri {
 
     /** 经验值 */
     exp: EcNumber = new EcNumber(0);
+
+    // 各种可升级属性 ========================================================
+
+    /** 力量 */
+    strength: EcNumber = new EcNumber(0);
+    /** 爆发 */
+    explosive: EcNumber = new EcNumber(0);
+    /** 耐久 */
+    durability: EcNumber = new EcNumber(0);
+    /** 敏捷 */
+    agility: EcNumber = new EcNumber(0);
+    /** 精神 */
+    mentality: EcNumber = new EcNumber(0);
+    /** 决心 */
+    determination: EcNumber = new EcNumber(0);
+    /** 洞察 */
+    discernment: EcNumber = new EcNumber(0);
+    /** 冷静 */
+    calmness: EcNumber = new EcNumber(0);
+
+    // 卡片 ========================================================
+
+
+    // ========================================================
 
     /** 闪躲率 */
     evade: EcNumber = new EcNumber(0);

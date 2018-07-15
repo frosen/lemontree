@@ -80,7 +80,7 @@ export default class Enemy extends Destroyee {
         this.onHurtCallback(dmg, crit);
 
         // 显示受伤数字
-        Enemy.figureDisplay.showFigure(pos, dmg, crit, atk.magicAttack);
+        Enemy.figureDisplay.showFigure(pos, dmg, crit, atk);
     }
 
     // 用于子类

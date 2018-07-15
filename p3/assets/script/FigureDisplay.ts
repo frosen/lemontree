@@ -1,5 +1,3 @@
-import MyNodePool from "./MyNodePool";
-
 // FigureDisplay.ts
 // 数字展示器，把数字和相关内容显示到当前节点的相应位置
 // 可以展示伤害数字和闪躲标识
@@ -7,6 +5,9 @@ import MyNodePool from "./MyNodePool";
 // lly 2018.3.25
 
 const {ccclass, property} = cc._decorator;
+
+import MyNodePool from "./MyNodePool";
+import Attack from "./Attack";
 
 @ccclass
 export default class FigureDisplay extends cc.Component {
@@ -22,7 +23,7 @@ export default class FigureDisplay extends cc.Component {
         }, 20, "FigureDisplay", this.node);
     }
 
-    showFigure(pos: cc.Vec2, figure: number, crit: boolean, magic: boolean) {
+    showFigure(pos: cc.Vec2, figure: number, crit: boolean, atk: Attack) {
         // 获取或者生成label
         let labelNode: cc.Node = this.pool.get();
 
@@ -30,7 +31,7 @@ export default class FigureDisplay extends cc.Component {
         labelNode.position = pos;
         this._resetLabel(
             labelNode, 
-            magic ? cc.Color.BLUE : cc.Color.RED,
+            atk.magicAttack ? (atk.poisonAttack ? cc.Color.GREEN : cc.Color.BLUE) : cc.Color.RED,
             Math.floor(figure).toString() + (crit ? "!" : "")
         )
 
