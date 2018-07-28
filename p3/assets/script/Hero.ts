@@ -20,6 +20,7 @@ import UICtrlr from "./UICtrlr";
 import Attack from "./Attack";
 import Destroyee from "./Destroyee";
 import Enemy from "./Enemy";
+import Pot from "./Pot";
 
 import ItemComp from "./ItemComp";
 import Item from "./Item";
@@ -289,7 +290,13 @@ export class Hero extends cc.Component {
     // 击中回调 ========================================================
 
     onHitEnemy(atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) {
-
+        if (!atk.magicAttack) {
+            if (this.attri.energyGettingByEnemey && node.getComponent(Enemy)) {
+                this.attri.energy.add(10);
+            } else if (this.attri.energyGettingByPot && node.getComponent(Pot)) {
+                this.attri.energy.add(10);
+            }
+        }
     }
 
     // 被状态机调用 ------------------------------------------------------------

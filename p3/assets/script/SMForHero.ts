@@ -83,15 +83,21 @@ class SMForHeroInJumpAccelerating extends SMForHero {
         let curSt = mgr.curState;
 
         if (curSt == ActState.dash) {
-            if (true && mgr.smObj.terrainCollider.edgeType == CollisionType.entity) { //撞墙跳
+            if (mgr.smObj.attri.jumpingByWall && mgr.smObj.terrainCollider.edgeType == CollisionType.entity) { //撞墙跳
                 mgr.changeStateTo(ActState.jumpByWall);
             }
             return false;
+
+        } else if (curSt == ActState.hurt) { // 如果有快速恢复的能力，并且有额外的跳跃次数，则恢复硬直
+            if (mgr.smObj.attri.fastHitRecovery && mgr.smObj.attri.jumpCount.get() > 0) {
+                mgr.smObj.looks.showHitRecovery();
+                return true;
+            } else {
+                return false;
+            }
+
         } else {
-            let canChange: boolean = 
-            curSt != ActState.jumpAccelerating &&
-            curSt != ActState.dash &&
-            curSt != ActState.hurt;
+            let canChange: boolean = curSt != ActState.jumpAccelerating;
             let hasAbility = mgr.smObj.attri.jumpCount.get() > 0;
 
             // 本身速度比跳跃时产生的速度还快时，就不能执行跳跃
@@ -105,6 +111,9 @@ class SMForHeroInJumpAccelerating extends SMForHero {
         let hero: Hero = mgr.smObj;
         hero.looks.jumpUp();
         hero.attri.jumpCount.add(-1);
+        if (hero.terrainCollider.curYCollisionType == CollisionType.none) {
+            mgr.smObj.looks.showJumpingAirFlow();
+        }
         this.time = 0;
     }
 
@@ -392,6 +401,7 @@ class SMForHeroInJumpByWall extends SMForHero {
     begin(mgr: SMForHeroMgr) {
         let hero: Hero = mgr.smObj;
         hero.looks.jumpUp();
+        hero.looks.showJumpingByWallAirFlow();
         this.time = 0;
 
         this.bounceDir = hero.looks.xUIDirs[HeroDirLv.move] * -1;

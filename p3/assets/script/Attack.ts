@@ -51,18 +51,25 @@ export default class Attack extends cc.Component {
     }
 
     // 计算基础伤害
-    getDamage(): {dmg: number, crit: boolean} {
-        let r = Math.random();
+    getDamage(): {dmg: number, crit: boolean} {       
         let dmg: number;
         let crit: boolean = false;
         if (this.magicAttack) {
             dmg = this.attri.magicDmg.get();
             if (!this.poisonAttack) {
-                crit = r < this.attri.magicCritRate.get();
-                if (crit) dmg *= this.attri.magicCritDmgRate.get();
+                let e = this.attri.energy.get();
+                if (e > 0) {
+                    let r = Math.random();
+                    crit = r < 0.75; // 魔法暴击率和暴击伤害倍数固定
+                    if (crit) {
+                        dmg *= 3;
+                        this.attri.energy.sub(1);
+                    }
+                }
             }          
         } else {
             dmg = this.attri.atkDmg.get();
+            let r = Math.random();
             crit = r < this.attri.critRate.get();
             if (crit) dmg *= this.attri.critDmgRate.get();
         }

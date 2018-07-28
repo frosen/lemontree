@@ -68,10 +68,10 @@ export default class AttriForHero extends Attri {
     maxDashCount: EcNumber = new EcNumber(0);
 
     /** 踩墙反弹跳 */
-    canJumpByWall: boolean = false;
+    jumpingByWall: boolean = false;
 
     /** 磁力吸附金币 */
-    magnetic: boolean = true;
+    magnetic: boolean = false;
 
     /** 地图中显示敌人 */
     enemyDisplay: boolean = false;
@@ -79,15 +79,15 @@ export default class AttriForHero extends Attri {
     /** 硬直恢复 */
     fastHitRecovery: boolean = false;
 
+    /** 落水而不会掉下去次数 */
+    waterWalkingCount: EcNumber = new EcNumber(0);
+    /** 落水而不会掉下去的最大次数 */
+    maxWaterWalkingCount: EcNumber = new EcNumber(0);
+
+    energyGettingByEnemey: boolean = false;
+    energyGettingByPot: boolean = false;
+
     onLoad() {
-        this.hp.addSetCallback((v: number): number => {
-            return Math.max(Math.min(v, this.maxHp.get()), 0);
-        });
-
-        this.maxHp.addAfterSetCallback((v: number) => {
-            this.hp.set(v);
-        });
-
         // 初始值
         this.jumpCount.set(1);
         this.maxJumpCount.set(1);
@@ -100,10 +100,12 @@ export default class AttriForHero extends Attri {
         this.ySpeed.set(JumpVelocity);
 
         // test
+        this.atkDmg.set(20);
         this.critRate.set(0.03);
         this.critDmgRate.set(1.5);
-        this.atkDmg.set(20);
+        
         this.magicDmg.set(20);
+
         this.maxJumpCount.set(2);
     }
 

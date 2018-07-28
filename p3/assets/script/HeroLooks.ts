@@ -90,6 +90,8 @@ export class HeroLooks extends cc.Component {
         // cc.log("ui -------> jumpUp");
         this.body.node.skewX = 0;
         this.body.node.skewY = 5;
+
+        // 根据
     }
 
     endJumpUp() {
@@ -141,6 +143,23 @@ export class HeroLooks extends cc.Component {
 
     setInvincibleEnabled(on: boolean) {
         this.node.opacity = on ? 100 : 255;
+    }
+
+    // ---------------
+
+    /** 跳跃时候的反向气流 */
+    showJumpingAirFlow() {
+
+    }
+
+    /** 反墙跳跃时候的反向气流 */
+    showJumpingByWallAirFlow() {
+
+    }
+
+    /** 快速硬直恢复时候的闪光 */
+    showHitRecovery() {
+
     }
 
     //========================================================
