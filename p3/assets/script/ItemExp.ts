@@ -6,6 +6,7 @@ import Item from "./Item";
 
 export abstract class ItemExp extends Item {
     abstract getExp(): number;
+    isMagnetic(): boolean {return true};
 }
 
 export class ItemExp1 extends ItemExp {

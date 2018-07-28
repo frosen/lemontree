@@ -72,9 +72,9 @@ export default abstract class Destroyee extends cc.Component {
     }
 
     _doHurtLogic(atk: Attack) {
-        atk.excuteHitCallback(this.node);
-
         let {death, dmg, crit} = this._calcHurt(atk);
+
+        atk.excuteHitCallback(this.node, death, dmg, crit);
         
         if (!death) {
             this._showHurtColor();

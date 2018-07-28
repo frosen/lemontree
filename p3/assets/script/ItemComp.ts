@@ -56,9 +56,10 @@ export default class ItemComp extends cc.Component {
         this.movableObj = this._createComp(MovableObject);
         this.terrainCollider = this._createComp(TerrainCollider);
         this.objCollider = this._createComp(ObjCollider);
-        this.watchCollider = this._createComp(ObjColliderForWatch);
+        
         this._createComp(Gravity);
 
+        this.watchCollider = this._createComp(ObjColliderForWatch);
         this.watchCollider.size = cc.size(270, 270);
         this.watchCollider.callback = this.onWatching.bind(this);
     }

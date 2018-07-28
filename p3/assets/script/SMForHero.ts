@@ -20,6 +20,8 @@ export class ActState {
     static dash: number = SMMgr.createSMState();
     static hurt: number = SMMgr.createSMState();
     static dead: number = SMMgr.createSMState();
+
+    static jumpByWall: number = SMMgr.createSMState();
 }
 
 
@@ -37,7 +39,9 @@ export class SMForHeroMgr extends SMMgr<Hero> {
         this.stateList[ActState.move] = new SMForHeroInMove();
         this.stateList[ActState.dash] = new SMForHeroInDash();
         this.stateList[ActState.hurt] = new SMForHeroInHurt();
-        this.stateList[ActState.dead] = new SMForHeroInDead();      
+        this.stateList[ActState.dead] = new SMForHeroInDead();  
+        
+        this.stateList[ActState.jumpByWall] = new SMForHeroInJumpByWall();
     }
 }
 
@@ -78,16 +82,23 @@ class SMForHeroInJumpAccelerating extends SMForHero {
     can(mgr: SMForHeroMgr): boolean {
         let curSt = mgr.curState;
 
-        let canChange: boolean = 
+        if (curSt == ActState.dash) {
+            if (true && mgr.smObj.terrainCollider.edgeType == CollisionType.entity) { //撞墙跳
+                mgr.changeStateTo(ActState.jumpByWall);
+            }
+            return false;
+        } else {
+            let canChange: boolean = 
             curSt != ActState.jumpAccelerating &&
             curSt != ActState.dash &&
             curSt != ActState.hurt;
-        let hasAbility = mgr.smObj.attri.jumpCount.get() > 0;
+            let hasAbility = mgr.smObj.attri.jumpCount.get() > 0;
 
-        // 本身速度比跳跃时产生的速度还快时，就不能执行跳跃
-        let limit = mgr.smObj.movableObj.yVelocity < mgr.smObj.attri.ySpeed.get(); 
-        
-        return canChange && hasAbility && limit;
+            // 本身速度比跳跃时产生的速度还快时，就不能执行跳跃
+            let limit = mgr.smObj.movableObj.yVelocity < mgr.smObj.attri.ySpeed.get(); 
+            
+            return canChange && hasAbility && limit;
+        } 
     }
 
     begin(mgr: SMForHeroMgr) {
@@ -306,10 +317,12 @@ class SMForHeroInHurt extends SMForHero {
 
         hero.attri.hp.add(-dmg);
 
-        atk.excuteHitCallback(hero.node);
+        let death = hero.attri.hp.get() <= 0;
+
+        atk.excuteHitCallback(hero.node, death, dmg, crit);
         
         // 死亡
-        if (hero.attri.hp.get() <= 0) { 
+        if (death) { 
             mgr.changeStateTo(ActState.dead);
             return;
         }
@@ -328,8 +341,6 @@ class SMForHeroInHurt extends SMForHero {
         let xCenter = node.x + node.width * (0.5 - node.anchorX);
         let yCenter = node.y + node.height * (0.5 - node.anchorY);
         this.figureDisplay.showFigure(cc.v2(xCenter, yCenter), dmg, crit, atk);
-
-        // 更改ui显示 llytodo
     }
 
     update(dt: number, mgr: SMForHeroMgr) {
@@ -369,6 +380,46 @@ class SMForHeroInDead extends SMForHero {
 
     update(dt: number, mgr: SMForHeroMgr) {
         cc.log("dead!");
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+const MaxJumpByWallTime: number = 0.3;
+class SMForHeroInJumpByWall extends SMForHero {
+    time: number = 0;
+    bounceDir: number = 0; //反弹方向
+    
+    begin(mgr: SMForHeroMgr) {
+        let hero: Hero = mgr.smObj;
+        hero.looks.jumpUp();
+        this.time = 0;
+
+        this.bounceDir = hero.looks.xUIDirs[HeroDirLv.move] * -1;
+    }
+
+    update(dt: number, mgr: SMForHeroMgr) {
+        this.time += dt;
+
+        let hero = mgr.smObj;
+        mgr.smObj.movableObj.xVelocity = this.bounceDir * DashSpeed;
+        hero.looks.setXUIDir(this.bounceDir, HeroDirLv.move);
+        hero.movableObj.yVelocity = hero.attri.ySpeed.get();
+    }
+
+    check(mgr: SMForHeroMgr) {
+        if (mgr.smObj.checkHurt()) {
+            mgr.changeStateTo(ActState.hurt);
+
+        } else if (mgr.smObj.terrainCollider.curYCollisionType != CollisionType.none) {
+            mgr.changeStateTo(ActState.jump);
+
+        } else if (this.time > MaxJumpByWallTime) {   
+            mgr.changeStateTo(ActState.jump);
+        }
+    }
+
+    end(mgr: SMForHeroMgr) {
+        mgr.smObj.looks.endJumpUp();
     }
 }
 

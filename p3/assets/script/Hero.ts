@@ -81,6 +81,7 @@ export class Hero extends cc.Component {
         // 回调
         this.objCollider.callback = this.onCollision.bind(this);
         this.watchCollider.callback = this.onWatching.bind(this);
+        this.attack.hitCallback = this.onHitEnemy.bind(this);
     }
 
     update(dt: number) {
@@ -283,6 +284,12 @@ export class Hero extends cc.Component {
 
     stopAttackLogic() {
         this.attack.enabled = false;
+    }
+
+    // 击中回调 ========================================================
+
+    onHitEnemy(atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) {
+
     }
 
     // 被状态机调用 ------------------------------------------------------------

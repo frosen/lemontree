@@ -7,6 +7,7 @@ import AttriForHero from "./AttriForHero";
 
 export abstract class ItemEfc extends Item {
     abstract doEffect();
+    isMagnetic(): boolean {return false};
 }
 
 export class ItemHealthPot extends ItemEfc {

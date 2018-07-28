@@ -47,10 +47,15 @@ export default class AttriForHero extends Attri {
     // 卡片 ========================================================
 
 
-    // ========================================================
+    // hero特有属性 ========================================================
 
     /** 闪躲率 */
     evade: EcNumber = new EcNumber(0);
+
+    /** 受伤无敌时间 */
+    invcTimeForHurt: EcNumber = new EcNumber(0);
+
+    // 特殊能力 ========================================================
 
     /** 剩余跳跃数量 */
     jumpCount: EcNumber = new EcNumber(0);
@@ -62,8 +67,17 @@ export default class AttriForHero extends Attri {
     /** 最大冲刺数量 */
     maxDashCount: EcNumber = new EcNumber(0);
 
-    /** 受伤无敌时间 */
-    invcTimeForHurt: EcNumber = new EcNumber(0);
+    /** 踩墙反弹跳 */
+    canJumpByWall: boolean = false;
+
+    /** 磁力吸附金币 */
+    magnetic: boolean = true;
+
+    /** 地图中显示敌人 */
+    enemyDisplay: boolean = false;
+
+    /** 硬直恢复 */
+    fastHitRecovery: boolean = false;
 
     onLoad() {
         this.hp.addSetCallback((v: number): number => {

@@ -29,6 +29,9 @@ export default class Attack extends cc.Component {
     @property
     hidingAtBeginning : boolean = false;
 
+    /** 攻击回调 */
+    hitCallback: (atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) => void = null;
+
     onLoad() {        
         if (this.attri == null) {
             let n = this.node;
@@ -77,7 +80,7 @@ export default class Attack extends cc.Component {
         if (this.index > 100000) this.index = this.index % 1000;
     }
 
-    excuteHitCallback(node: cc.Node) {
-        // llytodo
+    excuteHitCallback(node: cc.Node, death: boolean, dmg: number, crit: boolean) {
+        if (this.hitCallback) this.hitCallback(this, node, death, dmg, crit);
     }
 }

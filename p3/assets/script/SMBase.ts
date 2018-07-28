@@ -50,12 +50,12 @@ export class SMMgr<SMObj> {
      * 变化到某个状态
      * @param st: 状态
      */
-    changeStateTo(st: number): SM<SMObj> {
+    changeStateTo(st: number) {
         SMMgr.checkSMState(st);
 
         let stMachine = this.stateList[st];
 
-        if (!stMachine.can(this)) return null;
+        if (!stMachine.can(this)) return;
 
         this.curStateMachine.end(this);
 

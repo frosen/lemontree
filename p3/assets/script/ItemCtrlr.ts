@@ -4,7 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {MovableObject} from "./MovableObject";
+import AttriForHero from "./AttriForHero";
 import MyNodePool from "./MyNodePool";
 
 import ItemComp from "./ItemComp";
@@ -17,6 +17,7 @@ class ItemInfo {
     item: Item = null;
     frames: cc.SpriteFrame[] = [];
     times: number[] = [];
+    magnetic: boolean = false;
 
     constructor(item: Item) {
         this.item = item;
@@ -24,6 +25,7 @@ class ItemInfo {
         for (const info of frameInfo) {
             this.times.push(info.time);
         }
+        this.magnetic = item.isMagnetic();
     }
 }
 
@@ -33,11 +35,15 @@ export default class ItemCtrlr extends cc.Component {
     @property([cc.Node])
     showingItems: cc.Node[] = [];
 
+    heroAttri: AttriForHero = null;
+
     pool: MyNodePool = null;
 
     itemInfos: {[key: string]: ItemInfo;} = {};
 
     onLoad() {
+        this.heroAttri = cc.find("main/hero_layer/hero").getComponent("Hero").attri;
+
         // 生成节点池
         this.pool = new MyNodePool((): cc.Node => {
             let node = new cc.Node();
@@ -99,8 +105,9 @@ export default class ItemCtrlr extends cc.Component {
         let node: cc.Node = this.pool.get();
         let itemComp: ItemComp = node.getComponent(ItemComp);     
 
-        let {item, frames, times} = this.itemInfos[itemName];
+        let {item, frames, times, magnetic} = this.itemInfos[itemName];
         itemComp.setData(item, frames, times);
+        itemComp.watching = magnetic && this.heroAttri.magnetic;
 
         node.position = pos;
         itemComp.move(moveX, moveY);
@@ -118,7 +125,7 @@ export default class ItemCtrlr extends cc.Component {
         for (const name of itemNames) {
             let x = xNum * (xDirIsLeft ? -1 : 1);
             let y = 7 + Math.random() * 0.5;
-            let node = this._beginItemNode(name, pos, x, y);
+            this._beginItemNode(name, pos, x, y);
 
             xNum = 0.1 + Math.random() * 0.8;
             xDirIsLeft = !xDirIsLeft;
