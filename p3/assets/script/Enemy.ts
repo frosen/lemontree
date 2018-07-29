@@ -68,12 +68,8 @@ export default class Enemy extends Destroyee {
 
     // 碰撞回调 ------------------------------------------------------------
 
-    _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {
-        let {dmg, crit} = atk.getDamage();
-        this.attri.hp.add(-dmg);       
-
-        let death = this.attri.hp.get() <= 0;
-        return {death, dmg, crit};
+    _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {       
+        return atk.handleDamage(this.attri);
     }
 
     _hurt(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean) {

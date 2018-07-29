@@ -55,7 +55,7 @@ export class EcNumber {
     }
 
     sub(v: number) {
-        this.set(this._get() + v);
+        this.set(this._get() - v);
     }
 
     addSetCallback(c: (v: number) => number) {

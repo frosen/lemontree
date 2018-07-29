@@ -86,6 +86,7 @@ export default class AttriForHero extends Attri {
 
     energyGettingByEnemey: boolean = false;
     energyGettingByPot: boolean = false;
+    energyGettingByArea: boolean = false;
 
     onLoad() {
         // 初始值

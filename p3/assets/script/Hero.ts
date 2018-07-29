@@ -299,6 +299,14 @@ export class Hero extends cc.Component {
         }
     }
 
+    // 场景切换回调 ========================================================
+
+    onChangeArea() {
+        if (this.attri.energyGettingByArea && this.attri.energy.get() < 100) {
+            this.attri.energy.set(100);
+        }
+    }
+
     // 被状态机调用 ------------------------------------------------------------
 
     /**

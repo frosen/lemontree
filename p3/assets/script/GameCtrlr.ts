@@ -110,5 +110,7 @@ export default class GameCtrlr extends cc.Component {
 
         let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
         this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
+
+        this.hero.onChangeArea();
     }
 }

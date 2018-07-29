@@ -82,6 +82,23 @@ export default class Attack extends cc.Component {
         return {dmg, crit};
     }
 
+    handleDamage(attri: Attri): {death: boolean, dmg: number, crit: boolean} {
+        let {dmg, crit} = this.getDamage();
+        attri.hp.sub(dmg); 
+        
+        let death = false;
+        let hp = attri.hp.get();
+        if (hp <= 0) {
+            if (this.poisonAttack) { // 中毒不会死亡
+                attri.hp.set(1);
+            } else {
+                death = true;
+            }
+        }
+        
+        return {death, dmg, crit};
+    }
+
     changeIndex() {
         this.index += 10000;
         if (this.index > 100000) this.index = this.index % 1000;
