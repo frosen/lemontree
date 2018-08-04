@@ -79,35 +79,40 @@ export default class AttriForHero extends Attri {
     /** 硬直恢复 */
     fastHitRecovery: boolean = false;
 
-    /** 落水而不会掉下去次数 */
-    waterWalkingCount: EcNumber = new EcNumber(0);
-    /** 落水而不会掉下去的最大次数 */
-    maxWaterWalkingCount: EcNumber = new EcNumber(0);
+    /** 碰到机关不会硬直 */
+    trapDefence: boolean = false;
 
     energyGettingByEnemey: boolean = false;
     energyGettingByPot: boolean = false;
     energyGettingByArea: boolean = false;
 
-    onLoad() {
-        // 初始值
-        this.jumpCount.set(1);
-        this.maxJumpCount.set(1);
-        this.dashCount.set(1);
-        this.maxDashCount.set(1);
-        this.invcTimeForHurt.set(0.5);
+    _reset(attri: Attri) {
 
-        this.maxHp.set(100);
-        this.xSpeed.set(3);
-        this.ySpeed.set(JumpVelocity);
+        let hattri: AttriForHero = attri as AttriForHero;
+
+        // 初始值
+        hattri.jumpCount.set(1);
+        hattri.maxJumpCount.set(1);
+        hattri.dashCount.set(1);
+        hattri.maxDashCount.set(1);
+        hattri.invcTimeForHurt.set(0.5);
+
+        hattri.maxHp.set(100);
+        hattri.xSpeed.set(3);
+        hattri.ySpeed.set(JumpVelocity);
 
         // test
-        this.atkDmg.set(20);
-        this.critRate.set(0.03);
-        this.critDmgRate.set(1.5);
+        hattri.atkDmg.set(20);
+        hattri.critRate.set(0.03);
+        hattri.critDmgRate.set(1.5);
         
-        this.magicDmg.set(20);
+        hattri.magicDmg.set(20);
 
-        this.maxJumpCount.set(2);
+        hattri.maxJumpCount.set(2);
+    }
+
+    _resetVar(attri: Attri) {
+        attri.hp.set(attri.maxHp.get());
     }
 
     fillJumpAndDashCount() {

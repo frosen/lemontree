@@ -125,12 +125,11 @@ export default class PotCtrlr extends cc.Component {
 
             let node = this.pool.getByIndex(index);
             node.setPosition(data.pos);
-            
             let pot = node.getComponent(Pot);
             let info = data.info;
             pot.setData(index, info.frame, info.c1, info.c2);
         }
-        this.pool.reclaimOtherFrom(index + 1);
+        this.pool.reclaimOtherFrom(index);
     }
 
     killPot(pot: Pot) {

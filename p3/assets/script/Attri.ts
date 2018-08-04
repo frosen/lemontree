@@ -58,6 +58,10 @@ export class EcNumber {
         this.set(this._get() - v);
     }
 
+    multiply(v: number) {
+        this.set(this._get() * v);
+    }
+
     addSetCallback(c: (v: number) => number) {
         this._onSetList.push(c);
     }
@@ -78,9 +82,7 @@ export class Attri extends cc.Component {
         return Math.max(Math.min(v, this.maxHp.get()), 0);
     });
     /** 血量上限 */
-    maxHp: EcNumber = new EcNumber(0, null, (v: number) => {
-        this.hp.set(v);
-    });
+    maxHp: EcNumber = new EcNumber(0);
 
     /** 物理攻击伤害 */
     atkDmg: EcNumber = new EcNumber(0);
@@ -102,4 +104,31 @@ export class Attri extends cc.Component {
     xSpeed: EcNumber = new EcNumber(0);
     /** y方向速度 */
     ySpeed: EcNumber = new EcNumber(0);
+
+    // 属性数值生成 ========================================================
+
+    modificationCallDict: {[key: string]: ((Attri) => void)} = {};
+
+    addModificationCall(key: string, call: ((Attri) => void)) {
+        this.modificationCallDict[key] = call;
+    }
+
+    removeModificationCall(key: string) {
+        delete this.modificationCallDict[key];
+    }
+
+    reset(all: boolean = false) {
+        this._reset(this);
+        for (const key in this.modificationCallDict) {
+            let call = this.modificationCallDict[key];
+            call(this);
+        }
+        if (all) this._resetVar(this);
+    }
+
+    /** 重置非变量属性 */
+    _reset(attri: Attri) {}
+
+    /** 重置变量 */
+    _resetVar(attri: Attri) {}
 }

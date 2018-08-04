@@ -22,10 +22,6 @@ export default class Attack extends cc.Component {
     @property
     magicAttack: boolean = false;
 
-    /** 毒属性的攻击，一种特殊的magic，不能暴击 */
-    @property
-    poisonAttack: boolean = false;
-
     @property
     hidingAtBeginning : boolean = false;
 
@@ -56,15 +52,12 @@ export default class Attack extends cc.Component {
         let crit: boolean = false;
         if (this.magicAttack) {
             dmg = this.attri.magicDmg.get();
-            if (!this.poisonAttack) {
-                let e = this.attri.energy.get();
-                if (e > 0) {
-                    let r = Math.random();
-                    crit = r < 0.75; // 魔法暴击率和暴击伤害倍数固定
-                    if (crit) {
-                        dmg *= 3;
-                        this.attri.energy.sub(1);
-                    }
+            if (this.attri.energy.get() > 0) {
+                let r = Math.random();
+                crit = r < 0.75; // 魔法暴击率和暴击伤害倍数固定
+                if (crit) {
+                    dmg *= 3;
+                    this.attri.energy.sub(1);
                 }
             }          
         } else {
@@ -86,16 +79,7 @@ export default class Attack extends cc.Component {
         let {dmg, crit} = this.getDamage();
         attri.hp.sub(dmg); 
         
-        let death = false;
-        let hp = attri.hp.get();
-        if (hp <= 0) {
-            if (this.poisonAttack) { // 中毒不会死亡
-                attri.hp.set(1);
-            } else {
-                death = true;
-            }
-        }
-        
+        let death = attri.hp.get() <= 0;       
         return {death, dmg, crit};
     }
 
@@ -106,5 +90,9 @@ export default class Attack extends cc.Component {
 
     excuteHitCallback(node: cc.Node, death: boolean, dmg: number, crit: boolean) {
         if (this.hitCallback) this.hitCallback(this, node, death, dmg, crit);
+    }
+
+    getAttackColor(): cc.Color {
+        return this.magicAttack ? cc.Color.BLUE : cc.Color.RED;
     }
 }

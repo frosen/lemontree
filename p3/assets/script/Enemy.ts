@@ -76,7 +76,7 @@ export default class Enemy extends Destroyee {
         this.onHurtCallback(dmg, crit);
 
         // 显示受伤数字
-        Enemy.figureDisplay.showFigure(pos, dmg, crit, atk);
+        Enemy.figureDisplay.showFigure(pos, dmg, crit, atk.getAttackColor());
     }
 
     // 用于子类

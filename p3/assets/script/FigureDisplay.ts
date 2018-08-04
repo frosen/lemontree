@@ -23,7 +23,7 @@ export default class FigureDisplay extends cc.Component {
         }, 20, "FigureDisplay", this.node);
     }
 
-    showFigure(pos: cc.Vec2, figure: number, crit: boolean, atk: Attack) {
+    showFigure(pos: cc.Vec2, figure: number, crit: boolean, color: cc.Color) {
         // 获取或者生成label
         let labelNode: cc.Node = this.pool.get();
 
@@ -31,7 +31,7 @@ export default class FigureDisplay extends cc.Component {
         labelNode.position = pos;
         this._resetLabel(
             labelNode, 
-            atk.magicAttack ? (atk.poisonAttack ? cc.Color.GREEN : cc.Color.BLUE) : cc.Color.RED,
+            color,
             Math.floor(figure).toString() + (crit ? "!" : "")
         )
 

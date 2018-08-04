@@ -11,6 +11,8 @@ import {CollisionType} from "./TerrainCtrlr";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 import {HeroLooks, HeroDirLv} from "./HeroLooks";
+import DebuffComp from "./DebuffComp";
+import { Poisoning, Frozen } from "./Debuff";
 
 import AttriForHero from "./AttriForHero";
 import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
@@ -45,13 +47,17 @@ export class Hero extends cc.Component {
     /** 观察区碰撞组件 */
     watchCollider: ObjColliderForWatch = null;
 
+    /** 英雄属性 */
+    attri: AttriForHero = null;
+
     /** 英雄UI */
     looks: HeroLooks = null;
     /** 攻击范围 */
     attack: Attack = null;
+    /** 减损效果 */
+    debuff: DebuffComp = null;
 
-    /** 英雄属性 */
-    attri: AttriForHero = null;
+    
     /** 英雄状态机 */
     sm: SMForHeroMgr = null;
     /** 英雄无敌状态机 */
@@ -70,15 +76,18 @@ export class Hero extends cc.Component {
         this.objCollider = this.getComponent(ObjCollider);
         this.watchCollider = this.getComponent(ObjColliderForWatch);
 
+        this.attri = this.getComponent(AttriForHero);
+        this.attri.reset(true);
+
         this.looks = this.getComponent(HeroLooks);
         this.attack = this.getComponentInChildren(Attack);
+        this.debuff = this.getComponent(DebuffComp);
 
-        this.attri = this.getComponent(AttriForHero);
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
         this.smInvc = new SMForHeroInvcMgr(this);    
         
         this.ui = cc.find("canvas/ui").getComponent(UICtrlr);
-        
+
         // 回调
         this.objCollider.callback = this.onCollision.bind(this);
         this.watchCollider.callback = this.onWatching.bind(this);

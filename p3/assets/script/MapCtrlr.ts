@@ -317,7 +317,6 @@ export class MapCtrlr extends cc.Component {
      */
     createRandomGroundPoss(areaIndex: number): {pos: cc.Vec2, ground: GroundInfo}[] {
         let grounds = this.getGrounds(areaIndex);
-
         let count = Math.floor(grounds.length * 0.1);
 
         let usingGroundPoss: {pos: cc.Vec2, ground: GroundInfo}[] = [];
