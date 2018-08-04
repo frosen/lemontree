@@ -12,7 +12,6 @@ import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 import {HeroLooks, HeroDirLv} from "./HeroLooks";
 import DebuffComp from "./DebuffComp";
-import { Poisoning, Frozen } from "./Debuff";
 
 import AttriForHero from "./AttriForHero";
 import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
@@ -28,6 +27,7 @@ import ItemComp from "./ItemComp";
 import Item from "./Item";
 import {ItemExp} from "./ItemExp";
 import {ItemEfc} from "./ItemEfc";
+import { Poisoning, Curse, Frozen } from "./Debuff";
 
 export enum HeroUsingType {
     pickUp,
@@ -92,6 +92,8 @@ export class Hero extends cc.Component {
         this.objCollider.callback = this.onCollision.bind(this);
         this.watchCollider.callback = this.onWatching.bind(this);
         this.attack.hitCallback = this.onHitEnemy.bind(this);
+
+        this.attack.debuff = new Frozen(10);
     }
 
     update(dt: number) {

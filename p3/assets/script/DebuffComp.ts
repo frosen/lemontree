@@ -13,27 +13,35 @@ export default class DebuffComp extends cc.Component {
     curDebuff: Debuff = null;
 
     curTime: number = 0;
+    curSecond: number = 0;
 
     update(dt: number) {
         if (!this.curDebuff) return;
         
         this.curTime += dt;
 
-        if (this.curTime >= this.curDebuff.duration) {
+        if (this.curTime > this.curDebuff.duration) {
             this.curDebuff.end(this);
             this.curDebuff = null;
         } else {
-            this.curDebuff.update(dt, this);
+            let second = Math.floor(this.curTime);
+            if (second > this.curSecond) {
+                this.curSecond = second;
+                this.curDebuff.update(this); // 每秒一跳
+            }   
         }
     }
 
-    getDebuff(debuff: Debuff) {
+    setDebuff(debuff: Debuff) {
+        if (debuff == this.curDebuff) return;
+
         if (this.curDebuff) {
             this.curDebuff.end(this);
         }
 
         this.curDebuff = debuff;
         this.curTime = 0;
+        this.curSecond = 0;
 
         this.curDebuff.begin(this);
     }

@@ -332,6 +332,9 @@ class SMForHeroInHurt extends SMForHero {
             return;
         }
 
+        // 减损状态
+        if (atk.debuff) hero.debuff.setDebuff(atk.debuff);
+
         let hurtXDir = hero.getHurtDir();
 
         hero.looks.hurt(); 

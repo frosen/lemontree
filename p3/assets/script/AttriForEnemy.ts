@@ -18,7 +18,23 @@ export default class AttriForEnemy extends Attri {
         this.magicDmg.set(20);
     }
 
-    reset(lv: number) {
-        this.hp.set(this.maxHp.get());
+    _reset(attri: Attri) {
+
+        let eattri: AttriForEnemy = attri as AttriForEnemy;
+
+        eattri.hp.set(100);
+        eattri.maxHp.set(100);
+        eattri.critRate.set(0.03);
+        eattri.critDmgRate.set(1.5);
+        eattri.atkDmg.set(20);
+        eattri.magicDmg.set(20);
+    }
+
+    _resetVar(attri: Attri) {
+        attri.hp.set(attri.maxHp.get());
+    }
+
+    resetVar(lv: number) {
+        this._resetVar(this);
     }
 }

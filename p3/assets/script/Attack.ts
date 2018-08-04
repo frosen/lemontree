@@ -4,6 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 import {Attri} from "./Attri";
+import {Debuff} from "./Debuff";
 
 @ccclass
 export default class Attack extends cc.Component {
@@ -24,6 +25,9 @@ export default class Attack extends cc.Component {
 
     @property
     hidingAtBeginning : boolean = false;
+
+    /** 本次攻击会引起的减损状态 */
+    debuff: Debuff = null;
 
     /** 攻击回调 */
     hitCallback: (atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) => void = null;

@@ -9,13 +9,13 @@ import EnemyCtrlr from "./EnemyCtrlr";
 
 import AttriForEnemy from "./AttriForEnemy";
 import Attack from "./Attack";
+import DebuffComp from "./DebuffComp";
 import {CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 
 import {Hero} from "./Hero";
 import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
-
 
 @ccclass
 export default class Enemy extends Destroyee {
@@ -28,6 +28,8 @@ export default class Enemy extends Destroyee {
 
     /** 属性 */
     attri: AttriForEnemy = null;
+    /** 减损状态 */
+    debuff: DebuffComp = null;
     /** 观察区碰撞组件 */
     watchCollider: ObjColliderForWatch = null;
 
@@ -35,6 +37,8 @@ export default class Enemy extends Destroyee {
         super.onLoad();
 
         this.attri = this._createComp(AttriForEnemy);
+        this.debuff = this._createComp(DebuffComp);
+
         this.watchCollider = this._createComp(ObjColliderForWatch);
         this.watchCollider.callback = this.onWatching.bind(this);
 
@@ -57,7 +61,7 @@ export default class Enemy extends Destroyee {
 
     reset(index: number, lv: number) {
         this.ctrlrIndex = index;
-        this.attri.reset(lv);
+        this.attri.resetVar(lv);
         this._resetAction();
     }
 
@@ -68,8 +72,10 @@ export default class Enemy extends Destroyee {
 
     // 碰撞回调 ------------------------------------------------------------
 
-    _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {       
-        return atk.handleDamage(this.attri);
+    _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {  
+        let {death, dmg, crit} = atk.handleDamage(this.attri);
+        if (!death && atk.debuff) this.debuff.setDebuff(atk.debuff);
+        return {death, dmg, crit};
     }
 
     _hurt(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean) {

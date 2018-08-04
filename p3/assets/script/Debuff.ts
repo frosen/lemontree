@@ -16,7 +16,7 @@ export class Debuff {
 
     begin(comp: DebuffComp) {}
 
-    update(dt: number, comp: DebuffComp) {}
+    update(comp: DebuffComp) {}
 
     end(comp: DebuffComp) {
         this.changeColor(null, comp);
@@ -36,10 +36,7 @@ export class Debuff {
 }
 
 /** 中毒效果 */
-const PoisoningInterval = 1;
 export class Poisoning extends Debuff {
-
-    curTime: number;
 
     damage: number;
     figureDisplay: FigureDisplay;
@@ -52,15 +49,10 @@ export class Poisoning extends Debuff {
 
     begin(comp: DebuffComp) {
         this.changeColor(cc.color(100, 255, 150, 255), comp);
-        this.curTime = 0;
     }
 
-    update(dt: number, comp: DebuffComp) {
-        this.curTime += dt;
-        if (this.curTime >= PoisoningInterval) {
-            this.curTime = 0;
-            this.wound(comp);
-        }
+    update(comp: DebuffComp) {
+        this.wound(comp);
     }
 
     wound(comp: DebuffComp) {
@@ -92,6 +84,27 @@ export class Frozen extends Debuff {
         super.end(comp);
         let attri = comp.getComponent(Attri);
         attri.removeModificationCall(FrozenAttriKey);
+        attri.reset();
+    }
+}
+
+/** 诅咒效果 */
+const CurseAttriKey = "Curse";
+export class Curse extends Debuff {
+    begin(comp: DebuffComp) {
+        this.changeColor(cc.color(209, 43, 231, 255), comp);
+        let attri = comp.getComponent(Attri);
+        attri.addModificationCall(CurseAttriKey, (a: Attri) => {
+            a.atkDmg.multiply(0.5);
+            a.magicDmg.multiply(0.5);
+        });
+        attri.reset();
+    }
+
+    end(comp: DebuffComp) {
+        super.end(comp);
+        let attri = comp.getComponent(Attri);
+        attri.removeModificationCall(CurseAttriKey);
         attri.reset();
     }
 }
