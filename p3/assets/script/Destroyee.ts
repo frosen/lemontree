@@ -5,6 +5,7 @@
 const {ccclass, property, executeInEditMode} = cc._decorator;
 
 import {ObjCollider, CollisionData} from "./ObjCollider";
+import ColorComp from "./ColorComp";
 import Attack from "./Attack";
 import ItemCtrlr from "./ItemCtrlr";
 
@@ -17,15 +18,17 @@ export default abstract class Destroyee extends cc.Component {
 
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;
-
-    /** 所有带有精灵的节点，用于显示受伤 */
-    allSpNodes: cc.Node[] = [];
+    /** 颜色管理 */
+    colorComp: ColorComp = null;
 
     itemCtrlr: ItemCtrlr = null;
 
     onLoad() {
         this.objCollider = this._createComp(ObjCollider);
         this.objCollider.callback = this.onCollision.bind(this);
+
+        this.colorComp = this._createComp(ColorComp);
+
         if (CC_EDITOR) return;
 
         this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr); 
@@ -33,12 +36,7 @@ export default abstract class Destroyee extends cc.Component {
 
     start() {
         if (CC_EDITOR) return;
-        
-        // 获取精灵节点
-        let allSps = this.getComponents(cc.Sprite);
-        for (const sp of allSps) {
-            this.allSpNodes.push(sp.node);
-        }
+        this.colorComp.resetSp();
     }
 
     _createComp<T extends cc.Component>(type: {new(): T}): T {
@@ -101,15 +99,11 @@ export default abstract class Destroyee extends cc.Component {
 
     // 显示受伤，所有ui变红
     _showHurtColor() {
-        for (const spNode of this.allSpNodes) {
-            spNode.color = cc.color(255, 80, 80, 255);
-        }
+        this.colorComp.setColor("hurt", cc.color(255, 80, 80, 255))
     }
 
     _recoveryHurtColor() {
-        for (const spNode of this.allSpNodes) {
-            spNode.color = cc.Color.WHITE;
-        }
+        this.colorComp.removeColor("hurt");
     }  
 
     abstract _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean};

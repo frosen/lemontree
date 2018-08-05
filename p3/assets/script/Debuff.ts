@@ -5,6 +5,7 @@
 import DebuffComp from "./DebuffComp";
 import FigureDisplay from "./FigureDisplay";
 import { Attri } from "./Attri";
+import ColorComp from "./ColorComp";
 
 export class Debuff {
 
@@ -23,15 +24,11 @@ export class Debuff {
     }
 
     changeColor(color: cc.Color, comp: DebuffComp) {
-        let realColor = color || cc.Color.WHITE;
-        this._changeChildrenColor(realColor, comp.node);
-    }
-
-    _changeChildrenColor(color: cc.Color, node: cc.Node) {
-        node.color = color;
-        for (const child of node.children) {
-            this._changeChildrenColor(color, child);
-        }
+        let colorComp: ColorComp = comp.getComponent(ColorComp);
+        if (color)
+            colorComp.setColor("debuff", color);
+        else
+            colorComp.removeColor("debuff");
     }
 }
 

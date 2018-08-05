@@ -12,6 +12,7 @@ import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 import {HeroLooks, HeroDirLv} from "./HeroLooks";
 import DebuffComp from "./DebuffComp";
+import ColorComp from "./ColorComp";
 
 import AttriForHero from "./AttriForHero";
 import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
@@ -27,7 +28,6 @@ import ItemComp from "./ItemComp";
 import Item from "./Item";
 import {ItemExp} from "./ItemExp";
 import {ItemEfc} from "./ItemEfc";
-import { Poisoning, Curse, Frozen } from "./Debuff";
 
 export enum HeroUsingType {
     pickUp,
@@ -56,8 +56,9 @@ export class Hero extends cc.Component {
     attack: Attack = null;
     /** 减损效果 */
     debuff: DebuffComp = null;
+    /** 颜色管理 */
+    colorComp: ColorComp = null;
 
-    
     /** 英雄状态机 */
     sm: SMForHeroMgr = null;
     /** 英雄无敌状态机 */
@@ -82,6 +83,7 @@ export class Hero extends cc.Component {
         this.looks = this.getComponent(HeroLooks);
         this.attack = this.getComponentInChildren(Attack);
         this.debuff = this.getComponent(DebuffComp);
+        this.colorComp = this.getComponent(ColorComp);
 
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
         this.smInvc = new SMForHeroInvcMgr(this);    
@@ -92,8 +94,10 @@ export class Hero extends cc.Component {
         this.objCollider.callback = this.onCollision.bind(this);
         this.watchCollider.callback = this.onWatching.bind(this);
         this.attack.hitCallback = this.onHitEnemy.bind(this);
+    }
 
-        this.attack.debuff = new Frozen(10);
+    start() {
+        this.colorComp.resetSp();
     }
 
     update(dt: number) {
