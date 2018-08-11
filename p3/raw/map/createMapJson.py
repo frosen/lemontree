@@ -66,6 +66,7 @@ doorIndexs = {}
 
 heroData = []
 doorData = []
+spineData = []
 
 # 解析触发器
 def parseCo(t, lineNum, colNum, w, h, k):
@@ -73,6 +74,7 @@ def parseCo(t, lineNum, colNum, w, h, k):
     global heroData
     global doorData
     global doorIndexs
+    global spineData
 
     if t == 33:
         #hero pos
@@ -117,17 +119,30 @@ def parseCo(t, lineNum, colNum, w, h, k):
         doorData.append(thisDoorData)
 
         return newT
+
+    elif t == 49:
+        # spine
+        thisSpineData = {}
+        thisSpineData["x"] = colNum
+        thisSpineData["y"] = lineNum
+        thisSpineData["area"] = k
+        thisSpineData["id"] = t - 49
+        spineData.append(thisSpineData)
+
+        return 0
     else:
         return t
 
 areaHeroData = []
 areaDoorData = {}
+areaSpineData = []
 
 def parse(string, k):
 
     global heroData
     global doorData
     global doorIndexs
+    global spineData
     doorIndexs = {}
 
     data = {}
@@ -184,6 +199,7 @@ def parse(string, k):
         
     heroData = []
     
+    # 门
     for d in doorData:
         key = d["id"]
         t = key % 100
@@ -197,6 +213,10 @@ def parse(string, k):
         areaDoorData[t][index].append(d)
 
     doorData = []
+
+    #尖刺
+    areaSpineData.append(spineData)
+    spineData = []
 
     return data
 
@@ -221,6 +241,7 @@ def parseData():
         data["areas"] = dataList
         data["heros"] = areaHeroData
         data["gates"] = areaDoorData
+        data["spines"] = areaSpineData
 
         jsonDataList.append(data)
 

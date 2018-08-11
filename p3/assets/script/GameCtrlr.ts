@@ -9,6 +9,7 @@ import {TerrainCtrlr} from "./TerrainCtrlr";
 import {Hero} from "./Hero";
 
 import EnemyCtrlr from "./EnemyCtrlr";
+import SpineCtrlr from "./SpineCtrlr";
 import PotCtrlr from "./PotCtrlr";
 
 import ItemCtrlr from "./ItemCtrlr";
@@ -30,6 +31,9 @@ export default class GameCtrlr extends cc.Component {
     @property(EnemyCtrlr)
     enemyCtrlr: EnemyCtrlr = null;
 
+    @property(SpineCtrlr)
+    spineCtrlr: SpineCtrlr = null;
+
     @property(PotCtrlr)
     potCtrlr: PotCtrlr = null;
 
@@ -50,8 +54,9 @@ export default class GameCtrlr extends cc.Component {
         callList(this, [
             [this._createScene],
             [this._loadEnemyRes],
+            [this._loadSpineRes],
             [this._loadPotRes],
-            [this._createEnemyAndPot],
+            [this._createObjs],
             [this._gotoHeroSpot],
             [this._showScene]
         ]);
@@ -59,7 +64,7 @@ export default class GameCtrlr extends cc.Component {
 
     _createScene(callNext: () => void, lastData: any) {
         this.mapCtrlr.createScene(this.curScene, () => {
-            callNext();
+            return callNext();
         });
     }
 
@@ -67,27 +72,37 @@ export default class GameCtrlr extends cc.Component {
         this.enemyCtrlr.setSceneAndLoadRes(this.curScene, callNext);
     }
 
+    _loadSpineRes(callNext: () => void, lastData: any) {
+        this.spineCtrlr.setSceneAndLoadRes(this.curScene, callNext);
+    }
+
     _loadPotRes(callNext: () => void, lastData: any) {
         this.potCtrlr.setSceneAndLoadRes(this.curScene, callNext);
     }
 
-    _createEnemyAndPot(callNext: () => void, lastData: any) {
+    _createObjs(callNext: () => void, lastData: any) {
         let len = this.mapCtrlr.getAreaCount();
         for (let index = 1; index <= len; index++) {
-            let poss: {pos: cc.Vec2, ground: GroundInfo}[];
-            poss = this.mapCtrlr.createRandomGroundPoss(index);
-            this.enemyCtrlr.setData(index, poss);
+            // 生成机关陷阱
+            let spineInfo = this.mapCtrlr.getSpineInfo(index);
+            this.spineCtrlr.setData(index, spineInfo);
 
-            poss = this.mapCtrlr.createRandomGroundPoss(index);
-            this.potCtrlr.setData(index, poss);
+            // 生成敌人
+            let posInfos: {pos: cc.Vec2, ground: GroundInfo}[];
+            posInfos = this.mapCtrlr.createRandomGroundPoss(index);
+            this.enemyCtrlr.setData(index, posInfos);
+
+            // 生成pot
+            posInfos = this.mapCtrlr.createRandomGroundPoss(index);
+            this.potCtrlr.setData(index, posInfos);
         }
-        callNext();
+        return callNext();
     }
 
     _gotoHeroSpot(callNext: () => void, lastData: any) {
         let {area, x, y} = this.mapCtrlr.getHeroPos();
         this._changeArea(area, x, y);
-        callNext();
+        return callNext();
     }
 
     _showScene(callNext: () => void, lastData: any) {
@@ -105,6 +120,7 @@ export default class GameCtrlr extends cc.Component {
         this.mapCtrlr.changeArea(areaIndex);
 
         this.enemyCtrlr.changeArea(areaIndex);
+        this.spineCtrlr.changeArea(areaIndex);
         this.potCtrlr.changeArea(areaIndex);
         this.itemCtrlr.clear();
 

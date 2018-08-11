@@ -70,16 +70,16 @@ export default class PotCtrlr extends cc.Component {
 
     setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
         this.curScene = sceneIndex;
-        if (this.infos[sceneIndex]) return;
+        if (this.infos[sceneIndex]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(`pots/scene${sceneIndex}`, cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
+        cc.loader.loadResDir(`map/scene${sceneIndex}/pot`, cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load res dir: ${error.message}`);
                 return;
             }
             this._onGotFrames(sceneIndex, frames);
-            finishCallback();
+            return finishCallback();
         });
     }
 

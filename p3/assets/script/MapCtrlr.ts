@@ -29,6 +29,7 @@ class SceneJson {
     areas: AreaJson[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
+    spines: TriggerJson[][];
 }
 
 /**
@@ -88,18 +89,17 @@ export class MapCtrlr extends cc.Component {
             [this._createMapData],
             [this._holdMapAsset],
             [(callNext: () => void, lastData: any) => {
-                finishCallback();
+                return finishCallback();
             }]
         ]);
     }
 
     _loadMapJson(callNext: () => void, lastData: any) {
         if (this.sceneJsons[this.curScene]) {
-            callNext();
-            return;
+            return callNext();
         }
 
-        let url = `map/scene${this.curScene}/area`;
+        let url = `map/scene${this.curScene}/terrain/area`;
         cc.loader.loadRes(url, cc.TextAsset, (err, data) => {
             if (err) {
                 cc.log(`Wrong in loadMapJson: ${err.message}`);
@@ -108,7 +108,7 @@ export class MapCtrlr extends cc.Component {
 
             let decodeStr = MapCtrlr._decodeMapData(data.text);
             this.sceneJsons[this.curScene] = JSON.parse(decodeStr);
-            callNext();
+            return callNext();
         });        
     }
 
@@ -125,18 +125,17 @@ export class MapCtrlr extends cc.Component {
 
     _loadTexture(callNext: () => void, lastData: any) {
         if (this.frames[this.curScene]) {
-            callNext();
-            return;
+            return callNext();
         }
 
-        let url = `map/scene${this.curScene}/tiles`;
+        let url = `map/scene${this.curScene}/terrain/tiles`;
         cc.loader.loadRes(url, cc.SpriteFrame, (err, frame: cc.SpriteFrame) => {
             if (err) {
                 cc.log(`Wrong in loadTexture: ${err.message}`);
                 return;
             }
             this.frames[this.curScene] = frame;
-            callNext();
+            return callNext();
         }); 
     }
 
@@ -164,7 +163,7 @@ export class MapCtrlr extends cc.Component {
             this.curAssets.push(ourmap);
         }
 
-        callNext();
+        return callNext();
     }
 
     /** 生成tiledmap所用的地图数据 */
@@ -199,7 +198,6 @@ export class MapCtrlr extends cc.Component {
         let {width: w, height: h} = size;
 
         let col = w / tileLen;
-        let line = h / tileLen;
         let count = w * h;
         
         let tsxStr: string = `
@@ -218,7 +216,7 @@ export class MapCtrlr extends cc.Component {
             this.mapPool[index].tmxAsset = asset;           
         }
 
-        callNext();
+        return callNext();
     }
 
     getAreaCount(): number {
@@ -280,6 +278,18 @@ export class MapCtrlr extends cc.Component {
         };
     }
 
+    getSpineInfo(areaIndex: number): {x: number, y: number, spineId: number}[] {
+        let realAreaIndex = areaIndex - 1;
+        let spines = this.sceneJsons[this.curScene].spines[realAreaIndex];
+        let info: {x: number, y: number, spineId: number}[] = [];
+        let tileNumHeight = this.getAreaData(areaIndex).h;
+        for (const spine of spines) {
+            let pos = this.terrainCtrlr.getPosFromTilePos(spine.x, spine.y, tileNumHeight);
+            info.push({x: pos.x, y: pos.y, spineId: spine.id});
+        }
+        return info;
+    }
+
     /** 检测一个地图块是不是地面 */
     _isGroundByGid(gid: number) {
         return gid == 1 || gid == 3;
@@ -322,6 +332,8 @@ export class MapCtrlr extends cc.Component {
         let usingGroundPoss: {pos: cc.Vec2, ground: GroundInfo}[] = [];
         let usingStates = {};
 
+        let tileNumHeight = this.getAreaData(areaIndex).h;
+
         do {
             let k = Math.floor(Math.random() * grounds.length);
             let ground = grounds[k];
@@ -330,7 +342,6 @@ export class MapCtrlr extends cc.Component {
             let state = usingStates[stKey];
 
             if (!state) {
-                let tileNumHeight = this.getAreaData(areaIndex).h;
                 let pos = this.terrainCtrlr.getPosFromTilePos(ground.x, ground.y - 1, tileNumHeight);
                 usingGroundPoss.push({pos, ground});
                 usingStates[stKey] = 1;
