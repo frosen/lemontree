@@ -208,7 +208,7 @@ export class Hero extends cc.Component {
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
 
-            let atk = data.cldr.getComponent(Attack)
+            let atk = data.cldr.getComponent(Attack);
             if (atk && atk.enabled) { // 如果碰撞对象带有攻击性
                 this.hurtCollisionData = data;
             }

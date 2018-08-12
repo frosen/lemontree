@@ -4,11 +4,14 @@
 
 const {ccclass, property} = cc._decorator;
 
+import { Attri } from "./Attri";
+
 @ccclass
 export default class Spine extends cc.Component {
 
     onLoad() {
-        
+        let attri = this.getComponent(Attri);
+        attri.atkDmg.set(20);
     }
 
     reset() {

@@ -27,21 +27,21 @@ export default class AttriForHero extends Attri {
 
     // 各种可升级属性 ========================================================
 
-    /** 力量 */
+    /** 力量 物理攻击力 */
     strength: EcNumber = new EcNumber(0);
-    /** 爆发 */
+    /** 爆发 暴击率 0.01 + 0.005 * 等级 / 暴击效果 150 + 10 * 大等级 */
     explosive: EcNumber = new EcNumber(0);
-    /** 耐久 */
+    /** 耐久 HP (100 + 20 * 小等级) * (大等级 * 0.1 + 1) */
     durability: EcNumber = new EcNumber(0);
-    /** 敏捷 */
+    /** 敏捷 物理攻击闪躲率 0.5 * 小等级 / 冲刺时候额外获得闪躲 5 * 大等级 闪躲成功后无敌0.3s */
     agility: EcNumber = new EcNumber(0);
-    /** 精神 */
+    /** 精神 魔法攻击力 */
     mentality: EcNumber = new EcNumber(0);
-    /** 决心 */
+    /** 决心 消灭敌人回复HP/地图破坏物回复HP (*) 1~100；1~10 */
     determination: EcNumber = new EcNumber(0);
-    /** 洞察 */
+    /** 洞察 经验数量 20+1 /道具几率 */
     discernment: EcNumber = new EcNumber(0);
-    /** 冷静 */
+    /** 冷静 增加被击中后的无敌时间 0.5 + 0.01 * 等级 / 进入地形的无敌时间 等级 * 0.35 */
     calmness: EcNumber = new EcNumber(0);
 
     // 卡片 ========================================================
@@ -51,6 +51,8 @@ export default class AttriForHero extends Attri {
 
     /** 闪躲率 */
     evade: EcNumber = new EcNumber(0);
+    /** 冲刺时候的闪躲率 */
+    dashEvade: EcNumber = new EcNumber(0);
 
     /** 受伤无敌时间 */
     invcTimeForHurt: EcNumber = new EcNumber(0);
@@ -109,6 +111,8 @@ export default class AttriForHero extends Attri {
         hattri.magicDmg.set(20);
 
         hattri.maxJumpCount.set(2);
+
+        hattri.evade.set(0.5);
     }
 
     _resetVar(attri: Attri) {

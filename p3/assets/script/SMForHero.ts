@@ -10,6 +10,7 @@ import {HeroDirLv} from "./HeroLooks";
 import Attack from "./Attack";
 import FigureDisplay from "./FigureDisplay";
 import {SMMgr, SM} from "./SMBase";
+import Spine from "./Spine";
 
 /** 行动状态 */
 export class ActState {
@@ -83,7 +84,8 @@ class SMForHeroInJumpAccelerating extends SMForHero {
         let curSt = mgr.curState;
 
         if (curSt == ActState.dash) {
-            if (mgr.smObj.attri.jumpingByWall && mgr.smObj.terrainCollider.edgeType == CollisionType.entity) { //撞墙跳
+            if (mgr.smObj.attri.jumpingByWall && 
+                mgr.smObj.terrainCollider.edgeType == CollisionType.entity) { //撞墙跳
                 mgr.changeStateTo(ActState.jumpByWall);
             }
             return false;
@@ -302,22 +304,49 @@ class SMForHeroInHurt extends SMForHero {
     }
 
     can(mgr: SMForHeroMgr): boolean {
-        // 计算闪躲
-        let r = Math.random();
-        if (r < mgr.smObj.attri.evade.get()) {
-            // 显示闪躲 llytodo
-            let node = mgr.smObj.node;  
-            let xCenter = node.x + node.width * (0.5 - node.anchorX);
-            let yCenter = node.y + node.height * (0.5 - node.anchorY);
-            this.figureDisplay.showEvade(cc.v2(xCenter, yCenter));
-            mgr.smObj.beginInvcState(evadeInvcTime); // 小无敌
-            return false;
-        } else {
-            return true;
+        let hero = mgr.smObj;
+
+        let atk = hero.getHurtAtk();
+        if (!atk.magicAttack) {
+            let r = Math.random(); // 计算闪躲
+            if (mgr.curState == ActState.dash ? 
+                (r < hero.attri.evade.get()) : (r < hero.attri.dashEvade.get())) {
+                // 显示闪躲
+                let node = hero.node;  
+                let xCenter = node.x + node.width * (0.5 - node.anchorX);
+                let yCenter = node.y + node.height * (0.5 - node.anchorY);
+                this.figureDisplay.showEvade(cc.v2(xCenter, yCenter));
+                hero.beginInvcState(evadeInvcTime); // 小无敌
+                return false;
+            }
         }
+        
+        if (hero.attri.trapDefence && atk.attri.getComponent(Spine)) {
+            let death = this._calcHurt(mgr);
+            if (!death) hero.beginInvcState(hero.attri.invcTimeForHurt.get() + 0.5);
+            return false;
+        }
+
+        return true;
     }
 
     begin(mgr: SMForHeroMgr) {
+        let hero = mgr.smObj;
+
+        let death = this._calcHurt(mgr);
+        if (death) return;
+
+        let hurtXDir = hero.getHurtDir();
+
+        hero.looks.hurt(); 
+        hero.setNoAtkStateEnabled(true); // 进入不可攻击敌人的状态
+        hero.looks.setXUIDir(hurtXDir, HeroDirLv.hurt);
+        
+        this.hurtMoveDir = hurtXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
+        hero.movableObj.yVelocity = hurtYSpeed;      
+    }
+
+    _calcHurt(mgr: SMForHeroMgr): boolean {
         let hero = mgr.smObj;
 
         // 受伤属性计算
@@ -329,26 +358,19 @@ class SMForHeroInHurt extends SMForHero {
         // 死亡
         if (death) { 
             mgr.changeStateTo(ActState.dead);
-            return;
+            return true;
         }
 
         // 减损状态
         if (atk.debuff) hero.debuff.setDebuff(atk.debuff);
-
-        let hurtXDir = hero.getHurtDir();
-
-        hero.looks.hurt(); 
-        hero.setNoAtkStateEnabled(true); // 进入不可攻击敌人的状态
-        hero.looks.setXUIDir(hurtXDir, HeroDirLv.hurt);
-        
-        this.hurtMoveDir = hurtXDir * -1; // 在开始时就确定方向，之后不可改变；方向与ui方向相反
-        hero.movableObj.yVelocity = hurtYSpeed;
 
         // 显示数字   
         let node = hero.node;  
         let xCenter = node.x + node.width * (0.5 - node.anchorX);
         let yCenter = node.y + node.height * (0.5 - node.anchorY);
         this.figureDisplay.showFigure(cc.v2(xCenter, yCenter), dmg, crit, atk.getAttackColor());
+
+        return false;
     }
 
     update(dt: number, mgr: SMForHeroMgr) {
