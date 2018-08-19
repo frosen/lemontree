@@ -9,10 +9,11 @@ export default class CanvasCtrlr extends cc.Component {
 
     onLoad() {
         let canvas: cc.Canvas = this.getComponent(cc.Canvas);
+        let resolution = canvas.designResolution;
         let viewSize = cc.view.getFrameSize();
 
-        // 超过16/9（比如iphoneX）则高度不变的拉宽，否则就是宽度不变的拉高
-        if (viewSize.width / viewSize.height > 1.778) {
+        // 超过设计比例的宽高比（比如iphoneX）则高度不变的拉宽，否则就是宽度不变的拉高
+        if (viewSize.width / viewSize.height > resolution.width / resolution.height) {
             canvas.fitHeight = true;
             canvas.fitWidth = false;
         } else {

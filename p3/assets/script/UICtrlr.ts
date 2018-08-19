@@ -4,14 +4,17 @@
 
 const {ccclass, property} = cc._decorator;
 
+import GameCtrlr from "./GameCtrlr";
 import {Hero, HeroUsingType} from "./Hero";
 import AttriForHero from "./AttriForHero";
 
 @ccclass
 export default class UICtrlr extends cc.Component {
 
+    /** 游戏控制器 */
+    game: GameCtrlr = null;
+
     /** 英雄 */
-    @property(Hero)
     hero: Hero = null;
 
     attri: AttriForHero = null;
@@ -34,6 +37,9 @@ export default class UICtrlr extends cc.Component {
     curUsingType: HeroUsingType = null;
 
     onLoad() {
+        this.game = cc.find("main").getComponent(GameCtrlr);
+        this.hero = cc.find("main/hero_layer/hero").getComponent(Hero);
+
         this.attri = this.hero.attri;
     }
 
@@ -82,5 +88,9 @@ export default class UICtrlr extends cc.Component {
 
     use() {
         this.hero.use();
+    }
+
+    pause() {
+        this.game.pause();
     }
 }

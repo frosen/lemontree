@@ -64,7 +64,7 @@ export class Hero extends cc.Component {
     /** 英雄无敌状态机 */
     smInvc: SMForHeroInvcMgr = null;
 
-    ui: UICtrlr = null;
+    ui: UICtrlr = null; 
 
     /** x轴移动方向 */
     xMoveDir: number = 0;

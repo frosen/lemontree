@@ -15,12 +15,13 @@
   "design-resolution-width": 625,
   "excluded-modules": [
     "Spine Skeleton",
+    "VideoPlayer",
+    "WebView",
     "Collider",
     "Graphics",
     "DragonBones",
     "Physics",
     "StudioComponent",
-    "Chipmunk",
     "Intersection"
   ],
   "fit-height": true,

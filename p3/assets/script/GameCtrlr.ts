@@ -129,4 +129,9 @@ export default class GameCtrlr extends cc.Component {
 
         this.hero.onChangeArea();
     }
+
+    /** 暂停游戏 */
+    pause() {
+        
+    }
 }

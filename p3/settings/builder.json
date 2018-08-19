@@ -3,6 +3,7 @@
   "appSecret": "",
   "encryptJs": true,
   "excludeScenes": [],
+  "fb-instant-games": {},
   "includeAnySDK": false,
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
@@ -20,6 +21,10 @@
   },
   "packageName": "org.cocos2d.helloworld",
   "privateKey": "",
+  "qqplay": {
+    "REMOTE_SERVER_ROOT": "",
+    "orientation": "portrait"
+  },
   "renderMode": "0",
   "startScene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
   "title": "lemontree",
@@ -28,6 +33,6 @@
     "appid": "wx6ac3f5090a6b99c5",
     "orientation": "portrait"
   },
-  "xxteaKey": "fd658258-0dda-44",
+  "xxteaKey": "lmt",
   "zipCompressJs": true
 }

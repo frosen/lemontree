@@ -33,7 +33,7 @@ export default class AttriForHero extends Attri {
     explosive: EcNumber = new EcNumber(0);
     /** 耐久 HP (100 + 20 * 小等级) * (大等级 * 0.1 + 1) */
     durability: EcNumber = new EcNumber(0);
-    /** 敏捷 物理攻击闪躲率 0.5 * 小等级 / 冲刺时候额外获得闪躲 5 * 大等级 闪躲成功后无敌0.3s */
+    /** 敏捷 物理攻击闪躲率 0.005 * 小等级 / 冲刺时候额外获得闪躲 0.5 * 大等级 闪躲成功后无敌0.3s */
     agility: EcNumber = new EcNumber(0);
     /** 精神 魔法攻击力 */
     mentality: EcNumber = new EcNumber(0);
