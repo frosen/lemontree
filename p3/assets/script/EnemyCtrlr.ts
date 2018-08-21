@@ -4,6 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import Enemy from "./Enemy";
 import {GroundInfo} from "./MapCtrlr";
 
@@ -22,7 +23,7 @@ class EnemyData {
 }
 
 @ccclass
-export default class EnemyCtrlr extends cc.Component {
+export default class EnemyCtrlr extends MyComponent {
 
     /** 敌人名称对应的节点的对象池 */
     pool: {[key: string]: Enemy[];} = {};

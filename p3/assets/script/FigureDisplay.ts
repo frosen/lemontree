@@ -6,11 +6,11 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import MyNodePool from "./MyNodePool";
-import Attack from "./Attack";
 
 @ccclass
-export default class FigureDisplay extends cc.Component {
+export default class FigureDisplay extends MyComponent {
 
     @property(cc.Prefab)
     labelPrefab: cc.Prefab = null;

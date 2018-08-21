@@ -4,12 +4,13 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import GameCtrlr from "./GameCtrlr";
 import {Hero, HeroUsingType} from "./Hero";
 import AttriForHero from "./AttriForHero";
 
 @ccclass
-export default class UICtrlr extends cc.Component {
+export default class UICtrlr extends MyComponent {
 
     /** 游戏控制器 */
     game: GameCtrlr = null;
@@ -91,6 +92,6 @@ export default class UICtrlr extends cc.Component {
     }
 
     pause() {
-        this.game.pause();
+        this.game.pauseOrResume();
     }
 }

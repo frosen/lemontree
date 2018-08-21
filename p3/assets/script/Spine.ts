@@ -4,10 +4,11 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import { Attri } from "./Attri";
 
 @ccclass
-export default class Spine extends cc.Component {
+export default class Spine extends MyComponent {
 
     onLoad() {
         let attri = this.getComponent(Attri);

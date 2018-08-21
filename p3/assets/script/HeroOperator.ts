@@ -7,6 +7,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {Hero} from "./Hero";
 import CameraCtrlr from "./CameraCtrlr";
 
@@ -17,7 +18,7 @@ const CameraBackC: number = 0.8;
 const CameraBackP: number = 1;
 
 @ccclass
-export default class HeroOperator extends cc.Component {
+export default class HeroOperator extends MyComponent {
 
     /** 所控制的英雄 */
     @property(Hero)

@@ -5,6 +5,8 @@
 
 const {ccclass, property, executeInEditMode, disallowMultiple} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 /** 行为返回的结果 */
 export enum BTResult {
     /** 成功 */
@@ -20,7 +22,7 @@ export enum BTResult {
 @ccclass
 @executeInEditMode
 @disallowMultiple
-export abstract class BTNode extends cc.Component {
+export abstract class BTNode extends MyComponent {
 
     /** 类型名称，用于在层级管理器中显示 */
     typeString: string = "";

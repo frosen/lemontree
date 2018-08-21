@@ -5,6 +5,8 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 /** 一个瓦片的标准长度 */
 const TileLength: number = 32;
 
@@ -54,7 +56,7 @@ const GidTypeList = [
 ]
 
 @ccclass
-export class TerrainCtrlr extends cc.Component {
+export class TerrainCtrlr extends MyComponent {
 
     /** 地图块数 */
     tileNumSize: cc.Size = cc.Size.ZERO;
@@ -101,9 +103,7 @@ export class TerrainCtrlr extends cc.Component {
         return gid;
     }
 
-    // id 转 数据========================================================
-
-    
+    // id 转 数据======================================================== 
 
     /**
      * 根据瓦片id，转换成所代表的碰撞类型

@@ -4,10 +4,11 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import MyNodePool from "./MyNodePool";
 
 @ccclass
-export default class DeathEffectDisplay extends cc.Component {
+export default class DeathEffectDisplay extends MyComponent {
 
     @property(cc.Prefab)
     deathPrefab: cc.Prefab = null;

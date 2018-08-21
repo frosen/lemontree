@@ -4,6 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import Item from "./Item";
 import ItemCtrlr from "./ItemCtrlr";
 
@@ -15,7 +16,7 @@ import ObjColliderForWatch from "./ObjColliderForWatch";
 import Gravity from "./Gravity";
 
 @ccclass
-export default class ItemComp extends cc.Component {
+export default class ItemComp extends MyComponent {
 
     itemCore: Item = null;
 

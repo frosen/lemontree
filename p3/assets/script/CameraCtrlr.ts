@@ -4,11 +4,12 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.CameraCtrlr)
-export default class CameraCtrlr extends cc.Component {
+export default class CameraCtrlr extends MyComponent {
 
     @property(cc.Camera)
     camera: cc.Camera = null;

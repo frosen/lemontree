@@ -5,6 +5,8 @@
 
 const {ccclass, property, executeInEditMode} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 export class CollisionData {
     cldr: ObjCollider = null;
     minX: number = 0;
@@ -15,7 +17,7 @@ export class CollisionData {
 
 @ccclass
 @executeInEditMode
-export class ObjCollider extends cc.Component {
+export class ObjCollider extends MyComponent {
 
     /** 回调函数 */
     callback: (collisionDatas: CollisionData[])=>void = null;

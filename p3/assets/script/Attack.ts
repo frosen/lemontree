@@ -3,11 +3,13 @@
 // lly 2018.1.27
 
 const {ccclass, property} = cc._decorator;
+
+import MyComponent from "./MyComponent";
 import {Attri} from "./Attri";
 import {Debuff} from "./Debuff";
 
 @ccclass
-export default class Attack extends cc.Component {
+export default class Attack extends MyComponent {
 
     /** 索引，用于区分不同的攻击 
      * 目前只是敌人的攻击需要，同种攻击在一定时间内不会伤害第二次，

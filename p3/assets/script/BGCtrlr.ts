@@ -3,11 +3,13 @@
 // lly 2018.6.20
 
 const {ccclass, property, executionOrder} = cc._decorator;
+
+import MyComponent from "./MyComponent";
 import { TerrainCtrlr } from "./TerrainCtrlr";
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.BGCtrlr)
-export default class BGCtrlr extends cc.Component {
+export default class BGCtrlr extends MyComponent {
 
     @property(cc.Node)
     target: cc.Node = null;

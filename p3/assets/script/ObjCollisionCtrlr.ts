@@ -5,6 +5,7 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 
 /** 检测容器最大容量 */
@@ -12,7 +13,7 @@ const CollisionDataMaxLength: number = 1000;
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.ObjCollider) // 在地形碰撞后在检测
-export default class ObjCollisionCtrlr extends cc.Component {
+export default class ObjCollisionCtrlr extends MyComponent {
 
     /** 被检测的层 */
     @property([cc.Node])

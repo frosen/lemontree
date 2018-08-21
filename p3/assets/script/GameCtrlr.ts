@@ -15,6 +15,7 @@ import PotCtrlr from "./PotCtrlr";
 import ItemCtrlr from "./ItemCtrlr";
 import Curtain from "./Curtain";
 
+import MyComponent from "./MyComponent";
 
 @ccclass
 export default class GameCtrlr extends cc.Component {
@@ -44,6 +45,8 @@ export default class GameCtrlr extends cc.Component {
     curtain: Curtain = null;
 
     curScene: number = 1; // 从1开始
+
+    gamePause: boolean = false;
 
     start() {
         this.changeScene(1);
@@ -132,6 +135,64 @@ export default class GameCtrlr extends cc.Component {
 
     /** 暂停游戏 */
     pause() {
-        
+        if (this.gamePause) return;
+        this.gamePause = true;
+        this._pauseChildren(this.node);      
+    }
+
+    // 遍历当前节点所有子节点，停止其action，animation，停止所有MyComponent下的update
+    _pauseChildren(node: cc.Node) {
+        let sch = cc.director.getScheduler();
+        for (const child of node.children) {
+            child.pauseAllActions(); // 除此之外，不应该有pause action的地方
+
+            let anim = child.getComponent(cc.Animation);
+            if (anim) {
+                anim.pause(); // 除此之外，不应该有pause anim的地方
+            }
+
+            let mcomps = child.getComponents(MyComponent);
+            for (const mcomp of mcomps) {
+                mcomp.enableSaveForPause = mcomp.enabled; // 记录原启用状态
+                mcomp.enabled = false;
+
+                sch.pauseTarget(mcomp); // 除此之外，不应该有pause schedule的地方
+            }
+
+            this._pauseChildren(child);
+        }
+    }
+
+    resume() {
+        if (!this.gamePause) return;
+        this.gamePause = false;
+        this._resumeChildren(this.node);
+    }
+
+    _resumeChildren(node: cc.Node) {
+        let sch = cc.director.getScheduler();
+        for (const child of node.children) {
+            child.resumeAllActions(); // 除此之外，不应该有pause action的地方
+            let anim = child.getComponent(cc.Animation);
+            if (anim) {
+                anim.resume(); // 除此之外，不应该有pause anim的地方
+            }
+
+            let mcomps = child.getComponents(MyComponent);
+            for (const mcomp of mcomps) {
+                mcomp.enabled = mcomp.enableSaveForPause;
+                sch.resumeTarget(mcomp); // 除此之外，不应该有pause schedule的地方
+            }
+
+            this._resumeChildren(child);
+        }
+    }
+
+    pauseOrResume() {
+        if (this.gamePause) {
+            this.resume();
+        } else {
+            this.pause();
+        }
     }
 }

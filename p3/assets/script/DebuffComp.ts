@@ -4,10 +4,11 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {Debuff} from "./Debuff";
 
 @ccclass
-export default class DebuffComp extends cc.Component {
+export default class DebuffComp extends MyComponent {
 
     /** 当前减损效果，每个单位同一时间只能有一个减损效果 */
     curDebuff: Debuff = null;

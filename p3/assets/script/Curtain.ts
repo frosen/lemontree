@@ -4,8 +4,10 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 @ccclass
-export default class GameCtrlr extends cc.Component {
+export default class GameCtrlr extends MyComponent {
 
     @property(cc.Sprite)
     sp: cc.Sprite = null;

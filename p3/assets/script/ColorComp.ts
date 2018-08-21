@@ -4,8 +4,10 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 @ccclass
-export default class ColorComp extends cc.Component {
+export default class ColorComp extends MyComponent {
 
     /** 所有带有精灵的节点 */
     allSpNodes: cc.Node[] = [];

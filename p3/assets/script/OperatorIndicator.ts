@@ -3,10 +3,12 @@
 // lly 2017.12.12
 
 const {ccclass, property} = cc._decorator;
+
+import MyComponent from "./MyComponent";
 import HeroOperator from "./HeroOperator";
 
 @ccclass
-export default class OperatorIndicator extends cc.Component {
+export default class OperatorIndicator extends MyComponent {
 
     /** 英雄控制器 */
     @property(HeroOperator)

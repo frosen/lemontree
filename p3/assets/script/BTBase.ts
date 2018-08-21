@@ -7,11 +7,12 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {BTNode, BTResult} from "./BTNode";
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.BehaviorTree)
-export default class BTBase extends cc.Component {
+export default class BTBase extends MyComponent {
 
     /** 记录子节点的BtNode，增加遍历效率 */
     btNodes: BTNode[] = [];

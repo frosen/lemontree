@@ -3,11 +3,13 @@
 // lly 2017.12.30
 
 const {ccclass, property, executeInEditMode} = cc._decorator;
+
+import MyComponent from "./MyComponent";
 import HeroOperator from "./HeroOperator";
 
 @ccclass
 @executeInEditMode
-export default class ShowCtrlArea extends cc.Component {
+export default class ShowCtrlArea extends MyComponent {
 
     @property(HeroOperator)
     operator: HeroOperator = null;

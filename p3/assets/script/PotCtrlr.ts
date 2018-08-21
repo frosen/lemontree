@@ -4,6 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import Pot from "./Pot";
 import MyNodePool from "./MyNodePool";
 import {GroundInfo} from "./MapCtrlr";
@@ -27,7 +28,7 @@ class PotData {
 }
 
 @ccclass
-export default class PotCtrlr extends cc.Component {
+export default class PotCtrlr extends MyComponent {
 
     @property([cc.Node])
     showingPots: cc.Node[] = [];

@@ -4,6 +4,7 @@
 
 const {ccclass, property, executeInEditMode} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ColorComp from "./ColorComp";
 import Attack from "./Attack";
@@ -14,7 +15,7 @@ const InvcTime: number = 1000;
 
 @ccclass
 @executeInEditMode
-export default abstract class Destroyee extends cc.Component {
+export default abstract class Destroyee extends MyComponent {
 
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;

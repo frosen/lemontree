@@ -5,13 +5,14 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {MovableObject} from "./MovableObject";
 
 /** 默认重力加速度 */
 const DefaultAccel: number = -0.25;
 
 @ccclass
-export default class Gravity extends cc.Component {
+export default class Gravity extends MyComponent {
 
     onLoad() {
         requireComponents(this, [MovableObject]);

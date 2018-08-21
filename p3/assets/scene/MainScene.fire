@@ -2330,7 +2330,7 @@
       "__id__": 56
     },
     "component": "UICtrlr",
-    "handler": "addComponent",
+    "handler": "pause",
     "customEventData": ""
   },
   {

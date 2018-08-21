@@ -4,8 +4,10 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 @ccclass
-export default class CanvasCtrlr extends cc.Component {
+export default class CanvasCtrlr extends MyComponent {
 
     onLoad() {
         let canvas: cc.Canvas = this.getComponent(cc.Canvas);

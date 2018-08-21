@@ -4,6 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import MyNodePool from "./MyNodePool";
 import {MovableObject} from "./MovableObject";
 import Gravity from "./Gravity";
@@ -17,7 +18,7 @@ const speedRate: number = 3.5;
 const initYSpeed: number = 2;
 
 @ccclass
-export default class PotFragmentCtrlr extends cc.Component {
+export default class PotFragmentCtrlr extends MyComponent {
 
     @property([cc.SpriteFrame])
     fragmentFrames: cc.SpriteFrame[] = [];

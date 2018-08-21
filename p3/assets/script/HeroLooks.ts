@@ -4,6 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {Hero} from "./Hero";
 
 /** 控制UI方向的三个指标 */
@@ -14,7 +15,7 @@ export enum HeroDirLv {
 }
 
 @ccclass
-export class HeroLooks extends cc.Component {
+export class HeroLooks extends MyComponent {
 
     @property(cc.Sprite)
     body: cc.Sprite = null;

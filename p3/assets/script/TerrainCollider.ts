@@ -5,12 +5,13 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {MovableObject} from "./MovableObject";
 import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr"; 
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollider)
-export default class TerrainCollider extends cc.Component {
+export default class TerrainCollider extends MyComponent {
 
     /** 可移动对象组件 */
     movableObj: MovableObject = null;

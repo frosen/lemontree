@@ -4,6 +4,8 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 const MagicNum = Math.floor(Math.random() * 10000);
 
 // 加密数据
@@ -76,7 +78,7 @@ export class EcNumber {
 }
 
 @ccclass
-export class Attri extends cc.Component {
+export class Attri extends MyComponent {
     /** 血量 */
     hp: EcNumber = new EcNumber(0, (v: number): number => {
         return Math.max(Math.min(v, this.maxHp.get()), 0);

@@ -4,6 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import Spine from "./Spine";
 
 class SpineData {
@@ -17,7 +18,7 @@ class SpineData {
 }
 
 @ccclass
-export default class SpineCtrlr extends cc.Component {
+export default class SpineCtrlr extends MyComponent {
 
     /** 敌人名称对应的节点的对象池 */
     pool: {[key: string]: Spine[];} = {};

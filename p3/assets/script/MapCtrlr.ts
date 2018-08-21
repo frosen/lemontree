@@ -6,6 +6,7 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 
 /** 一个区域的属性 */
@@ -43,7 +44,7 @@ export class GroundInfo {
 }
 
 @ccclass
-export class MapCtrlr extends cc.Component {
+export class MapCtrlr extends MyComponent {
 
     @property(TerrainCtrlr)
     terrainCtrlr: TerrainCtrlr = null;

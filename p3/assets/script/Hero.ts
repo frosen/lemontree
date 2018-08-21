@@ -5,6 +5,8 @@
 
 const {ccclass, property} = cc._decorator;
 
+import MyComponent from "./MyComponent";
+
 import {MovableObject} from "./MovableObject";
 import TerrainCollider from "./TerrainCollider";
 import {CollisionType} from "./TerrainCtrlr";
@@ -36,7 +38,7 @@ export enum HeroUsingType {
 }
 
 @ccclass
-export class Hero extends cc.Component {
+export class Hero extends MyComponent {
 
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
