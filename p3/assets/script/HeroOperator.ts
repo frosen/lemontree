@@ -11,7 +11,7 @@ import MyComponent from "./MyComponent";
 import {Hero} from "./Hero";
 import CameraCtrlr from "./CameraCtrlr";
 
-const DisForMove: number = 20;
+const DisForMove: number = 7;
 const MinMoveBegin: number = 30;
 
 const CameraBackC: number = 0.8;
@@ -47,6 +47,8 @@ export default class HeroOperator extends MyComponent {
     moveTouchId: number = null;
     /** 移动起始点 */
     moveBeginPos: cc.Vec2 = null;
+    /** 移动方向 */
+    moveDir: number = 0;
 
     /** 镜头移动点击的id */
     watchTouchId: number = null;
@@ -90,6 +92,12 @@ export default class HeroOperator extends MyComponent {
             if (touchPos.y < this.moveH) {
                 this.moveTouchId = event.getID();
                 this.moveBeginPos = cc.v2(Math.max(touchPos.x, MinMoveBegin), Math.max(touchPos.y, MinMoveBegin));
+
+                // 点击到边缘直接移动
+                if (touchPos.x < this.moveBeginPos.x - DisForMove) {
+                    this.moveDir = -1;
+                    this.hero.move(this.moveDir);
+                }
             } else {
                 if (!this.cameraBack) {
                     this.watchTouchId = event.getID();
@@ -111,14 +119,22 @@ export default class HeroOperator extends MyComponent {
         if (event.getID() == this.moveTouchId) {
             let x = event.getLocation().x;
             let diff: number = x - this.moveBeginPos.x;
-            let dir: number = diff > 0 ? 1 : -1;
-            let dis = Math.abs(diff);
-
-            if (dis > DisForMove) {
-                this.hero.move(dir);
+            if (this.moveDir == 0) {
+                if (diff > DisForMove) {
+                    this.moveDir = 1;
+                } else if (diff < -DisForMove) {
+                    this.moveDir = -1;
+                }
+            } else if (this.moveDir > 0) {
+                if (diff < -DisForMove) {
+                    this.moveDir = -1;
+                }
             } else {
-                this.hero.move(0);
+                if (diff > DisForMove) {
+                    this.moveDir = 1;                   
+                }
             }
+            this.hero.move(this.moveDir);
 
         } else if (event.getID() == this.watchTouchId) {
             let {x, y} = event.getLocation();
@@ -137,7 +153,8 @@ export default class HeroOperator extends MyComponent {
         if (id == this.moveTouchId) {
             this.moveTouchId = null;
             this.moveBeginPos = null;
-            this.hero.move(0);
+            this.moveDir = 0;
+            this.hero.move(this.moveDir);
 
         } else if (id == this.watchTouchId) {
             this.watchTouchId = null;          
