@@ -14,7 +14,6 @@ import {BTNode, BTResult} from "./BTNode";
 import BTNodeWithFunc from "./BTNodeWithFunc";
 import BTNodeActionUntil from "./BTNodeActionUntil";
 import BTNodeActionEnd from "./BTNodeActionEnd";
-import BTBase from "./BTBase";
 
 @ccclass
 export default class BTNodeAction extends BTNodeWithFunc<() => void> {

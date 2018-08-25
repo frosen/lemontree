@@ -7,7 +7,6 @@ const {ccclass, property} = cc._decorator;
 
 import {BTResult} from "./BTNode";
 import BTNodeWithFunc from "./BTNodeWithFunc";
-import BTBase from "./BTBase";
 
 @ccclass
 export default class BTNodeActSet extends BTNodeWithFunc<() => void> {

@@ -6,7 +6,6 @@
 const {ccclass, property} = cc._decorator;
 
 import BTNodeCdtion from "./BTNodeCdtion";
-import {BTResult} from "./BTNode";
 
 /** 比较类型 */
 const CompareType = cc.Enum({

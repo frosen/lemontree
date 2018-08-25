@@ -38,6 +38,6 @@ export default class BTBase extends MyComponent {
         for (const btNode of this.btNodes) {
             let result = btNode.excute();
             if (result == BTResult.running) btNode.doAction();
-        }
+        } 
     }
 }

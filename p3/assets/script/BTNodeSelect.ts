@@ -7,7 +7,6 @@ const {ccclass, property} = cc._decorator;
 
 import {BTResult} from "./BTNode";
 import BTNodeSequence from "./BTNodeSequence";
-import BTNodeAction from "./BTNodeAction";
 
 @ccclass
 export default class BTNodeSelect extends BTNodeSequence {

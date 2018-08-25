@@ -6,7 +6,6 @@
 const {ccclass, property} = cc._decorator;
 
 import BTNodeCdtion from "./BTNodeCdtion";
-import {BTResult} from "./BTNode";
 
 @ccclass
 export default class BTNodeCdtionBool extends BTNodeCdtion<() => boolean> {

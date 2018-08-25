@@ -4,7 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {BTNode, BTResult} from "./BTNode";
+import {BTNode} from "./BTNode";
 import BTBase from "./BTBase";
 
 @ccclass
