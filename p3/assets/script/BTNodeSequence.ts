@@ -64,13 +64,15 @@ export default class BTNodeSequence extends BTNodeGroup {
             }
         }
 
-        if (this.curRunningBTNode.excute() != BTResult.running) {
-            let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
-            this.curRunningBTNode = null;
-            return this.excuteInNormal(nextIndex);
-        }
+        let result = this.curRunningBTNode.excute();
+        if (result == BTResult.running) return BTResult.running;
 
-        return BTResult.running;
+        this.curRunningBTNode = null;
+
+        if (result == BTResult.fail) return BTResult.fail;
+
+        let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
+        return this.excuteInNormal(nextIndex);
     }
 
     doAction() {
