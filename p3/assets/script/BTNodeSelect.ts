@@ -53,14 +53,18 @@ export default class BTNodeSelect extends BTNodeSequence {
         }
 
         let result = this.curRunningBTNode.excute();
-        if (result == BTResult.running) return BTResult.running;
+        if (result == BTResult.running) {
+            return BTResult.running;
 
-        this.curRunningBTNode = null;
+        } else if (result == BTResult.suc) {
+            this.curRunningBTNode = null;
+            return BTResult.suc;
 
-        if (result == BTResult.suc) return BTResult.suc;
-
-        let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
-        return this.excuteInNormal(nextIndex);
+        } else {
+            let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
+            this.curRunningBTNode = null;
+            return this.excuteInNormal(nextIndex);
+        }
     }
 
     getCheckingAheadInRunningStr(): string {

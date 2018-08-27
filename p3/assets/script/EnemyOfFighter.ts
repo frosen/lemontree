@@ -13,17 +13,28 @@ import {CollisionType} from "./TerrainCtrlr";
 @ccclass
 export default class EnemyOfFighter extends Enemy {
 
+    /** 可移动对象组件 */
+    movableObj: MovableObject = null;
+    /** 地形碰撞组件 */
+    terrainCollider: TerrainCollider = null;
+
+    onLoad() {
+        super.onLoad();
+
+        this.movableObj = this.getComponent(MovableObject);
+        this.terrainCollider = this.getComponent(TerrainCollider);
+    }
+
     // UI相关 ========================================================
 
     // 基本行动 ========================================================
 
     moveForward() {
-        let movableObj = this.getComponent(MovableObject);
-        movableObj.xVelocity = this.node.scaleX * 1;
+        this.movableObj.xVelocity = this.node.scaleX * 1;
     }
 
     stopMoving() {
-        this.getComponent(MovableObject).xVelocity = 0;
+        this.movableObj.xVelocity = 0;
     }
 
     turnAround() {
@@ -32,15 +43,16 @@ export default class EnemyOfFighter extends Enemy {
 
     moveToAim() {
         this.node.scaleX = Math.abs(this.node.scaleX) * this.aimDir;
-
-        let movableObj = this.getComponent(MovableObject);
-        movableObj.xVelocity = this.node.scaleX * 3;
+        this.movableObj.xVelocity = this.node.scaleX * 3;
     }
 
     // 对于行为树的判断 ========================================================
 
     isEdgeForward(): boolean {
-        let edge = this.getComponent(TerrainCollider).edgeType;
-        return edge == CollisionType.none || edge == CollisionType.entity;
+        return this.terrainCollider.edgeType == CollisionType.none;
+    }
+
+    isBlockForward(): boolean {
+        return this.terrainCollider.edgeType == CollisionType.entity;
     }
 }

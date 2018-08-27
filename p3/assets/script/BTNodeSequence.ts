@@ -65,14 +65,18 @@ export default class BTNodeSequence extends BTNodeGroup {
         }
 
         let result = this.curRunningBTNode.excute();
-        if (result == BTResult.running) return BTResult.running;
+        if (result == BTResult.running) {
+            return BTResult.running;
 
-        this.curRunningBTNode = null;
+        } else if (result == BTResult.fail) {
+            this.curRunningBTNode = null;
+            return BTResult.fail;
 
-        if (result == BTResult.fail) return BTResult.fail;
-
-        let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
-        return this.excuteInNormal(nextIndex);
+        } else {
+            let nextIndex = this.btNodes.indexOf(this.curRunningBTNode) + 1;
+            this.curRunningBTNode = null;
+            return this.excuteInNormal(nextIndex);
+        }
     }
 
     doAction() {

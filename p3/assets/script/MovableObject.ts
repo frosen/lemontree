@@ -1,6 +1,7 @@
 // MovableObject.ts
 // 可移动对象
 // 有这个组件的单位才可以进行移动，跳跃；该组件为对象设置速度和加速度
+// x和y有一定的差异，请注意
 // lly 2017.12.12
 
 const {ccclass, property, executionOrder} = cc._decorator;
@@ -14,8 +15,6 @@ export const VelocityMax: number = 15;
 @executionOrder(EXECUTION_ORDER.MovableObject)
 export class MovableObject extends MyComponent {
 
-    /** 当前x加速度 */
-    xAccel: number = 0;
     /** 当前y加速度 */
     yAccel: number = 0;
 
@@ -26,8 +25,6 @@ export class MovableObject extends MyComponent {
 
     /** x环境速度 */
     xEnvVelocity: number = 0;
-    /** y环境速度 */
-    yEnvVelocity: number = 0;
 
     xLastPos: number = 0;
     yLastPos: number = 0;
@@ -35,7 +32,6 @@ export class MovableObject extends MyComponent {
     xLastVelocity: number = 0;
     yLastVelocity: number = 0;
 
-    xVelocityEnabled: boolean = true;
     yVelocityEnabled: boolean = true;
 
     update(_: number) {
@@ -45,19 +41,14 @@ export class MovableObject extends MyComponent {
         this.yLastVelocity = this.yVelocity;
 
         // x
-        if (this.xVelocityEnabled) {
-            this.xVelocity += this.xAccel;
-            this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);        
-            this.node.x += this.xVelocity + this.xEnvVelocity;
-        } else {
-            this.xVelocity = 0;
-        }
+        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);        
+        this.node.x += this.xVelocity + this.xEnvVelocity;
 
         // y
         if (this.yVelocityEnabled) {
             this.yVelocity += this.yAccel;
             this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);       
-            this.node.y += this.yVelocity + this.yEnvVelocity;
+            this.node.y += this.yVelocity;
         } else {
             this.yVelocity = 0;
         }

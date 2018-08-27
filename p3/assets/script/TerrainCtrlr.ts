@@ -228,9 +228,9 @@ export class TerrainCtrlr extends MyComponent {
         
         // 如果至此leftBegin都没有结束的话，则是一种特殊情况
         if (leftBegin) {
-            edgeLeft = this.checkCollideAt(fromX, y);
-            edgeRight = t;
-        } else if (!rightBegin && (t == CollisionType.none || t == CollisionType.slope)) {
+            edgeLeft = this.checkCollideAt(fromX, y);            
+        } 
+        if (!rightBegin && (t == CollisionType.none || t == CollisionType.slope)) {
             edgeRight = t;
         }
 
