@@ -89,7 +89,7 @@ export default class ItemCtrlr extends MyComponent {
                 }
             }
 
-            myAssert(itemInfo.frames.length == itemInfo.times.length, "maybe wrong item name in png");
+            cc.assert(itemInfo.frames.length == itemInfo.times.length, "maybe wrong item name in png");
         }
 
         // 如果有需要直接安置的item，在此生成

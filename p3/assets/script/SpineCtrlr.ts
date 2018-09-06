@@ -43,7 +43,7 @@ export default class SpineCtrlr extends MyComponent {
                 return;
             }
 
-            myAssert(prefabs.length > 0, "Wrong size of spine prefab");
+            cc.assert(prefabs.length > 0, "Wrong size of spine prefab");
            
             let data = {};
             for (const prefab of prefabs) {

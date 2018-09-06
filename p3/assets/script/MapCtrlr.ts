@@ -227,7 +227,7 @@ export class MapCtrlr extends MyComponent {
     getAreaData(areaIndex: number): AreaJson {
         let realIndex = areaIndex - 1;
         let areas = this.sceneJsons[this.curScene].areas;
-        myAssert(0 <= realIndex && realIndex < areas.length, "wrong area index");
+        cc.assert(0 <= realIndex && realIndex < areas.length, "wrong area index");
 
         return areas[realIndex];
     }

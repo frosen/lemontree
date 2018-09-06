@@ -50,7 +50,7 @@ export default class EnemyCtrlr extends MyComponent {
                 return;
             }
 
-            myAssert(prefabs.length > 0, "Wrong size of enemy prefab");
+            cc.assert(prefabs.length > 0, "Wrong size of enemy prefab");
            
             let data = {};
             let names = [];

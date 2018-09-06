@@ -17,7 +17,7 @@ export class SMMgr<SMObj> {
     /** 检测状态数字是否正确 */
     static checkSMState(st: number) {
         let n = st - StateBeginuNmber;
-        myAssert(0 < n && n < StateBeginuNmber, "wrong sm st");
+        cc.assert(0 < n && n < StateBeginuNmber, "wrong sm st");
     }
 
     /** 状态列表，enum: SMForHero */

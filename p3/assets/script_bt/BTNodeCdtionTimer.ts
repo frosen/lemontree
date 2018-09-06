@@ -36,7 +36,7 @@ export default class BTNodeCdtionTimer extends BTNode {
             p = p.parent;
         }
 
-        myAssert(baseNode, "BTNodeCdtionTimer need in bt tree");
+        cc.assert(baseNode, "BTNodeCdtionTimer need in bt tree");
         baseNode.on("BTUpdate", this.onBTUpdate.bind(this));
     }
 
@@ -51,7 +51,7 @@ export default class BTNodeCdtionTimer extends BTNode {
             p = p.parent;
         }
 
-        myAssert(actNode, "BTNodeCdtionTimer need in until");
+        cc.assert(actNode, "BTNodeCdtionTimer need in until");
         actNode.on("BTActionBegin", this.onTimerBegin.bind(this));
     }
 

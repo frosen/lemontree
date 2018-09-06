@@ -47,7 +47,7 @@ export default class Attack extends MyComponent {
                 }
             }
         }
-        myAssert(this.attri != null, "attack need attri");
+        cc.assert(this.attri != null, "attack need attri");
 
         if (this.hidingAtBeginning) this.enabled = false;
     }

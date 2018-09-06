@@ -300,7 +300,7 @@ class SMForHeroInHurt extends SMForHero {
     constructor() {
         super();
         this.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
-        myAssert(this.figureDisplay, "need figure display");
+        cc.assert(this.figureDisplay, "need figure display");
     }
 
     can(mgr: SMForHeroMgr): boolean {

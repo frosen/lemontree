@@ -45,8 +45,6 @@ window.requireComponents = function (obj, components) {
     cc.assert(t, "[" + obj.name + "] need component: " + s);
 };
 
-window.myAssert = cc.assert;
-
 window.getClassName = function (func) {
     return func.name;
 }
