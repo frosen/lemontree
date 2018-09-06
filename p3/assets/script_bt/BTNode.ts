@@ -5,7 +5,7 @@
 
 const {ccclass, property, executeInEditMode, disallowMultiple} = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from "../script/MyComponent";
 
 /** 行为返回的结果 */
 export enum BTResult {

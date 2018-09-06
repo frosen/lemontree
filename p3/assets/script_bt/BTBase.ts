@@ -7,7 +7,7 @@
 
 const {ccclass, property, executionOrder} = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from "../script/MyComponent";
 import {BTNode, BTResult} from "./BTNode";
 
 @ccclass
