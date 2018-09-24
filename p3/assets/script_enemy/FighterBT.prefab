@@ -144,7 +144,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: EnemyOfFighter:isEdgeForward is True",
+    "_name": "IF: Fighter:isEdgeForward is True",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -204,7 +204,7 @@
       "__id__": 3
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:isEdgeForward",
+    "excuteString": "Fighter:isEdgeForward",
     "checkingTrue": true
   },
   {
@@ -220,7 +220,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: EnemyOfFighter:stopMoving",
+    "_name": "DO: Fighter:stopMoving",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -437,7 +437,7 @@
       "__id__": 6
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:stopMoving"
+    "excuteString": "Fighter:stopMoving"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -574,7 +574,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: EnemyOfFighter:getAimDir is != 1",
+    "_name": "IF: Fighter:getAimDir is != 1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 16
@@ -634,7 +634,7 @@
       "__id__": 17
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:getAimDir",
+    "excuteString": "Fighter:getAimDir",
     "compareType": 1,
     "compareNum": 1
   },
@@ -651,7 +651,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "SET: EnemyOfFighter:turnAround",
+    "_name": "SET: Fighter:turnAround",
     "_objFlags": 0,
     "_parent": {
       "__id__": 16
@@ -711,7 +711,7 @@
       "__id__": 20
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:turnAround"
+    "excuteString": "Fighter:turnAround"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -929,7 +929,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: EnemyOfFighter:isBlockForward is True",
+    "_name": "IF: Fighter:isBlockForward is True",
     "_objFlags": 0,
     "_parent": {
       "__id__": 32
@@ -989,7 +989,7 @@
       "__id__": 33
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:isBlockForward",
+    "excuteString": "Fighter:isBlockForward",
     "checkingTrue": true
   },
   {
@@ -1127,7 +1127,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: EnemyOfFighter:getAimDir is != 1",
+    "_name": "IF: Fighter:getAimDir is != 1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 37
@@ -1187,7 +1187,7 @@
       "__id__": 38
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:getAimDir",
+    "excuteString": "Fighter:getAimDir",
     "compareType": 1,
     "compareNum": 1
   },
@@ -1204,7 +1204,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "SET: EnemyOfFighter:turnAround",
+    "_name": "SET: Fighter:turnAround",
     "_objFlags": 0,
     "_parent": {
       "__id__": 37
@@ -1264,7 +1264,7 @@
       "__id__": 41
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:turnAround"
+    "excuteString": "Fighter:turnAround"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -1482,7 +1482,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: EnemyOfFighter:getAimDir is == -1",
+    "_name": "IF: Fighter:getAimDir is == -1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 53
@@ -1542,7 +1542,7 @@
       "__id__": 54
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:getAimDir",
+    "excuteString": "Fighter:getAimDir",
     "compareType": 0,
     "compareNum": -1
   },
@@ -1559,7 +1559,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "SET: EnemyOfFighter:turnAround",
+    "_name": "SET: Fighter:turnAround",
     "_objFlags": 0,
     "_parent": {
       "__id__": 53
@@ -1619,7 +1619,7 @@
       "__id__": 57
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:turnAround"
+    "excuteString": "Fighter:turnAround"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -1717,7 +1717,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: EnemyOfFighter:getAimDir is == 1",
+    "_name": "IF: Fighter:getAimDir is == 1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 62
@@ -1777,7 +1777,7 @@
       "__id__": 63
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:getAimDir",
+    "excuteString": "Fighter:getAimDir",
     "compareType": 0,
     "compareNum": 1
   },
@@ -1794,7 +1794,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: EnemyOfFighter:moveToAim",
+    "_name": "DO: Fighter:moveToAim",
     "_objFlags": 0,
     "_parent": {
       "__id__": 62
@@ -1854,7 +1854,7 @@
       "__id__": 66
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:moveToAim"
+    "excuteString": "Fighter:moveToAim"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -1949,7 +1949,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "DO: EnemyOfFighter:moveForward",
+    "_name": "DO: Fighter:moveForward",
     "_objFlags": 0,
     "_parent": {
       "__id__": 71
@@ -2009,7 +2009,7 @@
       "__id__": 72
     },
     "_enabled": true,
-    "excuteString": "EnemyOfFighter:moveForward"
+    "excuteString": "Fighter:moveForward"
   },
   {
     "__type__": "cc.PrefabInfo",
