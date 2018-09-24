@@ -6,6 +6,8 @@
 const {ccclass, property} = cc._decorator;
 
 import BTNodeCdtion from "./BTNodeCdtion";
+import {ExcuteFuncKey} from "./BTNodeWithFunc";
+import BTComp from "./BTComp";
 
 @ccclass
 export default class BTNodeCdtionBool extends BTNodeCdtion<() => boolean> {
@@ -14,8 +16,9 @@ export default class BTNodeCdtionBool extends BTNodeCdtion<() => boolean> {
     @property
     checkingTrue: boolean = true;
 
-    doExcuteFunc(): boolean {
-        return this.excuteFunc() == this.checkingTrue;
+    doExcuteFunc(comp: BTComp): boolean {
+        let func = comp.getValue(this.btIndex, ExcuteFuncKey);
+        return  func() == this.checkingTrue;
     }
 
     getExcuteResStr(): string {

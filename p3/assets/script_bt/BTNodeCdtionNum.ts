@@ -6,6 +6,8 @@
 const {ccclass, property} = cc._decorator;
 
 import BTNodeCdtion from "./BTNodeCdtion";
+import {ExcuteFuncKey} from "./BTNodeWithFunc";
+import BTComp from "./BTComp";
 
 /** 比较类型 */
 const CompareType = cc.Enum({
@@ -32,18 +34,6 @@ export default class BTNodeCdtionNum extends BTNodeCdtion<() => number> {
     @property
     compareNum: number = 0;
 
-    doExcuteFunc(): boolean {
-        let result: number = this.excuteFunc();
-        switch (this.compareType) {
-            case CompareType.equal:       return result == this.compareNum;        
-            case CompareType.notEqual:    return result != this.compareNum;
-            case CompareType.moreThan:    return result > this.compareNum;
-            case CompareType.lessThan:    return result < this.compareNum;
-            case CompareType.notMoreThan: return result <= this.compareNum;
-            case CompareType.notLessThan: return result >= this.compareNum;
-        }
-    }
-
     getExcuteResStr(): string {
         let str = "";
         switch (this.compareType) {
@@ -55,5 +45,18 @@ export default class BTNodeCdtionNum extends BTNodeCdtion<() => number> {
             case CompareType.notLessThan: str += ">= "; break;
         }
         return str + this.compareNum.toString();
+    }
+
+    doExcuteFunc(comp: BTComp): boolean {
+        let func = comp.getValue(this.btIndex, ExcuteFuncKey);
+        let result: number = func();
+        switch (this.compareType) {
+            case CompareType.equal:       return result == this.compareNum;        
+            case CompareType.notEqual:    return result != this.compareNum;
+            case CompareType.moreThan:    return result > this.compareNum;
+            case CompareType.lessThan:    return result < this.compareNum;
+            case CompareType.notMoreThan: return result <= this.compareNum;
+            case CompareType.notLessThan: return result >= this.compareNum;
+        }
     }
 }

@@ -6,26 +6,24 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTResult} from "./BTNode";
-import BTNodeWithFunc from "./BTNodeWithFunc";
+import {BTNodeWithFunc} from "./BTNodeWithFunc";
+import BTComp from "./BTComp";
 
 @ccclass
 export default abstract class BTNodeCdtion<FUNC_TYPE> extends BTNodeWithFunc<FUNC_TYPE> {
 
     typeString: string = "IF";
 
-    excute(): BTResult {
-        let result = this.doExcuteFunc() ? BTResult.suc : BTResult.fail;
+    getBTName(): string {
+        return this.excuteString + " is " + this.getExcuteResStr();           
+    }
+
+    abstract getExcuteResStr(): string;
+
+    excute(comp: BTComp): BTResult {
+        let result = this.doExcuteFunc(comp) ? BTResult.suc : BTResult.fail;
         return result;
     }
 
-    getBTName(): string {
-        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteString + 
-            " is " + this.getExcuteResStr();           
-    }
-
-    abstract doExcuteFunc(): boolean;
-
-    getExcuteResStr(): string {
-        return "";
-    }
+    abstract doExcuteFunc(comp: BTComp): boolean;
 }

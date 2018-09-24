@@ -15,11 +15,6 @@ declare namespace EXECUTION_ORDER {
 }
 
 /**
- * 根据字符串查找一个function，字符串用":"区分组件名和函数名
- */
-declare function getFuncFromString(obj: Object, str: string): function;
-
-/**
  * 按照list列表依次执行，执行的this是obj
  */
 declare function callList(obj: any, list: any[])
@@ -42,12 +37,15 @@ declare function curLineInfo(): string;
 // 补全 --------------------------------------------------------------------------------
 
 declare module cc {
-
+	/** 补全于c_mine */
 	export function assert(condition: any, log: string): void;
 
 	export interface TiledMapAsset {
+		/** 补全于c_mine */
 		tmxXmlStr: string;
+		/** 补全于c_mine */
 		tsxFileNames: string[];
+		/** 补全于c_mine */
 		tsxFiles: any[];
 	}
 }

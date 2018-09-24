@@ -6,23 +6,25 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTResult} from "./BTNode";
-import BTNodeWithFunc from "./BTNodeWithFunc";
+import {BTNodeWithFunc, ExcuteFuncKey} from "./BTNodeWithFunc";
+import BTComp from "./BTComp";
 
 @ccclass
 export default class BTNodeActSet extends BTNodeWithFunc<() => void> {
 
     typeString: string = "SET";
 
-    excute(): BTResult {
-        this.doSet();
+    getBTName(): string {
+        return this.excuteString;           
+    }
+
+    excute(comp: BTComp): BTResult {
+        this.doSet(comp);
         return BTResult.continue;
     }
 
-    doSet() {
-        this.excuteFunc();
-    }
-
-    getBTName(): string {
-        return (this.excuteNode ? this.excuteNode.name : "BT Root") + " >> " + this.excuteString;           
+    doSet(comp: BTComp) {
+        let func = comp.getValue(this.btIndex, ExcuteFuncKey);
+        func();
     }
 }

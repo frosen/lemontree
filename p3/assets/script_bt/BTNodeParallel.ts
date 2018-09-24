@@ -7,16 +7,17 @@ const {ccclass, property} = cc._decorator;
 
 import {BTResult} from "./BTNode";
 import BTNodeGroup from "./BTNodeGroup";
+import BTComp from "./BTComp";
 
 @ccclass
 export default class BTNodeParallel extends BTNodeGroup {
 
     typeString: string = "Parallel";
 
-    excute(): BTResult {
+    excute(comp: BTComp): BTResult {
         for (const btNode of this.btNodes) {
-            let result = btNode.excute();
-            if (result == BTResult.running) btNode.doAction();
+            let result = btNode.excute(comp);
+            if (result == BTResult.running) btNode.doAction(comp);
         }
 
         return BTResult.suc;

@@ -8,7 +8,8 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
-import BTNodeAction from "./BTNodeAction";
+import {BTNodeAction} from "./BTNodeAction";
+import BTComp from "./BTComp";
 
 @ccclass
 export default class BTNodeActionUntil extends BTNode {
@@ -20,12 +21,12 @@ export default class BTNodeActionUntil extends BTNode {
         cc.assert(this.node.parent.getComponent(BTNodeAction), "BTNodeActionEnd need action parent");
     }
 
-    excute(): BTResult {
-        cc.error("never use");
-        return BTResult.running;
-    }
-
     getBTName(): string {
         return "";
+    }
+
+    excute(comp: BTComp): BTResult {
+        cc.error("never use");
+        return BTResult.running;
     }
 }

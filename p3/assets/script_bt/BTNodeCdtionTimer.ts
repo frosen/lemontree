@@ -5,8 +5,11 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
-import BTBase from "./BTBase";
-import BTNodeAction from "./BTNodeAction";
+import {BTNodeAction, ActionBeginKey} from "./BTNodeAction";
+import BTComp from "./BTComp";
+
+const CurTimeKey: string = "CurTime";
+const MaxTime: number = 999999;
 
 @ccclass
 export default class BTNodeCdtionTimer extends BTNode {
@@ -17,64 +20,58 @@ export default class BTNodeCdtionTimer extends BTNode {
     @property
     untilTime: number = 1;
 
-    /** 当前时间 */
-    curTime: number = 999999;
-
     onLoad() {
+        let curComp = BTNode.getBTCtrlr().curComp;
+        curComp.setValue(this.btIndex, CurTimeKey, MaxTime);
+
         this.registerBTUpdate();
         this.registerBTActionBegin();        
     }
 
     registerBTUpdate() {
-        let p: cc.Node = this.node.parent;
-        let baseNode: cc.Node = null;
-        while (true) {
-            if (p.getComponent(BTBase)) {
-                baseNode = p;
-                break;
-            }
-            p = p.parent;
-        }
-
-        cc.assert(baseNode, "BTNodeCdtionTimer need in bt tree");
-        baseNode.on("BTUpdate", this.onBTUpdate.bind(this));
+        let curComp = BTNode.getBTCtrlr().curComp;
+        curComp.onUpdate(this.onBTUpdate.bind(this));
     }
 
     registerBTActionBegin() {
         let p: cc.Node = this.node.parent;
-        let actNode: cc.Node = null;
+        let actNode: BTNodeAction = null;
         while (true) {
-            if (p.getComponent(BTNodeAction)) {
-                actNode = p;
+            let mayActNode = p.getComponent(BTNodeAction)
+            if (mayActNode) {
+                actNode = mayActNode;
                 break;
             }
             p = p.parent;
         }
 
         cc.assert(actNode, "BTNodeCdtionTimer need in until");
-        actNode.on("BTActionBegin", this.onTimerBegin.bind(this));
+
+        let curComp = BTNode.getBTCtrlr().curComp;
+        curComp.on(actNode.btIndex, ActionBeginKey, this.onTimerBegin.bind(this));
     }
 
-    onBTUpdate(event) {
-        let dt: number = event.detail.dt;
-        this.curTime -= dt;
+    onBTUpdate(comp: BTComp, dt: number) {
+        let t = comp.getValue(this.btIndex, CurTimeKey);
+        comp.setValue(this.btIndex, CurTimeKey, t - dt);
     }
 
-    onTimerBegin() {
-        this.curTime = this.untilTime;
-    }
-
-    excute(): BTResult {
-        if (this.curTime > 0) {
-            return BTResult.fail;
-        } else {
-            let result = BTResult.suc;
-            this.curTime = 999999; // 结束倒计时：通过一个很大的值避免再执行excute
-            return result;
-        }
+    onTimerBegin(comp: BTComp) {
+        comp.setValue(this.btIndex, CurTimeKey, this.untilTime);
     }
 
     getBTName(): string {
         return this.untilTime.toString() + " seconds ago";           
+    }
+
+    excute(comp: BTComp): BTResult {
+        let t = comp.getValue(this.btIndex, CurTimeKey);
+        if (t > 0) {
+            return BTResult.fail;
+        } else {
+            let result = BTResult.suc;
+            comp.setValue(this.btIndex, CurTimeKey, MaxTime); // 结束倒计时：通过一个很大的值避免再执行excute
+            return result;
+        }
     }
 }
