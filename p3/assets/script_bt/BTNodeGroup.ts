@@ -1,11 +1,12 @@
 // BTNodeGroup.ts
 // 行为树节点，组合节点
-// 
+//
 // lly 2018.2.5
 
 const {ccclass, property} = cc._decorator;
 
 import {BTNode} from "./BTNode";
+import BTComp from "./BTComp";
 
 @ccclass
 export default abstract class BTNodeGroup extends BTNode {
@@ -20,6 +21,8 @@ export default abstract class BTNodeGroup extends BTNode {
     desc: string = "";
 
     onLoad() {
+        super.onLoad();
+
         for (const child of this.node.children) {
             if (child.active == false) continue;
             let comp = child.getComponent(BTNode);

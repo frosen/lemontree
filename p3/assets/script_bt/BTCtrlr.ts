@@ -14,21 +14,17 @@ export default class BTCtrlr extends cc.Component {
     // 行为树字典，每种行为树记录一份
     btDict: {[key: string]: BTNode} = {};
 
-    /** 当前组件，用于初始化 */
-    curComp: BTComp = null;
-
     setBT(comp: BTComp, name: string, btPrefab: cc.Prefab) {
-        if (this.btDict[name]) return;
+        let topBtNode = this.btDict[name];
+        if (!topBtNode) {
+            let btRootNode = cc.instantiate(btPrefab);
+            cc.game.addPersistRootNode(btRootNode);
+            let btNode = btRootNode.getComponent(BTNode);
+            this.btDict[name] = btNode;
+            topBtNode = btNode;
+        }
 
-        this.curComp = comp;
-
-        let btRootNode = cc.instantiate(btPrefab);
-        this.node.addChild(btRootNode);
-        btRootNode.active = false;
-
-        this.btDict[name] = btRootNode.getComponent(BTNode);
-
-        this.curComp = null;
+        topBtNode.init(comp);
     }
 
     updateBT(comp: BTComp, name: string) {

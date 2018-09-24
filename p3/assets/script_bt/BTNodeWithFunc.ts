@@ -5,6 +5,7 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode} from "./BTNode";
+import BTComp from "./BTComp";
 
 export const ExcuteFuncKey: string = "excuteFunc";
 
@@ -14,13 +15,10 @@ export abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
     /** 执行函数名称 用于在编辑器中设置excuteFunc，func可以有返回值 */
     @property excuteString: string = "";
 
-    onLoad() {
-        super.onLoad();
-        if (!CC_EDITOR) {
-            let curComp = BTNode.getBTCtrlr().curComp;
-            let excuteFunc = this._getFuncFromString(curComp.node, this.excuteString);
-            curComp.setValue(this.btIndex, ExcuteFuncKey, excuteFunc);
-        }
+    init(comp: BTComp) {
+        super.init(comp);
+        let excuteFunc: FUNC_TYPE = this._getFuncFromString(comp.node, this.excuteString);
+        comp.setValue(this.btIndex, ExcuteFuncKey, excuteFunc);
     }
 
     _getFuncFromString(node: cc.Node, str: string): any {

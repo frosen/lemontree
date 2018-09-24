@@ -44,11 +44,11 @@ export default class Enemy extends Destroyee {
 
         if (CC_EDITOR) return;
 
-        if (!Enemy.ctrlr) 
+        if (!Enemy.ctrlr)
             Enemy.ctrlr = cc.find("main/enemy_layer").getComponent(EnemyCtrlr);
-        if (!Enemy.figureDisplay) 
+        if (!Enemy.figureDisplay)
             Enemy.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
-        if (!Enemy.deathDisplay) 
+        if (!Enemy.deathDisplay)
             Enemy.deathDisplay = cc.find("main/death_effect_layer").getComponent(DeathEffectDisplay);
     }
 
@@ -67,12 +67,12 @@ export default class Enemy extends Destroyee {
 
     /** 需要继承 */
     _resetAction() {
-        
+
     }
 
     // 碰撞回调 ------------------------------------------------------------
 
-    _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {  
+    _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {
         let {death, dmg, crit} = atk.handleDamage(this.attri);
         if (!death && atk.debuff) this.debuff.setDebuff(atk.debuff);
         return {death, dmg, crit};
@@ -118,7 +118,7 @@ export default class Enemy extends Destroyee {
                 }
             }
         }
-        
+
         this.aimDir = this.aim ? (this.aim.node.x - this.node.x > 0 ? 1 : -1) : 0;
     }
 

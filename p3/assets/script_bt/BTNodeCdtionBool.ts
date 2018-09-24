@@ -1,6 +1,6 @@
 // BTNodeCdtionBool.ts
 // 行为树节点，条件节点，判断函数结果是否为true，false
-// 
+//
 // lly 2018.2.5
 
 const {ccclass, property} = cc._decorator;
@@ -18,7 +18,7 @@ export default class BTNodeCdtionBool extends BTNodeCdtion<() => boolean> {
 
     doExcuteFunc(comp: BTComp): boolean {
         let func = comp.getValue(this.btIndex, ExcuteFuncKey);
-        return  func() == this.checkingTrue;
+        return func() == this.checkingTrue;
     }
 
     getExcuteResStr(): string {

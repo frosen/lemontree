@@ -33,39 +33,38 @@ export class BTNodeAction extends BTNodeWithFunc<() => void> {
     /** 结束函数组，遍历其子until节点获得 */
     endFuncs: ((comp: BTComp) => BTResult)[] = [];
 
+    getBTName(): string {
+        return this.excuteString;
+    }
+
     onLoad() {
         super.onLoad();
-
-        if (!CC_EDITOR) {
-            for (const child of this.node.children) {
-                if (child.active == false) continue;
-                if (child.getComponent(BTNodeActionUntil)) {
-                    for (const untilChild of child.children) {
-                        if (untilChild.active == false) continue;
-                        let btNode = untilChild.getComponent(BTNode);
-                        let func = btNode["excute"].bind(btNode);
-                        this.untilFuncs.push(func);
-                    }
-                } else if (child.getComponent(BTNodeActionEnd)) {
-                    for (const endChild of child.children) {
-                        if (endChild.active == false) continue;
-                        let btNode = endChild.getComponent(BTNode);
-                        let func = btNode["excute"].bind(btNode);
-                        this.endFuncs.push(func);
-                    }
-                } else {
-                    cc.error("wrong child in action");
+        for (const child of this.node.children) {
+            if (child.active == false) continue;
+            if (child.getComponent(BTNodeActionUntil)) {
+                for (const untilChild of child.children) {
+                    if (untilChild.active == false) continue;
+                    let btNode = untilChild.getComponent(BTNode);
+                    let func = btNode["excute"].bind(btNode);
+                    this.untilFuncs.push(func);
                 }
+            } else if (child.getComponent(BTNodeActionEnd)) {
+                for (const endChild of child.children) {
+                    if (endChild.active == false) continue;
+                    let btNode = endChild.getComponent(BTNode);
+                    let func = btNode["excute"].bind(btNode);
+                    this.endFuncs.push(func);
+                }
+            } else {
+                cc.error("wrong child in action");
             }
-
-            let curComp = BTNode.getBTCtrlr().curComp;
-            curComp.setValue(this.btIndex, RunningKey, false);
-            curComp.setValue(this.btIndex, GoActionKey, false);
         }
     }
 
-    getBTName(): string {
-        return this.excuteString;
+    init(comp: BTComp) {
+        super.init(comp);
+        comp.setValue(this.btIndex, RunningKey, false);
+        comp.setValue(this.btIndex, GoActionKey, false);
     }
 
     excute(comp: BTComp): BTResult {

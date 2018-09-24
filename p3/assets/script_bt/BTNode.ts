@@ -46,6 +46,15 @@ export abstract class BTNode extends MyComponent {
 
     abstract getBTName(): string;
 
+    /** 初始化 */
+    init(comp: BTComp) {
+        let children = this.node.children;
+        for (const child of children) {
+            let btNode = child.getComponent(BTNode);
+            btNode.init(comp);
+        }
+    }
+
     /**
      * 执行并获取每个节点的执行结果
      * @return BTResult

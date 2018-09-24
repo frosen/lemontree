@@ -42,7 +42,7 @@ export default class EnemyCtrlr extends MyComponent {
     setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
         this.curScene = sceneIndex;
         if (this.prefabs[sceneIndex]) return finishCallback();
-        
+
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir(`map/scene${this.curScene}/enemy`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
             if (error) {
@@ -51,14 +51,14 @@ export default class EnemyCtrlr extends MyComponent {
             }
 
             cc.assert(prefabs.length > 0, "Wrong size of enemy prefab");
-           
+
             let data = {};
             let names = [];
             for (const prefab of prefabs) {
                 data[prefab.name] = prefab;
                 names.push(prefab.name);
             }
-            
+
             this.prefabs[this.curScene] = data;
             this.prefabNames[this.curScene] = names;
 
@@ -168,6 +168,6 @@ export default class EnemyCtrlr extends MyComponent {
             enemy.node.active = false;
         } else { // 没有index说明不是从pool中生成的
             enemy.node.removeFromParent();
-        } 
+        }
     }
 }

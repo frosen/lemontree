@@ -22,20 +22,22 @@ export default class BTNodeSelect extends BTNodeSequence {
     }
 
     excuteInNormal(comp: BTComp, inputIndex: number = 0): BTResult {
+        let finalresult: BTResult = BTResult.fail;
         for (let index = inputIndex; index < this.btNodes.length; index++) {
             let btNode = this.btNodes[index];
             let result: BTResult = btNode.excute(comp);
 
             if (result == BTResult.suc) {
-                return BTResult.suc; // 一旦成功则直接返回而不往后执行
+                finalresult = BTResult.suc; // 一旦成功则直接返回而不往后执行
+                break;
 
             } else if (result == BTResult.running) {
                 comp.setValue(this.btIndex, CurRunningNodeKey, btNode);
-                return BTResult.running; // 一旦进入运行状态，也不往后执行了
+                finalresult = BTResult.running; // 一旦进入运行状态，也不往后执行了
+                break;
             }
         }
-
-        return BTResult.fail;
+        return finalresult;
     }
 
     excuteInRunning(comp: BTComp): BTResult {

@@ -20,20 +20,24 @@ export default class BTNodeCdtionTimer extends BTNode {
     @property
     untilTime: number = 1;
 
-    onLoad() {
-        let curComp = BTNode.getBTCtrlr().curComp;
-        curComp.setValue(this.btIndex, CurTimeKey, MaxTime);
-
-        this.registerBTUpdate();
-        this.registerBTActionBegin();        
+    getBTName(): string {
+        return this.untilTime.toString() + " seconds ago";
     }
 
-    registerBTUpdate() {
-        let curComp = BTNode.getBTCtrlr().curComp;
-        curComp.onUpdate(this.onBTUpdate.bind(this));
+    init(comp: BTComp) {
+        super.init(comp);
+
+        comp.setValue(this.btIndex, CurTimeKey, MaxTime);
+
+        this.registerBTUpdate(comp);
+        this.registerBTActionBegin(comp);
     }
 
-    registerBTActionBegin() {
+    registerBTUpdate(comp: BTComp) {
+        comp.onUpdate(this.onBTUpdate.bind(this));
+    }
+
+    registerBTActionBegin(comp: BTComp) {
         let p: cc.Node = this.node.parent;
         let actNode: BTNodeAction = null;
         while (true) {
@@ -47,8 +51,7 @@ export default class BTNodeCdtionTimer extends BTNode {
 
         cc.assert(actNode, "BTNodeCdtionTimer need in until");
 
-        let curComp = BTNode.getBTCtrlr().curComp;
-        curComp.on(actNode.btIndex, ActionBeginKey, this.onTimerBegin.bind(this));
+        comp.on(actNode.btIndex, ActionBeginKey, this.onTimerBegin.bind(this));
     }
 
     onBTUpdate(comp: BTComp, dt: number) {
@@ -58,10 +61,6 @@ export default class BTNodeCdtionTimer extends BTNode {
 
     onTimerBegin(comp: BTComp) {
         comp.setValue(this.btIndex, CurTimeKey, this.untilTime);
-    }
-
-    getBTName(): string {
-        return this.untilTime.toString() + " seconds ago";           
     }
 
     excute(comp: BTComp): BTResult {

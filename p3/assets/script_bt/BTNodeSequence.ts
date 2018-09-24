@@ -20,14 +20,13 @@ export class BTNodeSequence extends BTNodeGroup {
     @property
     checkingAheadInRunning: boolean = false;
 
-    onLoad() {
-        /** 当前运行的子节点 */
-        let curComp = BTNode.getBTCtrlr().curComp;
-        curComp.setValue(this.btIndex, CurRunningNodeKey, null);
-    }
-
     getBTName(): string {
         return super.getBTName() + this.getCheckingAheadInRunningStr();
+    }
+
+    init(comp: BTComp) {
+        super.init(comp);
+        comp.setValue(this.btIndex, CurRunningNodeKey, null);
     }
 
     getCheckingAheadInRunningStr(): string {
@@ -35,11 +34,14 @@ export class BTNodeSequence extends BTNodeGroup {
     }
 
     excute(comp: BTComp): BTResult {
+        let result: BTResult;
         if (!this.isRunning(comp)) {
-            return this.excuteInNormal(comp);
+            result = this.excuteInNormal(comp);
         } else {
-            return this.excuteInRunning(comp);
+            result = this.excuteInRunning(comp);
         }
+
+        return result;
     }
 
     isRunning(comp: BTComp): boolean {
@@ -47,20 +49,22 @@ export class BTNodeSequence extends BTNodeGroup {
     }
 
     excuteInNormal(comp: BTComp, inputIndex: number = 0): BTResult {
+        let finalresult: BTResult = BTResult.suc;
         for (let index = inputIndex; index < this.btNodes.length; index++) {
             let btNode = this.btNodes[index];
             let result: BTResult = btNode.excute(comp);
 
             if (result == BTResult.fail) {
-                return BTResult.fail; // 一旦有失败则直接返回而不往后执行
+                finalresult = BTResult.fail; // 一旦有失败则直接返回而不往后执行
+                break;
 
             } else if (result == BTResult.running) {
                 comp.setValue(this.btIndex, CurRunningNodeKey, btNode);
-                return BTResult.running; // 一旦进入运行状态，也不往后执行了
+                finalresult = BTResult.running; // 一旦进入运行状态，也不往后执行了
+                break;
             }
         }
-
-        return BTResult.suc;
+        return finalresult;
     }
 
     excuteInRunning(comp: BTComp): BTResult {
