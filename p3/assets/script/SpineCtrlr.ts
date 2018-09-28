@@ -35,7 +35,7 @@ export default class SpineCtrlr extends MyComponent {
     setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
         this.curScene = sceneIndex;
         if (this.prefabs[sceneIndex]) return finishCallback();
-        
+
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir(`map/scene${this.curScene}/spine`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
             if (error) {
@@ -44,20 +44,22 @@ export default class SpineCtrlr extends MyComponent {
             }
 
             cc.assert(prefabs.length > 0, "Wrong size of spine prefab");
-           
+
             let data = {};
             for (const prefab of prefabs) {
                 data[prefab.name] = prefab;
             }
-            
+
             this.prefabs[this.curScene] = data;
 
             return finishCallback();
+
+            console.log
         });
     }
 
     getSpineNameFromId(id: number): string {
-        return "Spine";
+        return "spine";
     }
 
     setData(areaIndex: number, infos: {x: number, y: number, spineId: number}[]) {

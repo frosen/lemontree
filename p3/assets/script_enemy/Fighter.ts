@@ -21,8 +21,8 @@ export default class EnemyOfFighter extends Enemy {
     onLoad() {
         super.onLoad();
 
-        this.movableObj = this.getComponent(MovableObject);
-        this.terrainCollider = this.getComponent(TerrainCollider);
+        this.movableObj = this._createComp(MovableObject);
+        this.terrainCollider = this._createComp(TerrainCollider);
     }
 
     // UI相关 ========================================================

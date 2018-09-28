@@ -13,6 +13,9 @@ import DebuffComp from "./DebuffComp";
 import {CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 
+import BTComp from "../script_bt/BTComp";
+import EnemyLkComp from "./EnemyLkComp";
+
 import {Hero} from "./Hero";
 import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
@@ -41,6 +44,9 @@ export default class Enemy extends Destroyee {
 
         this.watchCollider = this._createComp(ObjColliderForWatch);
         this.watchCollider.callback = this.onWatching.bind(this);
+
+        this._createComp(BTComp);
+        this._createComp(EnemyLkComp);
 
         if (CC_EDITOR) return;
 
