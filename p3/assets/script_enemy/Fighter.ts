@@ -11,7 +11,7 @@ import TerrainCollider from "../script/TerrainCollider";
 import {CollisionType} from "../script/TerrainCtrlr";
 
 @ccclass
-export default class EnemyOfFighter extends Enemy {
+export default class Fighter extends Enemy {
 
     /** 可移动对象组件 */
     movableObj: MovableObject = null;

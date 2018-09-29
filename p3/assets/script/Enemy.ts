@@ -14,7 +14,6 @@ import {CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 
 import BTComp from "../script_bt/BTComp";
-import EnemyLkComp from "./EnemyLkComp";
 
 import {Hero} from "./Hero";
 import FigureDisplay from "./FigureDisplay";
@@ -46,7 +45,6 @@ export default class Enemy extends Destroyee {
         this.watchCollider.callback = this.onWatching.bind(this);
 
         this._createComp(BTComp);
-        this._createComp(EnemyLkComp);
 
         if (CC_EDITOR) return;
 

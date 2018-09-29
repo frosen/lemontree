@@ -15,6 +15,12 @@ export abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
     /** 执行函数名称 用于在编辑器中设置excuteFunc，func可以有返回值 */
     @property excuteString: string = "";
 
+    update(dt: number) {
+        if (!CC_EDITOR) return;
+        this.excuteString = this.excuteString.replace(/\s*/g,"");
+        super.update(dt);
+    }
+
     init(comp: BTComp) {
         super.init(comp);
         let excuteFunc: FUNC_TYPE = this._getFuncFromString(comp.node, this.excuteString);

@@ -138,7 +138,9 @@
       "__id__": 1
     },
     "_enabled": true,
-    "btPrefab": null
+    "btPrefab": {
+      "__uuid__": "3ce48f00-45f6-4df7-8ff5-342ca4689970"
+    }
   },
   {
     "__type__": "4c9bfiKcstLDql4Nw5yQDDU",
@@ -193,13 +195,13 @@
     "_enabled": true,
     "size": {
       "__type__": "cc.Size",
-      "width": 0,
-      "height": 0
+      "width": 300,
+      "height": 90
     },
     "offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": -20
     },
     "subColliders": [],
     "showingInRunning": false

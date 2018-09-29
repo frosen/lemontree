@@ -214,12 +214,12 @@
     "size": {
       "__type__": "cc.Size",
       "width": 300,
-      "height": 70
+      "height": 90
     },
     "offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": -20
     },
     "subColliders": [],
     "showingInRunning": false
