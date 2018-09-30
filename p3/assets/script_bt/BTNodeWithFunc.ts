@@ -6,6 +6,7 @@ const {ccclass, property} = cc._decorator;
 
 import {BTNode} from "./BTNode";
 import BTComp from "./BTComp";
+import BTNodeGroup from "./BTNodeGroup";
 
 export const ExecuteFuncKey: string = "executeFunc";
 
@@ -17,8 +18,38 @@ export abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
 
     update(dt: number) {
         if (!CC_EDITOR) return;
-        this.executeString = this.executeString.replace(/\s*/g,"");
+        this._checkExecuteString();
         super.update(dt);
+    }
+
+    _checkExecuteString() {
+        // 去空格
+        this.executeString = this.executeString.replace(/\s*/g,"");
+
+        // 补上":"
+        if (this.executeString.indexOf(":") < 0)
+            this.executeString = ":" + this.executeString;
+
+        // 检测comp名
+        let p: cc.Node = this.node;
+        while (true) {
+            let _p = p.parent;
+            if (!_p || _p instanceof cc.Scene || !_p.getComponent(BTNode)) {
+                break;
+            } else {
+                p = _p;
+            }
+        }
+
+        let groupNode: BTNodeGroup = p.getComponent(BTNodeGroup);
+        if (!groupNode) return;
+
+        let desc = groupNode.desc;
+        let index = desc.indexOf("==>");
+        if (index < 0) return;
+
+        let data = this.executeString.split(":");
+        this.executeString = desc.substr(index + 4) + ":" + data[1];
     }
 
     init(comp: BTComp) {

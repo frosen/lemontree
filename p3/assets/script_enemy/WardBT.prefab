@@ -12,7 +12,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Sequence: 面向敌人",
+    "_name": "Sequence: 面向敌人 ==> Ward",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -229,7 +229,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "desc": "面向敌人",
+    "desc": "面向敌人 ==> Ward",
     "checkingAheadInRunning": false
   },
   {
