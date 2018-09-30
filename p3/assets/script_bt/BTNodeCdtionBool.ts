@@ -6,22 +6,22 @@
 const {ccclass, property} = cc._decorator;
 
 import BTNodeCdtion from "./BTNodeCdtion";
-import {ExcuteFuncKey} from "./BTNodeWithFunc";
+import {ExecuteFuncKey} from "./BTNodeWithFunc";
 import BTComp from "./BTComp";
 
 @ccclass
 export default class BTNodeCdtionBool extends BTNodeCdtion<() => boolean> {
 
-    /** excuteFunc的返回结果为什么值表示成功 */
+    /** executeFunc的返回结果为什么值表示成功 */
     @property
     checkingTrue: boolean = true;
 
-    doExcuteFunc(comp: BTComp): boolean {
-        let func = comp.getValue(this.btIndex, ExcuteFuncKey);
+    doExecuteFunc(comp: BTComp): boolean {
+        let func = comp.getValue(this.btIndex, ExecuteFuncKey);
         return func() == this.checkingTrue;
     }
 
-    getExcuteResStr(): string {
+    getExecuteResStr(): string {
         return this.checkingTrue ? "True" : "False";
     }
 }

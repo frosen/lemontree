@@ -1,12 +1,12 @@
 // BTNodeCdtionNum.ts
 // 行为树节点，条件节点，判断函数结果数字
-// 
+//
 // lly 2018.2.5
 
 const {ccclass, property} = cc._decorator;
 
 import BTNodeCdtion from "./BTNodeCdtion";
-import {ExcuteFuncKey} from "./BTNodeWithFunc";
+import {ExecuteFuncKey} from "./BTNodeWithFunc";
 import BTComp from "./BTComp";
 
 /** 比较类型 */
@@ -30,14 +30,14 @@ export default class BTNodeCdtionNum extends BTNodeCdtion<() => number> {
     })
     compareType = CompareType.equal;
 
-    /** excuteFunc的返回结果比较的数字 */
+    /** executeFunc的返回结果比较的数字 */
     @property
     compareNum: number = 0;
 
-    getExcuteResStr(): string {
+    getExecuteResStr(): string {
         let str = "";
         switch (this.compareType) {
-            case CompareType.equal:       str += "== "; break;       
+            case CompareType.equal:       str += "== "; break;
             case CompareType.notEqual:    str += "!= "; break;
             case CompareType.moreThan:    str += "> "; break;
             case CompareType.lessThan:    str += "< "; break;
@@ -47,11 +47,11 @@ export default class BTNodeCdtionNum extends BTNodeCdtion<() => number> {
         return str + this.compareNum.toString();
     }
 
-    doExcuteFunc(comp: BTComp): boolean {
-        let func = comp.getValue(this.btIndex, ExcuteFuncKey);
+    doExecuteFunc(comp: BTComp): boolean {
+        let func = comp.getValue(this.btIndex, ExecuteFuncKey);
         let result: number = func();
         switch (this.compareType) {
-            case CompareType.equal:       return result == this.compareNum;        
+            case CompareType.equal:       return result == this.compareNum;
             case CompareType.notEqual:    return result != this.compareNum;
             case CompareType.moreThan:    return result > this.compareNum;
             case CompareType.lessThan:    return result < this.compareNum;

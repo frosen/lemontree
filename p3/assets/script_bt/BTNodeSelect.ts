@@ -21,11 +21,11 @@ export default class BTNodeSelect extends BTNodeSequence {
         return this.checkingAheadInRunning ? "" : " -- No!CheckAhead";
     }
 
-    excuteInNormal(comp: BTComp, inputIndex: number = 0): BTResult {
+    executeInNormal(comp: BTComp, inputIndex: number = 0): BTResult {
         let finalresult: BTResult = BTResult.fail;
         for (let index = inputIndex; index < this.btNodes.length; index++) {
             let btNode = this.btNodes[index];
-            let result: BTResult = btNode.excute(comp);
+            let result: BTResult = btNode.execute(comp);
 
             if (result == BTResult.suc) {
                 finalresult = BTResult.suc; // 一旦成功则直接返回而不往后执行
@@ -40,14 +40,14 @@ export default class BTNodeSelect extends BTNodeSequence {
         return finalresult;
     }
 
-    excuteInRunning(comp: BTComp): BTResult {
+    executeInRunning(comp: BTComp): BTResult {
         let curRunningBTNode = comp.getValue(this.btIndex, CurRunningNodeKey);
 
         if (this.checkingAheadInRunning) {
             for (const btNode of this.btNodes) {
                 if (btNode == curRunningBTNode) break;
 
-                let result: BTResult = btNode.excute(comp);
+                let result: BTResult = btNode.execute(comp);
 
                 if (result == BTResult.suc) {
                     this.endRunning(comp);
@@ -61,7 +61,7 @@ export default class BTNodeSelect extends BTNodeSequence {
             }
         }
 
-        let result = curRunningBTNode.excute(comp);
+        let result = curRunningBTNode.execute(comp);
         if (result == BTResult.running) {
             return BTResult.running;
 
@@ -72,7 +72,7 @@ export default class BTNodeSelect extends BTNodeSequence {
         } else {
             let nextIndex = this.btNodes.indexOf(curRunningBTNode) + 1;
             comp.setValue(this.btIndex, CurRunningNodeKey, null);
-            return this.excuteInNormal(comp, nextIndex);
+            return this.executeInNormal(comp, nextIndex);
         }
     }
 }

@@ -42,7 +42,7 @@ export default class ObjCollisionCtrlr extends MyComponent {
             cc.assert(typeof(layerId1) == "number" && typeof(layerId2) == "number", "layer id must be number");
             cc.assert(0 <= layerId1 && layerId1 < this.checkedLayers.length, "layer id 1 wrong");
             cc.assert(0 <= layerId2 && layerId2 < this.checkedLayers.length, "layer id 2 wrong");
-            
+
             this.checkingTactics.push([layerId1, layerId2]);
         }
 
@@ -50,7 +50,7 @@ export default class ObjCollisionCtrlr extends MyComponent {
         for (let index = 0; index < this.checkedLayers.length; ++index) {
             let data: CollisionData[] = [];
             for (let j = 0; j < CollisionDataMaxLength; ++j) {
-                data[j] = new CollisionData();               
+                data[j] = new CollisionData();
             }
             this.collisionDatas[index] = data;
             this.collisionDataLengths[index] = 0;
@@ -60,7 +60,7 @@ export default class ObjCollisionCtrlr extends MyComponent {
     update(_: number) {
         this.createCollsionData();
         this.checkByTictics();
-        this.excuteCollisionCallback();
+        this.executeCollisionCallback();
     }
 
     /** 遍历检测层，获取相关控件的数据 */
@@ -79,7 +79,7 @@ export default class ObjCollisionCtrlr extends MyComponent {
                     for (const subCollider of collider.subColliders) {
                         if (subCollider.enabled) this.saveCollsionDataAndResetObj(subCollider, collider, i);
                     }
-                }              
+                }
             }
         }
     }
@@ -103,7 +103,7 @@ export default class ObjCollisionCtrlr extends MyComponent {
         for (const checkingIndexs of this.checkingTactics) {
             let index0 = checkingIndexs[0];
             let index1 = checkingIndexs[1];
-            this.check(this.collisionDatas[index0], this.collisionDataLengths[index0], 
+            this.check(this.collisionDatas[index0], this.collisionDataLengths[index0],
                 this.collisionDatas[index1], this.collisionDataLengths[index1]);
         }
     }
@@ -121,14 +121,14 @@ export default class ObjCollisionCtrlr extends MyComponent {
         }
     }
 
-    excuteCollisionCallback() {
+    executeCollisionCallback() {
         for (let i = 0; i < this.collisionDatas.length; i++) {
             const dataList = this.collisionDatas[i];
             const l = this.collisionDataLengths[i];
             for (let j = 0; j < l; j++) {
                 const data = dataList[j];
-                data.cldr.excuteCallback();               
-            }           
+                data.cldr.executeCallback();
+            }
         }
     }
 }

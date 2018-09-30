@@ -63,13 +63,13 @@ export default class BTNodeCdtionTimer extends BTNode {
         comp.setValue(this.btIndex, CurTimeKey, this.untilTime);
     }
 
-    excute(comp: BTComp): BTResult {
+    execute(comp: BTComp): BTResult {
         let t = comp.getValue(this.btIndex, CurTimeKey);
         if (t > 0) {
             return BTResult.fail;
         } else {
             let result = BTResult.suc;
-            comp.setValue(this.btIndex, CurTimeKey, MaxTime); // 结束倒计时：通过一个很大的值避免再执行excute
+            comp.setValue(this.btIndex, CurTimeKey, MaxTime); // 结束倒计时：通过一个很大的值避免再执行execute
             return result;
         }
     }

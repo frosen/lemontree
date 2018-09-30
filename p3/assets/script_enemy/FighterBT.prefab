@@ -204,7 +204,7 @@
       "__id__": 3
     },
     "_enabled": true,
-    "excuteString": "Fighter:isEdgeForward",
+    "executeString": "Fighter:isEdgeForward",
     "checkingTrue": true
   },
   {
@@ -437,7 +437,7 @@
       "__id__": 6
     },
     "_enabled": true,
-    "excuteString": "Fighter:stopMoving"
+    "executeString": "Fighter:stopMoving"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -634,7 +634,7 @@
       "__id__": 17
     },
     "_enabled": true,
-    "excuteString": "Fighter:getAimDir",
+    "executeString": "Fighter:getAimDir",
     "compareType": 1,
     "compareNum": 1
   },
@@ -711,7 +711,7 @@
       "__id__": 20
     },
     "_enabled": true,
-    "excuteString": "Fighter:turnAround"
+    "executeString": "Fighter:turnAround"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -989,7 +989,7 @@
       "__id__": 33
     },
     "_enabled": true,
-    "excuteString": "Fighter:isBlockForward",
+    "executeString": "Fighter:isBlockForward",
     "checkingTrue": true
   },
   {
@@ -1187,7 +1187,7 @@
       "__id__": 38
     },
     "_enabled": true,
-    "excuteString": "Fighter:getAimDir",
+    "executeString": "Fighter:getAimDir",
     "compareType": 1,
     "compareNum": 1
   },
@@ -1264,7 +1264,7 @@
       "__id__": 41
     },
     "_enabled": true,
-    "excuteString": "Fighter:turnAround"
+    "executeString": "Fighter:turnAround"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -1542,7 +1542,7 @@
       "__id__": 54
     },
     "_enabled": true,
-    "excuteString": "Fighter:getAimDir",
+    "executeString": "Fighter:getAimDir",
     "compareType": 0,
     "compareNum": -1
   },
@@ -1619,7 +1619,7 @@
       "__id__": 57
     },
     "_enabled": true,
-    "excuteString": "Fighter:turnAround"
+    "executeString": "Fighter:turnAround"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -1777,7 +1777,7 @@
       "__id__": 63
     },
     "_enabled": true,
-    "excuteString": "Fighter:getAimDir",
+    "executeString": "Fighter:getAimDir",
     "compareType": 0,
     "compareNum": 1
   },
@@ -1854,7 +1854,7 @@
       "__id__": 66
     },
     "_enabled": true,
-    "excuteString": "Fighter:moveToAim"
+    "executeString": "Fighter:moveToAim"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -2009,7 +2009,7 @@
       "__id__": 72
     },
     "_enabled": true,
-    "excuteString": "Fighter:moveForward"
+    "executeString": "Fighter:moveForward"
   },
   {
     "__type__": "cc.PrefabInfo",

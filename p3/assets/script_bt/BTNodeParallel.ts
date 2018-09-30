@@ -1,6 +1,6 @@
 // BTNodeParallel.ts
 // 行为树节点，平行节点
-// 
+//
 // lly 2018.2.5
 
 const {ccclass, property} = cc._decorator;
@@ -14,9 +14,9 @@ export default class BTNodeParallel extends BTNodeGroup {
 
     typeString: string = "Parallel";
 
-    excute(comp: BTComp): BTResult {
+    execute(comp: BTComp): BTResult {
         for (const btNode of this.btNodes) {
-            let result = btNode.excute(comp);
+            let result = btNode.execute(comp);
             if (result == BTResult.running) btNode.doAction(comp);
         }
 

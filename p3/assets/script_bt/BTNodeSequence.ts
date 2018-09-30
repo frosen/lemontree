@@ -33,12 +33,12 @@ export class BTNodeSequence extends BTNodeGroup {
         return this.checkingAheadInRunning ? " -- CheckAhead" : "";
     }
 
-    excute(comp: BTComp): BTResult {
+    execute(comp: BTComp): BTResult {
         let result: BTResult;
         if (!this.isRunning(comp)) {
-            result = this.excuteInNormal(comp);
+            result = this.executeInNormal(comp);
         } else {
-            result = this.excuteInRunning(comp);
+            result = this.executeInRunning(comp);
         }
 
         return result;
@@ -48,11 +48,11 @@ export class BTNodeSequence extends BTNodeGroup {
         return comp.getValue(this.btIndex, CurRunningNodeKey) != null;
     }
 
-    excuteInNormal(comp: BTComp, inputIndex: number = 0): BTResult {
+    executeInNormal(comp: BTComp, inputIndex: number = 0): BTResult {
         let finalresult: BTResult = BTResult.suc;
         for (let index = inputIndex; index < this.btNodes.length; index++) {
             let btNode = this.btNodes[index];
-            let result: BTResult = btNode.excute(comp);
+            let result: BTResult = btNode.execute(comp);
 
             if (result == BTResult.fail) {
                 finalresult = BTResult.fail; // 一旦有失败则直接返回而不往后执行
@@ -67,14 +67,14 @@ export class BTNodeSequence extends BTNodeGroup {
         return finalresult;
     }
 
-    excuteInRunning(comp: BTComp): BTResult {
+    executeInRunning(comp: BTComp): BTResult {
         let curRunningBTNode = comp.getValue(this.btIndex, CurRunningNodeKey);
 
         if (this.checkingAheadInRunning) {
             for (const btNode of this.btNodes) {
                 if (btNode == curRunningBTNode) break;
 
-                let result: BTResult = btNode.excute(comp);
+                let result: BTResult = btNode.execute(comp);
 
                 if (result == BTResult.fail) {
                     this.endRunning(comp);
@@ -89,7 +89,7 @@ export class BTNodeSequence extends BTNodeGroup {
         }
 
 
-        let result = curRunningBTNode.excute(comp);
+        let result = curRunningBTNode.execute(comp);
         if (result == BTResult.running) {
             return BTResult.running;
 
@@ -100,7 +100,7 @@ export class BTNodeSequence extends BTNodeGroup {
         } else {
             let nextIndex = this.btNodes.indexOf(curRunningBTNode) + 1;
             comp.setValue(this.btIndex, CurRunningNodeKey, null);
-            return this.excuteInNormal(comp, nextIndex);
+            return this.executeInNormal(comp, nextIndex);
         }
     }
 

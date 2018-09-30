@@ -11,11 +11,11 @@ import {Debuff} from "./Debuff";
 @ccclass
 export default class Attack extends MyComponent {
 
-    /** 索引，用于区分不同的攻击 
+    /** 索引，用于区分不同的攻击
      * 目前只是敌人的攻击需要，同种攻击在一定时间内不会伤害第二次，
      * hero被攻击有无敌时间所以不需要
     */
-    @property 
+    @property
     index: number = 0;
 
     /** 对象属性，攻击计算需要 */
@@ -34,7 +34,7 @@ export default class Attack extends MyComponent {
     /** 攻击回调 */
     hitCallback: (atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) => void = null;
 
-    onLoad() {        
+    onLoad() {
         if (this.attri == null) {
             let n = this.node;
             while (true) {
@@ -53,7 +53,7 @@ export default class Attack extends MyComponent {
     }
 
     // 计算基础伤害
-    getDamage(): {dmg: number, crit: boolean} {       
+    getDamage(): {dmg: number, crit: boolean} {
         let dmg: number;
         let crit: boolean = false;
         if (this.magicAttack) {
@@ -65,7 +65,7 @@ export default class Attack extends MyComponent {
                     dmg *= 3;
                     this.attri.energy.sub(1);
                 }
-            }          
+            }
         } else {
             dmg = this.attri.atkDmg.get();
             let r = Math.random();
@@ -83,9 +83,9 @@ export default class Attack extends MyComponent {
 
     handleDamage(attri: Attri): {death: boolean, dmg: number, crit: boolean} {
         let {dmg, crit} = this.getDamage();
-        attri.hp.sub(dmg); 
-        
-        let death = attri.hp.get() <= 0;       
+        attri.hp.sub(dmg);
+
+        let death = attri.hp.get() <= 0;
         return {death, dmg, crit};
     }
 
@@ -94,7 +94,7 @@ export default class Attack extends MyComponent {
         if (this.index > 100000) this.index = this.index % 1000;
     }
 
-    excuteHitCallback(node: cc.Node, death: boolean, dmg: number, crit: boolean) {
+    executeHitCallback(node: cc.Node, death: boolean, dmg: number, crit: boolean) {
         if (this.hitCallback) this.hitCallback(this, node, death, dmg, crit);
     }
 

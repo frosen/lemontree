@@ -37,7 +37,7 @@ export class ObjCollider extends MyComponent {
     /** 运行时显示范围，便于测试 */
     @property
     showingInRunning: boolean = false;
-    
+
     /** 当前帧中，此碰撞对象碰触到的其他碰撞对象的列表 */
     collisionDatas: CollisionData[] = [];
 
@@ -70,7 +70,7 @@ export class ObjCollider extends MyComponent {
             this._debugDrawer.lineTo(minX, minY);
 
             this._debugDrawer.close();
-            this._debugDrawer.stroke();             
+            this._debugDrawer.stroke();
         }
     }
 
@@ -78,9 +78,9 @@ export class ObjCollider extends MyComponent {
      * 获取最大最小x，y
      * @param 父碰撞对象，只有次级碰撞对象有，默认为空
      * @returns 获取最大最小x，y
-     */        
+     */
     getMaxMinXY(parentCollider: ObjCollider = null): {minX: number, maxX: number, minY: number, maxY: number} {
-        
+
         let node = this.node;
         let w = this.size.width > 0 ? this.size.width : node.width;
         let h = this.size.height > 0 ? this.size.height : node.height;
@@ -108,14 +108,14 @@ export class ObjCollider extends MyComponent {
         let wp1 = cc.v2();
         let wp2 = cc.v2();
         let wp3 = cc.v2();
-        
+
         cc.obbApplyAffineTransform(rect, t, wp0, wp1, wp2, wp3);
 
         minX = Math.min(wp0.x, wp1.x, wp2.x, wp3.x);
         maxX = Math.max(wp0.x, wp1.x, wp2.x, wp3.x);
-        minY = Math.min(wp0.y, wp1.y, wp2.y, wp3.y); 
+        minY = Math.min(wp0.y, wp1.y, wp2.y, wp3.y);
         maxY = Math.max(wp0.y, wp1.y, wp2.y, wp3.y);
-        
+
         return {minX, maxX, minY, maxY};
     }
 
@@ -123,7 +123,7 @@ export class ObjCollider extends MyComponent {
      * 碰撞回调
      * @param 其他碰撞对象
      * 之所以要this.enabled是因为有可能在前面的碰撞结果中将其关闭
-     */ 
+     */
     onCollisionBy(collisionData: CollisionData) {
         if (this.enabled) this.collisionDatas.push(collisionData);
     }
@@ -131,8 +131,8 @@ export class ObjCollider extends MyComponent {
     /**
      * 执行碰撞后的回调
      * 之所以要this.enabled是因为有可能在前面的碰撞结果中将其关闭
-     */ 
-    excuteCallback() {
+     */
+    executeCallback() {
         if (this.callback && this.enabled) this.callback(this.collisionDatas);
     }
 

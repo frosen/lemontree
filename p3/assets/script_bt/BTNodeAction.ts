@@ -11,7 +11,7 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode, BTResult} from "./BTNode";
-import {BTNodeWithFunc, ExcuteFuncKey} from "./BTNodeWithFunc";
+import {BTNodeWithFunc, ExecuteFuncKey} from "./BTNodeWithFunc";
 import BTNodeActionUntil from "./BTNodeActionUntil";
 import BTNodeActionEnd from "./BTNodeActionEnd";
 import BTComp from "./BTComp";
@@ -34,7 +34,7 @@ export class BTNodeAction extends BTNodeWithFunc<() => void> {
     endFuncs: ((comp: BTComp) => BTResult)[] = [];
 
     getBTName(): string {
-        return this.excuteString;
+        return this.executeString;
     }
 
     onLoad() {
@@ -45,14 +45,14 @@ export class BTNodeAction extends BTNodeWithFunc<() => void> {
                 for (const untilChild of child.children) {
                     if (untilChild.active == false) continue;
                     let btNode = untilChild.getComponent(BTNode);
-                    let func = btNode["excute"].bind(btNode);
+                    let func = btNode["execute"].bind(btNode);
                     this.untilFuncs.push(func);
                 }
             } else if (child.getComponent(BTNodeActionEnd)) {
                 for (const endChild of child.children) {
                     if (endChild.active == false) continue;
                     let btNode = endChild.getComponent(BTNode);
-                    let func = btNode["excute"].bind(btNode);
+                    let func = btNode["execute"].bind(btNode);
                     this.endFuncs.push(func);
                 }
             } else {
@@ -67,7 +67,7 @@ export class BTNodeAction extends BTNodeWithFunc<() => void> {
         comp.setValue(this.btIndex, GoActionKey, false);
     }
 
-    excute(comp: BTComp): BTResult {
+    execute(comp: BTComp): BTResult {
         let result: BTResult
         if (!this.isRunning(comp)) {
             comp.setValue(this.btIndex, RunningKey, true);
@@ -87,7 +87,7 @@ export class BTNodeAction extends BTNodeWithFunc<() => void> {
     doAction(comp: BTComp) {
         if (comp.getValue(this.btIndex, GoActionKey)) {
             comp.setValue(this.btIndex, GoActionKey, false);
-            let func = comp.getValue(this.btIndex, ExcuteFuncKey);
+            let func = comp.getValue(this.btIndex, ExecuteFuncKey);
             func();
             comp.emit(this.btIndex, ActionBeginKey);
         }

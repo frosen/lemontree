@@ -59,7 +59,7 @@ export abstract class BTNode extends MyComponent {
      * 执行并获取每个节点的执行结果
      * @return BTResult
      */
-    abstract excute(comp: BTComp): BTResult;
+    abstract execute(comp: BTComp): BTResult;
 
     /**
      * 执行每个节点的行动（只有running时有行动）

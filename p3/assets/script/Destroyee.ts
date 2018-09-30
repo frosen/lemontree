@@ -32,7 +32,7 @@ export default abstract class Destroyee extends MyComponent {
 
         if (CC_EDITOR) return;
 
-        this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr); 
+        this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
     }
 
     start() {
@@ -64,23 +64,23 @@ export default abstract class Destroyee extends MyComponent {
                 let beginTime = this.invcTimeBegin[atkIndex]
                 if (beginTime == null || curTime - beginTime > InvcTime) {
                     this.invcTimeBegin[atkIndex] = curTime;
-                    let death = this._doHurtLogic(atk);                   
+                    let death = this._doHurtLogic(atk);
                 }
-            }         
-        }       
+            }
+        }
     }
 
     _doHurtLogic(atk: Attack) {
         let {death, dmg, crit} = this._calcHurt(atk);
 
-        atk.excuteHitCallback(this.node, death, dmg, crit);
-        
+        atk.executeHitCallback(this.node, death, dmg, crit);
+
         if (!death) {
             this._showHurtColor();
             this.scheduleOnce(this._recoveryHurtColor.bind(this), 0.1);
             let pos: cc.Vec2 = this._getCenterPos();
             this._hurt(pos, atk, dmg, crit);
-        } else {             
+        } else {
             this.gotoDead();
         }
     }
@@ -92,7 +92,7 @@ export default abstract class Destroyee extends MyComponent {
     }
 
     _getCenterPos(): cc.Vec2 {
-        let node = this.node;  
+        let node = this.node;
         let xCenter = node.x + node.width * (0.5 - node.anchorX);
         let yCenter = node.y + node.height * (0.5 - node.anchorY);
         return cc.v2(xCenter, yCenter);
@@ -105,10 +105,9 @@ export default abstract class Destroyee extends MyComponent {
 
     _recoveryHurtColor() {
         this.colorComp.removeColor("hurt");
-    }  
+    }
 
     abstract _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean};
     abstract _hurt(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean);
     abstract _dead(pos: cc.Vec2);
 }
-

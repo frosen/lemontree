@@ -29,7 +29,7 @@ export default class BTCtrlr extends cc.Component {
 
     updateBT(comp: BTComp, name: string) {
         let btNode = this.btDict[name];
-        let result = btNode.excute(comp);
+        let result = btNode.execute(comp);
         if (result == BTResult.running) btNode.doAction(comp);
     }
 }

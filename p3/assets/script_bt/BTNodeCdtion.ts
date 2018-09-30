@@ -1,6 +1,6 @@
 // BTNodeCdtion.ts
 // 行为树节点，条件节点的基类，需要继承
-// 
+//
 // lly 2018.2.5
 
 const {ccclass, property} = cc._decorator;
@@ -15,15 +15,15 @@ export default abstract class BTNodeCdtion<FUNC_TYPE> extends BTNodeWithFunc<FUN
     typeString: string = "IF";
 
     getBTName(): string {
-        return this.excuteString + " is " + this.getExcuteResStr();           
+        return this.executeString + " is " + this.getExecuteResStr();
     }
 
-    abstract getExcuteResStr(): string;
+    abstract getExecuteResStr(): string;
 
-    excute(comp: BTComp): BTResult {
-        let result = this.doExcuteFunc(comp) ? BTResult.suc : BTResult.fail;
+    execute(comp: BTComp): BTResult {
+        let result = this.doExecuteFunc(comp) ? BTResult.suc : BTResult.fail;
         return result;
     }
 
-    abstract doExcuteFunc(comp: BTComp): boolean;
+    abstract doExecuteFunc(comp: BTComp): boolean;
 }
