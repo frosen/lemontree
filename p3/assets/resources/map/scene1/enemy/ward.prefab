@@ -195,13 +195,13 @@
     "_enabled": true,
     "size": {
       "__type__": "cc.Size",
-      "width": 300,
-      "height": 90
+      "width": 400,
+      "height": 400
     },
     "offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": -20
+      "y": -150
     },
     "subColliders": [],
     "showingInRunning": false

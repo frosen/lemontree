@@ -21,7 +21,7 @@ export enum CollisionType {
     platform = 1,
     /** 碰撞了斜面，类似实体，
      * 根据dir从一边倾斜，
-     * 只考虑实面挨着足够长（大于obj的宽度）的实体，斜面挨着足够长的none的情况，其他情况可能会有问题 
+     * 只考虑实面挨着足够长（大于obj的宽度）的实体，斜面挨着足够长的none的情况，其他情况可能会有问题
     */
     slope = 2,
     /** 碰撞了实体 */
@@ -48,7 +48,7 @@ const GidTypeList = [
 
     CollisionType.entity,
     CollisionType.entity,
-    CollisionType.slope, 
+    CollisionType.slope,
     CollisionType.slope,
     CollisionType.entity,
     CollisionType.entity,
@@ -58,12 +58,23 @@ const GidTypeList = [
 @ccclass
 export class TerrainCtrlr extends MyComponent {
 
+    @property(cc.TiledMap)
+    testMap: cc.TiledMap = null;
+
     /** 地图块数 */
     tileNumSize: cc.Size = cc.Size.ZERO;
     /** 地形尺寸 */
     terrainSize: cc.Size = cc.Size.ZERO;
     /** 碰撞数据 */
     collisionData: number[][] = null;
+
+    onLoad() {
+        if (this.testMap) {
+            this.tileNumSize = this.testMap.getMapSize();
+            this.terrainSize = new cc.Size(this.tileNumSize.width * TileLength, this.tileNumSize.height * TileLength - 0.001);
+            this.node.setContentSize(this.terrainSize);
+        }
+    }
 
     setTerrainData(clsnData: number[][]) {
         this.collisionData = clsnData;
@@ -103,7 +114,7 @@ export class TerrainCtrlr extends MyComponent {
         return gid;
     }
 
-    // id 转 数据======================================================== 
+    // id 转 数据========================================================
 
     /**
      * 根据瓦片id，转换成所代表的碰撞类型
@@ -115,7 +126,7 @@ export class TerrainCtrlr extends MyComponent {
     _getSlopeDir(gid: number): number {
         switch (gid) {
             case 11: return 1;
-            case 12: return -1;              
+            case 12: return -1;
             default: return null;
         }
     }
@@ -127,8 +138,8 @@ export class TerrainCtrlr extends MyComponent {
     _getForcedMoveDir(gid: number): ForcedMoveType {
         switch (gid) {
             case 13: return ForcedMoveType.right;
-            case 14: return ForcedMoveType.left; 
-            case 15: return ForcedMoveType.up;             
+            case 14: return ForcedMoveType.left;
+            case 15: return ForcedMoveType.up;
             default: return null;
         }
     }
@@ -152,7 +163,7 @@ export class TerrainCtrlr extends MyComponent {
      * @return 碰撞类型
      */
     checkCollideAt(x: number, y: number): CollisionType {
-        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let {tileX, tileY} = this._getTileIndex(x, y);
         let gid = this._getGid(tileX, tileY);
         if (!gid) return CollisionType.none;
         return this._getTypeFromGid(gid);
@@ -169,7 +180,7 @@ export class TerrainCtrlr extends MyComponent {
         let collisionType: CollisionType = CollisionType.none;
         let y = fromY;
         while (true) {
-            let t: CollisionType = this.checkCollideAt(x, y);          
+            let t: CollisionType = this.checkCollideAt(x, y);
             if (t > collisionType) collisionType = t; // 数值大意味着优先级高
 
             y += TileLength;
@@ -177,9 +188,9 @@ export class TerrainCtrlr extends MyComponent {
         }
 
         // 还要检测下最后一个值
-        let t: CollisionType = this.checkCollideAt(x, toY);           
+        let t: CollisionType = this.checkCollideAt(x, toY);
         if (t > collisionType) collisionType = t;
-        
+
         return collisionType;
     }
 
@@ -192,7 +203,7 @@ export class TerrainCtrlr extends MyComponent {
      * @param dir: 对象运动朝向
      * @return {type: CollisionType, edgeLeft: CollisionType, edgeRight: CollisionType}
      */
-    checkCollideInHorizontalLine(fromX: number, toX: number, y: number): 
+    checkCollideInHorizontalLine(fromX: number, toX: number, y: number):
         {type: CollisionType, edgeLeft: CollisionType, edgeRight: CollisionType} {
         let type: CollisionType = CollisionType.none;
         let x = fromX;
@@ -216,20 +227,20 @@ export class TerrainCtrlr extends MyComponent {
                 if (t == CollisionType.none || t == CollisionType.slope) {
                     edgeRight = t;
                     rightBegin = true;
-                }  
+                }
             }
 
             x += TileLength;
             if (x >= toX) break;
         }
 
-        let t: CollisionType = this.checkCollideAt(toX, y);          
+        let t: CollisionType = this.checkCollideAt(toX, y);
         if (t > type) type = t;
-        
+
         // 如果至此leftBegin都没有结束的话，则是一种特殊情况
         if (leftBegin) {
-            edgeLeft = this.checkCollideAt(fromX, y);            
-        } 
+            edgeLeft = this.checkCollideAt(fromX, y);
+        }
         if (!rightBegin && (t == CollisionType.none || t == CollisionType.slope)) {
             edgeRight = t;
         }
@@ -256,7 +267,7 @@ export class TerrainCtrlr extends MyComponent {
      * @returns 偏移量 number 正数为向下偏移 为空表示不是斜面
      */
     getSlopeOffset(x: number, y: number, checkDir: number): number {
-        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let {tileX, tileY} = this._getTileIndex(x, y);
         let gid = this._getGid(tileX, tileY);
         if (!gid) return null;
 
@@ -268,7 +279,7 @@ export class TerrainCtrlr extends MyComponent {
         if (dir > 0) _x += 1;
         _y = this.tileNumSize.height - _y - 1;
         _x *= TileLength;
-        _y *= TileLength; 
+        _y *= TileLength;
 
         let dis = Math.abs(_x - x);
         let slopeY = _y + dis;
@@ -280,7 +291,7 @@ export class TerrainCtrlr extends MyComponent {
      * 获取强制移动的各方向速率
      */
     getForcedMoveVel(x: number, y: number): {vX: number, vY: number} {
-        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let {tileX, tileY} = this._getTileIndex(x, y);
         let gid = this._getGid(tileX, tileY);
         if (!gid) return {vX: 0, vY: 0};
 
@@ -291,12 +302,12 @@ export class TerrainCtrlr extends MyComponent {
             case ForcedMoveType.left: return {vX: ForcedMoveX * -1, vY: 0};
             case ForcedMoveType.right: return {vX: ForcedMoveX , vY: 0};
             case ForcedMoveType.up: return {vX: 0, vY: ForcedMoveY};
-            default: return {vX: 0, vY: 0};     
+            default: return {vX: 0, vY: 0};
         }
     }
 
     getGateData(x: number, y: number): number {
-        let {tileX, tileY} = this._getTileIndex(x, y); 
+        let {tileX, tileY} = this._getTileIndex(x, y);
         let gid = this._getGid(tileX, tileY);
         if (!gid) return;
 

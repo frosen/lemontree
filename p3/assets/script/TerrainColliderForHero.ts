@@ -26,7 +26,7 @@ export default class TerrainColliderForHero extends TerrainColliderForCreature {
 
         if (this.xOutRangeDir == 0 && this.yOutRangeDir == 0) {
             this.gateGid = this.terrainCtrlr.getGateData(xCenter, yCenter);
-            
+
         } else {
             if (this.gateGid == null) {
                 this.checkOutOfRange();
@@ -36,7 +36,5 @@ export default class TerrainColliderForHero extends TerrainColliderForCreature {
                 gameCtrlr.enterGate(this.gateGid, this.node.position);
             }
         }
-
-
     }
 }

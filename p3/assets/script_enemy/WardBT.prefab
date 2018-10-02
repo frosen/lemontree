@@ -71,7 +71,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "IF: Ward:getAimDir is == 2",
+    "_name": "IF: Ward:getAimDir is == -1",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -133,7 +133,7 @@
     "_enabled": true,
     "executeString": "Ward:getAimDir",
     "compareType": 0,
-    "compareNum": 2
+    "compareNum": -1
   },
   {
     "__type__": "cc.PrefabInfo",

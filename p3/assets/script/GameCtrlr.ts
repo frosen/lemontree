@@ -127,17 +127,19 @@ export default class GameCtrlr extends cc.Component {
         this.potCtrlr.changeArea(areaIndex);
         this.itemCtrlr.clear();
 
-        let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
-        this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
+        if (this.hero) {
+            let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
+            this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
 
-        this.hero.onChangeArea();
+            this.hero.onChangeArea();
+        }
     }
 
     /** 暂停游戏 */
     pause() {
         if (this.gamePause) return;
         this.gamePause = true;
-        this._pauseChildren(this.node);      
+        this._pauseChildren(this.node);
     }
 
     // 遍历当前节点所有子节点，停止其action，animation，停止所有MyComponent下的update

@@ -50,7 +50,7 @@ export default class PotCtrlr extends MyComponent {
             node.addComponent(Pot);
             node.setAnchorPoint(0.5, 0);
             return node;
-        }, 30, "pot", this.node); 
+        }, 30, "pot", this.node);
 
         this._createShowingPots();
     }
@@ -120,8 +120,7 @@ export default class PotCtrlr extends MyComponent {
         if (!potDatas) return;
 
         let index = 0;
-        for (; index < potDatas.length; index++) {  
-            let data = potDatas[index];
+        for (const data of potDatas) {
             if (data.living == false) continue;
 
             let node = this.pool.getByIndex(index);
@@ -129,6 +128,8 @@ export default class PotCtrlr extends MyComponent {
             let pot = node.getComponent(Pot);
             let info = data.info;
             pot.setData(index, info.frame, info.c1, info.c2);
+
+            index++;
         }
         this.pool.reclaimOtherFrom(index);
     }
@@ -140,6 +141,6 @@ export default class PotCtrlr extends MyComponent {
             this.pool.reclaim(pot.node);
         } else { // 没有index说明不是从pool中生成的
             pot.node.removeFromParent();
-        }      
+        }
     }
 }

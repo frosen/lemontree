@@ -1299,7 +1299,8 @@
     "node": {
       "__id__": 43
     },
-    "_enabled": true
+    "_enabled": true,
+    "testMap": null
   },
   {
     "__type__": "cc.Node",
