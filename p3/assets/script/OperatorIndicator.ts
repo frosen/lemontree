@@ -20,7 +20,7 @@ export default class OperatorIndicator extends MyComponent {
     onLoad() {
         requireComponents(this, [cc.Sprite]);
 
-        this.sp = this.getComponent(cc.Sprite);       
+        this.sp = this.getComponent(cc.Sprite);
     }
 
     update(_: number) {
@@ -34,4 +34,3 @@ export default class OperatorIndicator extends MyComponent {
         }
     }
 }
-

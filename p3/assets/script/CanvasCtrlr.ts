@@ -27,4 +27,3 @@ export default class CanvasCtrlr extends MyComponent {
         cc.view.enableAntiAlias(false);
     }
 }
-

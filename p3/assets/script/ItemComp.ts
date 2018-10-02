@@ -57,7 +57,7 @@ export default class ItemComp extends MyComponent {
         this.movableObj = this._createComp(MovableObject);
         this.terrainCollider = this._createComp(TerrainCollider);
         this.objCollider = this._createComp(ObjCollider);
-        
+
         this._createComp(Gravity);
 
         this.watchCollider = this._createComp(ObjColliderForWatch);
@@ -93,10 +93,10 @@ export default class ItemComp extends MyComponent {
         }
 
         if (!this.jumping) return;
-        if (this.terrainCollider.curYCollisionType != CollisionType.none && 
-            this.movableObj.getDir().yDir <= 0 && this.movableObj.yLastVelocity <= 0) {    
-                
-            // 反弹 
+        if (this.terrainCollider.curYCollisionType != CollisionType.none &&
+            this.movableObj.getDir().yDir <= 0 && this.movableObj.yLastVelocity <= 0) {
+
+            // 反弹
             let yV = this.movableObj.yLastVelocity;
             if (yV < -1) {
                 this.movableObj.yVelocity = this.movableObj.yLastVelocity * (-0.5);
@@ -195,8 +195,8 @@ export default class ItemComp extends MyComponent {
                     this.aim = cldr.node;
                     this.flySpeed = 1;
                     this.terrainCollider.enabled = false;
-                }   
-            }            
-        }    
+                }
+            }
+        }
     }
 }

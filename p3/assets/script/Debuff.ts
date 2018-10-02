@@ -57,7 +57,7 @@ export class Poisoning extends Debuff {
         let hp = Math.max(attri.hp.get() - this.damage, 1);
         attri.hp.set(hp);
 
-        let node = comp.node;  
+        let node = comp.node;
         let xCenter = node.x + node.width * (0.5 - node.anchorX);
         let yCenter = node.y + node.height * (0.5 - node.anchorY);
         this.figureDisplay.showFigure(cc.v2(xCenter, yCenter), this.damage, false, cc.Color.GREEN);

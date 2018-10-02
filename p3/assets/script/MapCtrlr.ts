@@ -110,7 +110,7 @@ export class MapCtrlr extends MyComponent {
             let decodeStr = MapCtrlr._decodeMapData(data.text);
             this.sceneJsons[this.curScene] = JSON.parse(decodeStr);
             return callNext();
-        });        
+        });
     }
 
     static _decodeMapData(eStr: string): string {
@@ -119,7 +119,7 @@ export class MapCtrlr extends MyComponent {
         let len = eStr.length - begin - end;
         let a = [];
         for (let i = 0; i < len; i++) {
-            a[i] = String.fromCharCode(eStr.charCodeAt(i + begin) + (i % 7) + (i % 13));          
+            a[i] = String.fromCharCode(eStr.charCodeAt(i + begin) + (i % 7) + (i % 13));
         }
         return a.join("");
     }
@@ -137,7 +137,7 @@ export class MapCtrlr extends MyComponent {
             }
             this.frames[this.curScene] = frame;
             return callNext();
-        }); 
+        });
     }
 
     /** 根据读取的map信息，按照tilemap规则，生成对应的tilemap数据，然后生成tiledmap */
@@ -148,7 +148,7 @@ export class MapCtrlr extends MyComponent {
         let frame = this.frames[this.curScene];
         for (let index = 0; index < areaJsons.length; index++) {
             let tmxStr = MapCtrlr._createTMXString(areaJsons[index]);
-            
+
             let ourmap = new cc.TiledMapAsset();
             ourmap.tmxXmlStr = tmxStr;
 
@@ -174,7 +174,7 @@ export class MapCtrlr extends MyComponent {
 
         let terrainStrs = [];
         for (const line of json.te) {
-            terrainStrs.push(line.toString() + ","); 
+            terrainStrs.push(line.toString() + ",");
         }
         let terrainStr = terrainStrs.join("\n");
 
@@ -200,7 +200,7 @@ export class MapCtrlr extends MyComponent {
 
         let col = w / tileLen;
         let count = w * h;
-        
+
         let tsxStr: string = `
             <?xml version="1.0" encoding="UTF-8"?>
             <tileset name="tiles" tilewidth="${tileLen}" tileheight="${tileLen}" tilecount="${count}" columns="${col}">
@@ -214,7 +214,7 @@ export class MapCtrlr extends MyComponent {
     _holdMapAsset(callNext: () => void, lastData: any) {
         for (let index = 0; index < this.curAssets.length; index++) {
             const asset = this.curAssets[index];
-            this.mapPool[index].tmxAsset = asset;           
+            this.mapPool[index].tmxAsset = asset;
         }
 
         return callNext();
@@ -233,12 +233,12 @@ export class MapCtrlr extends MyComponent {
     }
 
     getAreaSize(areaIndex: number): {w: number, h: number} {
-        let areaData = this.getAreaData(areaIndex);       
+        let areaData = this.getAreaData(areaIndex);
         return {w: areaData.w, h: areaData.h};
     }
 
     getAreaCollisionData(areaIndex: number): number[][] {
-        let areaData = this.getAreaData(areaIndex);        
+        let areaData = this.getAreaData(areaIndex);
         return areaData.co;
     }
 
@@ -252,7 +252,7 @@ export class MapCtrlr extends MyComponent {
     }
 
     /** 获取场景中不同区域之间的门的信息 */
-    getGatePos(id: number): 
+    getGatePos(id: number):
         {thisArea: number, thisX: number, thisY: number, otherArea: number, otherX: number, otherY: number} {
         let k = id % 100;
         let index = Math.floor(id / 100) % 100;
@@ -300,7 +300,7 @@ export class MapCtrlr extends MyComponent {
         if (this.groundInfos[areaIndex]) return this.groundInfos[areaIndex];
 
         let grounds: GroundInfo[] = [];
-        let areaData = this.getAreaData(areaIndex); 
+        let areaData = this.getAreaData(areaIndex);
         let clsnData = areaData.co;
         for (let h = 0; h < areaData.h; h++) {
             let wData = clsnData[h];
@@ -316,7 +316,7 @@ export class MapCtrlr extends MyComponent {
 
                     grounds.push(g);
                 }
-            }        
+            }
         }
 
         this.groundInfos[areaIndex] = grounds;
@@ -338,7 +338,7 @@ export class MapCtrlr extends MyComponent {
         do {
             let k = Math.floor(Math.random() * grounds.length);
             let ground = grounds[k];
-            
+
             let stKey = ground.x * 1000 + ground.y;
             let state = usingStates[stKey];
 
@@ -351,14 +351,14 @@ export class MapCtrlr extends MyComponent {
             }
 
         } while (usingGroundPoss.length < count);
-        
+
         return usingGroundPoss;
     }
 
     changeArea(areaIndex: number) {
         let realAreaIndex = areaIndex - 1;
         for (let index = 0; index < this.mapPool.length; index++) {
-            this.mapPool[index].node.active = (realAreaIndex == index);           
+            this.mapPool[index].node.active = (realAreaIndex == index);
         }
 
         let clsnData = this.getAreaCollisionData(areaIndex);

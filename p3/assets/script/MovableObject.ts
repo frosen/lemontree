@@ -41,13 +41,13 @@ export class MovableObject extends MyComponent {
         this.yLastVelocity = this.yVelocity;
 
         // x
-        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);        
+        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);
         this.node.x += this.xVelocity + this.xEnvVelocity;
 
         // y
         if (this.yVelocityEnabled) {
             this.yVelocity += this.yAccel;
-            this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);       
+            this.yVelocity = Math.min(Math.max(this.yVelocity, -VelocityMax), VelocityMax);
             this.node.y += this.yVelocity;
         } else {
             this.yVelocity = 0;
@@ -83,4 +83,3 @@ export class MovableObject extends MyComponent {
         this.yLastPos += disY;
     }
 }
-

@@ -66,7 +66,7 @@ export class Hero extends MyComponent {
     /** 英雄无敌状态机 */
     smInvc: SMForHeroInvcMgr = null;
 
-    ui: UICtrlr = null; 
+    ui: UICtrlr = null;
 
     /** x轴移动方向 */
     xMoveDir: number = 0;
@@ -88,8 +88,8 @@ export class Hero extends MyComponent {
         this.colorComp = this.getComponent(ColorComp);
 
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
-        this.smInvc = new SMForHeroInvcMgr(this);    
-        
+        this.smInvc = new SMForHeroInvcMgr(this);
+
         this.ui = cc.find("canvas/ui").getComponent(UICtrlr);
 
         // 回调
@@ -115,7 +115,7 @@ export class Hero extends MyComponent {
     }
 
     // 动作 被控制器调用 -------------------------------------------------
- 
+
     /**
      * 移动
      * @param dir: 1向右 -1向左 0停止
@@ -177,7 +177,7 @@ export class Hero extends MyComponent {
 
     setUsingType(t: HeroUsingType, b: boolean) {
         this.curUsingTypeStates[t] = b;
-        
+
         if (this.curUsingTypeStates[HeroUsingType.pickUp]) {
             this.curUsingType = HeroUsingType.pickUp;
         } else if (this.curUsingTypeStates[HeroUsingType.trigger]) {
@@ -206,7 +206,7 @@ export class Hero extends MyComponent {
 
         this.hurtCollisionData = null;
         this.efcItemComps = [];
-        
+
         for (const data of collisionDatas) {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
 
@@ -273,7 +273,7 @@ export class Hero extends MyComponent {
             let destroyee = data.cldr.getComponent(Destroyee);
             if (destroyee) {
                 this.watchedCollisionData = data;
-                
+
                 if (destroyee instanceof Enemy) {
                     if (enemyDir != curDir) {
                         enemyDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
@@ -283,7 +283,7 @@ export class Hero extends MyComponent {
                         potDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
                     }
                 }
-            }                                 
+            }
         }
 
         if (this.watchedCollisionData) {
@@ -291,7 +291,7 @@ export class Hero extends MyComponent {
             this.looks.attack(dir);
         } else if (havingDataBefore) {
             this.looks.endAttack();
-        }       
+        }
     }
 
     /** 调用attack组件，进行一次攻击 */

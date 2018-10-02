@@ -102,9 +102,9 @@ export default class HeroOperator extends MyComponent {
                 if (!this.cameraBack) {
                     this.watchTouchId = event.getID();
                     this.watchBeginPos = touchPos;
-                } 
+                }
             }
-            
+
         } else if (this.jumpX <= touchPos.x) {
             if (touchPos.y < this.jumpH) {
                 this.jumpTouchId = event.getID();
@@ -131,7 +131,7 @@ export default class HeroOperator extends MyComponent {
                 }
             } else {
                 if (diff > DisForMove) {
-                    this.moveDir = 1;                   
+                    this.moveDir = 1;
                 }
             }
             this.hero.move(this.moveDir);
@@ -145,7 +145,7 @@ export default class HeroOperator extends MyComponent {
             this.watchOffset.x = x * 2;
             this.watchOffset.y = y * 2;
             this.camera.offset = this.watchOffset;
-        } 
+        }
     }
 
     onTouchEnd(event: cc.Event.EventTouch) {
@@ -157,7 +157,7 @@ export default class HeroOperator extends MyComponent {
             this.hero.move(this.moveDir);
 
         } else if (id == this.watchTouchId) {
-            this.watchTouchId = null;          
+            this.watchTouchId = null;
             if (this.watchOffset.x != 0 || this.watchOffset.y != 0) {
                 this.cameraBack = true;
                 this.cameraBackDir.x = this.watchOffset.x < 0 ? 1 : -1;

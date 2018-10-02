@@ -16,6 +16,6 @@ export default class Spine extends MyComponent {
     }
 
     reset() {
-        
+
     }
 }

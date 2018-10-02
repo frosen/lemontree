@@ -20,5 +20,5 @@ export default class Gravity extends MyComponent {
         // 设置重力加速度即可
         this.getComponent(MovableObject).yAccel = DefaultAccel;
     }
-    
+
 }

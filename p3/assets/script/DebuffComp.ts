@@ -18,7 +18,7 @@ export default class DebuffComp extends MyComponent {
 
     update(dt: number) {
         if (!this.curDebuff) return;
-        
+
         this.curTime += dt;
 
         if (this.curTime > this.curDebuff.duration) {
@@ -29,7 +29,7 @@ export default class DebuffComp extends MyComponent {
             if (second > this.curSecond) {
                 this.curSecond = second;
                 this.curDebuff.update(this); // 每秒一跳
-            }   
+            }
         }
     }
 

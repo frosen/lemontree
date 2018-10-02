@@ -34,13 +34,13 @@ export default class Pot extends Destroyee {
 
         if (CC_EDITOR) return;
 
-        if (!Pot.potCtrlr) 
+        if (!Pot.potCtrlr)
             Pot.potCtrlr = cc.find("main/pot_layer").getComponent(PotCtrlr);
 
-        if (!Pot.fragmentCtrlr) 
+        if (!Pot.fragmentCtrlr)
             Pot.fragmentCtrlr = cc.find("main/fragment_layer").getComponent(PotFragmentCtrlr);
 
-        this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3 
+        this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3
     }
 
     setData(index: number, f: cc.SpriteFrame, c1: cc.Color, c2: cc.Color) {
@@ -53,13 +53,13 @@ export default class Pot extends Destroyee {
     // 碰撞回调 ------------------------------------------------------------
 
     _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {
-        this.hp -= 1;       
+        this.hp -= 1;
         let death = this.hp <= 0;
         return {death: death, dmg: 1, crit: false};
     }
 
     _hurt() {
-        
+
     }
 
     _dead(pos: cc.Vec2) {
@@ -67,4 +67,3 @@ export default class Pot extends Destroyee {
         Pot.potCtrlr.killPot(this);
     }
 }
-

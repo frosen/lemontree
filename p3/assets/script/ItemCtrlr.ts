@@ -104,7 +104,7 @@ export default class ItemCtrlr extends MyComponent {
 
     _beginItemNode(itemName: string, pos: cc.Vec2, moveX: number, moveY: number) {
         let node: cc.Node = this.pool.get();
-        let itemComp: ItemComp = node.getComponent(ItemComp);     
+        let itemComp: ItemComp = node.getComponent(ItemComp);
 
         let {item, frames, times, magnetic} = this.itemInfos[itemName];
         itemComp.setData(item, frames, times);

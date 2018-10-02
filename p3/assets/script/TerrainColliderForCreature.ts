@@ -21,19 +21,19 @@ export default class TerrainColliderForCreature extends TerrainCollider {
 
     // 超级重力为了让对象可以沿着斜坡行进
     checkSuperGravityForSlope() {
-        if (this.curYCollisionType == CollisionType.slope || 
+        if (this.curYCollisionType == CollisionType.slope ||
             this.edgeType == CollisionType.slope ||
             this.backEdgeType == CollisionType.slope) {
-            this.movableObj.yVelocity = -VelocityMax; 
+            this.movableObj.yVelocity = -VelocityMax;
         }
     }
 
     // 计算是否出界 // X不可超出范围
-    checkOutOfRange() {   
+    checkOutOfRange() {
         let size = this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let xCenter: number = this.node.x + size.width * (0.5 - anchor.x);
-        if (this.xOutRangeDir == -1) {          
+        if (this.xOutRangeDir == -1) {
             this.node.x -= xCenter;
         } else if (this.xOutRangeDir == 1) {
             this.node.x -= xCenter - this.terrainCtrlr.terrainSize.width;

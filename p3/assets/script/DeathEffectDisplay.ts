@@ -15,7 +15,7 @@ export default class DeathEffectDisplay extends MyComponent {
 
     pool: MyNodePool = null;
 
-    onLoad() {        
+    onLoad() {
         this.pool = new MyNodePool((): cc.Node => {
             let labelNode = this.creatDeathNode(); // 创建节点
             return labelNode;
@@ -39,8 +39,8 @@ export default class DeathEffectDisplay extends MyComponent {
         // 配置属性
         labelNode.position = pos;
 
-        // 执行动画       
-        this._doAction(labelNode);      
+        // 执行动画
+        this._doAction(labelNode);
     }
 
     _doAction(effectNode: cc.Node) {

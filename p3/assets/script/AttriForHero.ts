@@ -107,7 +107,7 @@ export default class AttriForHero extends Attri {
         hattri.atkDmg.set(20);
         hattri.critRate.set(0.03);
         hattri.critDmgRate.set(1.5);
-        
+
         hattri.magicDmg.set(20);
 
         hattri.maxJumpCount.set(2);

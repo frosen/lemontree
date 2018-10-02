@@ -15,7 +15,7 @@ export class EcNumber {
     _afterSetList: ((v: number) => void)[] = [];
     _onGetList: ((v: number) => number)[] = [];
 
-    constructor(v: number, 
+    constructor(v: number,
         setCall: (v: number) => number = null,
         afterSetCall: (v: number) => void = null,
         getCall: (v: number) => number = null) {
@@ -101,7 +101,7 @@ export class Attri extends MyComponent {
     });
     /** 能量上限 */
     maxEnergy: EcNumber = new EcNumber(300);
-    
+
     /** x方向速度 */
     xSpeed: EcNumber = new EcNumber(0);
     /** y方向速度 */

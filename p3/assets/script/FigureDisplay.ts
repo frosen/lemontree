@@ -17,7 +17,7 @@ export default class FigureDisplay extends MyComponent {
 
     pool: MyNodePool = null;
 
-    onLoad() {        
+    onLoad() {
         this.pool = new MyNodePool((): cc.Node => {
             return cc.instantiate(this.labelPrefab);
         }, 20, "FigureDisplay", this.node);
@@ -30,14 +30,14 @@ export default class FigureDisplay extends MyComponent {
         // 配置属性
         labelNode.position = pos;
         this._resetLabel(
-            labelNode, 
+            labelNode,
             color,
             Math.floor(figure).toString() + (crit ? "!" : "")
         )
 
-        // 执行动画       
+        // 执行动画
         this._doAction(labelNode);
-        if (crit) this._doCritAction(labelNode);  
+        if (crit) this._doCritAction(labelNode);
     }
 
     showEvade(pos: cc.Vec2) {
@@ -45,7 +45,7 @@ export default class FigureDisplay extends MyComponent {
 
         labelNode.position = pos;
         this._resetLabel(
-            labelNode, 
+            labelNode,
             cc.Color.BLUE,
             "Evade"
         )
@@ -56,7 +56,7 @@ export default class FigureDisplay extends MyComponent {
         labelNode.color = color;
         labelNode.opacity = 255;
         labelNode.scale = 1;
-        
+
         let label = labelNode.getComponent(cc.Label);
         label.string = str;
     }

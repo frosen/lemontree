@@ -7,7 +7,7 @@ const {ccclass, property, executionOrder} = cc._decorator;
 
 import MyComponent from "./MyComponent";
 import {MovableObject} from "./MovableObject";
-import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr"; 
+import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr";
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollider)
@@ -46,7 +46,7 @@ export default class TerrainCollider extends MyComponent {
     }
 
     checkCollision() {
-        let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置  
+        let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
         let size = this.size || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
@@ -65,11 +65,11 @@ export default class TerrainCollider extends MyComponent {
 
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkX, xDir);
                 let xPos = this.node.x - distance;
-               
+
                 if (xDir > 0) xPos = Math.max(xPos, this.movableObj.xLastPos); // 第一次检测x碰撞，其后退不可超过上次点的位置，否则会有y轴判断的错误
                 else xPos = Math.min(xPos, this.movableObj.xLastPos);
 
-                this.node.x = xPos;                  
+                this.node.x = xPos;
             }
         }
 
@@ -78,11 +78,11 @@ export default class TerrainCollider extends MyComponent {
         let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
 
         let checkY = this.node.y - anchorH + (yDir > 0 ? size.height : 0);
-        
+
         let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
 
         this.curYCollisionType = type;
-        if (yDir < 0 && type != CollisionType.none) {         
+        if (yDir < 0 && type != CollisionType.none) {
             if (realDir > 0) {
                 this.edgeType = edgeRight;
                 this.backEdgeType = edgeLeft;
@@ -110,7 +110,7 @@ export default class TerrainCollider extends MyComponent {
             if (yDir < 0) { // 只检测向下
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
                 let nodeYInMargin = this.node.y - distance;
-                
+
                 if (this.movableObj.yLastPos - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
                     this.node.y = nodeYInMargin;
                     this.movableObj.yVelocity = 0;
@@ -121,9 +121,9 @@ export default class TerrainCollider extends MyComponent {
                 this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
             }
         }
-        
+
         //========================================================
-        
+
         // 第一次x碰撞检测可能会因为y轴碰撞未进行而导致误判，
         // 所以需要在y检测后再检测一次，如果未碰撞则移动到相应位置
         if (xDir != 0 && preTestXClsnType == CollisionType.entity) {

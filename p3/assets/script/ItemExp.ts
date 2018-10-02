@@ -17,7 +17,7 @@ export class ItemExp1 extends ItemExp {
             {frameName: "ItemExp1_3", time: 300},
         ];
     }
-    
+
     getExp(): number {
         return 250;
     }

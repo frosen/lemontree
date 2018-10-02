@@ -37,7 +37,7 @@ export default class ColorComp extends MyComponent {
             g /= l;
             b /= l;
         }
-        
+
         let realColor = cc.color(255 - r, 255 - g, 255 - b, 255);
 
         for (const spNode of this.allSpNodes) {

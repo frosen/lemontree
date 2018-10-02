@@ -18,7 +18,7 @@ window.callList = function (obj, list) {
             const [func, ...param] = callInfo;
             func.call(obj, handle, data, ...param);
         }
-    }  
+    }
     handle();
 }
 

@@ -47,15 +47,15 @@ export default class UICtrlr extends MyComponent {
     update(_: number) {
         let hp = this.attri.hp.get();
         if (this.hpNum != hp) {
-            this.hpNum = hp;           
+            this.hpNum = hp;
             this.hpLbl.string = Math.floor(this.hpNum).toString();
-        } 
+        }
 
         let exp = this.attri.exp.get();
         if (this.expNum != exp) {
             this.expNum = exp;
             this.expLbl.string = this.expNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-        }       
+        }
     }
 
     showUsingButton(t: HeroUsingType) {

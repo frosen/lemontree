@@ -41,7 +41,7 @@ export class HeroLooks extends MyComponent {
         this.atkAnim = this.getComponent(cc.Animation);
 
         // 基本设置
-        this.node.setCascadeOpacityEnabled(true);       
+        this.node.setCascadeOpacityEnabled(true);
     }
 
     /**
@@ -71,12 +71,12 @@ export class HeroLooks extends MyComponent {
     get xUIDir(): number {
         let hurtDir = this.xUIDirs[HeroDirLv.hurt];
         if (hurtDir != 0) return hurtDir;
-        
+
         let attackDir = this.xUIDirs[HeroDirLv.attack];
         if (attackDir != 0) return attackDir;
         else return this.xUIDirs[HeroDirLv.move];
     }
-    
+
     stand() {
         // cc.log("ui -------> stand");
         this.body.node.skewX = 0;
@@ -126,7 +126,7 @@ export class HeroLooks extends MyComponent {
     }
 
     endDash() {
-        
+
     }
 
     hurt() {
@@ -171,10 +171,10 @@ export class HeroLooks extends MyComponent {
     goingToEndAtk: boolean = false;
     goingToTurnDir: number = 0;
 
-    attack(dir: number) {       
+    attack(dir: number) {
         if (!this.attacking) {
             this.attacking = true;
-            this.atkTimes = 0;        
+            this.atkTimes = 0;
             this.atkAnim.play();
             this.goingToEndAtk = false;
             this.setXUIDir(dir, HeroDirLv.attack);
@@ -191,7 +191,7 @@ export class HeroLooks extends MyComponent {
         this.goingToEndAtk = false;
         this.setXUIDir(0, HeroDirLv.attack);
         this.atkAnim.stop();
-        this.recoveryNoAtkUI();               
+        this.recoveryNoAtkUI();
         this.attacking = false;
     }
 
@@ -209,9 +209,9 @@ export class HeroLooks extends MyComponent {
             } else {
                 this.setXUIDir(this.goingToTurnDir, HeroDirLv.attack);
                 this.hero.doAttackLogic();
-            } 
-        }   
-    }  
+            }
+        }
+    }
 
     recoveryNoAtkUI() {
         this.sword.node.position = cc.v2(-8, 15);

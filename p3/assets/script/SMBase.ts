@@ -1,6 +1,6 @@
 // SMBase.ts
 // 状态机：
-// 
+//
 // lly 2018.1.5
 
 const StateBeginuNmber: number = 1173000;
@@ -35,12 +35,12 @@ export class SMMgr<SMObj> {
      * @param st: 起始状态
      */
     constructor(smObj: SMObj) {
-        this.smObj = smObj;        
+        this.smObj = smObj;
     }
 
     // 最开始的状态
     begin(st: number) {
-        SMMgr.checkSMState(st);        
+        SMMgr.checkSMState(st);
         this._setState(st);
         this.curStateMachine.begin(this);
         return this;
@@ -70,13 +70,13 @@ export class SMMgr<SMObj> {
     machineUpdate(dt: number) {
         this.curStateMachine.update(dt, this);
     }
-    
+
     /**
      * 通过总状态机调用当前状态机的check；check主要用于检测是否需要变化
      */
     machineCheck() {
         this.curStateMachine.check(this);
-    }   
+    }
 
     /** 设置当前状态和状态机 */
     _setState(st: number) {

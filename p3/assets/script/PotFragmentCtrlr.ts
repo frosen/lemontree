@@ -10,7 +10,7 @@ import {MovableObject} from "./MovableObject";
 import Gravity from "./Gravity";
 
 const fragDirs: number[][] = [
-    [0, 1], [0.7, 0.7], [1, 0], [0.7, -0.7], 
+    [0, 1], [0.7, 0.7], [1, 0], [0.7, -0.7],
     [0, -1], [-0.7, -0.7], [-1, 0], [-0.7, 0.7],
     [0, 1], [1, 0], [-1, 0], [0, -1]
 ];
@@ -50,12 +50,12 @@ export default class PotFragmentCtrlr extends MyComponent {
      */
     showFragments(pos: cc.Vec2, color1: cc.Color, color2: cc.Color) {
         let fragCount = Math.floor(Math.random() * 4) + 8;
-        
+
         let flip: number = 1;
         for (let index = 0; index < fragCount; index++) {
             let typeNum = Math.random();
-            let type = 
-                typeNum < 0.15 ? 0 : 
+            let type =
+                typeNum < 0.15 ? 0 :
                 (typeNum < 0.5 ? 1 :
                 (typeNum < 0.8 ? 2 : 3));
 

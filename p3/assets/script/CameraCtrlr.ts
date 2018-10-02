@@ -31,7 +31,7 @@ export default class CameraCtrlr extends MyComponent {
     offset: cc.Vec2 = cc.v2(0, 0);
 
     update(_: number) {
-        
+
         // 设置镜头的移动范围
         let newMapSize = this.map.terrainSize;
         if (newMapSize.width != this.mapSize.width || newMapSize.height != this.mapSize.height) {
@@ -55,7 +55,7 @@ export default class CameraCtrlr extends MyComponent {
 
         cameraPos.x = Math.min(Math.max(cameraPos.x, this.xMin), this.xMax);
         cameraPos.y = Math.min(Math.max(cameraPos.y, this.yMin), this.yMax);
-        
+
         this.node.position = cameraPos;
     }
 }
