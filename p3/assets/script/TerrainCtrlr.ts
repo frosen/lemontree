@@ -58,23 +58,12 @@ const GidTypeList = [
 @ccclass
 export class TerrainCtrlr extends MyComponent {
 
-    @property(cc.TiledMap)
-    testMap: cc.TiledMap = null;
-
     /** 地图块数 */
-    tileNumSize: cc.Size = cc.Size.ZERO;
+    tileNumSize: cc.Size = cc.size(999999, 999999);
     /** 地形尺寸 */
-    terrainSize: cc.Size = cc.Size.ZERO;
+    terrainSize: cc.Size = cc.size(999999, 999999);
     /** 碰撞数据 */
     collisionData: number[][] = null;
-
-    onLoad() {
-        if (this.testMap) {
-            this.tileNumSize = this.testMap.getMapSize();
-            this.terrainSize = new cc.Size(this.tileNumSize.width * TileLength, this.tileNumSize.height * TileLength - 0.001);
-            this.node.setContentSize(this.terrainSize);
-        }
-    }
 
     setTerrainData(clsnData: number[][]) {
         this.collisionData = clsnData;

@@ -24,7 +24,7 @@ window.callList = function (obj, list) {
 
 window.requireComponents = function (obj, components) {
     let t = true;
-    let s = ""
+    let s = "";
     for (let index = 0; index < components.length; index++) {
         const component = components[index];
         let has = !!obj.getComponent(component);

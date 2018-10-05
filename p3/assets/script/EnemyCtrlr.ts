@@ -25,6 +25,10 @@ class EnemyData {
 @ccclass
 export default class EnemyCtrlr extends MyComponent {
 
+    /** 测试使用 */
+    @property
+    debugEnemyLevel: number = 0;
+
     /** 敌人名称对应的节点的对象池 */
     pool: {[key: string]: Enemy[];} = {};
 
@@ -38,6 +42,15 @@ export default class EnemyCtrlr extends MyComponent {
 
     curScene: number = 1; //从1开始
     curArea: number = 1; //从1开始
+
+    start() { // 在enemy的onload后
+        if (this.debugEnemyLevel > 0) {
+            for (const child of this.node.children) {
+                let enemy: Enemy = child.getComponent(Enemy);
+                enemy.reset(null, this.debugEnemyLevel);
+            }
+        }
+    }
 
     setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
         this.curScene = sceneIndex;
@@ -67,6 +80,8 @@ export default class EnemyCtrlr extends MyComponent {
     }
 
     setData(areaIndex: number, posInfos: {pos: cc.Vec2, ground: GroundInfo}[]) {
+        if (this.debugEnemyLevel > 0) return; // 开启测试，就不随机生成了
+
         let data: EnemyData[] = [];
         let names = this.prefabNames[this.curScene];
         let len = names.length;
@@ -163,7 +178,7 @@ export default class EnemyCtrlr extends MyComponent {
 
     killEnemy(enemy: Enemy) {
         let index = enemy.ctrlrIndex;
-        if (index) {
+        if (index != null) {
             this.datas[this.curArea][index].living = false;
             enemy.node.active = false;
         } else { // 没有index说明不是从pool中生成的

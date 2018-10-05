@@ -62,6 +62,10 @@ export class MapCtrlr extends MyComponent {
     /** 每个场景中的地面信息 */
     groundInfos: GroundInfo[][] = [];
 
+    /** 测试用 ======================== */
+    @property(cc.TextAsset) textMapJson: cc.TextAsset = null;
+    @property(cc.SpriteFrame) textFrame: cc.SpriteFrame = null;
+
     onLoad() {
         // 生成多个map的节点池
         for (let index = 0; index < 10; index++) {
@@ -100,6 +104,13 @@ export class MapCtrlr extends MyComponent {
             return callNext();
         }
 
+        // 测试用
+        if (this.textMapJson) {
+            let decodeStr = MapCtrlr._decodeMapData(this.textMapJson.text);
+            this.sceneJsons[this.curScene] = JSON.parse(decodeStr);
+            return callNext();
+        }
+
         let url = `map/scene${this.curScene}/terrain/area`;
         cc.loader.loadRes(url, cc.TextAsset, (err, data) => {
             if (err) {
@@ -126,6 +137,12 @@ export class MapCtrlr extends MyComponent {
 
     _loadTexture(callNext: () => void, lastData: any) {
         if (this.frames[this.curScene]) {
+            return callNext();
+        }
+
+        // 测试用
+        if (this.textFrame) {
+            this.frames[this.curScene] = this.textFrame;
             return callNext();
         }
 
@@ -216,7 +233,6 @@ export class MapCtrlr extends MyComponent {
             const asset = this.curAssets[index];
             this.mapPool[index].tmxAsset = asset;
         }
-
         return callNext();
     }
 

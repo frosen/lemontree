@@ -616,7 +616,8 @@
     "node": {
       "__id__": 13
     },
-    "_enabled": true
+    "_enabled": true,
+    "debugEnemyLevel": 0
   },
   {
     "__type__": "cc.Node",
@@ -1299,8 +1300,7 @@
     "node": {
       "__id__": 43
     },
-    "_enabled": true,
-    "testMap": null
+    "_enabled": true
   },
   {
     "__type__": "cc.Node",
@@ -1367,7 +1367,9 @@
     "_enabled": true,
     "terrainCtrlr": {
       "__id__": 42
-    }
+    },
+    "textMapJson": null,
+    "textFrame": null
   },
   {
     "__type__": "cc.Node",
