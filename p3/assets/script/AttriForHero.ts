@@ -46,28 +46,32 @@ export default class AttriForHero extends Attri {
 
     // 卡片 ========================================================
 
-    _cardsNum: EcNumber = new EcNumber(0);
+    _cardArray: number[] = [];
+    _cardArrayForCheck: number[] = [];
 
     /**
-     * 设置卡片是否开启
+     * 设置卡片状态
      * @param index 从1开始
+     * @param 0是没有，1往后是有
      */
-    setCardEnabled(index: number, b: boolean) {
-        let k;
-        if (b) {
-            k = this._cardsNum.get() | (1 << (index - 1));
-        } else {
-            k = this._cardsNum.get() & (~(1 << (index - 1)));
-        }
-        this._cardsNum.set(k);
+    setCardState(index: number, s: number) {
+        this._cardArray[index] = s;
+        this._cardArrayForCheck[index] = s;
     }
 
     /**
-     * 获取卡片是否开启
+     * 获取卡片状态
      * @param index 从1开始
      */
-    isCardEnabled(index: number) {
-        return (this._cardsNum.get() & (1 << (index - 1))) != 0;
+    getCardState(index: number): number {
+        let card = this._cardArray[index];
+        if (card == undefined) return 0;
+
+        if (this._cardArrayForCheck[index] != card) {
+            throw new Error("card check wrong!");
+        }
+
+        return card;
     }
 
     // hero特有属性 ========================================================
@@ -80,8 +84,6 @@ export default class AttriForHero extends Attri {
     /** 受伤无敌时间 */
     invcTimeForHurt: EcNumber = new EcNumber(0);
 
-    // 特殊能力 1级 ========================================================
-
     /** 剩余跳跃数量 */
     jumpCount: EcNumber = new EcNumber(0);
     /** 最大跳跃数量 */
@@ -91,6 +93,12 @@ export default class AttriForHero extends Attri {
     dashCount: EcNumber = new EcNumber(0);
     /** 最大冲刺数量 */
     maxDashCount: EcNumber = new EcNumber(0);
+
+    // 特殊能力 1级 ========================================================
+
+    doubleJump: boolean = false;
+
+    dash: boolean = false;
 
     /** 踩墙反弹跳 */
     jumpingByWall: boolean = false;
@@ -142,7 +150,7 @@ export default class AttriForHero extends Attri {
 
     extraMagicAtk: number = 0;
 
-    executePower: number = 2;
+    executePower: number = 0;
 
     defence: number = 0;
 

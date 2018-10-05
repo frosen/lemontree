@@ -351,7 +351,11 @@ class SMForHeroInHurt extends SMForHero {
 
         // 受伤属性计算
         let atk: Attack = hero.getHurtAtk();
-        let {death, dmg, crit} = atk.handleDamage(hero.attri);
+        let {dmg, crit} = atk.getDamage();
+        if (hero.attri.defence) {
+            dmg -= dmg * 0.05 * hero.attri.defence;
+        }
+        let death = atk.handleHp(hero.attri, dmg);
 
         atk.executeHitCallback(hero.node, death, dmg, crit);
 

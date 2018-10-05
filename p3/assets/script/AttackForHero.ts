@@ -21,7 +21,7 @@ export default class AttackForHero extends Attack {
             }
         }
 
-        let death = this._handleDamage(attri, dmg);
+        let death = this.handleHp(attri, dmg);
         return {death, dmg, crit};
     }
 }
