@@ -64,7 +64,7 @@ export default abstract class Destroyee extends MyComponent {
                 let beginTime = this.invcTimeBegin[atkIndex]
                 if (beginTime == null || curTime - beginTime > InvcTime) {
                     this.invcTimeBegin[atkIndex] = curTime;
-                    let death = this._doHurtLogic(atk);
+                    this._doHurtLogic(atk);
                 }
             }
         }

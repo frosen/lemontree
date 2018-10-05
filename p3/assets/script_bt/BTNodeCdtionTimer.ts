@@ -41,6 +41,7 @@ export default class BTNodeCdtionTimer extends BTNode {
         let p: cc.Node = this.node.parent;
         let actNode: BTNodeAction = null;
         while (true) {
+            if (!p || p instanceof cc.Scene) break;
             let mayActNode = p.getComponent(BTNodeAction)
             if (mayActNode) {
                 actNode = mayActNode;
@@ -49,7 +50,7 @@ export default class BTNodeCdtionTimer extends BTNode {
             p = p.parent;
         }
 
-        cc.assert(actNode, "BTNodeCdtionTimer need in until");
+        cc.assert(actNode, "BTNodeCdtionTimer need BTNodeAction");
 
         comp.on(actNode.btIndex, ActionBeginKey, this.onTimerBegin.bind(this));
     }
