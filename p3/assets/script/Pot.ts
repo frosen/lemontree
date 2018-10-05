@@ -62,7 +62,7 @@ export default class Pot extends Destroyee {
 
     }
 
-    _dead(pos: cc.Vec2) {
+    _dead(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean) {
         Pot.fragmentCtrlr.showFragments(pos, this.c1, this.c2);
         Pot.potCtrlr.killPot(this);
     }

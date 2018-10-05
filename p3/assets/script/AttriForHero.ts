@@ -46,6 +46,29 @@ export default class AttriForHero extends Attri {
 
     // 卡片 ========================================================
 
+    _cardsNum: EcNumber = new EcNumber(0);
+
+    /**
+     * 设置卡片是否开启
+     * @param index 从1开始
+     */
+    setCardEnabled(index: number, b: boolean) {
+        let k;
+        if (b) {
+            k = this._cardsNum.get() | (1 << (index - 1));
+        } else {
+            k = this._cardsNum.get() & (~(1 << (index - 1)));
+        }
+        this._cardsNum.set(k);
+    }
+
+    /**
+     * 获取卡片是否开启
+     * @param index 从1开始
+     */
+    isCardEnabled(index: number) {
+        return (this._cardsNum.get() & (1 << (index - 1))) != 0;
+    }
 
     // hero特有属性 ========================================================
 
@@ -57,7 +80,7 @@ export default class AttriForHero extends Attri {
     /** 受伤无敌时间 */
     invcTimeForHurt: EcNumber = new EcNumber(0);
 
-    // 特殊能力 ========================================================
+    // 特殊能力 1级 ========================================================
 
     /** 剩余跳跃数量 */
     jumpCount: EcNumber = new EcNumber(0);
@@ -84,9 +107,48 @@ export default class AttriForHero extends Attri {
     /** 碰到机关不会硬直 */
     trapDefence: boolean = false;
 
-    energyGettingByEnemey: boolean = false;
+    /** 击中敌人获取能量 */
+    energyGettingByEnemy: boolean = false;
+    /** 击中罐子获取能量 */
     energyGettingByPot: boolean = false;
+    /** 区域变化获取能量 */
     energyGettingByArea: boolean = false;
+
+    /** 额外血量 */
+    extraMaxHp: boolean = false;
+
+    /** 魔法能力 蓄力炮增加蓄力速度，火圈增加半径，跟踪弹减少cd，死亡炸弹增加概率，寒冰增加冰冻时间，分身增加攻击距离 */
+    magicPower: boolean = false;
+
+    // 特殊能力 2级 ========================================================
+
+    itemKeeping: number = 0;
+
+    bossSlowing: number = 0;
+
+    fullHpPower: number = 0;
+
+    nearDeathPower: number = 0;
+
+    hpRecoveryPower: number = 0;
+
+    extraSpace: number = 0;
+
+    learningAbility: number = 0;
+
+    debuffResistent: number = 0;
+
+    extraAtk: number = 0;
+
+    extraMagicAtk: number = 0;
+
+    executePower: number = 2;
+
+    defence: number = 0;
+
+    // 特殊能力 3级 ========================================================
+
+    // 重置 ========================================================
 
     _reset(attri: Attri) {
 

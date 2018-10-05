@@ -81,14 +81,14 @@ export default abstract class Destroyee extends MyComponent {
             let pos: cc.Vec2 = this._getCenterPos();
             this._hurt(pos, atk, dmg, crit);
         } else {
-            this.gotoDead();
+            this.gotoDead(atk, dmg, crit);
         }
     }
 
-    gotoDead() {
+    gotoDead(atk: Attack, dmg: number, crit: boolean) {
         let pos: cc.Vec2 = this._getCenterPos();
         this.itemCtrlr.createItem(pos);
-        this._dead(pos);
+        this._dead(pos, atk, dmg, crit);
     }
 
     _getCenterPos(): cc.Vec2 {
@@ -109,5 +109,5 @@ export default abstract class Destroyee extends MyComponent {
 
     abstract _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean};
     abstract _hurt(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean);
-    abstract _dead(pos: cc.Vec2);
+    abstract _dead(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean);
 }

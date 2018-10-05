@@ -11,6 +11,7 @@ const MagicNum = Math.floor(Math.random() * 10000);
 // 加密数据
 export class EcNumber {
     _v: number = 0;
+    _vForCheck: number = 0;
     _onSetList: ((v: number) => number)[] = [];
     _afterSetList: ((v: number) => void)[] = [];
     _onGetList: ((v: number) => number)[] = [];
@@ -27,11 +28,15 @@ export class EcNumber {
     }
 
     _set(v: number) {
-        this._v = MagicNum - v;
+        this._v = v;
+        this._vForCheck = MagicNum - v;
     }
 
     _get() {
-        return MagicNum - this._v;
+        if (MagicNum - this._v != this._vForCheck) {
+            throw new Error("number check wrong!");
+        }
+        return this._v;
     }
 
     set(v: number) {

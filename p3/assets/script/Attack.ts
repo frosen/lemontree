@@ -81,11 +81,14 @@ export default class Attack extends MyComponent {
         return {dmg, crit};
     }
 
+    _handleDamage(attri: Attri, dmg: number): boolean {
+        attri.hp.sub(dmg);
+        return attri.hp.get() <= 0;
+    }
+
     handleDamage(attri: Attri): {death: boolean, dmg: number, crit: boolean} {
         let {dmg, crit} = this.getDamage();
-        attri.hp.sub(dmg);
-
-        let death = attri.hp.get() <= 0;
+        let death = this._handleDamage(attri, dmg);
         return {death, dmg, crit};
     }
 

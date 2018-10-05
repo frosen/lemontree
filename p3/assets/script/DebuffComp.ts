@@ -16,12 +16,15 @@ export default class DebuffComp extends MyComponent {
     curTime: number = 0;
     curSecond: number = 0;
 
+    /** 系数，可以控制debuff持续的时间 */
+    r: number = 1.0;
+
     update(dt: number) {
         if (!this.curDebuff) return;
 
         this.curTime += dt;
 
-        if (this.curTime > this.curDebuff.duration) {
+        if (this._checkTime()) {
             this.curDebuff.end(this);
             this.curDebuff = null;
         } else {
@@ -31,6 +34,10 @@ export default class DebuffComp extends MyComponent {
                 this.curDebuff.update(this); // 每秒一跳
             }
         }
+    }
+
+    _checkTime() {
+        return this.curTime > this.curDebuff.duration * this.r;
     }
 
     setDebuff(debuff: Debuff) {

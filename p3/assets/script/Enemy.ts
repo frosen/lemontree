@@ -59,7 +59,7 @@ export default class Enemy extends Destroyee {
     lateUpdate() {
         // 超出地形则会死亡
         if (this.node.y < -1) {
-            this.gotoDead();
+            this.gotoDead(null, 0, false);
         }
     }
 
@@ -94,7 +94,8 @@ export default class Enemy extends Destroyee {
 
     }
 
-    _dead(pos: cc.Vec2) {
+    _dead(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean) {
+        if (atk) Enemy.figureDisplay.showFigure(pos, dmg, crit, atk.getAttackColor());
         Enemy.deathDisplay.showDeathEffect(pos);
         Enemy.ctrlr.killEnemy(this);
     }
