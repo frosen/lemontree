@@ -5,10 +5,20 @@
 
 const {ccclass, property} = cc._decorator;
 
+import {Attri} from "./Attri";
+import Attack from "./Attack";
+
 @ccclass
 export default class Bullet extends cc.Component {
 
-    init() {
+    init(attri: Attri) {
+        let atks = this.getComponentsInChildren(Attack);
+        for (const atk of atks) {
+            atk.attri = attri;
+        }
+    }
+
+    reset(lv: number) {
 
     }
 

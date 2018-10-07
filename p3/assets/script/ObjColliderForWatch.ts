@@ -5,7 +5,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {ObjCollider, CollisionData} from "./ObjCollider";
+import {ObjCollider} from "./ObjCollider";
 
 @ccclass
 export default class ObjColliderForWatch extends ObjCollider {

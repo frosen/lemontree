@@ -9,7 +9,7 @@ import Item from "./Item";
 import ItemCtrlr from "./ItemCtrlr";
 
 import {MovableObject} from "./MovableObject";
-import TerrainCollider from "./TerrainCollider";
+import TerrainColliderClsn from "./TerrainColliderClsn";
 import {CollisionType} from "./TerrainCtrlr";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
@@ -26,7 +26,7 @@ export default class ItemComp extends MyComponent {
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
-    terrainCollider: TerrainCollider = null;
+    terrainCollider: TerrainColliderClsn = null;
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;
     /** 观察者组件 */
@@ -55,7 +55,7 @@ export default class ItemComp extends MyComponent {
     onLoad() {
         this.sp = this._createComp(cc.Sprite);
         this.movableObj = this._createComp(MovableObject);
-        this.terrainCollider = this._createComp(TerrainCollider);
+        this.terrainCollider = this._createComp(TerrainColliderClsn);
         this.objCollider = this._createComp(ObjCollider);
 
         this._createComp(Gravity);

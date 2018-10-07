@@ -8,7 +8,7 @@ const {ccclass, property} = cc._decorator;
 import MyComponent from "./MyComponent";
 
 import {MovableObject} from "./MovableObject";
-import TerrainCollider from "./TerrainCollider";
+import TerrainColliderClsn from "./TerrainColliderClsn";
 import {CollisionType} from "./TerrainCtrlr";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
@@ -43,7 +43,7 @@ export class Hero extends MyComponent {
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
-    terrainCollider: TerrainCollider = null;
+    terrainCollider: TerrainColliderClsn = null;
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;
     /** 观察区碰撞组件 */
@@ -72,10 +72,10 @@ export class Hero extends MyComponent {
     xMoveDir: number = 0;
 
     onLoad() {
-        requireComponents(this, [MovableObject, TerrainCollider, ObjCollider, ObjColliderForWatch, HeroLooks]);
+        requireComponents(this, [MovableObject, TerrainColliderClsn, ObjCollider, ObjColliderForWatch, HeroLooks]);
 
         this.movableObj = this.getComponent(MovableObject);
-        this.terrainCollider = this.getComponent(TerrainCollider);
+        this.terrainCollider = this.getComponent(TerrainColliderClsn);
         this.objCollider = this.getComponent(ObjCollider);
         this.watchCollider = this.getComponent(ObjColliderForWatch);
 

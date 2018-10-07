@@ -7,7 +7,7 @@ const {ccclass, property} = cc._decorator;
 import Enemy from "../script/Enemy";
 
 import {MovableObject} from "../script/MovableObject";
-import TerrainCollider from "../script/TerrainCollider";
+import TerrainColliderClsn from "../script/TerrainColliderClsn";
 import {CollisionType} from "../script/TerrainCtrlr";
 
 @ccclass
@@ -16,13 +16,13 @@ export default class Fighter extends Enemy {
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
-    terrainCollider: TerrainCollider = null;
+    terrainCollider: TerrainColliderClsn = null;
 
     onLoad() {
         super.onLoad();
 
         this.movableObj = this._createComp(MovableObject);
-        this.terrainCollider = this._createComp(TerrainCollider);
+        this.terrainCollider = this._createComp(TerrainColliderClsn);
     }
 
     // UI相关 ========================================================

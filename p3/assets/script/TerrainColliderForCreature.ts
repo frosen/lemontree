@@ -5,22 +5,23 @@
 
 const {ccclass, property} = cc._decorator;
 
-import TerrainCollider from "./TerrainCollider";
+import TerrainColliderClsn from "./TerrainColliderClsn";
 import {CollisionType} from "./TerrainCtrlr";
 import {VelocityMax} from "./MovableObject";
 
 
 @ccclass
-export default class TerrainColliderForCreature extends TerrainCollider {
+export default class TerrainColliderForCreature extends TerrainColliderClsn {
 
     update(_: number) {
-        this.checkCollision();
-        this.checkSuperGravityForSlope();
-        this.checkOutOfRange();
+        this._checkCollision();
+        this._checkOutOfRange();
+        this._checkSuperGravityForSlope();
+        this._handleOutOfRange();
     }
 
     // 超级重力为了让对象可以沿着斜坡行进
-    checkSuperGravityForSlope() {
+    _checkSuperGravityForSlope() {
         if (this.curYCollisionType == CollisionType.slope ||
             this.edgeType == CollisionType.slope ||
             this.backEdgeType == CollisionType.slope) {
@@ -29,7 +30,7 @@ export default class TerrainColliderForCreature extends TerrainCollider {
     }
 
     // 计算是否出界 // X不可超出范围
-    checkOutOfRange() {
+    _handleOutOfRange() {
         let size = this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let xCenter: number = this.node.x + size.width * (0.5 - anchor.x);

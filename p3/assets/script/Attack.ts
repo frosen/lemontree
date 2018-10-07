@@ -12,8 +12,8 @@ import {Debuff} from "./Debuff";
 export default class Attack extends MyComponent {
 
     /** 索引，用于区分不同的攻击
-     * 目前只是敌人的攻击需要，同种攻击在一定时间内不会伤害第二次，
-     * hero被攻击有无敌时间所以不需要
+     * 目前只是对敌人的攻击需要，同种攻击在一定时间内不会伤害第二次，
+     * 对hero的攻击有无敌时间所以不需要
     */
     @property
     index: number = 0;

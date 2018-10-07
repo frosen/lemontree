@@ -181,7 +181,7 @@ export default class EnemyCtrlr extends MyComponent {
 
     killEnemy(enemy: Enemy) {
         let index = enemy.ctrlrIndex;
-        if (index != null) {
+        if (index != null && index >= 0) {
             this.datas[this.curArea][index].living = false;
             enemy.node.active = false;
         } else { // 没有index说明不是从pool中生成的

@@ -14,8 +14,9 @@ export default class TerrainColliderForHero extends TerrainColliderForCreature {
     gateGid: number = null;
 
     update(_: number) {
-        this.checkCollision();
-        this.checkSuperGravityForSlope();
+        this._checkCollision();
+        this._checkOutOfRange();
+        this._checkSuperGravityForSlope();
 
         let size = this.size || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
@@ -29,7 +30,7 @@ export default class TerrainColliderForHero extends TerrainColliderForCreature {
 
         } else {
             if (this.gateGid == null) {
-                this.checkOutOfRange();
+                this._handleOutOfRange();
 
             } else {
                 let gameCtrlr = cc.find("main").getComponent(GameCtrlr);

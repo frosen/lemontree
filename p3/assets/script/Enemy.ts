@@ -76,7 +76,7 @@ export default class Enemy extends Destroyee {
     reset(index: number, lv: number) {
         this.ctrlrIndex = index;
         this.attri.resetVar(lv);
-        this.clearBullet();
+        this.resetBullet(lv);
     }
 
     /** 切换场景时候隐藏 */
@@ -97,12 +97,23 @@ export default class Enemy extends Destroyee {
                 let node = cc.instantiate(prefab);
                 Enemy.ctrlr.node.addChild(node, this.node.zIndex);
                 let bullet = node.getComponent(Bullet);
-                bullet.init();
+                bullet.init(this.attri);
                 enemys.push(bullet);
 
                 node.active = false;
             }
             this.bullets[name] = enemys;
+        }
+    }
+
+    resetBullet(lv: number) {
+        for (const name in this.bullets) {
+            let bulletList: Bullet[] = this.bullets[name];
+            for (const bullet of bulletList) {
+                bullet.reset(lv);
+                bullet.clear();
+                bullet.node.active = false;
+            }
         }
     }
 
