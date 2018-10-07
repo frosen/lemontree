@@ -48,7 +48,7 @@ export default class GameCtrlr extends cc.Component {
 
     gamePause: boolean = false;
 
-    start() {
+    start() { // 所有默认直接onload的之后
         this.changeScene(1);
     }
 

@@ -35,6 +35,10 @@ export default class Attack extends MyComponent {
     hitCallback: (atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) => void = null;
 
     onLoad() {
+        if (this.hidingAtBeginning) this.enabled = false;
+    }
+
+    start() { // 可能会在onload后再设置attri
         if (this.attri == null) {
             let n = this.node;
             while (true) {
@@ -48,8 +52,6 @@ export default class Attack extends MyComponent {
             }
         }
         cc.assert(this.attri != null, "attack need attri");
-
-        if (this.hidingAtBeginning) this.enabled = false;
     }
 
     // 计算基础伤害

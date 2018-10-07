@@ -35,7 +35,7 @@ export default abstract class Destroyee extends MyComponent {
         this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
     }
 
-    start() {
+    start() { // 在所有子节点（sprite）onLoad完成后
         if (CC_EDITOR) return;
         this.colorComp.resetSp();
     }

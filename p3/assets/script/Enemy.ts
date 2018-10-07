@@ -18,6 +18,7 @@ import BTComp from "../script_bt/BTComp";
 import {Hero} from "./Hero";
 import FigureDisplay from "./FigureDisplay";
 import DeathEffectDisplay from "./DeathEffectDisplay";
+import Bullet from "./Bullet";
 
 @ccclass
 export default class Enemy extends Destroyee {
@@ -26,6 +27,14 @@ export default class Enemy extends Destroyee {
     static figureDisplay: FigureDisplay = null;
     static deathDisplay: DeathEffectDisplay = null;
 
+    /** 子敌人（子弹什么的） */
+    @property([cc.Prefab]) bulletPrefabs: cc.Prefab[] = [];
+    /** 子敌人的最大数量 */
+    @property([cc.Integer]) bulletsMaxCount: number[] = [];
+    /** 子敌人 */
+    bullets: {[name: string]: Bullet[];} = {};
+
+    /** 用于控制器中的索引值 */
     ctrlrIndex: number = null;
 
     /** 属性 */
@@ -63,15 +72,48 @@ export default class Enemy extends Destroyee {
         }
     }
 
+    /** 切换场景时候重置 */
     reset(index: number, lv: number) {
         this.ctrlrIndex = index;
         this.attri.resetVar(lv);
-        this._resetAction();
+        this.clearBullet();
     }
 
-    /** 需要继承 */
-    _resetAction() {
+    /** 切换场景时候隐藏 */
+    onHide() {
+        this.clearBullet();
+    }
 
+    // 子敌人 ========================================================
+
+    initBullet() { // ctrlr中调用
+        for (let index = 0; index < this.bulletPrefabs.length; index++) {
+            let prefab = this.bulletPrefabs[index];
+            let maxCount = this.bulletsMaxCount[index];
+            let name = prefab.name;
+
+            let enemys: Bullet[] = [];
+            for (let j = 0; j < maxCount; j++) {
+                let node = cc.instantiate(prefab);
+                Enemy.ctrlr.node.addChild(node, this.node.zIndex);
+                let bullet = node.getComponent(Bullet);
+                bullet.init();
+                enemys.push(bullet);
+
+                node.active = false;
+            }
+            this.bullets[name] = enemys;
+        }
+    }
+
+    clearBullet() {
+        for (const name in this.bullets) {
+            let bulletList: Bullet[] = this.bullets[name];
+            for (const bullet of bulletList) {
+                bullet.clear();
+                bullet.node.active = false;
+            }
+        }
     }
 
     // 碰撞回调 ------------------------------------------------------------

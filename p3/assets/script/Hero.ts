@@ -98,7 +98,7 @@ export class Hero extends MyComponent {
         this.attack.hitCallback = this.onHitEnemy.bind(this);
     }
 
-    start() {
+    start() { // 在所有子节点（sprite）onLoad完成后
         this.colorComp.resetSp();
     }
 
