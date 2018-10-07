@@ -24,7 +24,7 @@ export class ObjCollider extends MyComponent {
 
     /** 碰撞范围 为空的话则使用node的size*/
     @property(cc.Size)
-    size: cc.Size = cc.size(0, 0);
+    osize: cc.Size = cc.size(0, 0);
 
     /** 碰撞范围偏移量 */
     @property(cc.Vec2)
@@ -53,8 +53,8 @@ export class ObjCollider extends MyComponent {
             }
 
             let node = this.node;
-            let w = this.size.width > 0 ? this.size.width : node.width;
-            let h = this.size.height > 0 ? this.size.height : node.height;
+            let w = this.osize.width > 0 ? this.osize.width : node.width;
+            let h = this.osize.height > 0 ? this.osize.height : node.height;
 
             let minX = -w * node.anchorX + this.offset.x;
             let maxX = minX + w;
@@ -82,8 +82,8 @@ export class ObjCollider extends MyComponent {
     getMaxMinXY(parentCollider: ObjCollider = null): {minX: number, maxX: number, minY: number, maxY: number} {
 
         let node = this.node;
-        let w = this.size.width > 0 ? this.size.width : node.width;
-        let h = this.size.height > 0 ? this.size.height : node.height;
+        let w = this.osize.width > 0 ? this.osize.width : node.width;
+        let h = this.osize.height > 0 ? this.osize.height : node.height;
 
         let minX = -w * node.anchorX + this.offset.x;
         let maxX = minX + w;

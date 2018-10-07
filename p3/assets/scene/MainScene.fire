@@ -754,7 +754,7 @@
       "__id__": 17
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0
@@ -891,7 +891,7 @@
       "__id__": 22
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 100,
       "height": 130
@@ -1219,7 +1219,7 @@
       "__id__": 10
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0
@@ -1244,7 +1244,7 @@
       "__id__": 10
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 170,
       "height": 130

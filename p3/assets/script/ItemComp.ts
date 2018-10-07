@@ -61,7 +61,7 @@ export default class ItemComp extends MyComponent {
         this._createComp(Gravity);
 
         this.watchCollider = this._createComp(ObjColliderForWatch);
-        this.watchCollider.size = cc.size(270, 270);
+        this.watchCollider.osize = cc.size(270, 270);
         this.watchCollider.callback = this.onWatching.bind(this);
     }
 
@@ -137,7 +137,7 @@ export default class ItemComp extends MyComponent {
         this.sp.sizeMode = cc.Sprite.SizeMode.RAW;
 
         let oSize = this.sp.spriteFrame.getOriginalSize();
-        this.terrainCollider.size = cc.size(oSize.width - 2, oSize.height); // 碰撞的两边稍微往里，为的是在斜面上不会看起来浮空
+        this.terrainCollider.tsize = cc.size(oSize.width - 2, oSize.height); // 碰撞的两边稍微往里，为的是在斜面上不会看起来浮空
     }
 
     move(x: number, y: number) {

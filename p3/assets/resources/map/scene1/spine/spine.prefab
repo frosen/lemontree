@@ -139,7 +139,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0

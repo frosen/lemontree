@@ -28,7 +28,7 @@ export default class TerrainCollider extends MyComponent {
     yOutRangeDir: number = 0;
 
     /** 碰撞范围 为空的话则使用node的size*/
-    size: cc.Size = null;
+    tsize: cc.Size = null;
 
     onLoad() {
         requireComponents(this, [MovableObject]);
@@ -44,7 +44,7 @@ export default class TerrainCollider extends MyComponent {
 
     _checkCollision() { // 不考虑旋转，不应该有旋转，或者旋转的节点不应该宽高不一致
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
-        let size = this.size || this.node.getContentSize();
+        let size = this.tsize || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let anchorW = size.width * anchor.x;
         let anchorH = size.height * anchor.y;
@@ -66,7 +66,7 @@ export default class TerrainCollider extends MyComponent {
     }
 
     _checkOutOfRange() {
-        let size = this.size || this.node.getContentSize();
+        let size = this.tsize || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let anchorW = size.width * anchor.x;
         let anchorH = size.height * anchor.y;

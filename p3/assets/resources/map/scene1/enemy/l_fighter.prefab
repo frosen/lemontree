@@ -128,7 +128,9 @@
     "node": {
       "__id__": 1
     },
-    "_enabled": true
+    "_enabled": true,
+    "bulletPrefabs": [],
+    "bulletsMaxCount": []
   },
   {
     "__type__": "dcce4iJIS1E9qdGzUmyUu+h",
@@ -190,7 +192,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0
@@ -211,7 +213,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 300,
       "height": 90

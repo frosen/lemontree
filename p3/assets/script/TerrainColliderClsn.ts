@@ -18,7 +18,7 @@ export default class TerrainColliderClsn extends TerrainCollider {
     _checkCollision() {
         let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置
         let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
-        let size = this.size || this.node.getContentSize();
+        let size = this.tsize || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let anchorW = size.width * anchor.x;
         let anchorH = size.height * anchor.y;

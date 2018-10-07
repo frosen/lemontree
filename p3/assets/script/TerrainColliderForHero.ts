@@ -18,7 +18,7 @@ export default class TerrainColliderForHero extends TerrainColliderForCreature {
         this._checkOutOfRange();
         this._checkSuperGravityForSlope();
 
-        let size = this.size || this.node.getContentSize();
+        let size = this.tsize || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let anchorW = size.width * anchor.x;
         let anchorH = size.height * anchor.y;
