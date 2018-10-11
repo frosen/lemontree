@@ -372,7 +372,9 @@ class SMForHeroInHurt extends SMForHero {
         let node = hero.node;
         let xCenter = node.x + node.width * (0.5 - node.anchorX);
         let yCenter = node.y + node.height * (0.5 - node.anchorY);
-        this.figureDisplay.showFigure(cc.v2(xCenter, yCenter), dmg, crit, atk.getAttackColor());
+        let pos = cc.v2(xCenter, yCenter)
+        let hurtDir = hero.getHurtDir();
+        this.figureDisplay.showFigure(pos, hurtDir, dmg, crit, atk.getAttackColor());
 
         return false;
     }

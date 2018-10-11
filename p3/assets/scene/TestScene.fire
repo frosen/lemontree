@@ -467,8 +467,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 613,
-      "y": 661
+      "x": 506,
+      "y": 368
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -618,7 +618,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "fighter",
+    "_name": "l_ward",
     "_objFlags": 0,
     "_parent": {
       "__id__": 13
@@ -667,7 +667,7 @@
     "_prefab": {
       "__id__": 27
     },
-    "_id": "33j3cL6r5BG5VEXPYk7ZQC",
+    "_id": "22391cwnhMMYpOy1DTTWFV",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
@@ -693,15 +693,15 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 443,
-      "y": 574
+      "x": 401,
+      "y": 362
     },
     "_skewX": 0,
     "_skewY": 0,
     "_localZOrder": 0,
     "_globalZOrder": 0,
     "_opacityModifyRGB": false,
-    "groupIndex": 0
+    "groupIndex": 2
   },
   {
     "__type__": "cc.Sprite",
@@ -712,10 +712,10 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "a34ac7cf-39ee-4a87-83e9-a47911f2596b"
+      "__uuid__": "7676e0df-3e29-4bf0-b2d5-ba66271d041a"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 2,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -730,13 +730,15 @@
     "_atlas": null
   },
   {
-    "__type__": "a89d1h5grRPa73EkMaycf03",
+    "__type__": "390a34wsDBFW5eWrH3fkhyN",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 14
     },
-    "_enabled": true
+    "_enabled": true,
+    "bulletPrefabs": [],
+    "bulletsMaxCount": []
   },
   {
     "__type__": "dcce4iJIS1E9qdGzUmyUu+h",
@@ -747,7 +749,7 @@
     },
     "_enabled": true,
     "btPrefab": {
-      "__uuid__": "0427f121-e1c4-4945-bef4-29f4d8ee6acf"
+      "__uuid__": "3ce48f00-45f6-4df7-8ff5-342ca4689970"
     }
   },
   {
@@ -773,24 +775,6 @@
     "hidingAtBeginning": false
   },
   {
-    "__type__": "9f661uXsONL36sPsozhGAtf",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 14
-    },
-    "_enabled": true
-  },
-  {
-    "__type__": "dff690rpulIrIGiVCCOJXcp",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 14
-    },
-    "_enabled": true
-  },
-  {
     "__type__": "1285aB1AudJHrqNa72cuLP1",
     "_name": "",
     "_objFlags": 0,
@@ -798,7 +782,7 @@
       "__id__": 14
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0
@@ -819,18 +803,36 @@
       "__id__": 14
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
-      "width": 300,
-      "height": 90
+      "width": 400,
+      "height": 400
     },
     "offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": -20
+      "y": -150
     },
     "subColliders": [],
     "showingInRunning": false
+  },
+  {
+    "__type__": "9f661uXsONL36sPsozhGAtf",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 14
+    },
+    "_enabled": true
+  },
+  {
+    "__type__": "dff690rpulIrIGiVCCOJXcp",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 14
+    },
+    "_enabled": true
   },
   {
     "__type__": "a4a9bzzriZBsKwXKwcFU/zV",
@@ -865,9 +867,9 @@
       "__id__": 14
     },
     "asset": {
-      "__uuid__": "c275fa59-5167-42d6-9f6c-2c31a19ca264"
+      "__uuid__": "a53c59f2-719b-41d0-a72d-f745b29802db"
     },
-    "fileId": "83P4uM7DBFS7L9DYO9FStZ",
+    "fileId": "69LMR4qCdHYIZeovTiK/Qo",
     "sync": false
   },
   {
@@ -1015,7 +1017,7 @@
       "__id__": 31
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0
@@ -1152,7 +1154,7 @@
       "__id__": 36
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 100,
       "height": 130
@@ -1480,7 +1482,7 @@
       "__id__": 10
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0
@@ -1505,7 +1507,7 @@
       "__id__": 10
     },
     "_enabled": true,
-    "size": {
+    "osize": {
       "__type__": "cc.Size",
       "width": 170,
       "height": 130

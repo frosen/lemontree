@@ -68,7 +68,7 @@ export default class Enemy extends Destroyee {
     lateUpdate() {
         // 超出地形则会死亡
         if (this.node.y < -1) {
-            this.gotoDead(null, 0, false);
+            this.gotoDead(0, null, 0, false);
         }
     }
 
@@ -135,20 +135,20 @@ export default class Enemy extends Destroyee {
         return {death, dmg, crit};
     }
 
-    _hurt(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean) {
-        this.onHurtCallback(dmg, crit);
+    _hurt(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
+        this.onHurtCallback(hurtDir, dmg, crit);
 
         // 显示受伤数字
-        Enemy.figureDisplay.showFigure(pos, dmg, crit, atk.getAttackColor());
+        Enemy.figureDisplay.showFigure(pos, hurtDir, dmg, crit, atk.getAttackColor());
     }
 
     // 用于子类
-    onHurtCallback(dmg: number, crit: boolean) {
+    onHurtCallback(hurtDir: number, dmg: number, crit: boolean) {
 
     }
 
-    _dead(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean) {
-        if (atk) Enemy.figureDisplay.showFigure(pos, dmg, crit, atk.getAttackColor());
+    _dead(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
+        if (atk) Enemy.figureDisplay.showFigure(pos, hurtDir, dmg, crit, atk.getAttackColor());
         Enemy.deathDisplay.showDeathEffect(pos);
         Enemy.ctrlr.killEnemy(this);
     }

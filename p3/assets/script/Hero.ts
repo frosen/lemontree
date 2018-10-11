@@ -240,7 +240,7 @@ export class Hero extends MyComponent {
      */
     getHurtDir(): number {
         let hurtNodeCenterX = (this.hurtCollisionData.minX + this.hurtCollisionData.maxX) * 0.5;
-        return this.node.x < hurtNodeCenterX ? 1 : -1;;
+        return this.node.x < hurtNodeCenterX ? 1 : -1;
     }
 
     /**

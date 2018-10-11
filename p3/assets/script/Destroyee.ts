@@ -64,31 +64,35 @@ export default abstract class Destroyee extends MyComponent {
                 let beginTime = this.invcTimeBegin[atkIndex]
                 if (beginTime == null || curTime - beginTime > InvcTime) {
                     this.invcTimeBegin[atkIndex] = curTime;
-                    this._doHurtLogic(atk);
+                    this._doHurtLogic(atk, this._getHurtDir(data));
                 }
             }
         }
     }
 
-    _doHurtLogic(atk: Attack) {
-        let {death, dmg, crit} = this._calcHurt(atk);
+    _getHurtDir(data: CollisionData): number {
+        let hurtNodeCenterX = (data.minX + data.maxX) * 0.5;
+        return this.node.x < hurtNodeCenterX ? 1 : -1;
+    }
 
+    _doHurtLogic(atk: Attack, hurtDir: number) {
+        let {death, dmg, crit} = this._calcHurt(atk);
         atk.executeHitCallback(this.node, death, dmg, crit);
 
         if (!death) {
             this._showHurtColor();
             this.scheduleOnce(this._recoveryHurtColor.bind(this), 0.1);
             let pos: cc.Vec2 = this._getCenterPos();
-            this._hurt(pos, atk, dmg, crit);
+            this._hurt(pos, hurtDir, atk, dmg, crit);
         } else {
-            this.gotoDead(atk, dmg, crit);
+            this.gotoDead(hurtDir, atk, dmg, crit);
         }
     }
 
-    gotoDead(atk: Attack, dmg: number, crit: boolean) {
+    gotoDead(hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
         let pos: cc.Vec2 = this._getCenterPos();
         this.itemCtrlr.createItem(pos);
-        this._dead(pos, atk, dmg, crit);
+        this._dead(pos, hurtDir, atk, dmg, crit);
     }
 
     _getCenterPos(): cc.Vec2 {
@@ -108,6 +112,6 @@ export default abstract class Destroyee extends MyComponent {
     }
 
     abstract _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean};
-    abstract _hurt(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean);
-    abstract _dead(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean);
+    abstract _hurt(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean);
+    abstract _dead(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean);
 }
