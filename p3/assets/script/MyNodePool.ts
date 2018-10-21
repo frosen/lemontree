@@ -6,10 +6,12 @@
 export default class MyNodePool {
 
     pool: cc.Node[] = [];
+    compPool: any[] = [];
 
-    nodeCreateFunc: () => cc.Node = null;
+    nodeCreateFunc: (pool: MyNodePool) => cc.Node = null;
     name: string = "";
     parent: cc.Node = null;
+    compType: {prototype: cc.Component} = null;
 
     /**
      * 构造器
@@ -18,13 +20,14 @@ export default class MyNodePool {
      * @param 节点池名称 可为空
      * @param 节点的父节点 可空
      */
-    constructor(nodeCreateFunc: () => cc.Node, nodeCount: number, name: string = "", parent: cc.Node = null) {
+    constructor(nodeCreateFunc: (pool: MyNodePool) => cc.Node, nodeCount: number, name: string = "", parent: cc.Node = null, compType: {prototype: cc.Component} = null) {
         this.nodeCreateFunc = nodeCreateFunc;
         this.name = name;
         this.parent = parent;
+        this.compType = compType;
 
         for (let index = 0; index < nodeCount; index++) {
-            let n = nodeCreateFunc();
+            let n = nodeCreateFunc(this);
             this._put(n);
         }
     }
@@ -50,6 +53,11 @@ export default class MyNodePool {
         this.pool.push(node);
 
         this._setNodeUsing(node, using);
+
+        if (this.compType) {
+            let c = node.getComponent(this.compType);
+            this.compPool.push(c);
+        }
     }
 
     _setNodeUsing(node: cc.Node, b: boolean) {
@@ -73,6 +81,22 @@ export default class MyNodePool {
         return n;
     }
 
+    getComp(): any {
+        for (let index = 0; index < this.pool.length; index++) {
+            let node = this.pool[index];
+            if (node.active == false) {
+                node.active = true;
+                return this.compPool[index];
+            }
+        }
+
+        // 如果没有节点了，就自动添加
+        let n = this.nodeCreateFunc();
+        this._put(n, true);
+
+        return n.getComponent(this.compType);
+    }
+
     reclaim(node: cc.Node) {
         this._setNodeUsing(node, false);
     }
@@ -85,9 +109,29 @@ export default class MyNodePool {
             node.active = true;
             return node;
         } else {
-            let n = this.nodeCreateFunc();
-            this._put(n, true);
+            let l = this.pool.length;
+            let n: cc.Node;
+            for (let i = l; i <= index; i++) {
+                n = this.nodeCreateFunc();
+                this._put(n, true);
+            }
             return n;
+        }
+    }
+
+    getCompByIndex(index: number): any {
+        if (index < this.pool.length) {
+            let node = this.pool[index];
+            node.active = true;
+            return this.compPool[index];
+        } else {
+            let l = this.pool.length;
+            let n: cc.Node;
+            for (let i = l; i <= index; i++) {
+                n = this.nodeCreateFunc();
+                this._put(n, true);
+            }
+            return n.getComponent(this.compType);
         }
     }
 
@@ -97,6 +141,18 @@ export default class MyNodePool {
             let node = this.pool[i];
             node.active = false;
             i++;
+        }
+    }
+
+    each(call: (n: cc.Node, using: boolean) => void) {
+        for (const node of this.pool) {
+            call(node, node.active);
+        }
+    }
+
+    eachComp(call: (c: any, using: boolean) => void) {
+        for (let index = 0; index < this.pool.length; index++) {
+            call(this.compPool[index], this.pool[index].active);
         }
     }
 }

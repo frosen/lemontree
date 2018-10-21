@@ -51,7 +51,7 @@ export default class ItemCtrlr extends MyComponent {
             let itemComp = node.addComponent(ItemComp);
             itemComp.itemCtrlr = this;
             return node;
-        }, 20, "item", this.node);
+        }, 20, "item", this.node, ItemComp);
 
         // 加载所有的道具
         this._pushItemIntoInfo(ItemExp1);
@@ -103,14 +103,13 @@ export default class ItemCtrlr extends MyComponent {
     }
 
     _beginItemNode(itemName: string, pos: cc.Vec2, moveX: number, moveY: number) {
-        let node: cc.Node = this.pool.get();
-        let itemComp: ItemComp = node.getComponent(ItemComp);
+        let itemComp: ItemComp = this.pool.getComp();
 
         let {item, frames, times, magnetic} = this.itemInfos[itemName];
         itemComp.setData(item, frames, times);
         itemComp.watching = magnetic && this.heroAttri.magnetic;
 
-        node.position = pos;
+        itemComp.node.position = pos;
         itemComp.move(moveX, moveY);
     }
 

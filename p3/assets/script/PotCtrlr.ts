@@ -50,7 +50,7 @@ export default class PotCtrlr extends MyComponent {
             node.addComponent(Pot);
             node.setAnchorPoint(0.5, 0);
             return node;
-        }, 30, "pot", this.node);
+        }, 30, "pot", this.node, Pot);
 
         this._createShowingPots();
     }
@@ -123,9 +123,8 @@ export default class PotCtrlr extends MyComponent {
         for (const data of potDatas) {
             if (data.living == false) continue;
 
-            let node = this.pool.getByIndex(index);
-            node.setPosition(data.pos);
-            let pot = node.getComponent(Pot);
+            let pot: Pot = this.pool.getCompByIndex(index);
+            pot.node.setPosition(data.pos);
             let info = data.info;
             pot.setData(index, info.frame, info.c1, info.c2);
 

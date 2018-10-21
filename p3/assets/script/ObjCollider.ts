@@ -20,7 +20,7 @@ export class CollisionData {
 export class ObjCollider extends MyComponent {
 
     /** 回调函数 */
-    callback: (collisionDatas: CollisionData[])=>void = null;
+    callback: (collisionDatas: CollisionData[]) => void = null;
 
     /** 碰撞范围 为空的话则使用node的size*/
     @property(cc.Size)

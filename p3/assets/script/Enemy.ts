@@ -27,12 +27,7 @@ export default class Enemy extends Destroyee {
     static figureDisplay: FigureDisplay = null;
     static deathDisplay: DeathEffectDisplay = null;
 
-    /** 子敌人（子弹什么的） */
-    @property([cc.Prefab]) bulletPrefabs: cc.Prefab[] = [];
-    /** 子敌人的最大数量 */
-    @property([cc.Integer]) bulletsMaxCount: number[] = [];
-    /** 子敌人 */
-    bullets: {[name: string]: Bullet[];} = {};
+    @property debugMode: boolean = false;
 
     /** 用于控制器中的索引值 */
     ctrlrIndex: number = null;
@@ -43,6 +38,8 @@ export default class Enemy extends Destroyee {
     debuff: DebuffComp = null;
     /** 观察区碰撞组件 */
     watchCollider: ObjColliderForWatch = null;
+    /** 敌人的子弹属性（这个属性可以自带子子弹） */
+    bullet: Bullet = null;
 
     onLoad() {
         super.onLoad();
@@ -55,6 +52,9 @@ export default class Enemy extends Destroyee {
 
         this._createComp(BTComp);
 
+        this.bullet = this._createComp(Bullet);
+        this.bullet.needInitAttri = false;
+
         if (CC_EDITOR) return;
 
         if (!Enemy.ctrlr)
@@ -65,6 +65,12 @@ export default class Enemy extends Destroyee {
             Enemy.deathDisplay = cc.find("main/death_effect_layer").getComponent(DeathEffectDisplay);
     }
 
+    start() {
+        if (this.debugMode && !CC_EDITOR) {
+            this.bullet.init(Enemy.ctrlr.node, null, this.attri, this);
+        }
+    }
+
     lateUpdate() {
         // 超出地形则会死亡
         if (this.node.y < -1) {
@@ -72,59 +78,26 @@ export default class Enemy extends Destroyee {
         }
     }
 
+    init() {
+        this.bullet.init(Enemy.ctrlr.node, null, this.attri, this);
+    }
+
     /** 切换场景时候重置 */
     reset(index: number, lv: number) {
         this.ctrlrIndex = index;
         this.attri.resetVar(lv);
-        this.resetBullet(lv);
+        this.bullet.reset({lv: lv, enemy: this});
     }
 
     /** 切换场景时候隐藏 */
     onHide() {
-        this.clearBullet();
+        this.bullet.clear(this);
     }
 
-    // 子敌人 ========================================================
+    // 子弹 ========================================================
 
-    initBullet() { // ctrlr中调用
-        for (let index = 0; index < this.bulletPrefabs.length; index++) {
-            let prefab = this.bulletPrefabs[index];
-            let maxCount = this.bulletsMaxCount[index];
-            let name = prefab.name;
-
-            let enemys: Bullet[] = [];
-            for (let j = 0; j < maxCount; j++) {
-                let node = cc.instantiate(prefab);
-                Enemy.ctrlr.node.addChild(node, this.node.zIndex);
-                let bullet = node.getComponent(Bullet);
-                bullet.init(this.attri);
-                enemys.push(bullet);
-
-                node.active = false;
-            }
-            this.bullets[name] = enemys;
-        }
-    }
-
-    resetBullet(lv: number) {
-        for (const name in this.bullets) {
-            let bulletList: Bullet[] = this.bullets[name];
-            for (const bullet of bulletList) {
-                bullet.reset(lv);
-                bullet.clear();
-                bullet.node.active = false;
-            }
-        }
-    }
-
-    clearBullet() {
-        for (const name in this.bullets) {
-            let bulletList: Bullet[] = this.bullets[name];
-            for (const bullet of bulletList) {
-                bullet.clear();
-                bullet.node.active = false;
-            }
-        }
+    getSubBullet(name: string): Bullet {
+        return this.bullet.getSubBullet(name);
     }
 
     // 碰撞回调 ------------------------------------------------------------

@@ -82,7 +82,7 @@ export default abstract class Destroyee extends MyComponent {
         if (!death) {
             this._showHurtColor();
             this.scheduleOnce(this._recoveryHurtColor.bind(this), 0.1);
-            let pos: cc.Vec2 = this._getCenterPos();
+            let pos: cc.Vec2 = this.getCenterPos();
             this._hurt(pos, hurtDir, atk, dmg, crit);
         } else {
             this.gotoDead(hurtDir, atk, dmg, crit);
@@ -90,12 +90,12 @@ export default abstract class Destroyee extends MyComponent {
     }
 
     gotoDead(hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
-        let pos: cc.Vec2 = this._getCenterPos();
+        let pos: cc.Vec2 = this.getCenterPos();
         this.itemCtrlr.createItem(pos);
         this._dead(pos, hurtDir, atk, dmg, crit);
     }
 
-    _getCenterPos(): cc.Vec2 {
+    getCenterPos(): cc.Vec2 {
         let node = this.node;
         let xCenter = node.x + node.width * (0.5 - node.anchorX);
         let yCenter = node.y + node.height * (0.5 - node.anchorY);

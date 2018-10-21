@@ -161,7 +161,7 @@ export default class TerrainColliderClsn extends TerrainCollider {
 
         //========================================================
 
-        // 检测强制移动
+        // 检测强制移动（影响下一帧的位置）
         {
             let checkX = this.node.x - anchorW + size.width * 0.5;
             let checkY = this.node.y - anchorH - 1;

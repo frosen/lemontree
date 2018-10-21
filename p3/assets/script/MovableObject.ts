@@ -25,6 +25,8 @@ export class MovableObject extends MyComponent {
 
     /** x环境速度 */
     xEnvVelocity: number = 0;
+    /** 加上环境后的速度 */
+    xFinalVelocity: number = 0;
 
     xLastPos: number = 0;
     yLastPos: number = 0;
@@ -41,8 +43,9 @@ export class MovableObject extends MyComponent {
         this.yLastVelocity = this.yVelocity;
 
         // x
-        this.xVelocity = Math.min(Math.max(this.xVelocity, -VelocityMax), VelocityMax);
-        this.node.x += this.xVelocity + this.xEnvVelocity;
+        this.xFinalVelocity = this.xVelocity + this.xEnvVelocity;
+        this.xFinalVelocity = Math.min(Math.max(this.xFinalVelocity, -VelocityMax), VelocityMax);
+        this.node.x += this.xFinalVelocity;
 
         // y
         if (this.yVelocityEnabled) {
@@ -60,8 +63,8 @@ export class MovableObject extends MyComponent {
      */
     getDir(): {xDir: number, yDir: number} {
         let xDir = 0;
-        if (this.xVelocity > 0.001) xDir = 1;
-        else if (this.xVelocity < -0.001) xDir = -1;
+        if (this.xFinalVelocity > 0.001) xDir = 1;
+        else if (this.xFinalVelocity < -0.001) xDir = -1;
 
         let yDir = 0;
         if (this.yVelocity > 0.001) yDir = 1;

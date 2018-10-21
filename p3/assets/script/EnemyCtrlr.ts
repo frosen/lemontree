@@ -121,7 +121,7 @@ export default class EnemyCtrlr extends MyComponent {
                     let node = cc.instantiate(prefab);
                     parent.addChild(node);
                     let enemy = node.getComponent(Enemy);
-                    enemy.initBullet();
+                    enemy.init();
                     nodes.push(enemy);
                     node.active = false;
                 }

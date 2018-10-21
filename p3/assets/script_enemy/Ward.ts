@@ -5,6 +5,7 @@
 const {ccclass, property} = cc._decorator;
 
 import Enemy from "../script/Enemy";
+import BulletToFront from "./BulletToFront";
 
 @ccclass
 export default class Ward extends Enemy {
@@ -15,5 +16,14 @@ export default class Ward extends Enemy {
 
     turnAround() {
         this.node.scaleX *= -1;
+    }
+
+    fire() {
+        let pos = this.getCenterPos();
+        pos.x += this.node.scaleX * 10;
+
+        let b: BulletToFront = this.getSubBullet("a_bulletToFront") as BulletToFront;
+        b.node.setPosition(pos);
+        b.begin(this.node.scaleX);
     }
 }
