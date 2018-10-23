@@ -8,6 +8,7 @@ import Bullet from "../script/Bullet";
 import {MovableObject} from "../script/MovableObject";
 import TerrainCollider from "../script/TerrainCollider";
 import {CollisionType} from "../script/TerrainCtrlr";
+import BulletForEffect from "../script/BulletForEffect";
 
 const SPEED: number = 6;
 
@@ -27,6 +28,7 @@ export default class BulletToFront extends Bullet {
         this.mobj.xVelocity = dir * SPEED;
 
         // 展示启动效果
+        (this.getSubBullet("e_bulletToFrontBegin") as BulletForEffect).doEffectAt(this.node.position);
     }
 
     isBlocked() {
@@ -39,5 +41,6 @@ export default class BulletToFront extends Bullet {
         this.reclaimThisBullet();
 
         // 展示爆炸
+        (this.getSubBullet("e_bulletToFrontEnd") as BulletForEffect).doEffectAt(this.node.position);
     }
 }

@@ -93,6 +93,4 @@ export default class Bullet extends cc.Component {
     reclaimThisBullet() {
         this.thisPool.reclaim(this.node);
     }
-
-
 }

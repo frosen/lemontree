@@ -123,6 +123,10 @@ export default class Enemy extends Destroyee {
     _dead(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
         if (atk) Enemy.figureDisplay.showFigure(pos, hurtDir, dmg, crit, atk.getAttackColor());
         Enemy.deathDisplay.showDeathEffect(pos);
+        this._reclaim();
+    }
+
+    _reclaim() {
         Enemy.ctrlr.killEnemy(this);
     }
 
