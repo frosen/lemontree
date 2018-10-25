@@ -12,6 +12,8 @@ const TileLength: number = 32;
 
 const ForcedMoveX: number = 2;
 const ForcedMoveY: number = 10;
+const ForcedFlowY: number = 1;
+const ForcedFlowYMax: number = 7;
 
 /** 碰撞类型 */
 export enum CollisionType {
@@ -28,10 +30,12 @@ export enum CollisionType {
     entity = 3,
 }
 
-enum ForcedMoveType {
+/** 强制移动类型 */
+export enum ForcedMoveType {
     left,
     right,
-    up,
+    up, // 直接变换向上的速度
+    flow, // 缓慢增加向上的速度
 }
 
 const GidTypeList = [
@@ -52,7 +56,8 @@ const GidTypeList = [
     CollisionType.slope,
     CollisionType.entity,
     CollisionType.entity,
-    CollisionType.entity
+    CollisionType.entity,
+    CollisionType.none
 ]
 
 @ccclass
@@ -129,6 +134,7 @@ export class TerrainCtrlr extends MyComponent {
             case 13: return ForcedMoveType.right;
             case 14: return ForcedMoveType.left;
             case 15: return ForcedMoveType.up;
+            case 16: return ForcedMoveType.flow;
             default: return null;
         }
     }
@@ -277,21 +283,26 @@ export class TerrainCtrlr extends MyComponent {
     }
 
     /**
-     * 获取强制移动的各方向速率
+     * 计算强制移动的各方向速率
+     * @param x 位置
+     * @param y 位置
+     * @param oriVX 当前原x速度
+     * @param oriVY 当前原y速度
      */
-    getForcedMoveVel(x: number, y: number): {vX: number, vY: number} {
+    calcForcedMoveVel(x: number, y: number, oriVX: number, oriVY): {dir: ForcedMoveType, vX: number, vY: number} {
         let {tileX, tileY} = this._getTileIndex(x, y);
         let gid = this._getGid(tileX, tileY);
-        if (!gid) return {vX: 0, vY: 0};
+        if (!gid) return {dir: null, vX: oriVX, vY: oriVY};
 
         let dir = this._getForcedMoveDir(gid);
-        if (dir == null) return {vX: 0, vY: 0};
+        if (dir == null) return {dir: null, vX: oriVX, vY: oriVY};
 
         switch (dir) {
-            case ForcedMoveType.left: return {vX: ForcedMoveX * -1, vY: 0};
-            case ForcedMoveType.right: return {vX: ForcedMoveX , vY: 0};
-            case ForcedMoveType.up: return {vX: 0, vY: ForcedMoveY};
-            default: return {vX: 0, vY: 0};
+            case ForcedMoveType.left: return {dir: dir, vX: ForcedMoveX * -1, vY: oriVY};
+            case ForcedMoveType.right: return {dir: dir, vX: ForcedMoveX , vY: oriVY};
+            case ForcedMoveType.up: return {dir: dir, vX: oriVX, vY: ForcedMoveY};
+            case ForcedMoveType.flow:
+                return {dir: dir, vX: oriVX, vY: Math.min(oriVY + ForcedFlowY, ForcedFlowYMax)};
         }
     }
 

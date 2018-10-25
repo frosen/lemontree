@@ -5,7 +5,7 @@
 
 import {Hero} from "./Hero";
 
-import {CollisionType} from "./TerrainCtrlr";
+import {CollisionType, ForcedMoveType} from "./TerrainCtrlr";
 import {HeroDirLv} from "./HeroLooks";
 import Attack from "./Attack";
 import FigureDisplay from "./FigureDisplay";
@@ -387,6 +387,7 @@ class SMForHeroInHurt extends SMForHero {
         let hero = mgr.smObj;
         let yDir: number = hero.movableObj.getDir().yDir;
         let lastYVelocity: number = hero.movableObj.yLastVelocity;
+
         if (hero.terrainCollider.curYCollisionType != CollisionType.none &&
             yDir <= 0 && lastYVelocity <= 0) {
             if (hero.xMoveDir == 0) {
@@ -394,6 +395,8 @@ class SMForHeroInHurt extends SMForHero {
             } else {
                 mgr.changeStateTo(ActState.move);
             }
+        } else if (hero.terrainCollider.forcedMoveType == ForcedMoveType.flow) {
+            mgr.changeStateTo(ActState.jump);
         }
     }
 

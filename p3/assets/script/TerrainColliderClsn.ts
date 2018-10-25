@@ -6,7 +6,7 @@
 const {ccclass, property} = cc._decorator;
 
 import TerrainCollider from "./TerrainCollider";
-import {CollisionType} from "./TerrainCtrlr";
+import {CollisionType, ForcedMoveType} from "./TerrainCtrlr";
 
 @ccclass
 export default class TerrainColliderClsn extends TerrainCollider {
@@ -14,6 +14,7 @@ export default class TerrainColliderClsn extends TerrainCollider {
     /** 边缘类型，可以是none, entity或者slope，不在边缘则为空 */
     edgeType: CollisionType = null;
     backEdgeType: CollisionType = null;
+    forcedMoveType: ForcedMoveType = null;
 
     _checkCollision() {
         let saveX = this.node.x; // 在没有碰撞的情况下，x该到的位置
@@ -36,7 +37,8 @@ export default class TerrainColliderClsn extends TerrainCollider {
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkX, xDir);
                 let xPos = this.node.x - distance;
 
-                if (xDir > 0) xPos = Math.max(xPos, this.movableObj.xLastPos); // 第一次检测x碰撞，其后退不可超过上次点的位置，否则会有y轴判断的错误
+                // 第一次检测x碰撞，其后退不可超过上次点的位置，否则会有y轴判断的错误
+                if (xDir > 0) xPos = Math.max(xPos, this.movableObj.xLastPos);
                 else xPos = Math.min(xPos, this.movableObj.xLastPos);
 
                 this.node.x = xPos;
@@ -81,7 +83,8 @@ export default class TerrainColliderClsn extends TerrainCollider {
                 let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
                 let nodeYInMargin = this.node.y - distance;
 
-                if (this.movableObj.yLastPos - nodeYInMargin > -0.01) { // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
+                // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
+                if (this.movableObj.yLastPos - nodeYInMargin > -0.01) {
                     this.node.y = nodeYInMargin;
                     this.movableObj.yVelocity = 0;
                 } else {
@@ -165,9 +168,10 @@ export default class TerrainColliderClsn extends TerrainCollider {
         {
             let checkX = this.node.x - anchorW + size.width * 0.5;
             let checkY = this.node.y - anchorH - 1;
-            let {vX, vY} = this.terrainCtrlr.getForcedMoveVel(checkX, checkY);
+            let {dir, vX, vY} = this.terrainCtrlr.calcForcedMoveVel(checkX, checkY, 0, this.movableObj.yVelocity);
+            this.forcedMoveType = dir;
             this.movableObj.xEnvVelocity = vX; // x轴方向需要进行叠加
-            if (vY) this.movableObj.yVelocity = vY; // y轴方向直接改变当前速度，才可以和重力适配
+            this.movableObj.yVelocity = vY; // y轴方向直接改变当前速度，才可以和重力适配
         }
 
         //========================================================
