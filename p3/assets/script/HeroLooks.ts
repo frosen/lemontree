@@ -9,9 +9,9 @@ import {Hero} from "./Hero";
 
 /** 控制UI方向的三个指标 */
 export enum HeroDirLv {
-    move = 0,
-    attack = 1,
-    hurt = 2, //hurt方向指向hurt来源方向
+    move = 1,
+    attack,
+    hurt, //hurt方向指向hurt来源方向
 }
 
 @ccclass

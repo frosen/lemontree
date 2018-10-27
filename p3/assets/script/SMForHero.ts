@@ -467,8 +467,8 @@ class SMForHeroInJumpByWall extends SMForHero {
 
 // 无敌状态
 export enum InvcState {
-    on,
-    off
+    off,
+    on
 }
 
 // 无敌状态机

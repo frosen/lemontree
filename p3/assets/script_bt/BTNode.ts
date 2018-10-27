@@ -12,7 +12,7 @@ import BTCtrlr from "./BTCtrlr";
 /** 行为返回的结果 */
 export enum BTResult {
     /** 成功 */
-    suc,
+    suc = 1,
     /** 失败 */
     fail,
     /** 正在执行，用于action节点 */

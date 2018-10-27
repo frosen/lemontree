@@ -32,7 +32,7 @@ import {ItemExp} from "./ItemExp";
 import {ItemEfc} from "./ItemEfc";
 
 export enum HeroUsingType {
-    pickUp,
+    pickUp = 1,
     trigger,
     jumpDown,
 }

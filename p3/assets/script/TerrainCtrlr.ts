@@ -10,11 +10,6 @@ import MyComponent from "./MyComponent";
 /** 一个瓦片的标准长度 */
 const TileLength: number = 32;
 
-const ForcedMoveX: number = 2;
-const ForcedMoveY: number = 10;
-const ForcedFlowY: number = 1;
-const ForcedFlowYMax: number = 7;
-
 /** 碰撞类型 */
 export enum CollisionType {
     /** 无碰撞 */
@@ -32,10 +27,11 @@ export enum CollisionType {
 
 /** 强制移动类型 */
 export enum ForcedMoveType {
+    none,
     left,
     right,
-    up, // 直接变换向上的速度
     flow, // 缓慢增加向上的速度
+    up, // 直接变换向上的速度
 }
 
 const GidTypeList = [
@@ -135,7 +131,7 @@ export class TerrainCtrlr extends MyComponent {
             case 14: return ForcedMoveType.left;
             case 15: return ForcedMoveType.up;
             case 16: return ForcedMoveType.flow;
-            default: return null;
+            default: return ForcedMoveType.none;
         }
     }
 
@@ -283,27 +279,16 @@ export class TerrainCtrlr extends MyComponent {
     }
 
     /**
-     * 计算强制移动的各方向速率
+     * 获取强制移动类型
      * @param x 位置
      * @param y 位置
-     * @param oriVX 当前原x速度
-     * @param oriVY 当前原y速度
      */
-    calcForcedMoveVel(x: number, y: number, oriVX: number, oriVY): {dir: ForcedMoveType, vX: number, vY: number} {
+    getForcedMoveType(x: number, y: number): ForcedMoveType {
         let {tileX, tileY} = this._getTileIndex(x, y);
         let gid = this._getGid(tileX, tileY);
-        if (!gid) return {dir: null, vX: oriVX, vY: oriVY};
+        if (!gid) return ForcedMoveType.none;
 
-        let dir = this._getForcedMoveDir(gid);
-        if (dir == null) return {dir: null, vX: oriVX, vY: oriVY};
-
-        switch (dir) {
-            case ForcedMoveType.left: return {dir: dir, vX: ForcedMoveX * -1, vY: oriVY};
-            case ForcedMoveType.right: return {dir: dir, vX: ForcedMoveX , vY: oriVY};
-            case ForcedMoveType.up: return {dir: dir, vX: oriVX, vY: ForcedMoveY};
-            case ForcedMoveType.flow:
-                return {dir: dir, vX: oriVX, vY: Math.min(oriVY + ForcedFlowY, ForcedFlowYMax)};
-        }
+        return this._getForcedMoveDir(gid);
     }
 
     getGateData(x: number, y: number): number {

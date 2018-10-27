@@ -8,6 +8,11 @@ const {ccclass, property} = cc._decorator;
 import TerrainCollider from "./TerrainCollider";
 import {CollisionType, ForcedMoveType} from "./TerrainCtrlr";
 
+const ForcedMoveX: number = 2;
+const ForcedMoveY: number = 10;
+const ForcedFlowY: number = 1;
+const ForcedFlowYMax: number = 7;
+
 @ccclass
 export default class TerrainColliderClsn extends TerrainCollider {
 
@@ -46,52 +51,54 @@ export default class TerrainColliderClsn extends TerrainCollider {
         }
 
         //========================================================
-        let checkX = this.node.x - anchorW; // 从左往右计算上下的碰撞
-        let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
+        {
+            let checkX = this.node.x - anchorW; // 从左往右计算上下的碰撞
+            let checkXEnd = checkX + size.width - 1; // 使能通过标准的一个瓦片所以减1
 
-        let checkY = this.node.y - anchorH + (yDir > 0 ? size.height : 0);
+            let checkY = this.node.y - anchorH + (yDir > 0 ? size.height : 0);
 
-        let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
+            let {type, edgeLeft, edgeRight} = this.terrainCtrlr.checkCollideInHorizontalLine(checkX, checkXEnd, checkY);
 
-        this.curYCollisionType = type;
-        if (yDir < 0 && type != CollisionType.none) {
-            if (realDir > 0) {
-                this.edgeType = edgeRight;
-                this.backEdgeType = edgeLeft;
-            } else {
-                this.edgeType = edgeLeft;
-                this.backEdgeType = edgeRight;
-            }
-        } else {
-            this.edgeType = null;
-            this.backEdgeType = null;
-        }
-
-        if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
-            let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
-            this.node.y -= distance;
-            this.movableObj.yVelocity = 0;
-
-        } else if (this.curYCollisionType == CollisionType.slope) {
-            if (preTestXClsnType == CollisionType.entity) {
-                let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
-                this.node.y -= distance;
-            }
-
-        } else if (this.curYCollisionType == CollisionType.platform) { // 有只向下而且能越过的碰撞
-            if (yDir < 0) { // 只检测向下
-                let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
-                let nodeYInMargin = this.node.y - distance;
-
-                // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
-                if (this.movableObj.yLastPos - nodeYInMargin > -0.01) {
-                    this.node.y = nodeYInMargin;
-                    this.movableObj.yVelocity = 0;
+            this.curYCollisionType = type;
+            if (yDir < 0 && type != CollisionType.none) {
+                if (realDir > 0) {
+                    this.edgeType = edgeRight;
+                    this.backEdgeType = edgeLeft;
                 } else {
-                    this.curYCollisionType = CollisionType.none; // 过了最上一条边后就不可碰撞了
+                    this.edgeType = edgeLeft;
+                    this.backEdgeType = edgeRight;
                 }
             } else {
-                this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
+                this.edgeType = null;
+                this.backEdgeType = null;
+            }
+
+            if (this.curYCollisionType == CollisionType.entity) { // 有碰撞
+                let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
+                this.node.y -= distance;
+                this.movableObj.yVelocity = 0;
+
+            } else if (this.curYCollisionType == CollisionType.slope) {
+                if (preTestXClsnType == CollisionType.entity) {
+                    let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
+                    this.node.y -= distance;
+                }
+
+            } else if (this.curYCollisionType == CollisionType.platform) { // 有只向下而且能越过的碰撞
+                if (yDir < 0) { // 只检测向下
+                    let distance = this.terrainCtrlr.getDistanceToTileSide(checkY, yDir);
+                    let nodeYInMargin = this.node.y - distance;
+
+                    // 用上一个点是否在边缘之上来确定是否碰撞，可以用改变上一点的方式越过
+                    if (this.movableObj.yLastPos - nodeYInMargin > -0.01) {
+                        this.node.y = nodeYInMargin;
+                        this.movableObj.yVelocity = 0;
+                    } else {
+                        this.curYCollisionType = CollisionType.none; // 过了最上一条边后就不可碰撞了
+                    }
+                } else {
+                    this.curYCollisionType = CollisionType.none; // 不是向下则platform不可碰撞
+                }
             }
         }
 
@@ -166,12 +173,28 @@ export default class TerrainColliderClsn extends TerrainCollider {
 
         // 检测强制移动（影响下一帧的位置）
         {
-            let checkX = this.node.x - anchorW + size.width * 0.5;
-            let checkY = this.node.y - anchorH - 1;
-            let {dir, vX, vY} = this.terrainCtrlr.calcForcedMoveVel(checkX, checkY, 0, this.movableObj.yVelocity);
-            this.forcedMoveType = dir;
-            this.movableObj.xEnvVelocity = vX; // x轴方向需要进行叠加
-            this.movableObj.yVelocity = vY; // y轴方向直接改变当前速度，才可以和重力适配
+            let checkX = this.node.x - anchorW + (xDir > 0 ? size.width : 0);
+            let checkXEnd = checkX + size.width - 1;
+            let checkY = this.node.y - anchorH - 1; // -1了才是地面
+            let dir1 = this.terrainCtrlr.getForcedMoveType(checkX, checkY);
+            let dir2 = this.terrainCtrlr.getForcedMoveType(checkXEnd, checkY);
+            this.forcedMoveType = Math.max(dir1, dir2);
+
+            this.movableObj.xEnvVelocity = 0;
+            switch (this.forcedMoveType) {
+                case ForcedMoveType.left:
+                    this.movableObj.xEnvVelocity = -ForcedMoveX;
+                    break;
+                case ForcedMoveType.right:
+                    this.movableObj.xEnvVelocity = ForcedMoveX;
+                    break;
+                case ForcedMoveType.up:
+                    this.movableObj.yVelocity = ForcedMoveY;
+                    break;
+                case ForcedMoveType.flow:
+                    this.movableObj.yVelocity = Math.min(this.movableObj.yVelocity + ForcedFlowY, ForcedFlowYMax);
+                    break;
+            }
         }
 
         //========================================================

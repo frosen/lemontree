@@ -8,17 +8,6 @@ import {EcNumber, Attri} from "./Attri";
 /** 起跳速度 像素/帧 */
 const JumpVelocity: number = 4.5;
 
-export enum CardType {
-    /** 成功 */
-    suc,
-    /** 失败 */
-    fail,
-    /** 正在执行，用于action节点 */
-    running,
-    /** 无效果，用于set节点 */
-    continue,
-}
-
 @ccclass
 export default class AttriForHero extends Attri {
 
