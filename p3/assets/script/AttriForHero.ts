@@ -145,6 +145,42 @@ export default class AttriForHero extends Attri {
 
     // 特殊能力 3级 ========================================================
 
+    /** 大真理之剑 */
+    swordWave: number = 0;
+
+    /** 加农炮 */
+    cannon: number = 0;
+
+    /** 烈焰经理 */
+    flameSprite: number = 0;
+
+    /** 小蜜蜂炸弹 */
+    beeBomb: number = 0;
+
+    /** 灵魂储藏器 */
+    soulStorage: number = 0;
+
+    /** 跟我走炸弹 */
+    followMe: number = 0;
+
+    /** 腐烂苹果 */
+    rottenApple: number = 0;
+
+    /** 爆裂之甲 */
+    burstingArmor: number = 0;
+
+    /** 飞行鞋 */
+    bootsOfSpeed: number = 0;
+
+    /** 实力的证明 */
+    proofOfStrength: number = 0;
+
+    /** 霜冻之神 */
+    godOfFrost: number = 0;
+
+    /** 幻象 */
+    illusion: number = 0;
+
     // 重置 ========================================================
 
     _reset(attri: Attri) {

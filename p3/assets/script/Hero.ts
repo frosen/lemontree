@@ -15,6 +15,7 @@ import ObjColliderForWatch from "./ObjColliderForWatch";
 import {HeroLooks, HeroDirLv} from "./HeroLooks";
 import DebuffComp from "./DebuffComp";
 import ColorComp from "./ColorComp";
+import Bullet from "./Bullet";
 
 import AttriForHero from "./AttriForHero";
 import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
@@ -60,6 +61,8 @@ export class Hero extends MyComponent {
     debuff: DebuffComp = null;
     /** 颜色管理 */
     colorComp: ColorComp = null;
+    /** 子弹属性 */
+    bullet: Bullet = null;
 
     /** 英雄状态机 */
     sm: SMForHeroMgr = null;
@@ -87,6 +90,9 @@ export class Hero extends MyComponent {
         this.debuff = this.getComponent(DebuffComp);
         this.colorComp = this.getComponent(ColorComp);
 
+        this.bullet = this.getComponent(Bullet);
+        this.bullet.needInitAttri = false;
+
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
         this.smInvc = new SMForHeroInvcMgr(this);
 
@@ -112,6 +118,20 @@ export class Hero extends MyComponent {
 
         // 如果处于platform上，显示下跳按钮
         this.setUsingType(HeroUsingType.jumpDown, this.terrainCollider.curYCollisionType == CollisionType.platform);
+    }
+
+    // 初始化 ========================================================
+
+    reset() {
+
+    }
+
+    resetCardAbility() {
+        let attri = this.attri;
+
+        if (attri.swordWave > 0) {
+
+        }
     }
 
     // 动作 被控制器调用 -------------------------------------------------
@@ -298,6 +318,8 @@ export class Hero extends MyComponent {
     doAttackLogic() {
         this.attack.enabled = true;
         this.attack.changeIndex();
+
+        this.doSwordWave();
     }
 
     stopAttackLogic() {
@@ -353,5 +375,19 @@ export class Hero extends MyComponent {
         if (b) this.looks.endAttack();
         this.noAtkState = b;
         this.looks.endAttackAtOnce();
+    }
+
+    // 能力 ======================================================
+
+    getSubBullet(name: string): Bullet {
+        return this.bullet.getSubBullet(name);
+    }
+
+    doSwordWave() {
+        if (this.attri.swordWave == 0) return;
+
+        // let b: BulletToFront = this.getSubBullet("a_bulletToFront") as BulletToFront;
+        // b.node.setPosition(pos);
+        // b.begin(this.node.scaleX);
     }
 }

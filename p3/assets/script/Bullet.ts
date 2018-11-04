@@ -32,9 +32,11 @@ export default class Bullet extends cc.Component {
         this.parent = parent;
         this.thisPool = pool;
 
-        let atks = this.getComponentsInChildren(Attack);
-        for (const atk of atks) {
-            atk.attri = attri;
+        if (this.needInitAttri) {
+            let atks = this.getComponentsInChildren(Attack);
+            for (const atk of atks) {
+                atk.attri = attri;
+            }
         }
 
         this.initSubBullet(attri, data);
