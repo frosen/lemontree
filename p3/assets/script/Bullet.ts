@@ -57,10 +57,10 @@ export default class Bullet extends cc.Component {
             let prefab = this.bulletPrefabs[index];
             let maxCount = this.bulletsMaxCount[index];
             let name = prefab.name;
-            let pool = new MyNodePool((pool: MyNodePool): cc.Node => {
+            let pool = new MyNodePool((p: MyNodePool): cc.Node => {
                 let node = cc.instantiate(prefab);
                 let bullet = node.getComponent(Bullet);
-                bullet.init(this.parent, pool, attri, data);
+                bullet.init(this.parent, p, attri, data);
                 return node;
             }, maxCount, this.name + "sub", this.parent, Bullet);
             this.bullets[name] = pool;

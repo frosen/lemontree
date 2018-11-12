@@ -133,8 +133,9 @@ export class Hero extends MyComponent {
         let attri = this.attri;
 
         if (attri.swordWave > 0) {
-
+            (this.getSubBullet("a_swordWave") as SwordWave).reset(attri.swordWave);
         }
+
     }
 
     // 动作 被控制器调用 -------------------------------------------------
@@ -393,6 +394,6 @@ export class Hero extends MyComponent {
         let p = this.node.position;
         let dir = this.node.scaleX;
         sw.node.setPosition(p.x + dir * 65, p.y + 15);
-        sw.begin(dir);
+        sw.begin(dir, this.attack.index);
     }
 }

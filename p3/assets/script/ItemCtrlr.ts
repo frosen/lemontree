@@ -46,7 +46,7 @@ export default class ItemCtrlr extends MyComponent {
         this.heroAttri = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
 
         // 生成节点池
-        this.pool = new MyNodePool((): cc.Node => {
+        this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
             let node = new cc.Node();
             let itemComp = node.addComponent(ItemComp);
             itemComp.itemCtrlr = this;

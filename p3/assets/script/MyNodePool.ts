@@ -75,7 +75,7 @@ export default class MyNodePool {
         }
 
         // 如果没有节点了，就自动添加
-        let n = this.nodeCreateFunc();
+        let n = this.nodeCreateFunc(this);
         this._put(n, true);
 
         return n;
@@ -91,7 +91,7 @@ export default class MyNodePool {
         }
 
         // 如果没有节点了，就自动添加
-        let n = this.nodeCreateFunc();
+        let n = this.nodeCreateFunc(this);
         this._put(n, true);
 
         return n.getComponent(this.compType);
@@ -112,7 +112,7 @@ export default class MyNodePool {
             let l = this.pool.length;
             let n: cc.Node;
             for (let i = l; i <= index; i++) {
-                n = this.nodeCreateFunc();
+                n = this.nodeCreateFunc(this);
                 this._put(n, true);
             }
             return n;
@@ -128,7 +128,7 @@ export default class MyNodePool {
             let l = this.pool.length;
             let n: cc.Node;
             for (let i = l; i <= index; i++) {
-                n = this.nodeCreateFunc();
+                n = this.nodeCreateFunc(this);
                 this._put(n, true);
             }
             return n.getComponent(this.compType);

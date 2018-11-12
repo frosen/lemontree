@@ -146,7 +146,7 @@ export default class AttriForHero extends Attri {
     // 特殊能力 3级 ========================================================
 
     /** 大真理之剑 */
-    swordWave: number = 1;
+    swordWave: number = 0;
 
     /** 加农炮 */
     cannon: number = 0;

@@ -22,6 +22,10 @@ export default class Attack extends MyComponent {
     @property(Attri)
     attri: Attri = null;
 
+    /** 系数，可以控制此攻击伤害对于攻击力的比例 */
+    @property
+    rate: number = 1;
+
     @property
     magicAttack: boolean = false;
 
@@ -76,9 +80,11 @@ export default class Attack extends MyComponent {
         }
 
         // 伤害从0.8到1.2浮动
-        let r2 = Math.random();
-        let rate = 0.8 + r2 * 0.4;
-        dmg *= rate;
+        let float = 0.8 + Math.random() * 0.4;
+        dmg *= float;
+
+        // 乘以系数
+        dmg *= this.rate;
 
         return {dmg, crit};
     }

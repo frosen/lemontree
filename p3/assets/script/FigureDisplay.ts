@@ -26,7 +26,7 @@ export default class FigureDisplay extends MyComponent {
     z: number = 1;
 
     onLoad() {
-        this.pool = new MyNodePool((): cc.Node => {
+        this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
             return cc.instantiate(this.labelPrefab);
         }, 20, "FigureDisplay", this.node);
     }
