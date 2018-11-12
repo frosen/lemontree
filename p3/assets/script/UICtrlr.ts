@@ -39,7 +39,7 @@ export default class UICtrlr extends MyComponent {
 
     onLoad() {
         this.game = cc.find("main").getComponent(GameCtrlr);
-        this.hero = cc.find("main/hero_layer/hero").getComponent(Hero);
+        this.hero = cc.find("main/hero_layer/s_hero").getComponent(Hero);
 
         this.attri = this.hero.attri;
     }

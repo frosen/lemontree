@@ -98,8 +98,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": -125,
-      "y": 57
+      "x": 0,
+      "y": 0
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -633,8 +633,14 @@
       "__id__": 1
     },
     "_enabled": true,
-    "bulletPrefabs": [],
-    "bulletsMaxCount": []
+    "bulletPrefabs": [
+      {
+        "__uuid__": "34062fcd-6c2c-490f-a25c-9aa37814c3ce"
+      }
+    ],
+    "bulletsMaxCount": [
+      1
+    ]
   },
   {
     "__type__": "cc.PrefabInfo",

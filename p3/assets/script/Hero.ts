@@ -32,6 +32,8 @@ import Item from "./Item";
 import {ItemExp} from "./ItemExp";
 import {ItemEfc} from "./ItemEfc";
 
+import SwordWave from "../script_hero/SwordWave";
+
 export enum HeroUsingType {
     pickUp = 1,
     trigger,
@@ -92,6 +94,7 @@ export class Hero extends MyComponent {
 
         this.bullet = this.getComponent(Bullet);
         this.bullet.needInitAttri = false;
+        this.bullet.init(this.node.parent, null, this.attri, null);
 
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
         this.smInvc = new SMForHeroInvcMgr(this);
@@ -386,8 +389,10 @@ export class Hero extends MyComponent {
     doSwordWave() {
         if (this.attri.swordWave == 0) return;
 
-        // let b: BulletToFront = this.getSubBullet("a_bulletToFront") as BulletToFront;
-        // b.node.setPosition(pos);
-        // b.begin(this.node.scaleX);
+        let sw: SwordWave = this.getSubBullet("a_swordWave") as SwordWave;
+        let p = this.node.position;
+        let dir = this.node.scaleX;
+        sw.node.setPosition(p.x + dir * 65, p.y + 15);
+        sw.begin(dir);
     }
 }

@@ -43,7 +43,7 @@ export default class ItemCtrlr extends MyComponent {
     itemInfos: {[key: string]: ItemInfo;} = {};
 
     onLoad() {
-        this.heroAttri = cc.find("main/hero_layer/hero").getComponent("Hero").attri;
+        this.heroAttri = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
 
         // 生成节点池
         this.pool = new MyNodePool((): cc.Node => {

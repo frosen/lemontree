@@ -381,7 +381,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "hero",
+    "_name": "s_hero",
     "_objFlags": 0,
     "_parent": {
       "__id__": 11
@@ -1358,8 +1358,14 @@
       "__id__": 10
     },
     "_enabled": true,
-    "bulletPrefabs": [],
-    "bulletsMaxCount": []
+    "bulletPrefabs": [
+      {
+        "__uuid__": "34062fcd-6c2c-490f-a25c-9aa37814c3ce"
+      }
+    ],
+    "bulletsMaxCount": [
+      1
+    ]
   },
   {
     "__type__": "cc.PrefabInfo",

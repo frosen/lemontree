@@ -21,7 +21,7 @@ export default class BulletForEffect extends Bullet {
         this.reclaimThisBullet();
     }
 
-    doEffect(name: string) {
+    doEffect(name: string = null) {
         this.anim.play(name);
     }
 
