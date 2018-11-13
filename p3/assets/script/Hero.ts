@@ -109,6 +109,9 @@ export class Hero extends MyComponent {
 
     start() { // 在所有子节点（sprite）onLoad完成后
         this.colorComp.resetSp();
+
+        // test llytodo hero的第一次初始化还不知道在何时
+        this.reset();
     }
 
     update(dt: number) {
@@ -126,16 +129,7 @@ export class Hero extends MyComponent {
     // 初始化 ========================================================
 
     reset() {
-
-    }
-
-    resetCardAbility() {
-        let attri = this.attri;
-
-        if (attri.swordWave > 0) {
-            (this.getSubBullet("a_swordWave") as SwordWave).reset(attri.swordWave);
-        }
-
+        this.resetCardAbility();
     }
 
     // 动作 被控制器调用 -------------------------------------------------
@@ -385,6 +379,17 @@ export class Hero extends MyComponent {
 
     getSubBullet(name: string): Bullet {
         return this.bullet.getSubBullet(name);
+    }
+
+    eachBullet(name: string, call: (bullet: Bullet, using: boolean) => void) {
+        this.bullet.eachBullet(name, call);
+    }
+
+    resetCardAbility() {
+        let attri = this.attri;
+
+        this.eachBullet("a_swordWave", (b, _) => {b.reset(attri.swordWave);});
+        this.eachBullet("a_flameSprite", (b, _) => {b.reset({level: attri.flameSprite, hero: this});});
     }
 
     doSwordWave() {

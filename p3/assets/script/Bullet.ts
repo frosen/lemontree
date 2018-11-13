@@ -16,6 +16,8 @@ export default class Bullet extends cc.Component {
     @property([cc.Prefab]) bulletPrefabs: cc.Prefab[] = [];
     /** 子敌人的最大数量 */
     @property([cc.Integer]) bulletsMaxCount: number[] = [];
+    /** 子敌人能否自动生成 */
+    @property([cc.Boolean]) bulletsAutoCreate: boolean[] = [];
     /** 子敌人 */
     bullets: {[name: string]: MyNodePool;} = {};
 
@@ -63,6 +65,7 @@ export default class Bullet extends cc.Component {
                 bullet.init(this.parent, p, attri, data);
                 return node;
             }, maxCount, this.name + "sub", this.parent, Bullet);
+            pool.autoCreate = this.bulletsAutoCreate[index];
             this.bullets[name] = pool;
         }
     }
@@ -92,7 +95,15 @@ export default class Bullet extends cc.Component {
         return this.bullets[name].getComp();
     }
 
+    useThisBullet() {
+        this.node.active = true;
+    }
+
     reclaimThisBullet() {
         this.thisPool.reclaim(this.node);
+    }
+
+    eachBullet(name: string, call: (bullet: Bullet, using: boolean) => void) {
+        this.bullets[name].eachComp(call);
     }
 }

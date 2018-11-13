@@ -85,8 +85,10 @@ export default class AttriForHero extends Attri {
 
     // 特殊能力 1级 ========================================================
 
+    /** 二段跳 */
     doubleJump: boolean = false;
 
+    /** 冲刺 */
     dash: boolean = false;
 
     /** 踩墙反弹跳 */
@@ -148,11 +150,11 @@ export default class AttriForHero extends Attri {
     /** 大真理之剑 */
     swordWave: number = 0;
 
-    /** 加农炮 */
-    cannon: number = 0;
-
     /** 烈焰经理 */
     flameSprite: number = 0;
+
+    /** 加农炮 */
+    cannon: number = 0;
 
     /** 小蜜蜂炸弹 */
     beeBomb: number = 0;

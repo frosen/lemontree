@@ -23,6 +23,7 @@ export default class SwordWave extends BulletForEffect {
     }
 
     reset(level: number) {
+        super.reset(null);
         this.atk.rate = 0.3 * level + 0.2; // 0.5 0.8 1.1
     }
 

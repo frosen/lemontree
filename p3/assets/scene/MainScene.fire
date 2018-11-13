@@ -921,6 +921,7 @@
     "_enabled": true,
     "index": 0,
     "attri": null,
+    "rate": 1,
     "magicAttack": false,
     "hidingAtBeginning": true
   },
@@ -1361,10 +1362,18 @@
     "bulletPrefabs": [
       {
         "__uuid__": "34062fcd-6c2c-490f-a25c-9aa37814c3ce"
+      },
+      {
+        "__uuid__": "2dc87053-46ed-47cb-bc32-182f6a3472f1"
       }
     ],
     "bulletsMaxCount": [
+      1,
       1
+    ],
+    "bulletsAutoCreate": [
+      true,
+      false
     ]
   },
   {

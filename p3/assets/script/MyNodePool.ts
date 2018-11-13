@@ -5,13 +5,21 @@
 
 export default class MyNodePool {
 
+    /** 节点池 */
     pool: cc.Node[] = [];
+    /** 组件池，为了省去获得节点后再查找组件的过程 */
     compPool: any[] = [];
 
+    /** 节点生成函数 */
     nodeCreateFunc: (pool: MyNodePool) => cc.Node = null;
+    /** 名称 */
     name: string = "";
+    /** 父节点 */
     parent: cc.Node = null;
+    /** 要获得的组件类型 */
     compType: {prototype: cc.Component} = null;
+    /** 初始化以后，是否允许自动增加新节点 */
+    autoCreate: boolean = true;
 
     /**
      * 构造器
@@ -20,7 +28,9 @@ export default class MyNodePool {
      * @param 节点池名称 可为空
      * @param 节点的父节点 可空
      */
-    constructor(nodeCreateFunc: (pool: MyNodePool) => cc.Node, nodeCount: number, name: string = "", parent: cc.Node = null, compType: {prototype: cc.Component} = null) {
+    constructor(nodeCreateFunc: (pool: MyNodePool) => cc.Node, nodeCount: number, name: string = "",
+        parent: cc.Node = null, compType: {prototype: cc.Component} = null) {
+
         this.nodeCreateFunc = nodeCreateFunc;
         this.name = name;
         this.parent = parent;
@@ -74,11 +84,16 @@ export default class MyNodePool {
             }
         }
 
-        // 如果没有节点了，就自动添加
-        let n = this.nodeCreateFunc(this);
-        this._put(n, true);
+        if (this.autoCreate) {
+            // 如果没有节点了，就自动添加
+            let n = this.nodeCreateFunc(this);
+            this._put(n, true);
 
-        return n;
+            return n;
+        } else {
+            cc.error("this pool can not create new node");
+            return null;
+        }
     }
 
     getComp(): any {
@@ -90,11 +105,15 @@ export default class MyNodePool {
             }
         }
 
-        // 如果没有节点了，就自动添加
-        let n = this.nodeCreateFunc(this);
-        this._put(n, true);
-
-        return n.getComponent(this.compType);
+        if (this.autoCreate) {
+            // 如果没有节点了，就自动添加
+            let n = this.nodeCreateFunc(this);
+            this._put(n, true);
+            return n.getComponent(this.compType);
+        } else {
+            cc.error("this pool can not create new node");
+            return null;
+        }
     }
 
     reclaim(node: cc.Node) {
@@ -108,7 +127,7 @@ export default class MyNodePool {
             let node = this.pool[index];
             node.active = true;
             return node;
-        } else {
+        } else if (this.autoCreate) {
             let l = this.pool.length;
             let n: cc.Node;
             for (let i = l; i <= index; i++) {
@@ -116,6 +135,9 @@ export default class MyNodePool {
                 this._put(n, true);
             }
             return n;
+        } else {
+            cc.error("this pool can not create new node");
+            return null;
         }
     }
 
@@ -124,7 +146,7 @@ export default class MyNodePool {
             let node = this.pool[index];
             node.active = true;
             return this.compPool[index];
-        } else {
+        } else if (this.autoCreate) {
             let l = this.pool.length;
             let n: cc.Node;
             for (let i = l; i <= index; i++) {
@@ -132,6 +154,9 @@ export default class MyNodePool {
                 this._put(n, true);
             }
             return n.getComponent(this.compType);
+        } else {
+            cc.error("this pool can not create new node");
+            return null;
         }
     }
 

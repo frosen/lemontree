@@ -165,6 +165,7 @@
     "_enabled": true,
     "index": 0,
     "attri": null,
+    "rate": 1,
     "magicAttack": false,
     "hidingAtBeginning": false
   },
@@ -270,6 +271,9 @@
     ],
     "bulletsMaxCount": [
       3
+    ],
+    "bulletsAutoCreate": [
+      true
     ]
   },
   {
