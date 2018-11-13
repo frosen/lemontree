@@ -327,12 +327,10 @@ export class Hero extends MyComponent {
     // 击中回调 ========================================================
 
     onHitEnemy(atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) {
-        if (!atk.magicAttack) {
-            if (this.attri.energyGettingByEnemy && node.getComponent(Enemy)) {
-                this.attri.energy.add(10);
-            } else if (this.attri.energyGettingByPot && node.getComponent(Pot)) {
-                this.attri.energy.add(10);
-            }
+        if (this.attri.energyGettingByEnemy && node.getComponent(Enemy)) {
+            this.attri.energy.add(10);
+        } else if (this.attri.energyGettingByPot && node.getComponent(Pot)) {
+            this.attri.energy.add(10);
         }
     }
 

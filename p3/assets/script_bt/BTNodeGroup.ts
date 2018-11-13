@@ -6,7 +6,6 @@
 const {ccclass, property} = cc._decorator;
 
 import {BTNode} from "./BTNode";
-import BTComp from "./BTComp";
 
 @ccclass
 export default abstract class BTNodeGroup extends BTNode {

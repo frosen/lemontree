@@ -66,6 +66,7 @@ export default class Enemy extends Destroyee {
     }
 
     start() {
+        super.start();
         if (this.debugMode && !CC_EDITOR) {
             this.bullet.init(Enemy.ctrlr.node, null, this.attri, this);
         }

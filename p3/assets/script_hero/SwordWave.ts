@@ -1,5 +1,5 @@
 // SwordWave.ts
-// hero剑气 物理攻击 攻击id和普通攻击一致并且触发时间一定在hero后面 可以享受到普攻的一些特性
+// hero剑气 物理攻击 攻击id和普通攻击一致并且触发时间一定在hero后面 可以享受到普攻的一些特性但不增加energy
 // lly 2018.11.7
 
 const {ccclass, property} = cc._decorator;
@@ -8,7 +8,7 @@ import BulletForEffect from "../script/BulletForEffect";
 import {MovableObject} from "../script/MovableObject";
 import Attack from "../script/Attack";
 
-const SPEED: number = 3;
+const Speed: number = 3;
 
 @ccclass
 export default class SwordWave extends BulletForEffect {
@@ -31,6 +31,6 @@ export default class SwordWave extends BulletForEffect {
         this.atk.index = atkIndex;
         this.doEffect();
         this.node.scaleX = dir;
-        this.mobj.xVelocity = dir * SPEED;
+        this.mobj.xVelocity = dir * Speed;
     }
 }

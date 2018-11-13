@@ -9,13 +9,13 @@ import MyNodePool from "./MyNodePool";
 import {MovableObject} from "./MovableObject";
 import Gravity from "./Gravity";
 
-const fragDirs: number[][] = [
+const FragDirs: number[][] = [
     [0, 1], [0.7, 0.7], [1, 0], [0.7, -0.7],
     [0, -1], [-0.7, -0.7], [-1, 0], [-0.7, 0.7],
     [0, 1], [1, 0], [-1, 0], [0, -1]
 ];
-const speedRate: number = 3.5;
-const initYSpeed: number = 2;
+const SpeedRate: number = 3.5;
+const InitYSpeed: number = 2;
 
 @ccclass
 export default class PotFragmentCtrlr extends MyComponent {
@@ -62,9 +62,9 @@ export default class PotFragmentCtrlr extends MyComponent {
             let colorNum = Math.random();
             let color = colorNum < 0.75 ? color1 : color2;
 
-            let dirInfo = fragDirs[index];
-            let x = (dirInfo[0] + Math.random()) * speedRate;
-            let y = (dirInfo[1] + Math.random()) * speedRate + initYSpeed;
+            let dirInfo = FragDirs[index];
+            let x = (dirInfo[0] + Math.random()) * SpeedRate;
+            let y = (dirInfo[1] + Math.random()) * SpeedRate + InitYSpeed;
 
             let r = index * 30;
             let rt = (2400 + index * 100) * flip;

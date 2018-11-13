@@ -9,7 +9,7 @@ import {MovableObject} from "../script/MovableObject";
 import Attack from "../script/Attack";
 import { Hero } from "../script/Hero";
 
-const SPEED: number = 3;
+const EnergyCost: number = 1;
 
 @ccclass
 export default class FlameSprite extends Bullet {
@@ -25,6 +25,9 @@ export default class FlameSprite extends Bullet {
         for (let index = 0; index < 4; index++) {
             let flame = this.node.getChildByName("flame" + index.toString());
             this.flames.push(flame);
+
+            let atk = flame.getComponent(Attack);
+            atk.hitCallback = this.onHitEnemy.bind(this);
         }
     }
 
@@ -48,5 +51,9 @@ export default class FlameSprite extends Bullet {
         } else {
             this.reclaimThisBullet();
         }
+    }
+
+    onHitEnemy() {
+        this.hero.attri.energy.sub(EnergyCost);
     }
 }

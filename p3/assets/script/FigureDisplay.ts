@@ -9,7 +9,7 @@ const {ccclass, property} = cc._decorator;
 import MyComponent from "./MyComponent";
 import MyNodePool from "./MyNodePool";
 
-let lblActParams: number[][] = [
+const LblActParams: number[][] = [
     [17, 16], [3, 21], [23, 6], [11, 19],
     [22, 29], [2, 27], [20, 8], [13, 26]
 ];
@@ -76,9 +76,9 @@ export default class FigureDisplay extends MyComponent {
     }
 
     _doAction(labelNode: cc.Node, dir: number) {
-        let params = lblActParams[actParamsIndex];
+        let params = LblActParams[actParamsIndex];
         actParamsIndex++;
-        if (actParamsIndex >= lblActParams.length) actParamsIndex = 0;
+        if (actParamsIndex >= LblActParams.length) actParamsIndex = 0;
 
         let p = cc.v2((50 + params[0])  * dir, 0);
         let h = 30 + params[1];

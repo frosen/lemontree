@@ -77,7 +77,8 @@ export default class ObjCollisionCtrlr extends MyComponent {
                     if (collider.enabled) this.saveCollsionDataAndResetObj(collider, null, i);
 
                     for (const subCollider of collider.subColliders) {
-                        if (subCollider.enabled) this.saveCollsionDataAndResetObj(subCollider, collider, i);
+                        if (subCollider.enabled && subCollider.node.activeInHierarchy)
+                            this.saveCollsionDataAndResetObj(subCollider, collider, i);
                     }
                 }
             }

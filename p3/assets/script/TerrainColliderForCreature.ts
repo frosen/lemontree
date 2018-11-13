@@ -9,7 +9,6 @@ import TerrainColliderClsn from "./TerrainColliderClsn";
 import {CollisionType} from "./TerrainCtrlr";
 import {VelocityMax} from "./MovableObject";
 
-
 @ccclass
 export default class TerrainColliderForCreature extends TerrainColliderClsn {
 

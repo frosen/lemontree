@@ -10,7 +10,7 @@ import TerrainCollider from "../script/TerrainCollider";
 import {CollisionType} from "../script/TerrainCtrlr";
 import BulletForEffect from "../script/BulletForEffect";
 
-const SPEED: number = 6;
+const Speed: number = 6;
 
 @ccclass
 export default class BulletToFront extends Bullet {
@@ -25,7 +25,7 @@ export default class BulletToFront extends Bullet {
     }
 
     begin(dir: number) {
-        this.mobj.xVelocity = dir * SPEED;
+        this.mobj.xVelocity = dir * Speed;
 
         // 展示启动效果
         (this.getSubBullet("e_bulletToFrontBegin") as BulletForEffect).doEffectAt(this.node.position);

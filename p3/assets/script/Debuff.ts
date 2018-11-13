@@ -4,7 +4,7 @@
 
 import DebuffComp from "./DebuffComp";
 import FigureDisplay from "./FigureDisplay";
-import { Attri } from "./Attri";
+import {Attri} from "./Attri";
 import ColorComp from "./ColorComp";
 
 export class Debuff {

@@ -25,8 +25,6 @@ export class ActState {
     static jumpByWall: number = SMMgr.createSMState();
 }
 
-
-
 export class SMForHeroMgr extends SMMgr<Hero> {
     /**
      * 初始化状态机

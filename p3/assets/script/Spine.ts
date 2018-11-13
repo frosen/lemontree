@@ -5,7 +5,7 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
-import { Attri } from "./Attri";
+import {Attri} from "./Attri";
 
 @ccclass
 export default class Spine extends MyComponent {
