@@ -188,4 +188,16 @@ export default class EnemyCtrlr extends MyComponent {
             enemy.node.removeFromParent();
         }
     }
+
+    /**
+     * 获取活着的敌人数量
+     */
+    getLivingEnemyCount(): number {
+        let datas = this.datas[this.curArea];
+        let count: number = 0;
+        for (const data of datas) {
+            if (data.living) count++;
+        }
+        return count;
+    }
 }

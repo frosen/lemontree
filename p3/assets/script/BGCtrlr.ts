@@ -5,7 +5,7 @@
 const {ccclass, property, executionOrder} = cc._decorator;
 
 import MyComponent from "./MyComponent";
-import { TerrainCtrlr } from "./TerrainCtrlr";
+import {TerrainCtrlr} from "./TerrainCtrlr";
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.BGCtrlr)

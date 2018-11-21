@@ -6,6 +6,7 @@ const {ccclass, property} = cc._decorator;
 
 import Destroyee from "./Destroyee";
 import EnemyCtrlr from "./EnemyCtrlr";
+import {ItemCtrlr, ItemSource} from "./ItemCtrlr";
 
 import AttriForEnemy from "./AttriForEnemy";
 import Attack from "./Attack";
@@ -24,6 +25,7 @@ import Bullet from "./Bullet";
 export default class Enemy extends Destroyee {
 
     static ctrlr: EnemyCtrlr = null;
+    static itemCtrlr: ItemCtrlr = null;
     static figureDisplay: FigureDisplay = null;
     static deathDisplay: DeathEffectDisplay = null;
 
@@ -59,6 +61,8 @@ export default class Enemy extends Destroyee {
 
         if (!Enemy.ctrlr)
             Enemy.ctrlr = cc.find("main/enemy_layer").getComponent(EnemyCtrlr);
+        if (!Enemy.itemCtrlr)
+            Enemy.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
         if (!Enemy.figureDisplay)
             Enemy.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
         if (!Enemy.deathDisplay)
@@ -124,6 +128,7 @@ export default class Enemy extends Destroyee {
     _dead(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
         if (atk) Enemy.figureDisplay.showFigure(pos, hurtDir, dmg, crit, atk.getAttackColor());
         Enemy.deathDisplay.showDeathEffect(pos);
+        Enemy.itemCtrlr.createItem(pos, ItemSource.enemy, false);
         this._reclaim();
     }
 

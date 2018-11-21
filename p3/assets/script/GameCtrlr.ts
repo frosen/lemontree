@@ -12,7 +12,7 @@ import EnemyCtrlr from "./EnemyCtrlr";
 import SpineCtrlr from "./SpineCtrlr";
 import PotCtrlr from "./PotCtrlr";
 
-import ItemCtrlr from "./ItemCtrlr";
+import {ItemCtrlr} from "./ItemCtrlr";
 import Curtain from "./Curtain";
 
 import MyComponent from "./MyComponent";

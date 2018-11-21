@@ -8,7 +8,6 @@ import MyComponent from "./MyComponent";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ColorComp from "./ColorComp";
 import Attack from "./Attack";
-import ItemCtrlr from "./ItemCtrlr";
 
 /** 敌人对于一种伤害的无敌时间（毫秒） */
 const InvcTime: number = 1000;
@@ -22,17 +21,11 @@ export default abstract class Destroyee extends MyComponent {
     /** 颜色管理 */
     colorComp: ColorComp = null;
 
-    itemCtrlr: ItemCtrlr = null;
-
     onLoad() {
         this.objCollider = this._createComp(ObjCollider);
         this.objCollider.callback = this.onCollision.bind(this);
 
         this.colorComp = this._createComp(ColorComp);
-
-        if (CC_EDITOR) return;
-
-        this.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
     }
 
     start() { // 在所有子节点（sprite）onLoad完成后
@@ -91,7 +84,6 @@ export default abstract class Destroyee extends MyComponent {
 
     gotoDead(hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
         let pos: cc.Vec2 = this.getCenterPos();
-        this.itemCtrlr.createItem(pos);
         this._dead(pos, hurtDir, atk, dmg, crit);
     }
 

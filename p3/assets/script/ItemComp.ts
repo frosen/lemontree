@@ -6,7 +6,7 @@ const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
 import Item from "./Item";
-import ItemCtrlr from "./ItemCtrlr";
+import {ItemCtrlr} from "./ItemCtrlr";
 
 import {MovableObject} from "./MovableObject";
 import TerrainColliderClsn from "./TerrainColliderClsn";

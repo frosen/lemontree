@@ -17,8 +17,10 @@ export class ItemHealthPot extends ItemEfc {
         ];
     }
 
+    /** 恢复已损失血量的20% */
     doEffect() {
         let attri: AttriForHero = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
-        attri.hp.add(attri.maxHp.get() * 0.1);
+        let hpLoss = attri.maxHp.get() - attri.hp.get();
+        attri.hp.add(hpLoss * 0.2);
     }
 }

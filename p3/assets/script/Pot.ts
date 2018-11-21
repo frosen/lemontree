@@ -7,6 +7,7 @@ const {ccclass, property, executeInEditMode} = cc._decorator;
 import Destroyee from "./Destroyee";
 import PotCtrlr from "./PotCtrlr";
 import PotFragmentCtrlr from "./PotFragmentCtrlr";
+import {ItemCtrlr, ItemSource} from "./ItemCtrlr";
 
 import Attack from "./Attack";
 
@@ -18,6 +19,7 @@ export default class Pot extends Destroyee {
 
     static potCtrlr: PotCtrlr = null;
     static fragmentCtrlr: PotFragmentCtrlr = null;
+    static itemCtrlr: ItemCtrlr = null;
 
     ctrlrIndex: number = null;
     sp: cc.Sprite = null;
@@ -36,9 +38,10 @@ export default class Pot extends Destroyee {
 
         if (!Pot.potCtrlr)
             Pot.potCtrlr = cc.find("main/pot_layer").getComponent(PotCtrlr);
-
         if (!Pot.fragmentCtrlr)
             Pot.fragmentCtrlr = cc.find("main/fragment_layer").getComponent(PotFragmentCtrlr);
+        if (!Pot.itemCtrlr)
+            Pot.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
 
         this.hp = Math.floor(Math.random() * 3) + 1; //随机1-3
     }
@@ -62,8 +65,9 @@ export default class Pot extends Destroyee {
 
     }
 
-    _dead(pos: cc.Vec2, atk: Attack, dmg: number, crit: boolean) {
+    _dead(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
         Pot.fragmentCtrlr.showFragments(pos, this.c1, this.c2);
+        Pot.itemCtrlr.createItem(pos, ItemSource.pot, false);
         Pot.potCtrlr.killPot(this);
     }
 }

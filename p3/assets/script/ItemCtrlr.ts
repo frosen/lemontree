@@ -6,6 +6,9 @@ const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
 import AttriForHero from "./AttriForHero";
+import EnemyCtrlr from "./EnemyCtrlr";
+import PotCtrlr from "./PotCtrlr";
+
 import MyNodePool from "./MyNodePool";
 
 import ItemComp from "./ItemComp";
@@ -30,20 +33,41 @@ class ItemInfo {
     }
 }
 
+export enum ItemSource {
+    enemy,
+    pot
+}
+
 @ccclass
-export default class ItemCtrlr extends MyComponent {
+export class ItemCtrlr extends MyComponent {
 
     @property([cc.Node])
     showingItems: cc.Node[] = [];
 
     heroAttri: AttriForHero = null;
+    enemyCtrlr: EnemyCtrlr = null;
+    potCtrlr: PotCtrlr = null;
 
     pool: MyNodePool = null;
 
     itemInfos: {[key: string]: ItemInfo;} = {};
 
+    // ========================================================
+
+    /** 经验基数 */
+    expBase: number = 0;
+    /** 经验池 */
+    expPool: number = 0;
+
+    /** 物品掉落概率池 */
+    mfRate: number = 0;
+    /** 高级物品掉落概率池 */
+    adMfRate: number = 0;
+
     onLoad() {
         this.heroAttri = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
+        this.enemyCtrlr = cc.find("main/enemy_layer").getComponent(EnemyCtrlr);
+        this.potCtrlr = cc.find("main/pot_layer").getComponent(PotCtrlr);
 
         // 生成节点池
         this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
@@ -102,10 +126,10 @@ export default class ItemCtrlr extends MyComponent {
         }
     }
 
-    _beginItemNode(itemName: string, pos: cc.Vec2, moveX: number, moveY: number) {
+    _beginItemNode(itemName: new () => any, pos: cc.Vec2, moveX: number, moveY: number) {
         let itemComp: ItemComp = this.pool.getComp();
 
-        let {item, frames, times, magnetic} = this.itemInfos[itemName];
+        let {item, frames, times, magnetic} = this.itemInfos[getClassName(itemName)];
         itemComp.setData(item, frames, times);
         itemComp.watching = magnetic && this.heroAttri.magnetic;
 
@@ -115,19 +139,49 @@ export default class ItemCtrlr extends MyComponent {
 
     // 生成道具 ========================================================
 
-    createItem(pos: cc.Vec2) {
+    /**
+     * 生成道具
+     * @param pos 生成位置
+     * @param source 来源
+     * @param advanced 高级的可以获取更多更好的道具
+     */
+    createItem(pos: cc.Vec2, source: ItemSource, advanced: boolean) {
         // 计算有几个道具，分别是什么
-        let itemNames = ["ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1", "ItemHealthPot"];
+        // let itemNames = ["ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1", "ItemHealthPot"];
+        let itemNames: (new () => any)[];
 
-        // 开始节点
+        if (advanced) {
+            itemNames = this._getItemsFromAdvaced();
+        } else if (source == ItemSource.enemy) {
+            let count = this.enemyCtrlr.getLivingEnemyCount();
+            if (count == 1) {
+                itemNames = this._getItemsFromLastEnemy();
+            } else {
+                itemNames = this._getItemsFromNormal();
+            }
+        } else {
+            let count = this.potCtrlr.getPotRemainsCount();
+            if (count == 1) {
+                itemNames = this._getItemsFromLastPot();
+            } else {
+                itemNames = this._getItemsFromNormal();
+            }
+        }
+        itemNames = [ItemHealthPot];
+        this.createItemByName(pos, itemNames);
+    }
+
+    createItemByName(pos: cc.Vec2, items: (new () => any)[]) {
         let xNum = 0;
+        let yNum = 7;
         let xDirIsLeft = true;
-        for (const name of itemNames) {
-            let x = xNum * (xDirIsLeft ? -1 : 1);
-            let y = 7 + Math.random() * 0.5;
-            this._beginItemNode(name, pos, x, y);
+        for (const item of items) {
+            let x = (xNum + Math.random()) * (xDirIsLeft ? -1 : 1);
+            let y = yNum + Math.random();
+            this._beginItemNode(item, pos, x, y);
 
-            xNum = 0.1 + Math.random() * 0.8;
+            xNum += 0.2;
+            yNum -= 0.2;
             xDirIsLeft = !xDirIsLeft;
         }
     }
@@ -135,6 +189,78 @@ export default class ItemCtrlr extends MyComponent {
     removeItem(itemComp: ItemComp) {
         let node: cc.Node = itemComp.node;
         this.pool.reclaim(node);
+    }
+
+    _getItemsFromNormal(): (new () => any)[] {
+        let card = this._getCardItem();
+        if (card) return card;
+
+        let r = Math.random();
+        if (r < 0.1) {
+            return this._getEfcItem();
+        } else {
+            return this._getExpItem();
+        }
+    }
+
+    _getItemsFromAdvaced(): (new () => any)[] {
+        let card = this._getCardItemByAdvanced();
+        if (card) return card;
+
+        let r = Math.random();
+        if (r < 0.3) {
+            return this._getExtraExpItem();
+        } else {
+            return this._getEfcItem();
+        }
+    }
+
+    _getItemsFromLastEnemy(): (new () => any)[] {
+        let card = this._getCardItem();
+        if (card) return card;
+
+        let r = Math.random();
+        if (r < 0.1) {
+            return this._getExtraExpItem();
+        } else {
+            return this._getEfcItem();
+        }
+    }
+
+    _getItemsFromLastPot(): (new () => any)[] {
+        let card = this._getCardItem();
+        if (card) return card;
+
+        let r = Math.random();
+        if (r < 0.6) {
+            return this._getHpItem();
+        } else {
+            return this._getExpItem();
+        }
+    }
+
+    _getCardItem(): (new () => any)[] {
+
+    }
+
+    _getCardItemByAdvanced(): (new () => any)[] {
+
+    }
+
+    _getEfcItem(): (new () => any)[] {
+
+    }
+
+    _getExpItem(): (new () => any)[] {
+
+    }
+
+    _getExtraExpItem(): (new () => any)[] {
+
+    }
+
+    _getHpItem(): (new () => any)[] {
+        return [ItemHealthPot];
     }
 
     // ========================================================

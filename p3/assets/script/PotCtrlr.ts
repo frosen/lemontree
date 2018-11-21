@@ -142,4 +142,16 @@ export default class PotCtrlr extends MyComponent {
             pot.node.removeFromParent();
         }
     }
+
+    /**
+     * 获取还存在的pot的数量
+     */
+    getPotRemainsCount(): number {
+        let datas = this.datas[this.curArea];
+        let count: number = 0;
+        for (const data of datas) {
+            if (data.living) count++;
+        }
+        return count;
+    }
 }
