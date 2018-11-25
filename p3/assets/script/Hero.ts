@@ -327,9 +327,9 @@ export class Hero extends MyComponent {
     // 击中回调 ========================================================
 
     onHitEnemy(atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) {
-        if (this.attri.energyGettingByEnemy && node.getComponent(Enemy)) {
+        if (this.attri.energyGettingByEnemy > 0 && node.getComponent(Enemy)) {
             this.attri.energy.add(10);
-        } else if (this.attri.energyGettingByPot && node.getComponent(Pot)) {
+        } else if (this.attri.energyGettingByPot > 0 && node.getComponent(Pot)) {
             this.attri.energy.add(10);
         }
     }
@@ -337,7 +337,7 @@ export class Hero extends MyComponent {
     // 场景切换回调 ========================================================
 
     onChangeArea() {
-        if (this.attri.energyGettingByArea && this.attri.energy.get() < 100) {
+        if (this.attri.energyGettingByArea > 0 && this.attri.energy.get() < 100) {
             this.attri.energy.set(100);
         }
     }

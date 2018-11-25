@@ -14,7 +14,7 @@ import MyNodePool from "./MyNodePool";
 import ItemComp from "./ItemComp";
 import Item from "./Item";
 
-import {ItemExp1} from "./ItemExp";
+import {ItemExp, ItemExp1} from "./ItemExp";
 import {ItemHealthPot} from "./ItemEfc";
 
 class ItemInfo {
@@ -54,8 +54,12 @@ export class ItemCtrlr extends MyComponent {
 
     // ========================================================
 
+    /** 会按照从高到低的顺序排列经验掉落，便于遍历查找合适的 */
+    expList: ItemExp[] = [];
     /** 经验基数 */
     expBase: number = 0;
+    /** 经验最小值 */
+    expMin: ItemExp = null;
     /** 经验池 */
     expPool: number = 0;
 
@@ -77,9 +81,10 @@ export class ItemCtrlr extends MyComponent {
             return node;
         }, 20, "item", this.node, ItemComp);
 
-        // 加载所有的道具
+        // 加载所有经验掉落 （按照经验从高到低的顺序）
         this._pushItemIntoInfo(ItemExp1);
 
+        // 加载所有的道具
         this._pushItemIntoInfo(ItemHealthPot);
 
         // 异步加载道具纹理，生成列表
@@ -90,6 +95,21 @@ export class ItemCtrlr extends MyComponent {
             }
             this._onGotFrames(frames);
         });
+
+        // test llytodo
+        this.expBase = 20;
+        for (const expItem of this.expList) {
+            if (expItem.getExp() <= this.expBase) {
+                this.expMin = expItem;
+                break;
+            }
+        }
+    }
+
+    _pushExpItemIntoInfo(itemType: {new()}) {
+        let item: ItemExp = new itemType();
+        this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
+        this.expList.push(item);
     }
 
     _pushItemIntoInfo(itemType: {new()}) {
@@ -131,7 +151,7 @@ export class ItemCtrlr extends MyComponent {
 
         let {item, frames, times, magnetic} = this.itemInfos[getClassName(itemName)];
         itemComp.setData(item, frames, times);
-        itemComp.watching = magnetic && this.heroAttri.magnetic;
+        itemComp.watching = magnetic && this.heroAttri.magnetic > 0;
 
         itemComp.node.position = pos;
         itemComp.move(moveX, moveY);
@@ -148,27 +168,27 @@ export class ItemCtrlr extends MyComponent {
     createItem(pos: cc.Vec2, source: ItemSource, advanced: boolean) {
         // 计算有几个道具，分别是什么
         // let itemNames = ["ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1", "ItemHealthPot"];
-        let itemNames: (new () => any)[];
+        let items: (new () => any)[];
 
         if (advanced) {
-            itemNames = this._getItemsFromAdvaced();
+            items = this._getItemsFromAdvaced();
         } else if (source == ItemSource.enemy) {
             let count = this.enemyCtrlr.getLivingEnemyCount();
             if (count == 1) {
-                itemNames = this._getItemsFromLastEnemy();
+                items = this._getItemsFromLastEnemy();
             } else {
-                itemNames = this._getItemsFromNormal();
+                items = this._getItemsFromNormal();
             }
         } else {
             let count = this.potCtrlr.getPotRemainsCount();
             if (count == 1) {
-                itemNames = this._getItemsFromLastPot();
+                items = this._getItemsFromLastPot();
             } else {
-                itemNames = this._getItemsFromNormal();
+                items = this._getItemsFromNormal();
             }
         }
-        itemNames = [ItemHealthPot];
-        this.createItemByName(pos, itemNames);
+
+        if (items) this.createItemByName(pos, items);
     }
 
     createItemByName(pos: cc.Vec2, items: (new () => any)[]) {
@@ -240,7 +260,7 @@ export class ItemCtrlr extends MyComponent {
     }
 
     _getCardItem(): (new () => any)[] {
-
+        return null;
     }
 
     _getCardItemByAdvanced(): (new () => any)[] {
@@ -252,11 +272,67 @@ export class ItemCtrlr extends MyComponent {
     }
 
     _getExpItem(): (new () => any)[] {
-
+        if (this.expPool < 1) { // 50%留 50%放基数
+            if (Math.random() < 0.5) {
+                this.expPool += this.expBase;
+                return null;
+            } else {
+                this.expPool += this.expBase - this.expMin.getExp();
+                return [this.expMin.constructor as (new () => any)];
+            }
+        } else if (this.expPool < this.expMin.getExp() * 7) { // 20%留 50%放基数 15%全放 15%加倍全放
+            let r = Math.random();
+            if (r < 0.2) {
+                this.expPool += this.expBase;
+                return null;
+            } else if (r < 0.7) {
+                this.expPool += this.expBase - this.expMin.getExp();
+                return [this.expMin.constructor as (new () => any)];
+            } else if (r < 0.85) {
+                let exp = this.expPool;
+                this.expPool -= exp;
+                return this._createExpItems(exp);
+            } else {
+                let exp = this.expPool * 2;
+                this.expPool -= exp;
+                return this._createExpItems(exp);
+            }
+        } else {
+            if (Math.random() < 0.5) {
+                let exp = this.expPool;
+                this.expPool -= exp;
+                return this._createExpItems(exp);
+            } else {
+                let exp = this.expPool * 2;
+                this.expPool -= exp;
+                return this._createExpItems(exp);
+            }
+        }
     }
 
     _getExtraExpItem(): (new () => any)[] {
+        let exp = this.expBase * (6 + Math.floor(Math.random() * 3));
+        let expItems = this._createExpItems(exp);
 
+        let minExpCount = (4 + Math.floor(Math.random() * 3));
+        for (let _ = 0; _ < minExpCount; _++) {
+            expItems.push(this.expMin.constructor as (new () => any));
+        }
+        return expItems;
+    }
+
+    _createExpItems(exp: number): (new () => any)[] {
+        let expItems: (new () => any)[] = [];
+        for (let index = 0; index < this.expList.length;) {
+            const expItem = this.expList[index];
+            if (exp > expItem.getExp()) {
+                expItems.push(expItem.constructor as (new () => any));
+                exp -= expItem.getExp();
+            } else {
+                index++;
+            }
+        }
+        return expItems;
     }
 
     _getHpItem(): (new () => any)[] {

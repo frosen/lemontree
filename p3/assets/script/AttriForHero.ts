@@ -33,36 +33,6 @@ export default class AttriForHero extends Attri {
     /** 冷静 增加被击中后的无敌时间 0.5 + 0.01 * 等级 / 进入地形的无敌时间 等级 * 0.35 */
     calmness: EcNumber = new EcNumber(0);
 
-    // 卡片 ========================================================
-
-    _cardArray: number[] = [];
-    _cardArrayForCheck: number[] = [];
-
-    /**
-     * 设置卡片状态
-     * @param index 从1开始
-     * @param 0是没有，1往后是有
-     */
-    setCardState(index: number, s: number) {
-        this._cardArray[index] = s;
-        this._cardArrayForCheck[index] = s;
-    }
-
-    /**
-     * 获取卡片状态
-     * @param index 从1开始
-     */
-    getCardState(index: number): number {
-        let card = this._cardArray[index];
-        if (card == undefined) return 0;
-
-        if (this._cardArrayForCheck[index] != card) {
-            throw new Error("card check wrong!");
-        }
-
-        return card;
-    }
-
     // hero特有属性 ========================================================
 
     /** 闪躲率 */
@@ -83,41 +53,111 @@ export default class AttriForHero extends Attri {
     /** 最大冲刺数量 */
     maxDashCount: EcNumber = new EcNumber(0);
 
+    // 卡片 ========================================================
+
+    /**
+     * 36种类型，12种一类，三类分别有1个等级，2个等级，3个等级
+     */
+    cardList: number[] = [];
+    cardListForCheck: number[] = [];
+
+    cardNames: string[] = [
+        "doubleJump",
+        "dash",
+        "jumpingByWall",
+        "magnetic",
+        "enemyDisplay",
+        "fastHitRecovery",
+        "trapDefence",
+        "energyGettingByEnemy",
+        "energyGettingByPot",
+        "energyGettingByArea",
+        "extraMaxHp",
+        "magicPower",
+        "itemKeeping",
+        "bossSlowing",
+        "fullHpPower",
+        "nearDeathPower",
+        "hpRecoveryPower",
+        "extraSpace",
+        "learningAbility",
+        "debuffResistent",
+        "extraAtk",
+        "extraMagicAtk",
+        "executePower",
+        "defence",
+        "swordWave",
+        "flameSprite",
+        "cannon",
+        "beeBomb",
+        "soulStorage",
+        "followMe",
+        "rottenApple",
+        "burstingArmor",
+        "bootsOfSpeed",
+        "proofOfStrength",
+        "godOfFrost",
+        "illusion",
+    ];
+
+    /** 增加卡片 */
+    addCard(index) {
+        let curCardCount = this.cardList[index] + 1;
+        this.cardList[index] = curCardCount;
+        this.cardListForCheck[index] = curCardCount;
+    }
+
+    /** 获取尚未获得的卡片的列表 */
+    getNoObtainedCards(): number[] {
+        let cards: number[] = [];
+        for (let index = 0; index < this.cardList.length; index++) {
+            const card = this.cardList[index];
+            if (index < 12) {
+                if (card < 1) cards.push(index);
+            } else if (index < 24) {
+                if (card < 2) cards.push(index);
+            } else {
+                if (card < 3) cards.push(index);
+            }
+        }
+        return cards;
+    }
+
     // 特殊能力 1级 ========================================================
 
     /** 二段跳 */
-    doubleJump: boolean = false;
+    doubleJump: number = 0;
 
     /** 冲刺 */
-    dash: boolean = false;
+    dash: number = 0;
 
     /** 踩墙反弹跳 */
-    jumpingByWall: boolean = false;
+    jumpingByWall: number = 0;
 
     /** 磁力吸附金币 */
-    magnetic: boolean = false;
+    magnetic: number = 0;
 
     /** 地图中显示敌人 */
-    enemyDisplay: boolean = false;
+    enemyDisplay: number = 0;
 
     /** 硬直恢复 */
-    fastHitRecovery: boolean = false;
+    fastHitRecovery: number = 0;
 
     /** 碰到机关不会硬直 */
-    trapDefence: boolean = false;
+    trapDefence: number = 0;
 
     /** 击中敌人获取能量 */
-    energyGettingByEnemy: boolean = false;
+    energyGettingByEnemy: number = 0;
     /** 击中罐子获取能量 */
-    energyGettingByPot: boolean = false;
+    energyGettingByPot: number = 0;
     /** 区域变化获取能量 */
-    energyGettingByArea: boolean = false;
+    energyGettingByArea: number = 0;
 
     /** 额外血量 */
-    extraMaxHp: boolean = false;
+    extraMaxHp: number = 0;
 
     /** 魔法能力 蓄力炮增加蓄力速度，火圈增加半径，跟踪弹减少cd，死亡炸弹增加概率，寒冰增加冰冻时间，分身增加攻击距离 */
-    magicPower: boolean = false;
+    magicPower: number = 0;
 
     // 特殊能力 2级 ========================================================
 
@@ -200,7 +240,7 @@ export default class AttriForHero extends Attri {
         hattri.xSpeed.set(3);
         hattri.ySpeed.set(JumpVelocity);
 
-        // test
+        // test llytodo
         hattri.atkDmg.set(20);
         hattri.critRate.set(0.03);
         hattri.critDmgRate.set(1.5);
@@ -210,6 +250,29 @@ export default class AttriForHero extends Attri {
         hattri.maxJumpCount.set(2);
 
         hattri.evade.set(0.5);
+    }
+
+    _resetToOrigin(hattri: AttriForHero) {
+
+    }
+
+    _resetByAbility(hattri: AttriForHero) {
+
+    }
+
+    _resetByCards(hattri: AttriForHero) {
+        for (let index = 0; index < this.cardList.length; index++) {
+            let card = this.cardList[index];
+            if (this.cardListForCheck[index] != card) { // 检测
+                throw new Error("card check wrong!");
+            }
+            let cardName = this.cardNames[index];
+            this[cardName] = card;
+        }
+    }
+
+    _resetByItems(hattri: AttriForHero) {
+
     }
 
     _resetVar(attri: Attri) {

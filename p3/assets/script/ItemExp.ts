@@ -19,6 +19,6 @@ export class ItemExp1 extends ItemExp {
     }
 
     getExp(): number {
-        return 250;
+        return 20;
     }
 }

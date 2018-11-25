@@ -82,14 +82,14 @@ class SMForHeroInJumpAccelerating extends SMForHero {
         let curSt = mgr.curState;
 
         if (curSt == ActState.dash) {
-            if (mgr.smObj.attri.jumpingByWall &&
+            if (mgr.smObj.attri.jumpingByWall > 0 &&
                 mgr.smObj.terrainCollider.edgeType == CollisionType.entity) { //撞墙跳
                 mgr.changeStateTo(ActState.jumpByWall);
             }
             return false;
 
         } else if (curSt == ActState.hurt) { // 如果有快速恢复的能力，并且有额外的跳跃次数，则恢复硬直
-            if (mgr.smObj.attri.fastHitRecovery && mgr.smObj.attri.jumpCount.get() > 0) {
+            if (mgr.smObj.attri.fastHitRecovery > 0 && mgr.smObj.attri.jumpCount.get() > 0) {
                 mgr.smObj.looks.showHitRecovery();
                 return true;
             } else {
@@ -319,7 +319,7 @@ class SMForHeroInHurt extends SMForHero {
             }
         }
 
-        if (hero.attri.trapDefence && atk.attri.getComponent(Spine)) {
+        if (hero.attri.trapDefence > 0 && atk.attri.getComponent(Spine)) {
             let death = this._calcHurt(mgr);
             if (!death) hero.beginInvcState(hero.attri.invcTimeForHurt.get() + 0.5);
             return false;

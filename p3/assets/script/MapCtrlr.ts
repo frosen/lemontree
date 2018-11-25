@@ -25,12 +25,18 @@ class TriggerJson {
     id: number;
 }
 
+/** 场景属性，记录当前场景的一些数据 */
+export class SceneAttri {
+    cardIndexs: number[] = [];
+}
+
 /** 一个场景的属性 */
 class SceneJson {
     areas: AreaJson[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
     spines: TriggerJson[][];
+    attri: SceneAttri;
 }
 
 /**
@@ -379,5 +385,10 @@ export class MapCtrlr extends MyComponent {
 
         let clsnData = this.getAreaCollisionData(areaIndex);
         this.terrainCtrlr.setTerrainData(clsnData);
+    }
+
+    /** 获取当前场景属性 */
+    getCurSceneAttri(): SceneAttri {
+        return this.sceneJsons[this.curScene].attri;
     }
 }
