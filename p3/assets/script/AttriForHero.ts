@@ -101,10 +101,36 @@ export default class AttriForHero extends Attri {
     ];
 
     /** 增加卡片 */
-    addCard(index) {
+    addCard(index, resetingCardFunc: boolean = true) {
         let curCardCount = this.cardList[index] + 1;
         this.cardList[index] = curCardCount;
         this.cardListForCheck[index] = curCardCount;
+
+        if (resetingCardFunc) {
+            this.resetCardFunc();
+        }
+    }
+
+    resetCardFunc() {
+        for (let index = 0; index < this.cardList.length; index++) {
+            let card = this.cardList[index];
+            if (this.cardListForCheck[index] != card) { // 检测
+                throw new Error("card check wrong!");
+            }
+            let cardName = this.cardNames[index];
+            this[cardName] = card;
+        }
+
+        if (this.doubleJump > 0) {
+            this.addModificationCall("doubleJump", (a: Attri) => {
+                this.maxJumpCount.add(1);
+                this.jumpCount.set(this.maxJumpCount.get());
+            });
+        } else {
+            this.removeModificationCall("doubleJump");
+        }
+
+
     }
 
     /** 获取尚未获得的卡片的列表 */
@@ -125,35 +151,35 @@ export default class AttriForHero extends Attri {
 
     // 特殊能力 1级 ========================================================
 
-    /** 二段跳 */
+    /** 二段跳 st*/
     doubleJump: number = 0;
 
-    /** 冲刺 */
+    /** 冲刺 st*/
     dash: number = 0;
 
-    /** 踩墙反弹跳 */
+    /** 踩墙反弹跳 fc*/
     jumpingByWall: number = 0;
 
-    /** 磁力吸附金币 */
+    /** 磁力吸附金币 fc*/
     magnetic: number = 0;
 
-    /** 地图中显示敌人 */
+    /** 地图中显示敌人 fc*/
     enemyDisplay: number = 0;
 
-    /** 硬直恢复 */
+    /** 硬直恢复 fc*/
     fastHitRecovery: number = 0;
 
-    /** 碰到机关不会硬直 */
+    /** 碰到机关不会硬直 fc*/
     trapDefence: number = 0;
 
-    /** 击中敌人获取能量 */
+    /** 击中敌人获取能量 fc*/
     energyGettingByEnemy: number = 0;
-    /** 击中罐子获取能量 */
+    /** 击中罐子获取能量 fc*/
     energyGettingByPot: number = 0;
-    /** 区域变化获取能量 */
+    /** 区域变化获取能量 fc*/
     energyGettingByArea: number = 0;
 
-    /** 额外血量 */
+    /** 额外血量 st*/
     extraMaxHp: number = 0;
 
     /** 魔法能力 蓄力炮增加蓄力速度，火圈增加半径，跟踪弹减少cd，死亡炸弹增加概率，寒冰增加冰冻时间，分身增加攻击距离 */
@@ -161,12 +187,16 @@ export default class AttriForHero extends Attri {
 
     // 特殊能力 2级 ========================================================
 
+    /** 物品效果保留 fc */
     itemKeeping: number = 0;
 
+    /** boss减速 fc */
     bossSlowing: number = 0;
 
+    /** 满血增加伤害 25 50 fc */
     fullHpPower: number = 0;
 
+    /** 濒死增加暴击效果50 15/30以下 fc */
     nearDeathPower: number = 0;
 
     hpRecoveryPower: number = 0;
@@ -250,6 +280,9 @@ export default class AttriForHero extends Attri {
         hattri.maxJumpCount.set(2);
 
         hattri.evade.set(0.5);
+
+        this._resetToOrigin(hattri);
+        this._resetByAbility(hattri);
     }
 
     _resetToOrigin(hattri: AttriForHero) {
@@ -257,21 +290,6 @@ export default class AttriForHero extends Attri {
     }
 
     _resetByAbility(hattri: AttriForHero) {
-
-    }
-
-    _resetByCards(hattri: AttriForHero) {
-        for (let index = 0; index < this.cardList.length; index++) {
-            let card = this.cardList[index];
-            if (this.cardListForCheck[index] != card) { // 检测
-                throw new Error("card check wrong!");
-            }
-            let cardName = this.cardNames[index];
-            this[cardName] = card;
-        }
-    }
-
-    _resetByItems(hattri: AttriForHero) {
 
     }
 

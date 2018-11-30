@@ -53,7 +53,9 @@ export default class FlameSprite extends Bullet {
         }
     }
 
-    onHitEnemy() {
-        this.hero.attri.energy.sub(EnergyCost);
+    onHitEnemy(atk: Attack, node: cc.Node, death: boolean, dmg: number, crit: boolean) {
+        if (crit) {
+            this.hero.attri.energy.set(Math.max(this.hero.attri.energy.get() - EnergyCost));
+        }
     }
 }

@@ -69,7 +69,6 @@ export default class Attack extends MyComponent {
                 crit = r < 0.75; // 魔法暴击率和暴击伤害倍数固定
                 if (crit) {
                     dmg *= 3;
-                    this.attri.energy.sub(1);
                 }
             }
         } else {
@@ -90,8 +89,9 @@ export default class Attack extends MyComponent {
     }
 
     handleHp(attri: Attri, dmg: number): boolean {
-        attri.hp.sub(dmg);
-        return attri.hp.get() <= 0;
+        let hp = Math.max(attri.hp.get() - dmg);
+        attri.hp.set(hp);
+        return hp <= 0;
     }
 
     handleDamage(attri: Attri): {death: boolean, dmg: number, crit: boolean} {

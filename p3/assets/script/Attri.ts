@@ -12,82 +12,40 @@ const MagicNum = Math.floor(Math.random() * 10000);
 export class EcNumber {
     _v: number = 0;
     _vForCheck: number = 0;
-    _onSetList: ((v: number) => number)[] = [];
-    _afterSetList: ((v: number) => void)[] = [];
-    _onGetList: ((v: number) => number)[] = [];
 
-    constructor(v: number,
-        setCall: (v: number) => number = null,
-        afterSetCall: (v: number) => void = null,
-        getCall: (v: number) => number = null) {
-
+    constructor(v: number) {
         this.set(v);
-        if (setCall) this.addSetCallback(setCall);
-        if (afterSetCall) this.addAfterSetCallback(afterSetCall);
-        if (getCall) this.addGetCallback(getCall);
     }
 
-    _set(v: number) {
+    set(v: number) {
         this._v = v;
         this._vForCheck = MagicNum - v;
     }
 
-    _get() {
+    get(): number {
         if (MagicNum - this._v != this._vForCheck) {
             throw new Error("number check wrong!");
         }
         return this._v;
     }
 
-    set(v: number) {
-        for (const call of this._onSetList) {
-            v = call(v);
-        }
-        this._set(v);
-        for (const call of this._afterSetList) {
-            call(v);
-        }
-    }
-
-    get(): number {
-        let v = this._get();
-        for (const call of this._onGetList) {
-            v = call(v);
-        }
-        return v;
-    }
-
     add(v: number) {
-        this.set(this._get() + v);
+        this.set(this.get() + v);
     }
 
     sub(v: number) {
-        this.set(this._get() - v);
+        this.set(this.get() - v);
     }
 
     multiply(v: number) {
-        this.set(this._get() * v);
-    }
-
-    addSetCallback(c: (v: number) => number) {
-        this._onSetList.push(c);
-    }
-
-    addAfterSetCallback(c: (v: number) => void) {
-        this._afterSetList.push(c);
-    }
-
-    addGetCallback(c: (v: number) => number) {
-        this._onGetList.push(c);
+        this.set(this.get() * v);
     }
 }
 
 @ccclass
 export class Attri extends MyComponent {
     /** 血量 */
-    hp: EcNumber = new EcNumber(0, (v: number): number => {
-        return Math.max(Math.min(v, this.maxHp.get()), 0);
-    });
+    hp: EcNumber = new EcNumber(0);
     /** 血量上限 */
     maxHp: EcNumber = new EcNumber(0);
 
@@ -101,9 +59,7 @@ export class Attri extends MyComponent {
     /** 魔法攻击伤害 */
     magicDmg: EcNumber = new EcNumber(0);
     /** 能量，魔法有能量才能暴击 */
-    energy: EcNumber = new EcNumber(0, (v: number): number => {
-        return Math.max(Math.min(v, this.maxEnergy.get()), 0);
-    });
+    energy: EcNumber = new EcNumber(0);
     /** 能量上限 */
     maxEnergy: EcNumber = new EcNumber(300);
 

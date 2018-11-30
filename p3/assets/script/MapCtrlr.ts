@@ -27,7 +27,7 @@ class TriggerJson {
 
 /** 场景属性，记录当前场景的一些数据 */
 export class SceneAttri {
-    cardIndexs: number[] = [];
+    cardIndexs: number[];
 }
 
 /** 一个场景的属性 */

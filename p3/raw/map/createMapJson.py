@@ -139,6 +139,10 @@ areaSpineData = []
 
 def parse(string, k):
 
+    global areaHeroData
+    global areaDoorData
+    global areaSpineData 
+
     global heroData
     global doorData
     global doorIndexs
@@ -220,7 +224,23 @@ def parse(string, k):
 
     return data
 
+attriJson = None
+def readAttriJson(index):
+    global attriJson
+
+    if not attriJson:
+        with open("./mapAttri.json", 'r') as load_f:
+            attriJson = json.load(load_f)
+
+    return attriJson[index]
+
+
+
 def parseData():
+    global areaHeroData
+    global areaDoorData
+    global areaSpineData
+
     s = 1
     for scenedata in mapdata:
         if scenedata == 1:
@@ -242,12 +262,16 @@ def parseData():
         data["heros"] = areaHeroData
         data["gates"] = areaDoorData
         data["spines"] = areaSpineData
+        data["attri"] = readAttriJson(s - 1)
 
         jsonDataList.append(data)
 
+        areaHeroData = []
+        areaDoorData = {}
+        areaSpineData = []
+
         s += 1
 
-import random
 def encode(jstr):
     res = ""
     l = len(jstr)

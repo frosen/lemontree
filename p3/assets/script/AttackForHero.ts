@@ -14,10 +14,17 @@ export default class AttackForHero extends Attack {
     handleDamage(attri: Attri): {death: boolean, dmg: number, crit: boolean} {
         let {dmg, crit} = this.getDamage();
 
-        let executePower = (this.attri as AttriForHero).executePower;
-        if (executePower) {
+        let hattri = this.attri as AttriForHero;
+
+        if (hattri.fullHpPower > 0) {
+            if (hattri.hp.get() == hattri.maxHp.get()) {
+                dmg += dmg * 0.5 * hattri.fullHpPower;
+            }
+        }
+
+        if (hattri.executePower > 0) {
             if (attri.hp.get() < attri.maxHp.get() * 0.3) {
-                dmg += dmg * 0.15 * executePower;
+                dmg += dmg * 0.15 * hattri.executePower;
             }
         }
 
