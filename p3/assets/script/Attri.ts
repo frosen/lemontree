@@ -30,15 +30,19 @@ export class EcNumber {
     }
 
     add(v: number) {
-        this.set(this.get() + v);
+        this.set(this._v + v);
     }
 
     sub(v: number) {
-        this.set(this.get() - v);
+        this.set(this._v - v);
     }
 
     multiply(v: number) {
-        this.set(this.get() * v);
+        this.set(this._v * v);
+    }
+
+    getHighDigit() {
+        return Math.floor(this.get() / 10 + 0.01);
     }
 }
 
@@ -70,28 +74,38 @@ export class Attri extends MyComponent {
 
     // 属性数值生成 ========================================================
 
-    modificationCallDict: {[key: string]: ((Attri) => void)} = {};
+    modificationCallDict: {[key: string]: {[key: string]: ((Attri) => void)}} = {};
 
-    addModificationCall(key: string, call: ((Attri) => void)) {
-        this.modificationCallDict[key] = call;
+    addModificationCall(category: string, key: string, call: ((Attri) => void)) {
+        if (this.modificationCallDict[category] == undefined) {
+            this.modificationCallDict[category] = {};
+        }
+        this.modificationCallDict[category][key] = call;
     }
 
-    removeModificationCall(key: string) {
-        delete this.modificationCallDict[key];
+    removeModificationCall(category: string, key: string = null) {
+        if (key == null) {
+            this.modificationCallDict[category] = {};
+        } else {
+            delete this.modificationCallDict[category][key];
+        }
     }
 
     reset(all: boolean = false) {
-        this._reset(this);
-        for (const key in this.modificationCallDict) {
-            let call = this.modificationCallDict[key];
-            call(this);
+        this._reset();
+        for (const category in this.modificationCallDict) {
+            let dict = this.modificationCallDict[category];
+            for (const key in dict) {
+                let call = dict[key];
+                call(this);
+            }
         }
-        if (all) this._resetVar(this);
+        if (all) this._resetVar();
     }
 
     /** 重置非变量属性 */
-    _reset(attri: Attri) {}
+    _reset() {}
 
     /** 重置变量 */
-    _resetVar(attri: Attri) {}
+    _resetVar() {}
 }

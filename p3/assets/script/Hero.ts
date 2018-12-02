@@ -129,6 +129,7 @@ export class Hero extends MyComponent {
     // 初始化 ========================================================
 
     reset() {
+        this.attri.reset();
         this.resetCardAbility();
     }
 
@@ -181,8 +182,6 @@ export class Hero extends MyComponent {
     pickUp() {
         let comp: ItemComp = this.efcItemComps[0];
         comp.onCollision();
-        let itemEfc: ItemEfc = <ItemEfc>(comp.itemCore);
-        itemEfc.doEffect();
     }
 
     trigger() {

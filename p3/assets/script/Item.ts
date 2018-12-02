@@ -4,5 +4,6 @@
 
 export default abstract class Item {
     abstract getFrameInfos(): {frameName: string, time: number}[];
+    abstract doEffect();
     abstract isMagnetic(): boolean;
 }

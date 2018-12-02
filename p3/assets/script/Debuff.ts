@@ -7,6 +7,8 @@ import FigureDisplay from "./FigureDisplay";
 import {Attri} from "./Attri";
 import ColorComp from "./ColorComp";
 
+const DebuffKey = "Debuff";
+
 export class Debuff {
 
     duration: number;
@@ -70,7 +72,7 @@ export class Frozen extends Debuff {
     begin(comp: DebuffComp) {
         this.changeColor(cc.color(150, 80, 255, 255), comp);
         let attri = comp.getComponent(Attri);
-        attri.addModificationCall(FrozenAttriKey, (a: Attri) => {
+        attri.addModificationCall(DebuffKey, FrozenAttriKey, (a: Attri) => {
             a.xSpeed.multiply(0.7);
             a.ySpeed.multiply(0.7);
         });
@@ -80,7 +82,7 @@ export class Frozen extends Debuff {
     end(comp: DebuffComp) {
         super.end(comp);
         let attri = comp.getComponent(Attri);
-        attri.removeModificationCall(FrozenAttriKey);
+        attri.removeModificationCall(DebuffKey, FrozenAttriKey);
         attri.reset();
     }
 }
@@ -91,7 +93,7 @@ export class Curse extends Debuff {
     begin(comp: DebuffComp) {
         this.changeColor(cc.color(209, 43, 231, 255), comp);
         let attri = comp.getComponent(Attri);
-        attri.addModificationCall(CurseAttriKey, (a: Attri) => {
+        attri.addModificationCall(DebuffKey, CurseAttriKey, (a: Attri) => {
             a.atkDmg.multiply(0.5);
             a.magicDmg.multiply(0.5);
         });
@@ -101,7 +103,7 @@ export class Curse extends Debuff {
     end(comp: DebuffComp) {
         super.end(comp);
         let attri = comp.getComponent(Attri);
-        attri.removeModificationCall(CurseAttriKey);
+        attri.removeModificationCall(DebuffKey, CurseAttriKey);
         attri.reset();
     }
 }

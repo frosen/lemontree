@@ -18,6 +18,10 @@ export class ItemExp1 extends ItemExp {
         ];
     }
 
+    doEffect() {
+        // UI 效果 lly todo
+    }
+
     getExp(): number {
         return 20;
     }

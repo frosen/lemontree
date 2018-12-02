@@ -12,12 +12,13 @@ export default class DebuffComp extends MyComponent {
 
     /** 当前减损效果，每个单位同一时间只能有一个减损效果 */
     curDebuff: Debuff = null;
+    curDuration: number = 0;
 
     curTime: number = 0;
     curSecond: number = 0;
 
     /** 系数，可以控制debuff持续的时间 */
-    r: number = 1.0;
+    timeRate: number = 1.0;
 
     update(dt: number) {
         if (!this.curDebuff) return;
@@ -37,7 +38,7 @@ export default class DebuffComp extends MyComponent {
     }
 
     _checkTime() {
-        return this.curTime > this.curDebuff.duration * this.r;
+        return this.curTime > this.curDuration;
     }
 
     setDebuff(debuff: Debuff) {
@@ -48,6 +49,7 @@ export default class DebuffComp extends MyComponent {
         }
 
         this.curDebuff = debuff;
+        this.curDuration = this.curDebuff.duration * this.timeRate;
         this.curTime = 0;
         this.curSecond = 0;
 

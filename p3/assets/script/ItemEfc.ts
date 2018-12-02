@@ -5,12 +5,15 @@
 import Item from "./Item";
 import AttriForHero from "./AttriForHero";
 import {MapCtrlr, SceneAttri} from "./MapCtrlr";
+import {Hero} from "./Hero";
 
 export abstract class ItemEfc extends Item {
-    abstract doEffect();
     isMagnetic(): boolean {return false};
 }
 
+// 特殊道具 获取后的UI显示和普通不一样========================================================
+
+/** 恢复已损失血量的20% */
 export class ItemHealthPot extends ItemEfc {
     getFrameInfos(): {frameName: string, time: number}[] {
         return [
@@ -18,28 +21,28 @@ export class ItemHealthPot extends ItemEfc {
         ];
     }
 
-    /** 恢复已损失血量的20% */
     doEffect() {
-        let attri: AttriForHero = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
+        let attri: AttriForHero = cc.find("main/hero_layer/s_hero").getComponent("AttriForHero");
         let hpLoss = attri.maxHp.get() - attri.hp.get();
         attri.hp.add(hpLoss * 0.2);
     }
 }
 
-export class ItemCardPot extends ItemEfc {
+/** 根据当前场景和拥有卡片的程度，随机获取一张卡片 */
+export class ItemCard extends ItemEfc {
     getFrameInfos(): {frameName: string, time: number}[] {
         return [
             {frameName: "ItemCard_1", time: 1000},
         ];
     }
 
-    /** 根据当前场景和拥有卡片的程度，随机获取一张卡片 */
     doEffect() {
         let mapCtrlr: MapCtrlr = cc.find("main/map").getComponent("MapCtrlr");
         let sceneAttri: SceneAttri = mapCtrlr.getCurSceneAttri();
         let sceneCards: number[] = sceneAttri.cardIndexs;
 
-        let attri: AttriForHero = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
+        let hero: Hero = cc.find("main/hero_layer/s_hero").getComponent("Hero");
+        let attri: AttriForHero = hero.attri;
         let noObtCards = attri.getNoObtainedCards();
 
         // 获取两个list中的相同项，两个list都是递增的
@@ -62,6 +65,44 @@ export class ItemCardPot extends ItemEfc {
         attri.addCard(cardIndex);
 
         // UI表现后reset
-        attri.reset();
+        hero.reset();
     }
+}
+
+// 普通道具 ========================================================
+
+/** 和卡片一样的效果的道具的基类 */
+export abstract class ItemNormalEffectBase extends ItemEfc {
+
+    doEffect() {
+        this._doEffect();
+
+        // UI显示效果
+        // lly todo
+    }
+
+    abstract _doEffect();
+}
+
+/** 和卡片一样的效果的道具的基类 */
+export abstract class ItemCardEffectBase extends ItemNormalEffectBase {
+
+    _doEffect() {
+        let hero: Hero = cc.find("main/hero_layer/s_hero").getComponent("Hero");
+        let attri: AttriForHero = hero.attri;
+        let name = this._getCardName();
+        let index = attri.cardNames.indexOf(name);
+        let max = attri.getCardMax(index);
+        let card: number = attri[name];
+        if (card < max) {
+            attri[name] = card + 1;
+            if (max == 3) { // 有三级的是主动能力卡片
+                hero.resetCardAbility();
+            } else {
+                attri.reset();
+            }
+        }
+    }
+
+    abstract _getCardName(): string;
 }

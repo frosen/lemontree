@@ -181,7 +181,10 @@ export default class ItemComp extends MyComponent {
             cc.callFunc(() => {
                 this.itemCtrlr.removeItem(this);
             })
-        ))
+        ));
+
+        // 效果
+        this.itemCore.doEffect();
     }
 
     // 开启自动收集后，只要观察到hero，会直接飞向hero，不会停止

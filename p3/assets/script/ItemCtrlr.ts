@@ -15,7 +15,7 @@ import ItemComp from "./ItemComp";
 import Item from "./Item";
 
 import {ItemExp, ItemExp1} from "./ItemExp";
-import {ItemHealthPot} from "./ItemEfc";
+import {ItemEfc, ItemHealthPot, ItemCard} from "./ItemEfc";
 
 class ItemInfo {
     item: Item = null;
@@ -63,10 +63,16 @@ export class ItemCtrlr extends MyComponent {
     /** 经验池 */
     expPool: number = 0;
 
+    /** 物品掉落概率 */
+    curMfRate: number = 0;
     /** 物品掉落概率池 */
-    mfRate: number = 0;
+    mfRatePool: number = 0;
+    /** 高级物品掉落概率 */
+    curAdMfRate: number = 0;
     /** 高级物品掉落概率池 */
-    adMfRate: number = 0;
+    adMfRatePool: number = 0;
+
+    efcList: ItemEfc[] = [];
 
     onLoad() {
         this.heroAttri = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
@@ -82,10 +88,11 @@ export class ItemCtrlr extends MyComponent {
         }, 20, "item", this.node, ItemComp);
 
         // 加载所有经验掉落 （按照经验从高到低的顺序）
-        this._pushItemIntoInfo(ItemExp1);
+        this._pushExpItemIntoInfo(ItemExp1);
 
         // 加载所有的道具
-        this._pushItemIntoInfo(ItemHealthPot);
+        this._pushExtraEfcItemIntoInfo(ItemHealthPot);
+        this._pushExtraEfcItemIntoInfo(ItemCard);
 
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir("items", cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
@@ -104,6 +111,8 @@ export class ItemCtrlr extends MyComponent {
                 break;
             }
         }
+        this.curMfRate = 0.11;
+        this.curAdMfRate = 0.11;
     }
 
     _pushExpItemIntoInfo(itemType: {new()}) {
@@ -112,8 +121,15 @@ export class ItemCtrlr extends MyComponent {
         this.expList.push(item);
     }
 
-    _pushItemIntoInfo(itemType: {new()}) {
-        this.itemInfos[getClassName(itemType)] = new ItemInfo(new itemType());
+    _pushEfcItemIntoInfo(itemType: {new()}) {
+        let item: ItemEfc = new itemType();
+        this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
+        this.efcList.push(item);
+    }
+
+    _pushExtraEfcItemIntoInfo(itemType: {new()}) {
+        let item: ItemEfc = new itemType();
+        this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
     }
 
     /**
@@ -191,6 +207,7 @@ export class ItemCtrlr extends MyComponent {
         if (items) this.createItemByName(pos, items);
     }
 
+    /** 创造item，设置飞出的位置和速度 */
     createItemByName(pos: cc.Vec2, items: (new () => any)[]) {
         let xNum = 0;
         let yNum = 7;
@@ -260,15 +277,30 @@ export class ItemCtrlr extends MyComponent {
     }
 
     _getCardItem(): (new () => any)[] {
-        return null;
+        let r = Math.random();
+        if (r < this.mfRatePool) {
+            this.mfRatePool = 0;
+            return [ItemCard];
+        } else {
+            this.mfRatePool += this.curMfRate;
+        }
     }
 
     _getCardItemByAdvanced(): (new () => any)[] {
-
+        let r = Math.random();
+        if (r < this.adMfRatePool) {
+            this.adMfRatePool = 0;
+            return [ItemCard];
+        } else {
+            this.adMfRatePool += this.curAdMfRate;
+        }
     }
 
     _getEfcItem(): (new () => any)[] {
-
+        let len = this.efcList.length;
+        let index = Math.floor(Math.random() * len);
+        let item: ItemEfc = this.efcList[index];
+        return [item.constructor as (new () => any)];
     }
 
     _getExpItem(): (new () => any)[] {
