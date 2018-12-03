@@ -4,12 +4,9 @@
 
 const {ccclass, property} = cc._decorator;
 import {EcNumber, Attri} from "./Attri";
-import DebuffComp from "./DebuffComp";
 
 /** 起跳速度 像素/帧 */
 const JumpVelocity: number = 4.5;
-
-const CardKey = "Card";
 
 @ccclass
 export default class AttriForHero extends Attri {
@@ -106,61 +103,10 @@ export default class AttriForHero extends Attri {
     ];
 
     /** 增加卡片 */
-    addCard(index, resetingCardFunc: boolean = true) {
+    addCard(index) {
         let curCardCount = this.cardList[index] + 1;
         this.cardList[index] = curCardCount;
         this.cardListForCheck[index] = curCardCount;
-
-        if (resetingCardFunc) {
-            this.resetCardFunc();
-        }
-    }
-
-    resetCardFunc() {
-        for (let index = 0; index < this.cardList.length; index++) {
-            let card = this.cardList[index];
-            if (this.cardListForCheck[index] != card) { // 检测
-                throw new Error("card check wrong!");
-            }
-            let cardName = this.cardNames[index];
-            this[cardName] = card;
-        }
-
-        // 应该不会有card值大于0后又等于0的情况，st的card也不能因item而增长，所以以下if不用else
-        if (this.doubleJump > 0) {
-            this.addModificationCall(CardKey, "doubleJump", (a: Attri) => {
-                this.maxJumpCount.add(1);
-            });
-        }
-
-        if (this.dash > 0) {
-            this.addModificationCall(CardKey, "dash", (a: Attri) => {
-                this.dashCount.add(1);
-            });
-        }
-
-        if (this.extraMaxHp > 0) {
-            this.addModificationCall(CardKey, "extraMaxHp", (a: Attri) => {
-                this.maxHp.add(this.extraMaxHp * 150);
-            });
-        }
-
-        if (this.extraSpace > 0) {
-            // llytodo
-        }
-
-        if (this.debuffResistent > 0) {
-            let debuffComp: DebuffComp = cc.find("main/hero_layer/s_hero").getComponent("DebuffComp");
-            debuffComp.timeRate = 1 - this.debuffResistent * 0.2;
-        }
-
-        if (this.extraAtk > 0) {
-            // llytodo
-        }
-
-        if (this.extraMagicAtk > 0) {
-            // llytodo
-        }
     }
 
     /** 获取尚未获得的卡片的列表 */
@@ -242,7 +188,7 @@ export default class AttriForHero extends Attri {
     /** 减少学习花费 fc */
     learningAbility: number = 0;
 
-    /** 减低负面效果时间 st */
+    /** 减低负面效果时间 fc */
     debuffResistent: number = 0;
 
     /** 额外攻击力 st */
@@ -300,6 +246,7 @@ export default class AttriForHero extends Attri {
     _reset() {
         this._resetToOrigin();
         this._resetByAbility();
+        this._resetByCard();
     }
 
     _resetToOrigin() {
@@ -321,7 +268,8 @@ export default class AttriForHero extends Attri {
     }
 
     _resetByAbility() {
-        // let strength = this.strength.get();
+        let strength = this.strength.get();
+        // llytodo
 
         this.critRate.add(this.explosive.get() * 0.005);
         this.critDmgRate.add(this.explosive.getHighDigit() * 0.1);
@@ -331,10 +279,38 @@ export default class AttriForHero extends Attri {
         this.evade.add(this.agility.get() * 0.004);
         this.dashEvade.add(this.agility.getHighDigit() * 3);
 
-        // let mentality = this.mentality.get();
+        let mentality = this.mentality.get();
+        // llytodo
 
         this.invcTimeForHurt.add(this.calmness.get() * 0.01);
         this.invcTimeForEnter.add(this.calmness.getHighDigit() * 0.1);
+    }
+
+    _resetByCard() {
+        for (let index = 0; index < this.cardList.length; index++) {
+            let card = this.cardList[index];
+            if (this.cardListForCheck[index] != card) { // 检测
+                throw new Error("card check wrong!");
+            }
+            let cardName = this.cardNames[index];
+            this[cardName] = card;
+        }
+
+        if (this.doubleJump > 0) this.maxJumpCount.add(1);
+        if (this.dash > 0) this.dashCount.add(1);
+        if (this.extraMaxHp > 0) this.maxHp.add(this.extraMaxHp * 150);
+
+        if (this.extraSpace > 0) {
+            // llytodo
+        }
+
+        if (this.extraAtk > 0) {
+            // llytodo
+        }
+
+        if (this.extraMagicAtk > 0) {
+            // llytodo
+        }
     }
 
     _resetVar() {

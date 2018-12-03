@@ -7,8 +7,6 @@ import FigureDisplay from "./FigureDisplay";
 import {Attri} from "./Attri";
 import ColorComp from "./ColorComp";
 
-const DebuffKey = "Debuff";
-
 export class Debuff {
 
     duration: number;
@@ -17,11 +15,11 @@ export class Debuff {
         this.duration = duration;
     }
 
-    begin(comp: DebuffComp) {}
+    begin(comp: DebuffComp): {} {return null}
 
     update(comp: DebuffComp) {}
 
-    end(comp: DebuffComp) {
+    end(comp: DebuffComp, deduction: {}) {
         this.changeColor(null, comp);
     }
 
@@ -46,8 +44,9 @@ export class Poisoning extends Debuff {
         this.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
     }
 
-    begin(comp: DebuffComp) {
+    begin(comp: DebuffComp): {} {
         this.changeColor(cc.color(100, 255, 150, 255), comp);
+        return null;
     }
 
     update(comp: DebuffComp) {
@@ -67,43 +66,49 @@ export class Poisoning extends Debuff {
 }
 
 /** 冰冻效果 */
-const FrozenAttriKey = "Frozen";
 export class Frozen extends Debuff {
-    begin(comp: DebuffComp) {
+
+    begin(comp: DebuffComp): {} {
         this.changeColor(cc.color(150, 80, 255, 255), comp);
         let attri = comp.getComponent(Attri);
-        attri.addModificationCall(DebuffKey, FrozenAttriKey, (a: Attri) => {
-            a.xSpeed.multiply(0.7);
-            a.ySpeed.multiply(0.7);
-        });
-        attri.reset();
+        let xDeduction = attri.xSpeed.get() * 0.3;
+        let yDeduction = attri.ySpeed.get() * 0.3;
+        attri.xSpeed.sub(xDeduction);
+        attri.ySpeed.sub(yDeduction);
+        return {
+            x: xDeduction,
+            y: yDeduction
+        };
     }
 
-    end(comp: DebuffComp) {
-        super.end(comp);
+    end(comp: DebuffComp, deduction: {x: number, y: number}) {
+        super.end(comp, deduction);
         let attri = comp.getComponent(Attri);
-        attri.removeModificationCall(DebuffKey, FrozenAttriKey);
-        attri.reset();
+        attri.xSpeed.add(deduction.x);
+        attri.ySpeed.add(deduction.y);
     }
 }
 
 /** 诅咒效果 */
-const CurseAttriKey = "Curse";
 export class Curse extends Debuff {
-    begin(comp: DebuffComp) {
+    begin(comp: DebuffComp): {} {
         this.changeColor(cc.color(209, 43, 231, 255), comp);
         let attri = comp.getComponent(Attri);
-        attri.addModificationCall(DebuffKey, CurseAttriKey, (a: Attri) => {
-            a.atkDmg.multiply(0.5);
-            a.magicDmg.multiply(0.5);
-        });
-        attri.reset();
+
+        let aDeduction = attri.atkDmg.get() * 0.5;
+        let mDeduction = attri.magicDmg.get() * 0.5;
+        attri.atkDmg.sub(aDeduction);
+        attri.magicDmg.sub(mDeduction);
+        return {
+            a: aDeduction,
+            m: mDeduction
+        };
     }
 
-    end(comp: DebuffComp) {
-        super.end(comp);
+    end(comp: DebuffComp, deduction: {a: number, m: number}) {
+        super.end(comp, deduction);
         let attri = comp.getComponent(Attri);
-        attri.removeModificationCall(DebuffKey, CurseAttriKey);
-        attri.reset();
+        attri.atkDmg.sub(deduction.a);
+        attri.magicDmg.sub(deduction.m);
     }
 }

@@ -29,6 +29,7 @@ export class ItemHealthPot extends ItemEfc {
 }
 
 /** 根据当前场景和拥有卡片的程度，随机获取一张卡片 */
+/** 注意：卡片效果只能在下一次使用 */
 export class ItemCard extends ItemEfc {
     getFrameInfos(): {frameName: string, time: number}[] {
         return [
@@ -64,8 +65,7 @@ export class ItemCard extends ItemEfc {
         let cardIndex = availableCards[Math.floor(Math.random() * availableCards.length)];
         attri.addCard(cardIndex);
 
-        // UI表现后reset
-        hero.reset();
+        // UI表现
     }
 }
 
@@ -98,8 +98,6 @@ export abstract class ItemCardEffectBase extends ItemNormalEffectBase {
             attri[name] = card + 1;
             if (max == 3) { // 有三级的是主动能力卡片
                 hero.resetCardAbility();
-            } else {
-                attri.reset();
             }
         }
     }

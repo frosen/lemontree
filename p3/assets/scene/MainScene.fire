@@ -1316,15 +1316,6 @@
     "showingInRunning": false
   },
   {
-    "__type__": "036280/O5pK6KnOiLj2Zccv",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 10
-    },
-    "_enabled": true
-  },
-  {
     "__type__": "b4e31O8CFJMYJhspDeuSOVl",
     "_name": "",
     "_objFlags": 0,
@@ -1375,6 +1366,15 @@
       true,
       false
     ]
+  },
+  {
+    "__type__": "be6ba3QIJtBFozfC63kiklc",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 10
+    },
+    "_enabled": true
   },
   {
     "__type__": "cc.PrefabInfo",

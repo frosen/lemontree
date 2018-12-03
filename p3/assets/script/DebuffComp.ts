@@ -17,8 +17,7 @@ export default class DebuffComp extends MyComponent {
     curTime: number = 0;
     curSecond: number = 0;
 
-    /** 系数，可以控制debuff持续的时间 */
-    timeRate: number = 1.0;
+    curDeduction: {} = null;
 
     update(dt: number) {
         if (!this.curDebuff) return;
@@ -26,7 +25,7 @@ export default class DebuffComp extends MyComponent {
         this.curTime += dt;
 
         if (this._checkTime()) {
-            this.curDebuff.end(this);
+            this.curDebuff.end(this, this.curDeduction);
             this.curDebuff = null;
         } else {
             let second = Math.floor(this.curTime);
@@ -45,14 +44,14 @@ export default class DebuffComp extends MyComponent {
         if (debuff == this.curDebuff) return;
 
         if (this.curDebuff) {
-            this.curDebuff.end(this);
+            this.curDebuff.end(this, this.curDeduction);
         }
 
         this.curDebuff = debuff;
-        this.curDuration = this.curDebuff.duration * this.timeRate;
+        this.curDuration = this.curDebuff.duration;
         this.curTime = 0;
         this.curSecond = 0;
 
-        this.curDebuff.begin(this);
+        this.curDeduction = this.curDebuff.begin(this);
     }
 }

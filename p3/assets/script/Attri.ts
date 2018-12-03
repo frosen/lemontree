@@ -74,32 +74,8 @@ export class Attri extends MyComponent {
 
     // 属性数值生成 ========================================================
 
-    modificationCallDict: {[key: string]: {[key: string]: ((Attri) => void)}} = {};
-
-    addModificationCall(category: string, key: string, call: ((Attri) => void)) {
-        if (this.modificationCallDict[category] == undefined) {
-            this.modificationCallDict[category] = {};
-        }
-        this.modificationCallDict[category][key] = call;
-    }
-
-    removeModificationCall(category: string, key: string = null) {
-        if (key == null) {
-            this.modificationCallDict[category] = {};
-        } else {
-            delete this.modificationCallDict[category][key];
-        }
-    }
-
     reset(all: boolean = false) {
         this._reset();
-        for (const category in this.modificationCallDict) {
-            let dict = this.modificationCallDict[category];
-            for (const key in dict) {
-                let call = dict[key];
-                call(this);
-            }
-        }
         if (all) this._resetVar();
     }
 
