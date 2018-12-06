@@ -49,7 +49,7 @@ export default class GameCtrlr extends cc.Component {
     gamePause: boolean = false;
 
     start() { // 所有默认直接onload的之后
-        this.changeScene(1);
+        this.changeScene(1); // llytodo
     }
 
     changeScene(index: number) {
@@ -105,6 +105,7 @@ export default class GameCtrlr extends cc.Component {
     _gotoHeroSpot(callNext: () => void, lastData: any) {
         let {area, x, y} = this.mapCtrlr.getHeroPos();
         this._changeArea(area, x, y);
+        this.hero.resetHero(); // 切换场景时，重置hero
         return callNext();
     }
 
@@ -127,12 +128,10 @@ export default class GameCtrlr extends cc.Component {
         this.potCtrlr.changeArea(areaIndex);
         this.itemCtrlr.clear();
 
-        if (this.hero) {
-            let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
-            this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
+        let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
+        this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
 
-            this.hero.onChangeArea();
-        }
+        this.hero.onChangeArea();
     }
 
     /** 暂停游戏 */

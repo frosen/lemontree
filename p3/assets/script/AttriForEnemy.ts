@@ -9,7 +9,6 @@ import {Attri} from "./Attri";
 export default class AttriForEnemy extends Attri {
 
     onLoad() {
-
         this.hp.set(100);
         this.maxHp.set(100);
         this.critRate.set(0.03);
@@ -19,7 +18,6 @@ export default class AttriForEnemy extends Attri {
     }
 
     _reset() {
-
         this.hp.set(100);
         this.maxHp.set(100);
         this.critRate.set(0.03);
@@ -32,7 +30,7 @@ export default class AttriForEnemy extends Attri {
         this.hp.set(this.maxHp.get());
     }
 
-    resetVar(lv: number) {
+    resetVar(lv: number) { // llytodo enemy的reset如何进行（根据lv）
         this._resetVar();
     }
 }

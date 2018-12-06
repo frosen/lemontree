@@ -85,7 +85,6 @@ export class Hero extends MyComponent {
         this.watchCollider = this.getComponent(ObjColliderForWatch);
 
         this.attri = this.getComponent(AttriForHero);
-        this.attri.reset(true);
 
         this.looks = this.getComponent(HeroLooks);
         this.attack = this.getComponentInChildren(Attack);
@@ -109,9 +108,6 @@ export class Hero extends MyComponent {
 
     start() { // 在所有子节点（sprite）onLoad完成后
         this.colorComp.resetSp();
-
-        // test llytodo hero的第一次初始化还不知道在何时
-        this.reset();
     }
 
     update(dt: number) {
@@ -128,8 +124,8 @@ export class Hero extends MyComponent {
 
     // 初始化 ========================================================
 
-    reset() {
-        this.attri.reset();
+    resetHero() {
+        this.attri.resetAttri(true);
         this.resetCardAbility();
     }
 
@@ -336,6 +332,8 @@ export class Hero extends MyComponent {
     // 场景切换回调 ========================================================
 
     onChangeArea() {
+        this.beginInvcState(this.attri.invcTimeForEnter.get()); // 切地图的无敌时间
+
         if (this.attri.energyGettingByArea > 0 && this.attri.energy.get() < 100) {
             this.attri.energy.set(100);
         }

@@ -19,7 +19,7 @@ export class ItemExp1 extends ItemExp {
     }
 
     doEffect() {
-        // UI 效果 lly todo
+        // UI 效果 llytodo
     }
 
     getExp(): number {

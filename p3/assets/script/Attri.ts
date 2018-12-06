@@ -74,7 +74,7 @@ export class Attri extends MyComponent {
 
     // 属性数值生成 ========================================================
 
-    reset(all: boolean = false) {
+    resetAttri(all: boolean = false) {
         this._reset();
         if (all) this._resetVar();
     }
