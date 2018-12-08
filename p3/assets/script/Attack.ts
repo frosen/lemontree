@@ -89,7 +89,7 @@ export default class Attack extends MyComponent {
     }
 
     handleHp(attri: Attri, dmg: number): boolean {
-        let hp = Math.max(attri.hp.get() - dmg);
+        let hp = Math.max(attri.hp.get() - dmg, 0);
         attri.hp.set(hp);
         return hp <= 0;
     }

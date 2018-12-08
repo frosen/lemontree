@@ -38,13 +38,19 @@ export class ItemCard extends ItemEfc {
     }
 
     doEffect() {
-        let mapCtrlr: MapCtrlr = cc.find("main/map").getComponent("MapCtrlr");
-        let sceneAttri: SceneAttri = mapCtrlr.getCurSceneAttri();
-        let sceneCards: number[] = sceneAttri.cardIndexs;
-
         let hero: Hero = cc.find("main/hero_layer/s_hero").getComponent("Hero");
         let attri: AttriForHero = hero.attri;
         let noObtCards = attri.getNoObtainedCards();
+
+        // 已经获得全部卡片，特殊UI
+        if (noObtCards.length == 0) {
+            // UI表现 llytodo
+            return;
+        }
+
+        let mapCtrlr: MapCtrlr = cc.find("main/map").getComponent("MapCtrlr");
+        let sceneAttri: SceneAttri = mapCtrlr.getCurSceneAttri();
+        let sceneCards: number[] = sceneAttri.cardIndexs;
 
         // 获取两个list中的相同项，两个list都是递增的
         let sceneCardIndex = 0;
@@ -55,11 +61,18 @@ export class ItemCard extends ItemEfc {
             let noObtCard = noObtCards[noObtCardIndex];
             if (sceneCard == noObtCard) {
                 availableCards.push(sceneCard);
+                sceneCardIndex++;
+                noObtCardIndex++;
             } else if (sceneCard > noObtCard) {
                 noObtCardIndex++;
             } else {
                 sceneCardIndex++;
             }
+        }
+
+        // 如果本地图可以允许获得的所有卡片都已经获得，则可以获得其他卡片
+        if (availableCards.length == 0) {
+            availableCards = noObtCards;
         }
 
         let cardIndex = availableCards[Math.floor(Math.random() * availableCards.length)];

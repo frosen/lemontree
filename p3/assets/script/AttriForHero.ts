@@ -244,9 +244,22 @@ export default class AttriForHero extends Attri {
     // 重置 ========================================================
 
     _reset() {
+        // test
+        this.cardList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.cardListForCheck = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
         this._resetToOrigin();
         this._resetByAbility();
         this._resetByCard();
+
+        // test
+        this.atkDmg.add(20);
+        this.maxJumpCount.add(1);
+        this.maxDashCount.add(1);
     }
 
     _resetToOrigin() {

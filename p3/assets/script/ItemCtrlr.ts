@@ -182,10 +182,7 @@ export class ItemCtrlr extends MyComponent {
      * @param advanced 高级的可以获取更多更好的道具
      */
     createItem(pos: cc.Vec2, source: ItemSource, advanced: boolean) {
-        // 计算有几个道具，分别是什么
-        // let itemNames = ["ItemExp1", "ItemExp1", "ItemExp1", "ItemExp1", "ItemHealthPot"];
         let items: (new () => any)[];
-
         if (advanced) {
             items = this._getItemsFromAdvaced();
         } else if (source == ItemSource.enemy) {
@@ -299,6 +296,7 @@ export class ItemCtrlr extends MyComponent {
     _getEfcItem(): (new () => any)[] {
         let len = this.efcList.length;
         let index = Math.floor(Math.random() * len);
+        cc.log("get item", len, index);
         let item: ItemEfc = this.efcList[index];
         return [item.constructor as (new () => any)];
     }
@@ -357,7 +355,7 @@ export class ItemCtrlr extends MyComponent {
         let expItems: (new () => any)[] = [];
         for (let index = 0; index < this.expList.length;) {
             const expItem = this.expList[index];
-            if (exp > expItem.getExp()) {
+            if (exp >= expItem.getExp()) {
                 expItems.push(expItem.constructor as (new () => any));
                 exp -= expItem.getExp();
             } else {
