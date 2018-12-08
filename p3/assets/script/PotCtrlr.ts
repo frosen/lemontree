@@ -135,7 +135,7 @@ export default class PotCtrlr extends MyComponent {
 
     killPot(pot: Pot) {
         let index = pot.ctrlrIndex;
-        if (index) {
+        if (index != null) {
             this.datas[this.curArea][index].living = false;
             this.pool.reclaim(pot.node);
         } else { // 没有index说明不是从pool中生成的

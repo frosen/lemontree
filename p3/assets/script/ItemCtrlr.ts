@@ -15,7 +15,7 @@ import ItemComp from "./ItemComp";
 import Item from "./Item";
 
 import {ItemExp, ItemExp1} from "./ItemExp";
-import {ItemEfc, ItemHealthPot, ItemCard} from "./ItemEfc";
+import {ItemEfc, ItemEfcDict} from "./ItemEfc";
 
 class ItemInfo {
     item: Item = null;
@@ -91,8 +91,15 @@ export class ItemCtrlr extends MyComponent {
         this._pushExpItemIntoInfo(ItemExp1);
 
         // 加载所有的道具
-        this._pushExtraEfcItemIntoInfo(ItemHealthPot);
-        this._pushExtraEfcItemIntoInfo(ItemCard);
+        this._pushExtraEfcItemIntoInfo(ItemEfcDict.ItemHealthPot);
+        this._pushExtraEfcItemIntoInfo(ItemEfcDict.ItemCard);
+
+        this._pushEfcItemIntoInfo(ItemEfcDict.ItemCardSwordWave);
+        this._pushEfcItemIntoInfo(ItemEfcDict.ItemCardFlameSprite);
+
+        this._pushEfcItemIntoInfo(ItemEfcDict.ItemCriticalSword);
+
+
 
         // 异步加载道具纹理，生成列表
         cc.loader.loadResDir("items", cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
@@ -111,7 +118,7 @@ export class ItemCtrlr extends MyComponent {
                 break;
             }
         }
-        this.curMfRate = 0.11;
+        this.curMfRate = 0.03;
         this.curAdMfRate = 0.11;
     }
 
@@ -121,15 +128,15 @@ export class ItemCtrlr extends MyComponent {
         this.expList.push(item);
     }
 
+    _pushExtraEfcItemIntoInfo(itemType: {new()}) {
+        let item: ItemEfc = new itemType();
+        this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
+    }
+
     _pushEfcItemIntoInfo(itemType: {new()}) {
         let item: ItemEfc = new itemType();
         this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
         this.efcList.push(item);
-    }
-
-    _pushExtraEfcItemIntoInfo(itemType: {new()}) {
-        let item: ItemEfc = new itemType();
-        this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
     }
 
     /**
@@ -230,7 +237,7 @@ export class ItemCtrlr extends MyComponent {
         if (card) return card;
 
         let r = Math.random();
-        if (r < 0.1) {
+        if (r < 0.05) {
             return this._getEfcItem();
         } else {
             return this._getExpItem();
@@ -266,10 +273,12 @@ export class ItemCtrlr extends MyComponent {
         if (card) return card;
 
         let r = Math.random();
-        if (r < 0.6) {
-            return this._getHpItem();
-        } else {
+        if (r < 0.1) {
+            return this._getExtraExpItem();
+        } else if (r < 0.1) {
             return this._getExpItem();
+        } else {
+            return this._getHpItem();
         }
     }
 
@@ -277,7 +286,7 @@ export class ItemCtrlr extends MyComponent {
         let r = Math.random();
         if (r < this.mfRatePool) {
             this.mfRatePool = 0;
-            return [ItemCard];
+            return [ItemEfcDict.ItemCard];
         } else {
             this.mfRatePool += this.curMfRate;
         }
@@ -287,7 +296,7 @@ export class ItemCtrlr extends MyComponent {
         let r = Math.random();
         if (r < this.adMfRatePool) {
             this.adMfRatePool = 0;
-            return [ItemCard];
+            return [ItemEfcDict.ItemCard];
         } else {
             this.adMfRatePool += this.curAdMfRate;
         }
@@ -296,7 +305,6 @@ export class ItemCtrlr extends MyComponent {
     _getEfcItem(): (new () => any)[] {
         let len = this.efcList.length;
         let index = Math.floor(Math.random() * len);
-        cc.log("get item", len, index);
         let item: ItemEfc = this.efcList[index];
         return [item.constructor as (new () => any)];
     }
@@ -366,7 +374,7 @@ export class ItemCtrlr extends MyComponent {
     }
 
     _getHpItem(): (new () => any)[] {
-        return [ItemHealthPot];
+        return [ItemEfcDict.ItemHealthPot];
     }
 
     // ========================================================

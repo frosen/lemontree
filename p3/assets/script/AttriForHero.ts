@@ -65,7 +65,7 @@ export default class AttriForHero extends Attri {
 
     cardNames: string[] = [
         "doubleJump",
-        "dash",
+        "superDash",
         "jumpingByWall",
         "magnetic",
         "enemyDisplay",
@@ -135,7 +135,7 @@ export default class AttriForHero extends Attri {
     doubleJump: number = 0;
 
     /** 冲刺 st*/
-    dash: number = 0;
+    superDash: number = 0;
 
     /** 踩墙反弹跳 fc*/
     jumpingByWall: number = 0;
@@ -310,7 +310,7 @@ export default class AttriForHero extends Attri {
         }
 
         if (this.doubleJump > 0) this.maxJumpCount.add(1);
-        if (this.dash > 0) this.dashCount.add(1);
+        if (this.superDash > 0) this.dashCount.add(1);
         if (this.extraMaxHp > 0) this.maxHp.add(this.extraMaxHp * 150);
 
         if (this.extraSpace > 0) {
