@@ -468,7 +468,7 @@ def saveJsonAndImg(path, oldPath):
         if not os.path.exists(realPath):
             os.makedirs(realPath)
 
-        realFile = realPath + "area.ini"
+        realFile = realPath + "area.json"
         saveFile(realFile, jsonStr)
 
         oldImgName = oldPath + "scene_" + str(index) + ".png"
