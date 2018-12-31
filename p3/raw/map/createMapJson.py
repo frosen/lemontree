@@ -6,8 +6,11 @@ import os
 import re
 import shutil
 
+# ================================================================================
+
 arrayMax = 20
 
+# 所有map txm的数据，mapdata[场景(从0开始)][地图(从0开始)]
 mapdata = [1] * arrayMax
 
 def readFile(filePath):
@@ -27,18 +30,8 @@ def readFile(filePath):
         print("read " + filePath + " no res! ")
     return d
 
-def saveFile(path, data):
-    fp = None
-    try:
-        fp = open(path, "w")
-        fp.write(data)
-
-    except Exception, e:
-        print("save " + path + " exception! " + str(Exception) + ":" + str(e))
-
-    finally:
-        if fp: fp.close()
-
+# 先获取所有tmx的数据 
+# 文件以scene_m_n.tmx的形式命名
 def getTMXFiles(path):
     fList = os.listdir(path)
     for f in fList:
@@ -53,7 +46,19 @@ def getTMXFiles(path):
 
             mapdata[i][j] = d
 
+# ================================================================================
+
+# 转换后的json数据 jsonDataList[场景]
 jsonDataList = []
+
+# 场景数据
+sceneHeroData = []
+sceneDoorData = {}
+sceneSpineData = []
+
+# area数据
+noEnemyPosData = {}
+doorIndexs = {} # 每个area中的door索引
 
 # 去掉碰撞层的影响
 def parseTe(t):
@@ -62,33 +67,30 @@ def parseTe(t):
     else:
         return t
 
-doorIndexs = {}
+# 解析标记
+def parseNo(t, lineNum, colNum, w, h, area):
 
-heroData = []
-doorData = []
-spineData = []
+    global sceneHeroData
+    global sceneDoorData
+    global sceneSpineData
 
-# 解析触发器
-def parseCo(t, lineNum, colNum, w, h, k):
-
-    global heroData
-    global doorData
+    global noEnemyPosData
     global doorIndexs
-    global spineData
 
-    if t == 33:
+    if t == 38:
+        noEnemyPosData[colNum * 1000 + lineNum] = 1
+
+    elif t == 49:
         #hero pos
 
         thisHeroData = {}
         thisHeroData["x"] = colNum
         thisHeroData["y"] = lineNum
-        thisHeroData["area"] = k
+        thisHeroData["area"] = area
         thisHeroData["id"] = t
-        heroData.append(thisHeroData)
+        sceneHeroData.append(thisHeroData)
 
-        return 0
-
-    elif 34 <= t and t <= 48:
+    elif 50 <= t and t <= 64:
         # 门
         key = 1
 
@@ -114,43 +116,72 @@ def parseCo(t, lineNum, colNum, w, h, k):
         thisDoorData = {}
         thisDoorData["x"] = colNum
         thisDoorData["y"] = lineNum
-        thisDoorData["area"] = k
+        thisDoorData["area"] = area
         thisDoorData["id"] = newT
-        doorData.append(thisDoorData)
 
-        return newT
+        if not sceneDoorData.has_key(t):
+            sceneDoorData[t] = {}
 
-    elif t == 49:
+        if not sceneDoorData[t].has_key(doorIndexs[t]):
+            sceneDoorData[t][doorIndexs[t]] = []
+
+        sceneDoorData[t][doorIndexs[t]].append(thisDoorData)
+
+    elif t == 65:
         # spine
         thisSpineData = {}
         thisSpineData["x"] = colNum
         thisSpineData["y"] = lineNum
-        thisSpineData["area"] = k
+        thisSpineData["area"] = area
         thisSpineData["id"] = t - 49
-        spineData.append(thisSpineData)
 
-        return 0
-    else:
-        return t
+        if not sceneSpineData[area]:
+            sceneSpineData[area] = []
 
-areaHeroData = []
-areaDoorData = {}
-areaSpineData = []
+        sceneSpineData[area].append(thisSpineData)
 
-def parse(string, k):
 
-    global areaHeroData
-    global areaDoorData
-    global areaSpineData 
+def getDataFromTileJson(jsonStr, key):
+    k1 = "<layer name=\"" + key + r"\"([\s\S]*?)</layer>"
+    k2 = r"<data encoding=\"csv\">\n([\s\S]*?)\n</data>"
+    subStr = re.findall(k1, jsonStr)[0]
+    subStr = re.findall(k2, subStr)[0]
+    lineStrs = subStr.split("\n")
+    tilelist = []
+    for line in lineStrs:
+        tileData = line.split(",")
+        tileLineList = []
+        for tileStr in tileData:
+            if len(tileStr) < 1: continue
+            tile = int(tileStr)
+            tileLineList.append(tile)
 
-    global heroData
-    global doorData
+        tilelist.append(tileLineList)
+
+    return tilelist
+
+def getIndex(x, y):
+    return x * 1000 + y
+
+# 解析对应的场景的区域 {w h noeps fi[ {x y w h te co d[] } ] r }
+# 顺便解析了其他的数据：
+# param string 一个区域的数据文本
+# param areaIndex 区域索引 从1开始
+def parse(string, areaIndex):
+
+    global sceneHeroData
+    global sceneDoorData
+    global sceneSpineData 
+
+    global noEnemyPosData
     global doorIndexs
-    global spineData
+
+    noEnemyPosData = {}
     doorIndexs = {}
 
     data = {}
 
+    # 获取宽高
     wStr = re.findall(r" width=\"(.+?)\"", string)[0]
     hStr = re.findall(r" height=\"(.+?)\"", string)[0]
     w = int(wStr)
@@ -158,143 +189,280 @@ def parse(string, k):
     data["w"] = w
     data["h"] = h
 
-    teStr = re.findall(r"<layer name=\"terrain\"([\s\S]*?)</layer>", string)[0]
-    teStr = re.findall(r"<data encoding=\"csv\">\n([\s\S]*?)\n</data>", teStr)[0]
-    teList = []
-    teLineStrs = teStr.split("\n")
-    for line in teLineStrs:
-        tileData = line.split(",")
-        tileLineList = []
-        for tileStr in tileData:
-            if len(tileStr) < 1: continue
-            tile = int(tileStr)
-            tile = parseTe(tile)
-            tileLineList.append(tile)
+    # 从json string提取tile数据
+    teList = getDataFromTileJson(string, "terrain") # 地形
+    coList = getDataFromTileJson(string, "collision") # 碰撞
+    noList = getDataFromTileJson(string, "notation") # 标记
 
-        teList.append(tileLineList)
+    # 遍历标记，获取无敌人区域，门，spine等信息
+    for j in xrange(0, len(noList)):
+        noLine = noList[j]
+        for i in xrange(0, len(noLine)):
+            noData = noLine[i]
+            parseNo(noData, j, i, w, h, areaIndex)
 
-    coStr = re.findall(r"<layer name=\"collision\"([\s\S]*?)</layer>", string)[0]
-    coStr = re.findall(r"<data encoding=\"csv\">\n([\s\S]*?)\n</data>", coStr)[0]
-    coList = []
-    coLineStrs = coStr.split("\n")
+    data["noeps"] = noEnemyPosData
 
-    lineNum = 0
-    for line in coLineStrs:
-        coData = line.split(",")
-        coLineList = []
+    # 遍历碰撞，获取随机区域和固定区域
+    interval = 3
+    rx = 1
+    ry = 0
+    xLen = w - 2
+    yLen = h - 1
 
-        colNum = 0
-        for coStr in coData:
-            if len(coStr) < 1: continue
-            tile = int(coStr)
-            tile = parseCo(tile, lineNum, colNum, w, h, k)
-            coLineList.append(tile)
-            colNum += 1
+    rList = [] # 随机区域标记
 
-        coList.append(coLineList)
-        lineNum += 1
+    while True:
+        if ry >= yLen:
+            break
 
-    data["te"] = teList
-    data["co"] = coList
+        rLine = []
+        _x = rx
+        while True:
+            if _x > xLen:
+                break
 
-    # 把每个area的相关信息汇聚在一起
-    for d in heroData:
-        areaHeroData.append(d)
-        
-    heroData = []
-    
-    # 门
-    for d in doorData:
-        key = d["id"]
-        t = key % 100
-        index = key / 100 % 100
-        if not areaDoorData.has_key(t):
-            areaDoorData[t] = {}
+            # 开始 =======================================
 
-        if not areaDoorData[t].has_key(index):
-            areaDoorData[t][index] = []
+            # 获取位置元素
+            coData = coList[ry][_x]
+            # 查看是否是随机块
+            if coData == 33:
+                rLine.append(0)
+            else:
+                rLine.append(1)
 
-        areaDoorData[t][index].append(d)
+            # 结束 =======================================
+            _x += interval
 
-    doorData = []
 
-    #尖刺
-    areaSpineData.append(spineData)
-    spineData = []
+        rList.append(rLine)
+        ry += interval
+
+    # 根据rList中记录的固定区域，记录固定区域相关信息
+    fi = [] # [ {x y w h te co d[] } ]
+    used = {} # 已用过的区域
+
+    rListLen = len(rList)
+    for rLineIndex in xrange(0, rListLen):
+        rLine = rList[rLineIndex]
+        rLineLen = len(rLine)
+        for rDataIndex in xrange(0, rLineLen):
+            rData = rLine[rDataIndex]
+            if rData == 1 and not used.has_key(getIndex(rDataIndex, rLineIndex)):
+                # 查看大小
+                fiY = rLineIndex
+                fiX = rDataIndex
+
+                while True: # 看宽度
+                    if fiX + 1 >= rLineLen or rLine[fiX + 1] != 1:
+                        break
+                    fiX += 1
+
+                while True: # 看高度
+                    if fiY + 1 >= rListLen or rList[fiY + 1][fiX] != 1:
+                        break
+                    fiY += 1
+
+                # 记录到“已用过的区域”
+                for y in xrange(rLineIndex, fiY + 1):
+                    for x in xrange(rDataIndex, fiX + 1):
+                        used[getIndex(x, y)] = 1
+
+                realY = rLineIndex * interval
+                realYMax = (fiY + 1) * interval
+                realX = rDataIndex * interval + 1
+                realXMax = (fiX + 1) * interval + 1
+
+                realW = realXMax - realX
+                realH = realYMax - realY
+
+                #靠边的块要加上边缘
+                if realX == 1:
+                    realX = 0
+                    realW += 1
+
+                if realXMax == w - 1:
+                    realW += 1
+
+                if realYMax == h - 1:
+                    realH += 1
+
+                oneFi = {}
+
+                # 基础属性
+                oneFi["x"] = realX
+                oneFi["y"] = realY
+                oneFi["w"] = realW
+                oneFi["h"] = realH
+
+                # 区域的地形和碰撞
+                fite = []
+                fico = []
+
+                for y in xrange(realY, realY + realH):
+                    fiteLine = []
+                    ficoLine = []
+
+                    for x in xrange(realX, realX + realW):
+                        fiteData = parseTe(teList[y][x])
+                        ficoData = coList[y][x]
+                        fiteLine.append(fiteData)
+                        ficoLine.append(ficoData)
+
+                    fite.append(fiteLine)
+                    fico.append(ficoLine)
+
+                oneFi["te"] = fite
+                oneFi["co"] = fico
+
+                # 区域的门信息
+                doorUp = []
+                doorDown = []
+                doorLeft = []
+                doorRight = []
+
+                doorNotation = [34, 35, 36, 37]
+                for thumbY in xrange(rLineIndex, fiY + 1):
+                    y = thumbY * interval
+                    for thumbX in xrange(rDataIndex, fiX + 1):
+                        x = thumbX * interval + 1
+
+                        # 上下左右
+                        if y - 1 >= 0 and noList[y - 1][x] in doorNotation:
+                            doorUp.append([x, y])
+
+                        if y + 3 < h - 1 and noList[y + 3][x] in doorNotation:
+                            doorDown.append([x, y + 2])
+
+                        if x - 1 >= 1 and noList[y][x - 1] in doorNotation:
+                            doorLeft.append([x - 1, y])
+
+                        if x + 3 < w - 2 and noList[y][x + 3] in doorNotation:
+                            doorRight.append([x + 2, y])
+
+                door = []
+                door.append(doorUp)
+                door.append(doorDown)
+                door.append(doorLeft)
+                door.append(doorDown)
+                oneFi["d"] = door
+
+                fi.append(oneFi)
+
+
+    data["r"] = rList
+    data["fi"] = fi
 
     return data
 
+# 获取对应场景的attri
 attriJson = None
-def readAttriJson(index):
+def readAttriJson(sceneIndex):
     global attriJson
 
     if not attriJson:
         with open("./mapAttri.json", 'r') as load_f:
             attriJson = json.load(load_f)
 
-    return attriJson[index]
+    return attriJson[sceneIndex]
 
-
-
+# 解析mapData
 def parseData():
-    global areaHeroData
-    global areaDoorData
-    global areaSpineData
+    global sceneHeroData
+    global sceneDoorData
+    global sceneSpineData
 
-    s = 1
+    sceneIndex = 1
     for scenedata in mapdata:
         if scenedata == 1:
             break
 
         dataList = []
-        k = 1
+        sceneHeroData = []
+        sceneDoorData = {}
+        sceneSpineData = []
+
+        areaIndex = 1
         for areadata in scenedata:
             if areadata == 1:
                 break
 
-            print "parse scene {} area {}".format(s, k)
-            data = parse(areadata, k)
+            print "parse scene {} area {}".format(sceneIndex, areaIndex)
+            data = parse(areadata, areaIndex)
             dataList.append(data)
-            k = k + 1
+            areaIndex = areaIndex + 1
 
         data = {}
         data["areas"] = dataList
-        data["heros"] = areaHeroData
-        data["gates"] = areaDoorData
-        data["spines"] = areaSpineData
-        data["attri"] = readAttriJson(s - 1)
+        data["heros"] = sceneHeroData
+        data["gates"] = sceneDoorData
+        data["spines"] = sceneSpineData
+        data["attri"] = readAttriJson(sceneIndex - 1)
 
         jsonDataList.append(data)
 
-        areaHeroData = []
-        areaDoorData = {}
-        areaSpineData = []
+        sceneIndex += 1
 
-        s += 1
+# ================================================================================
 
-def encode(jstr):
-    res = ""
-    l = len(jstr)
+total = 0
 
-    for i in xrange(l):
-        k = (i % 7) + (i % 13)
-        asc = ord(jstr[i])
-        res += chr(asc - k)
+def encrypt(obj):
+    global total
 
-    mid = int(len(res) / 2)
-    resHead = res[mid:mid + 28]
-    print mid
-    print resHead
-    th = int(len(res) / 3)
-    resTh = res[th:th + 30]
-    return "\x06\0" + resHead + res + resTh
+    if isinstance(obj, int):
+        total += obj
+
+    elif isinstance(obj, dict):
+        for sub in obj.values():
+            encrypt(sub)
+
+    elif isinstance(obj, list):
+        for sub in obj:
+            encrypt(sub)
+    
+
+def saveEncryptInfo(path):
+    global total
+    
+    index = 1
+    encryptTotal = []
+    for jsonData in jsonDataList:
+        total = 0
+
+        encrypt(jsonData)
+
+        encryptTotal.append(total)
+
+    jsonStr = json.dumps(encryptTotal)
+    jsStr = "module.exports = " + jsonStr + ";"
+
+    realPath = path
+    if not os.path.exists(realPath):
+        os.makedirs(realPath)
+
+    realFile = realPath + "MapCheck.js"
+    saveFile(realFile, jsStr)
+
+# ================================================================================
+
+def saveFile(path, data):
+    fp = None
+    try:
+        fp = open(path, "w")
+        fp.write(data)
+
+    except Exception, e:
+        print("save " + path + " exception! " + str(Exception) + ":" + str(e))
+
+    finally:
+        if fp: fp.close()
 
 def saveJsonAndImg(path, oldPath):
     index = 1
     for jsonData in jsonDataList:
         jsonStr = json.dumps(jsonData)
-
-        jsonStr = encode(jsonStr)
 
         realPath = path + "scene" + str(index) + "/"
         if not os.path.exists(realPath):
@@ -309,13 +477,19 @@ def saveJsonAndImg(path, oldPath):
 
         index += 1
 
+# ================================================================================
 
-############| main |############
 if '__main__' == __name__:
     path = "./"
     # outPath = "../assets/resources/map/"
     outPath = "./output/"
     getTMXFiles(path)
     parseData()
+    saveEncryptInfo(outPath)
     saveJsonAndImg(outPath, path)
     print "finish at: " + outPath
+
+
+
+
+
