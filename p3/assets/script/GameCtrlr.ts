@@ -15,6 +15,8 @@ import PotCtrlr from "./PotCtrlr";
 import {ItemCtrlr} from "./ItemCtrlr";
 import Curtain from "./Curtain";
 
+import {GameMemory} from "./GameMemory";
+
 import MyComponent from "./MyComponent";
 
 @ccclass
@@ -44,12 +46,20 @@ export default class GameCtrlr extends cc.Component {
     @property(Curtain)
     curtain: Curtain = null;
 
-    curScene: number = 1; // 从1开始
+    gameMemory: GameMemory = null;
+
+    curScene: number = 1; // 从1开始，0则为家
 
     gamePause: boolean = false;
 
     start() { // 所有默认直接onload的之后
         this.changeScene(1); // llytodo
+
+        this.gameMemory = new GameMemory(this.onMemoryLoad.bind(this));
+    }
+
+    onMemoryLoad() {
+
     }
 
     changeScene(index: number) {

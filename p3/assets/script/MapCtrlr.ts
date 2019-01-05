@@ -69,8 +69,8 @@ export class MapCtrlr extends MyComponent {
     groundInfos: GroundInfo[][] = [];
 
     /** 测试用 ======================== */
-    @property(cc.TextAsset) textMapJson: cc.TextAsset = null;
-    @property(cc.SpriteFrame) textFrame: cc.SpriteFrame = null;
+    @property(cc.TextAsset) testMapJson: cc.TextAsset = null;
+    @property(cc.SpriteFrame) testFrame: cc.SpriteFrame = null;
 
     onLoad() {
         // 生成多个map的节点池
@@ -111,8 +111,8 @@ export class MapCtrlr extends MyComponent {
         }
 
         // 测试用
-        if (this.textMapJson) {
-            let decodeStr = MapCtrlr._decodeMapData(this.textMapJson.text);
+        if (this.testMapJson) {
+            let decodeStr = MapCtrlr._decodeMapData(this.testMapJson.text);
             this.sceneJsons[this.curScene] = JSON.parse(decodeStr);
             return callNext();
         }
@@ -147,8 +147,8 @@ export class MapCtrlr extends MyComponent {
         }
 
         // 测试用
-        if (this.textFrame) {
-            this.frames[this.curScene] = this.textFrame;
+        if (this.testFrame) {
+            this.frames[this.curScene] = this.testFrame;
             return callNext();
         }
 

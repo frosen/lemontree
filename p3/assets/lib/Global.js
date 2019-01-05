@@ -11,12 +11,16 @@ window.EXECUTION_ORDER = {
     BGCtrlr: 6
 };
 
+let scheduler = cc.director.getScheduler();
+let schTarget = {};
 window.callList = function (obj, list) {
     function handle(data = null) {
         let callInfo = list.shift();
         if (callInfo) {
             const [func, ...param] = callInfo;
-            func.call(obj, handle, data, ...param);
+            scheduler.schedule(function (_) {
+                func.call(obj, handle, data, ...param);
+            }, schTarget, 0, 0, 0, false);
         }
     }
     handle();
