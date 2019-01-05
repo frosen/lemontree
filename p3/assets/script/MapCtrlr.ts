@@ -9,12 +9,29 @@ const {ccclass, property} = cc._decorator;
 import MyComponent from "./MyComponent";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 
+// 随机前数据类 ========================================================
+
+
+
+// 已经形成的地形的类 ========================================================
+
+/**
+ * 地面信息，用于生成enemy或者pot时候使用，不同属性的地面可以生成的东西不一样
+ * 凡是地面，那么其上面两格必定为空
+ */
+export class GroundInfo {
+    x: number;
+    y: number;
+    wide: boolean;
+}
+
 /** 一个区域的属性 */
 class AreaJson {
     te: number[][];
     co: number[][];
     w: number;
     h: number;
+    grounds: GroundInfo[];
 }
 
 /** 每个区域中触发点的属性 */
@@ -39,15 +56,7 @@ class SceneJson {
     attri: SceneAttri;
 }
 
-/**
- * 地面信息，用于生成enemy或者pot时候使用，不同属性的地面可以生成的东西不一样
- * 凡是地面，那么其上面两格必定为空
- */
-export class GroundInfo {
-    x: number;
-    y: number;
-    wide: boolean;
-}
+// ========================================================
 
 @ccclass
 export class MapCtrlr extends MyComponent {
@@ -65,12 +74,9 @@ export class MapCtrlr extends MyComponent {
     /** 当前场景中每个区域对应的地图的列表 */
     curAssets: cc.TiledMapAsset[] = [];
 
-    /** 每个场景中的地面信息 */
-    groundInfos: GroundInfo[][] = [];
-
-    /** 测试用 ======================== */
-    @property(cc.TextAsset) testMapJson: cc.TextAsset = null;
-    @property(cc.SpriteFrame) testFrame: cc.SpriteFrame = null;
+    /** 特殊场景（家） */
+    @property(cc.JsonAsset) homeMapJson: cc.JsonAsset = null;
+    @property(cc.SpriteFrame) homeFrame: cc.SpriteFrame = null;
 
     onLoad() {
         // 生成多个map的节点池
@@ -86,7 +92,11 @@ export class MapCtrlr extends MyComponent {
 
             node.active = false;
         }
+
+        // 读取信息
     }
+
+    // ========================================================
 
     /**
      * 创建场景
@@ -105,15 +115,20 @@ export class MapCtrlr extends MyComponent {
         ]);
     }
 
+    createHomeScene(finishCallback: () => void) {
+        this.curScene = 0;
+        callList(this, [
+            [this._loadHomeJsonAndTexture],
+            [this._createMapData],
+            [this._holdMapAsset],
+            [(callNext: () => void, lastData: any) => {
+                return finishCallback();
+            }]
+        ]);
+    }
+
     _loadMapJson(callNext: () => void, lastData: any) {
         if (this.sceneJsons[this.curScene]) {
-            return callNext();
-        }
-
-        // 测试用
-        if (this.testMapJson) {
-            let decodeStr = MapCtrlr._decodeMapData(this.testMapJson.text);
-            this.sceneJsons[this.curScene] = JSON.parse(decodeStr);
             return callNext();
         }
 
@@ -130,25 +145,8 @@ export class MapCtrlr extends MyComponent {
         });
     }
 
-    static _decodeMapData(eStr: string): string {
-        let begin = 30;
-        let end = 30;
-        let len = eStr.length - begin - end;
-        let a = [];
-        for (let i = 0; i < len; i++) {
-            a[i] = String.fromCharCode(eStr.charCodeAt(i + begin) + (i % 7) + (i % 13));
-        }
-        return a.join("");
-    }
-
     _loadTexture(callNext: () => void, lastData: any) {
         if (this.frames[this.curScene]) {
-            return callNext();
-        }
-
-        // 测试用
-        if (this.testFrame) {
-            this.frames[this.curScene] = this.testFrame;
             return callNext();
         }
 
@@ -161,6 +159,15 @@ export class MapCtrlr extends MyComponent {
             this.frames[this.curScene] = frame;
             return callNext();
         });
+    }
+
+    _loadHomeJsonAndTexture(callNext: () => void, lastData: any) {
+        if (this.sceneJsons[this.curScene]) {
+            return callNext();
+        }
+        this.sceneJsons[this.curScene] = this.homeMapJson.json;
+        this.frames[this.curScene] = this.homeFrame;
+        return callNext();
     }
 
     /** 根据读取的map信息，按照tilemap规则，生成对应的tilemap数据，然后生成tiledmap */
@@ -242,6 +249,12 @@ export class MapCtrlr extends MyComponent {
         return callNext();
     }
 
+    _saveMapData(callNext: () => void, lastData: any) {
+
+    }
+
+    // ========================================================
+
     getAreaCount(): number {
         return this.sceneJsons[this.curScene].areas.length;
     }
@@ -313,36 +326,13 @@ export class MapCtrlr extends MyComponent {
         return info;
     }
 
-    /** 检测一个地图块是不是地面 */
-    _isGroundByGid(gid: number) {
-        return gid == 1 || gid == 3;
+    /** 获取当前场景属性 */
+    getCurSceneAttri(): SceneAttri {
+        return this.sceneJsons[this.curScene].attri;
     }
 
     getGrounds(areaIndex: number): GroundInfo[] {
-        if (this.groundInfos[areaIndex]) return this.groundInfos[areaIndex];
-
-        let grounds: GroundInfo[] = [];
-        let areaData = this.getAreaData(areaIndex);
-        let clsnData = areaData.co;
-        for (let h = 0; h < areaData.h; h++) {
-            let wData = clsnData[h];
-            for (let w = 0; w < areaData.w; w++) {
-                let gid = wData[w];
-                if (this._isGroundByGid(gid)) {
-                    let g = new GroundInfo()
-                    g.x = w;
-                    g.y = h;
-
-                    // 计算左右是否是连续的地面
-                    g.wide = this._isGroundByGid(wData[w - 1]) && this._isGroundByGid(wData[w + 1]);
-
-                    grounds.push(g);
-                }
-            }
-        }
-
-        this.groundInfos[areaIndex] = grounds;
-        return grounds;
+        return this.sceneJsons[this.curScene].areas[areaIndex].grounds;
     }
 
     /**
@@ -377,6 +367,8 @@ export class MapCtrlr extends MyComponent {
         return usingGroundPoss;
     }
 
+    // ========================================================
+
     changeArea(areaIndex: number) {
         let realAreaIndex = areaIndex - 1;
         for (let index = 0; index < this.mapPool.length; index++) {
@@ -385,10 +377,5 @@ export class MapCtrlr extends MyComponent {
 
         let clsnData = this.getAreaCollisionData(areaIndex);
         this.terrainCtrlr.setTerrainData(clsnData);
-    }
-
-    /** 获取当前场景属性 */
-    getCurSceneAttri(): SceneAttri {
-        return this.sceneJsons[this.curScene].attri;
     }
 }

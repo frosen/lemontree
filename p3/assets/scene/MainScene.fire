@@ -1438,8 +1438,12 @@
     "terrainCtrlr": {
       "__id__": 47
     },
-    "textMapJson": null,
-    "textFrame": null
+    "homeMapJson": {
+      "__uuid__": "02bfe168-cc60-4cd5-9634-81b196b0788a"
+    },
+    "homeFrame": {
+      "__uuid__": "ac8e5745-dd77-4c95-b189-2dad369512cd"
+    }
   },
   {
     "__type__": "cc.Node",

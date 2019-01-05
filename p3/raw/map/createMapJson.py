@@ -39,7 +39,7 @@ def getTMXFiles(path):
         if fileInfos[1] == '.tmx':
             d = readFile(path + f)
             indexs = fileInfos[0].split("_")
-            i = int(indexs[1]) - 1
+            i = int(indexs[1])
             j = int(indexs[2]) - 1
             if mapdata[i] == 1:
                 mapdata[i] = [1] * arrayMax
@@ -109,7 +109,7 @@ def parseNo(t, lineNum, colNum, w, h, area):
         elif colNum == w - 1:
             orient = 4
         else:
-            raise RuntimeError("Wrong door at line %d, col %d" % lineNum, colNum)
+            orient = 5 # 在中间的门
 
         newT = key * 100000 + orient * 10000 + doorIndexs[t] * 100 + t
 
@@ -162,6 +162,52 @@ def getDataFromTileJson(jsonStr, key):
 
 def getIndex(x, y):
     return x * 1000 + y
+
+# 解析对应的场景的区域 {w h te co}
+# 顺便解析了其他的数据：
+# param string 一个区域的数据文本
+# param areaIndex 区域索引 从1开始
+def parseHome(string, areaIndex):
+    global sceneHeroData
+    global sceneDoorData
+
+    global doorIndexs
+
+    doorIndexs = {}
+
+    data = {}
+
+    # 获取宽高
+    wStr = re.findall(r" width=\"(.+?)\"", string)[0]
+    hStr = re.findall(r" height=\"(.+?)\"", string)[0]
+    w = int(wStr)
+    h = int(hStr)
+    data["w"] = w
+    data["h"] = h
+
+    # 从json string提取tile数据
+    teList = getDataFromTileJson(string, "terrain") # 地形
+    coList = getDataFromTileJson(string, "collision") # 碰撞
+    noList = getDataFromTileJson(string, "notation") # 标记
+
+    # 遍历标记，获取门等信息
+    for j in xrange(0, len(noList)):
+        noLine = noList[j]
+        for i in xrange(0, len(noLine)):
+            noData = noLine[i]
+            parseNo(noData, j, i, w, h, areaIndex)
+
+    realTeList = []
+    for line in teList:
+        realLine = []
+        for tdata in line:
+            realLine.append(parseTe(tdata))
+        realTeList.append(realLine)
+
+    data["te"] = realTeList
+    data["co"] = coList
+
+    return data
 
 # 解析对应的场景的区域 {w h noeps fi[ {x y w h te co d[] } ] r }
 # 顺便解析了其他的数据：
@@ -373,34 +419,57 @@ def parseData():
     global sceneDoorData
     global sceneSpineData
 
-    sceneIndex = 1
+    sceneIndex = 0 # 0是home，要特殊处理
     for scenedata in mapdata:
         if scenedata == 1:
             break
 
-        dataList = []
-        sceneHeroData = []
-        sceneDoorData = {}
-        sceneSpineData = []
+        if sceneIndex == 0:
+            dataList = []
+            sceneHeroData = []
+            sceneDoorData = {}
 
-        areaIndex = 1
-        for areadata in scenedata:
-            if areadata == 1:
-                break
+            areaIndex = 1
+            for areadata in scenedata:
+                if areadata == 1:
+                    break
 
-            print "parse scene {} area {}".format(sceneIndex, areaIndex)
-            data = parse(areadata, areaIndex)
-            dataList.append(data)
-            areaIndex = areaIndex + 1
+                print "parse home scene {} area {}".format(sceneIndex, areaIndex)
+                data = parseHome(areadata, areaIndex)
+                dataList.append(data)
+                areaIndex = areaIndex + 1
 
-        data = {}
-        data["areas"] = dataList
-        data["heros"] = sceneHeroData
-        data["gates"] = sceneDoorData
-        data["spines"] = sceneSpineData
-        data["attri"] = readAttriJson(sceneIndex - 1)
+            data = {}
+            data["areas"] = dataList
+            data["heros"] = sceneHeroData
+            data["gates"] = sceneDoorData
 
-        jsonDataList.append(data)
+            jsonDataList.append(data)
+
+        else:
+            dataList = []
+            sceneHeroData = []
+            sceneDoorData = {}
+            sceneSpineData = []
+
+            areaIndex = 1
+            for areadata in scenedata:
+                if areadata == 1:
+                    break
+
+                print "parse scene {} area {}".format(sceneIndex, areaIndex)
+                data = parse(areadata, areaIndex)
+                dataList.append(data)
+                areaIndex = areaIndex + 1
+
+            data = {}
+            data["areas"] = dataList
+            data["heros"] = sceneHeroData
+            data["gates"] = sceneDoorData
+            data["spines"] = sceneSpineData
+            data["attri"] = readAttriJson(sceneIndex - 1)
+
+            jsonDataList.append(data)
 
         sceneIndex += 1
 
@@ -426,7 +495,6 @@ def encrypt(obj):
 def saveEncryptInfo(path):
     global total
     
-    index = 1
     encryptTotal = []
     for jsonData in jsonDataList:
         total = 0
@@ -460,7 +528,7 @@ def saveFile(path, data):
         if fp: fp.close()
 
 def saveJsonAndImg(path, oldPath):
-    index = 1
+    index = 0
     for jsonData in jsonDataList:
         jsonStr = json.dumps(jsonData)
 
