@@ -10,6 +10,18 @@ import shutil
 
 arrayMax = 20
 
+clsnSize = 256 #碰撞层瓦块的总数
+
+
+tileGateFrom = 33
+tileGateTo = 47
+tileRandom = 48
+tileDoors = [49, 50, 51, 52]
+tileNoEnemy = 53
+tileSpine = 65
+tileHero = 66
+
+
 # 所有map txm的数据，mapdata[场景(从0开始)][地图(从0开始)]
 mapdata = [1] * arrayMax
 
@@ -62,8 +74,8 @@ doorIndexs = {} # 每个area中的door索引
 
 # 去掉碰撞层的影响
 def parseTe(t):
-    if t > 256:
-        return t - 256
+    if t > clsnSize:
+        return t - clsnSize
     else:
         return t
 
@@ -71,16 +83,28 @@ def parseTe(t):
 def parseNo(t, lineNum, colNum, w, h, area):
 
     global sceneHeroData
-    global sceneDoorData
     global sceneSpineData
 
     global noEnemyPosData
-    global doorIndexs
+    
 
-    if t == 38:
+    if t == tileNoEnemy:
         noEnemyPosData[colNum * 1000 + lineNum] = 1
 
-    elif t == 49:
+    elif t == tileSpine:
+        # spine
+        thisSpineData = {}
+        thisSpineData["x"] = colNum
+        thisSpineData["y"] = lineNum
+        thisSpineData["area"] = area
+        thisSpineData["id"] = t - tileSpine
+
+        if not sceneSpineData[area]:
+            sceneSpineData[area] = []
+
+        sceneSpineData[area].append(thisSpineData)
+
+    elif t == tileHero:
         #hero pos
 
         thisHeroData = {}
@@ -90,7 +114,11 @@ def parseNo(t, lineNum, colNum, w, h, area):
         thisHeroData["id"] = t
         sceneHeroData.append(thisHeroData)
 
-    elif 50 <= t and t <= 64:
+def parseCo(t, lineNum, colNum, w, h, area):
+    global sceneDoorData
+    global doorIndexs
+
+    if tileGateFrom <= t and t <= tileGateTo:
         # 门
         key = 1
 
@@ -127,19 +155,10 @@ def parseNo(t, lineNum, colNum, w, h, area):
 
         sceneDoorData[t][doorIndexs[t]].append(thisDoorData)
 
-    elif t == 65:
-        # spine
-        thisSpineData = {}
-        thisSpineData["x"] = colNum
-        thisSpineData["y"] = lineNum
-        thisSpineData["area"] = area
-        thisSpineData["id"] = t - 49
+        return newT
 
-        if not sceneSpineData[area]:
-            sceneSpineData[area] = []
-
-        sceneSpineData[area].append(thisSpineData)
-
+    else:
+        return None
 
 def getDataFromTileJson(jsonStr, key):
     k1 = "<layer name=\"" + key + r"\"([\s\S]*?)</layer>"
@@ -197,6 +216,15 @@ def parseHome(string, areaIndex):
             noData = noLine[i]
             parseNo(noData, j, i, w, h, areaIndex)
 
+    # 遍历碰撞，获取门信息
+    for j in xrange(0, len(coList)):
+        coLine = coList[j]
+        for i in xrange(0, len(coLine)):
+            coData = coLine[i]
+            newT = parseCo(coData, j, i, w, h, areaIndex)
+            if newT:
+                coList[j][i] = newT
+
     realTeList = []
     for line in teList:
         realLine = []
@@ -240,7 +268,7 @@ def parse(string, areaIndex):
     coList = getDataFromTileJson(string, "collision") # 碰撞
     noList = getDataFromTileJson(string, "notation") # 标记
 
-    # 遍历标记，获取无敌人区域，门，spine等信息
+    # 遍历标记，获取无敌人区域，spine等信息
     for j in xrange(0, len(noList)):
         noLine = noList[j]
         for i in xrange(0, len(noLine)):
@@ -248,6 +276,15 @@ def parse(string, areaIndex):
             parseNo(noData, j, i, w, h, areaIndex)
 
     data["noeps"] = noEnemyPosData
+
+    # 遍历碰撞，获取门信息
+    for j in xrange(0, len(coList)):
+        coLine = coList[j]
+        for i in xrange(0, len(coLine)):
+            coData = coLine[i]
+            newT = parseCo(coData, j, i, w, h, areaIndex)
+            if newT:
+                coList[j][i] = newT
 
     # 遍历碰撞，获取随机区域和固定区域
     interval = 3
@@ -273,7 +310,7 @@ def parse(string, areaIndex):
             # 获取位置元素
             coData = coList[ry][_x]
             # 查看是否是随机块
-            if coData == 33:
+            if coData == tileRandom:
                 rLine.append(0)
             else:
                 rLine.append(1)
@@ -368,7 +405,7 @@ def parse(string, areaIndex):
                 doorLeft = []
                 doorRight = []
 
-                doorNotation = [34, 35, 36, 37]
+                doorNotation = tileDoors
                 for thumbY in xrange(rLineIndex, fiY + 1):
                     y = thumbY * interval
                     for thumbX in xrange(rDataIndex, fiX + 1):

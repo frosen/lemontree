@@ -81,7 +81,7 @@ export class Hero extends MyComponent {
     xMoveDir: number = 0;
 
     onLoad() {
-        requireComponents(this, [MovableObject, TerrainColliderClsn, ObjCollider, ObjColliderForWatch, HeroLooks]);
+        requireComponents(this, [MovableObject, TerrainColliderForHero, ObjCollider, ObjColliderForWatch, HeroLooks]);
 
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCollider = this.getComponent(TerrainColliderForHero);
@@ -126,7 +126,7 @@ export class Hero extends MyComponent {
         // 如果处于platform上，显示下跳按钮
         this.setUsingType(HeroUsingType.jumpDown, this.terrainCollider.curYCollisionType == CollisionType.platform);
 
-        let atMidGate = this.terrainCtrlr.getGateKey(this.terrainCollider.gateGid) == GateType.mid;
+        let atMidGate = this.terrainCtrlr.getGateType(this.terrainCollider.gateGid) == GateType.mid;
         this.setUsingType(HeroUsingType.midGate, atMidGate);
     }
 

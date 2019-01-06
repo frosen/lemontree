@@ -289,8 +289,8 @@ export class MapCtrlr extends MyComponent {
     /** 获取场景中不同区域之间的门的信息 */
     getGatePos(id: number):
         {thisArea: number, thisX: number, thisY: number, otherArea: number, otherX: number, otherY: number} {
-        let k = id % 100;
-        let index = Math.floor(id / 100) % 100;
+        let k = this.terrainCtrlr.getGateKey(id);
+        let index = this.terrainCtrlr.getGateIndex(id);
         let gates = this.sceneJsons[this.curScene].gates;
         let gateList = gates[k][index];
 

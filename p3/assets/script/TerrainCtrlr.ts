@@ -40,11 +40,10 @@ export enum GateType {
     mid,
 }
 
-
 const GidTypeList = [
     undefined,
 
-    CollisionType.platform,
+    CollisionType.entity,
     CollisionType.entity,
     CollisionType.entity,
     CollisionType.entity,
@@ -55,6 +54,14 @@ const GidTypeList = [
 
     CollisionType.entity,
     CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.none,
+    CollisionType.none,
+
+    CollisionType.platform,
     CollisionType.slope,
     CollisionType.slope,
     CollisionType.entity,
@@ -122,8 +129,8 @@ export class TerrainCtrlr extends MyComponent {
 
     _getSlopeDir(gid: number): number {
         switch (gid) {
-            case 11: return 1;
-            case 12: return -1;
+            case 18: return 1;
+            case 19: return -1;
             default: return null;
         }
     }
@@ -134,31 +141,33 @@ export class TerrainCtrlr extends MyComponent {
      */
     _getForcedMoveDir(gid: number): ForcedMoveType {
         switch (gid) {
-            case 13: return ForcedMoveType.right;
-            case 14: return ForcedMoveType.left;
-            case 15: return ForcedMoveType.up;
-            case 16: return ForcedMoveType.flow;
+            case 20: return ForcedMoveType.right;
+            case 21: return ForcedMoveType.left;
+            case 22: return ForcedMoveType.up;
+            case 23: return ForcedMoveType.flow;
             default: return ForcedMoveType.none;
         }
     }
 
     /**
-     * 如果是门（边门，中门），则获得门的id（包含其属性），否则获得空
+     * 如果是门（边门，中门），则获得门的id，否则获得空
      */
     _getGateGid(gid: number): number {
-        let key = this.getGateKey(gid);
-        if (key) return gid;
-        else return null;
+        if (Math.floor(gid / 100000) == 1) {
+            return gid;
+        } else return null;
     }
 
     getGateKey(gid: number): number {
-        if (gid == null) return null;
-        let key = Math.floor(gid / 100000);
-        if (key == GateType.side || key == GateType.side) {
-            return key;
-        } else {
-            return null;
-        }
+        return gid % 100;
+    }
+
+    getGateIndex(gid: number): number {
+        return Math.floor(gid / 100) % 100;
+    }
+
+    getGateType(gid: number): GateType {
+        return Math.floor(gid / 10000) % 10 == 5 ? GateType.mid : GateType.side;
     }
 
     // ==================================================================
