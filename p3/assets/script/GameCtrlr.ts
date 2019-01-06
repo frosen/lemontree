@@ -53,13 +53,17 @@ export default class GameCtrlr extends cc.Component {
     gamePause: boolean = false;
 
     start() { // 所有默认直接onload的之后
-        this.changeScene(1); // llytodo
-
         this.gameMemory = new GameMemory(this.onMemoryLoad.bind(this));
+        this.gameMemory.load();
     }
 
     onMemoryLoad() {
-
+        let sceneIndex = this.gameMemory.loadedData.curScene;
+        if (sceneIndex == 0) {
+            this.changeToHomeScene();
+        } else {
+            this.changeScene(sceneIndex);
+        }
     }
 
     changeScene(index: number) {
@@ -75,8 +79,23 @@ export default class GameCtrlr extends cc.Component {
         ]);
     }
 
+    changeToHomeScene() {
+        this.curScene = 0;
+        callList(this, [
+            [this._createHomeScene],
+            [this._gotoHeroSpot],
+            [this._showScene]
+        ]);
+    }
+
     _createScene(callNext: () => void, lastData: any) {
         this.mapCtrlr.createScene(this.curScene, () => {
+            return callNext();
+        });
+    }
+
+    _createHomeScene(callNext: () => void, lastData: any) {
+        this.mapCtrlr.createHomeScene(() => {
             return callNext();
         });
     }
@@ -123,11 +142,15 @@ export default class GameCtrlr extends cc.Component {
         this.curtain.showScene();
     }
 
-    enterGate(gateGid: number, lastHeroPos: cc.Vec2) {
+    enterSideGate(gateGid: number, lastHeroPos: cc.Vec2) {
         let {thisX, thisY, otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
         let lastGatePos = this.terrainCtrlr.getPosFromTilePos(thisX, thisY);
         let diff = cc.pSub(lastHeroPos, lastGatePos);
         this._changeArea(otherArea, otherX, otherY, diff.x, diff.y);
+    }
+
+    enterMidGate(gateGid: number) {
+
     }
 
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {

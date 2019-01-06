@@ -11,7 +11,14 @@ import GameCtrlr from "./GameCtrlr";
 @ccclass
 export default class TerrainColliderForHero extends TerrainColliderForCreature {
 
+    gameCtrlr: GameCtrlr = null;
+
     gateGid: number = null;
+
+    onLoad() {
+        super.onLoad();
+        this.gameCtrlr = cc.find("main").getComponent(GameCtrlr);
+    }
 
     update(_: number) {
         this._checkCollision();
@@ -25,16 +32,18 @@ export default class TerrainColliderForHero extends TerrainColliderForCreature {
         let xCenter = this.node.x - anchorW + size.width * 0.5;
         let yCenter = this.node.y - anchorH + size.height * 0.5;
 
+        // 门
+        let gateGid = this.terrainCtrlr.getGateData(xCenter, yCenter);
+
         if (this.xOutRangeDir == 0 && this.yOutRangeDir == 0) {
-            this.gateGid = this.terrainCtrlr.getGateData(xCenter, yCenter);
+            this.gateGid = gateGid; // 记录gate，边门在出界时候用，中门在点击时候用
 
         } else {
             if (this.gateGid == null) {
                 this._handleOutOfRange();
 
             } else {
-                let gameCtrlr = cc.find("main").getComponent(GameCtrlr);
-                gameCtrlr.enterGate(this.gateGid, this.node.position);
+                this.gameCtrlr.enterSideGate(this.gateGid, this.node.position);
             }
         }
     }

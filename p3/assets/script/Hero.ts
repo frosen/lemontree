@@ -6,10 +6,11 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
+import GameCtrlr from "./GameCtrlr";
 
 import {MovableObject} from "./MovableObject";
-import TerrainColliderClsn from "./TerrainColliderClsn";
-import {CollisionType} from "./TerrainCtrlr";
+import TerrainColliderForHero from "./TerrainColliderForHero";
+import {TerrainCtrlr, CollisionType, GateType} from "./TerrainCtrlr";
 import {ObjCollider, CollisionData} from "./ObjCollider";
 import ObjColliderForWatch from "./ObjColliderForWatch";
 import {HeroLooks, HeroDirLv} from "./HeroLooks";
@@ -38,6 +39,7 @@ export enum HeroUsingType {
     pickUp = 1,
     trigger,
     jumpDown,
+    midGate,
 }
 
 @ccclass
@@ -46,7 +48,9 @@ export class Hero extends MyComponent {
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
-    terrainCollider: TerrainColliderClsn = null;
+    terrainCollider: TerrainColliderForHero = null;
+    /** 地图的碰撞检测管理器 */
+    terrainCtrlr: TerrainCtrlr = null;
     /** 对象碰撞组件 */
     objCollider: ObjCollider = null;
     /** 观察区碰撞组件 */
@@ -80,7 +84,8 @@ export class Hero extends MyComponent {
         requireComponents(this, [MovableObject, TerrainColliderClsn, ObjCollider, ObjColliderForWatch, HeroLooks]);
 
         this.movableObj = this.getComponent(MovableObject);
-        this.terrainCollider = this.getComponent(TerrainColliderClsn);
+        this.terrainCollider = this.getComponent(TerrainColliderForHero);
+        this.terrainCtrlr = cc.find("main/map").getComponent(TerrainCtrlr);
         this.objCollider = this.getComponent(ObjCollider);
         this.watchCollider = this.getComponent(ObjColliderForWatch);
 
@@ -120,6 +125,9 @@ export class Hero extends MyComponent {
 
         // 如果处于platform上，显示下跳按钮
         this.setUsingType(HeroUsingType.jumpDown, this.terrainCollider.curYCollisionType == CollisionType.platform);
+
+        let atMidGate = this.terrainCtrlr.getGateKey(this.terrainCollider.gateGid) == GateType.mid;
+        this.setUsingType(HeroUsingType.midGate, atMidGate);
     }
 
     // 初始化 ========================================================
@@ -161,7 +169,8 @@ export class Hero extends MyComponent {
     }
 
     /** 当前点击使用按钮会触发的类型 */
-    curUsingTypeStates: [boolean, boolean, boolean] = [false, false, false];
+    curUsingTypeStates: [boolean, boolean, boolean, boolean, boolean] =
+        [false, false, false, false, false];
     curUsingType: HeroUsingType = null;
 
     /**
@@ -172,6 +181,7 @@ export class Hero extends MyComponent {
             case HeroUsingType.pickUp: this.pickUp(); break;
             case HeroUsingType.trigger: this.trigger(); break;
             case HeroUsingType.jumpDown: this.jumpDown(); break;
+            case HeroUsingType.midGate: this.midGate(); break;
         }
     }
 
@@ -188,6 +198,10 @@ export class Hero extends MyComponent {
         this.node.y -= 2;
     }
 
+    midGate() {
+        cc.find("main").getComponent(GameCtrlr).enterMidGate(this.terrainCollider.gateGid);
+    }
+
     setUsingType(t: HeroUsingType, b: boolean) {
         this.curUsingTypeStates[t] = b;
 
@@ -197,6 +211,8 @@ export class Hero extends MyComponent {
             this.curUsingType = HeroUsingType.trigger;
         } else if (this.curUsingTypeStates[HeroUsingType.jumpDown]) {
             this.curUsingType = HeroUsingType.jumpDown;
+        } else if (this.curUsingTypeStates[HeroUsingType.midGate]) {
+            this.curUsingType = HeroUsingType.midGate;
         } else {
             this.curUsingType = null;
         }

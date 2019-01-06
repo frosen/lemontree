@@ -3,7 +3,7 @@
 // lly 2018.5.12
 
 export class MemoryData {
-
+    curScene: number;
 }
 
 export class GameMemory {
@@ -11,13 +11,16 @@ export class GameMemory {
     /** 读取后的回调，new的时候执行读取 */
     loadCall: () => void
 
+    loadedData: MemoryData = null;
+
     constructor(loadCall: () => void) {
         this.loadCall = loadCall;
-        this._load();
     }
 
-    _load() {
-
+    load() {
+        this.loadedData = new MemoryData();
+        this.loadedData.curScene = 0;
+        this.loadCall();
     }
 
     save() {

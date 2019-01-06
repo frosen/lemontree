@@ -34,6 +34,13 @@ export enum ForcedMoveType {
     up, // 直接变换向上的速度
 }
 
+/** 门类型 */
+export enum GateType {
+    side = 1,
+    mid,
+}
+
+
 const GidTypeList = [
     undefined,
 
@@ -136,13 +143,22 @@ export class TerrainCtrlr extends MyComponent {
     }
 
     /**
-     * 如果是门，则获得门的id（包含其属性），否则获得空
+     * 如果是门（边门，中门），则获得门的id（包含其属性），否则获得空
      */
     _getGateGid(gid: number): number {
-        let key = Math.floor(gid / 100000);
-        if (key != 1) return null;
+        let key = this.getGateKey(gid);
+        if (key) return gid;
+        else return null;
+    }
 
-        return gid;
+    getGateKey(gid: number): number {
+        if (gid == null) return null;
+        let key = Math.floor(gid / 100000);
+        if (key == GateType.side || key == GateType.side) {
+            return key;
+        } else {
+            return null;
+        }
     }
 
     // ==================================================================

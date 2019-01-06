@@ -47,6 +47,7 @@ export default class PotCtrlr extends MyComponent {
         // 生成节点池
         this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
             let node = new cc.Node();
+            node.name = "pot";
             node.addComponent(Pot);
             node.setAnchorPoint(0.5, 0);
             return node;

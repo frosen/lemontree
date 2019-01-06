@@ -139,7 +139,7 @@ export class MapCtrlr extends MyComponent {
                 return;
             }
 
-            let decodeStr = MapCtrlr._decodeMapData(data.text);
+            let decodeStr = "";
             this.sceneJsons[this.curScene] = JSON.parse(decodeStr);
             return callNext();
         });

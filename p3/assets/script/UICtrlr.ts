@@ -34,6 +34,7 @@ export default class UICtrlr extends MyComponent {
     @property(cc.Button) pickUpBtn: cc.Button = null;
     @property(cc.Button) triggerBtn: cc.Button = null;
     @property(cc.Button) jumpDownBtn: cc.Button = null;
+    @property(cc.Button) midGateBtn: cc.Button = null;
 
     curUsingType: HeroUsingType = null;
 
@@ -81,6 +82,7 @@ export default class UICtrlr extends MyComponent {
             case HeroUsingType.pickUp: return this.pickUpBtn;
             case HeroUsingType.trigger: return this.triggerBtn;
             case HeroUsingType.jumpDown: return this.jumpDownBtn;
+            case HeroUsingType.midGate: return this.midGateBtn;
         }
         return null;
     }

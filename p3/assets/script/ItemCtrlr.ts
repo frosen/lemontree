@@ -82,6 +82,7 @@ export class ItemCtrlr extends MyComponent {
         // 生成节点池
         this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
             let node = new cc.Node();
+            node.name = "item";
             let itemComp = node.addComponent(ItemComp);
             itemComp.itemCtrlr = this;
             return node;
