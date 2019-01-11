@@ -5,6 +5,7 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
+import GameCtrlr from "./GameCtrlr";
 import Spine from "./Spine";
 
 class SpineData {
@@ -20,6 +21,8 @@ class SpineData {
 @ccclass
 export default class SpineCtrlr extends MyComponent {
 
+    gameCtrlr: GameCtrlr = null;
+
     /** 敌人名称对应的节点的对象池 */
     pool: {[key: string]: Spine[];} = {};
 
@@ -29,15 +32,16 @@ export default class SpineCtrlr extends MyComponent {
     /** 每个区域的尖刺位置信息 */
     datas: SpineData[][] = [];
 
-    curScene: number = 1; //从1开始
-    curArea: number = 1; //从1开始
+    onLoad() {
+        this.gameCtrlr = cc.find("main").getComponent(GameCtrlr);
+    }
 
-    setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
-        this.curScene = sceneIndex;
-        if (this.prefabs[sceneIndex]) return finishCallback();
+    setSceneAndLoadRes(finishCallback: () => void) {
+        let curScene = this.gameCtrlr.getCurScene();
+        if (this.prefabs[curScene]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(`map/scene${this.curScene}/spine`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
+        cc.loader.loadResDir(`map/scene${curScene}/spine`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load spine prefab res dir: ${error.message}`);
                 return;
@@ -50,7 +54,7 @@ export default class SpineCtrlr extends MyComponent {
                 data[prefab.name] = prefab;
             }
 
-            this.prefabs[this.curScene] = data;
+            this.prefabs[curScene] = data;
 
             return finishCallback();
 
@@ -81,7 +85,7 @@ export default class SpineCtrlr extends MyComponent {
             }
         }
 
-        let prefabs = this.prefabs[this.curScene];
+        let prefabs = this.prefabs[this.gameCtrlr.getCurScene()];
         let parent = this.node;
         for (const name in counts) {
             const count = counts[name];
@@ -104,9 +108,9 @@ export default class SpineCtrlr extends MyComponent {
         }
     }
 
-    changeArea(areaIndex: number) {
-        this.curArea = areaIndex;
-        let datas: SpineData[] = this.datas[areaIndex];
+    changeArea() {
+        let curArea = this.gameCtrlr.getCurArea();
+        let datas: SpineData[] = this.datas[curArea];
         if (!datas) return;
 
         let poolIndexs = {};

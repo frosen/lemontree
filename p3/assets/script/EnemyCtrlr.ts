@@ -5,6 +5,7 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
+import GameCtrlr from "./GameCtrlr";
 import Enemy from "./Enemy";
 import {GroundInfo} from "./MapCtrlr";
 
@@ -29,6 +30,8 @@ export default class EnemyCtrlr extends MyComponent {
     @property
     debugEnemyLevel: number = 0;
 
+    gameCtrlr: GameCtrlr = null;
+
     /** 敌人名称对应的节点的对象池 */
     pool: {[key: string]: Enemy[];} = {};
 
@@ -40,8 +43,9 @@ export default class EnemyCtrlr extends MyComponent {
     /** 每个区域的敌人位置信息 */
     datas: EnemyData[][] = [];
 
-    curScene: number = 1; //从1开始
-    curArea: number = 1; //从1开始
+    onLoad() {
+        this.gameCtrlr = cc.find("main").getComponent(GameCtrlr);
+    }
 
     start() { // 在enemy的onload后
         if (this.debugEnemyLevel > 0) {
@@ -52,12 +56,12 @@ export default class EnemyCtrlr extends MyComponent {
         }
     }
 
-    setSceneAndLoadRes(sceneIndex: number, finishCallback: () => void) {
-        this.curScene = sceneIndex;
-        if (this.prefabs[sceneIndex]) return finishCallback();
+    setSceneAndLoadRes(finishCallback: () => void) {
+        let curScene = this.gameCtrlr.getCurScene();
+        if (this.prefabs[curScene]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(`map/scene${this.curScene}/enemy`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
+        cc.loader.loadResDir(`map/scene${curScene}/enemy`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load enemy prefab res dir: ${error.message}`);
                 return;
@@ -72,8 +76,8 @@ export default class EnemyCtrlr extends MyComponent {
                 names.push(prefab.name);
             }
 
-            this.prefabs[this.curScene] = data;
-            this.prefabNames[this.curScene] = names;
+            this.prefabs[curScene] = data;
+            this.prefabNames[curScene] = names;
 
             return finishCallback();
         });
@@ -82,8 +86,9 @@ export default class EnemyCtrlr extends MyComponent {
     setData(areaIndex: number, posInfos: {pos: cc.Vec2, ground: GroundInfo}[]) {
         if (this.debugEnemyLevel > 0) return; // 开启测试，就不随机生成了
 
+        let curScene = this.gameCtrlr.getCurScene();
         let data: EnemyData[] = [];
-        let names = this.prefabNames[this.curScene];
+        let names = this.prefabNames[curScene];
         let len = names.length;
         for (const posInfo of posInfos) {
             let r = Math.random() * len;
@@ -105,7 +110,7 @@ export default class EnemyCtrlr extends MyComponent {
             }
         }
 
-        let prefabs = this.prefabs[this.curScene];
+        let prefabs = this.prefabs[curScene];
         let parent = this.node;
         for (const name in counts) {
             const count = counts[name];
@@ -129,9 +134,9 @@ export default class EnemyCtrlr extends MyComponent {
         }
     }
 
-    changeArea(areaIndex: number) {
-        this.curArea = areaIndex;
-        let datas: EnemyData[] = this.datas[areaIndex];
+    changeArea() {
+        let curArea = this.gameCtrlr.getCurArea();
+        let datas: EnemyData[] = this.datas[curArea];
         if (!datas) return;
 
         let dataIndex = 0;
@@ -180,9 +185,10 @@ export default class EnemyCtrlr extends MyComponent {
     }
 
     killEnemy(enemy: Enemy) {
+        let curArea = this.gameCtrlr.getCurArea();
         let index = enemy.ctrlrIndex;
         if (index != null && index >= 0) {
-            this.datas[this.curArea][index].living = false;
+            this.datas[curArea][index].living = false;
             enemy.node.active = false;
         } else { // 没有index说明不是从pool中生成的
             enemy.node.removeFromParent();
@@ -193,7 +199,8 @@ export default class EnemyCtrlr extends MyComponent {
      * 获取活着的敌人数量
      */
     getLivingEnemyCount(): number {
-        let datas = this.datas[this.curArea];
+        let curArea = this.gameCtrlr.getCurArea();
+        let datas = this.datas[curArea];
         let count: number = 0;
         for (const data of datas) {
             if (data.living) count++;

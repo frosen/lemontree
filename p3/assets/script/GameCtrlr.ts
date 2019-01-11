@@ -48,9 +48,15 @@ export default class GameCtrlr extends cc.Component {
 
     gameMemory: GameMemory = null;
 
-    curScene: number = 1; // 从1开始，0则为家
+    private curScene: number = 1; // 从1开始，0则为家
+    private curArea: number = 1; // 从1开始
 
     gamePause: boolean = false;
+
+    // 游戏总数据 ----------
+
+    /** 下次进入fight场景时都可能进入的场景序号 */
+    needFightSceneIndexs: number[] = [];
 
     start() { // 所有默认直接onload的之后
         this.gameMemory = new GameMemory(this.onMemoryLoad.bind(this));
@@ -62,21 +68,8 @@ export default class GameCtrlr extends cc.Component {
         if (sceneIndex == 0) {
             this.changeToHomeScene();
         } else {
-            this.changeScene(sceneIndex);
+            this.changeToFightScene(sceneIndex);
         }
-    }
-
-    changeScene(index: number) {
-        this.curScene = index;
-        callList(this, [
-            [this._createScene],
-            [this._loadEnemyRes],
-            [this._loadSpineRes],
-            [this._loadPotRes],
-            [this._createObjs],
-            [this._gotoHeroSpot],
-            [this._showScene]
-        ]);
     }
 
     changeToHomeScene() {
@@ -88,10 +81,17 @@ export default class GameCtrlr extends cc.Component {
         ]);
     }
 
-    _createScene(callNext: () => void, lastData: any) {
-        this.mapCtrlr.createScene(this.curScene, () => {
-            return callNext();
-        });
+    changeToFightScene(index: number) {
+        this.curScene = index;
+        callList(this, [
+            [this._createFightScene],
+            [this._loadEnemyRes],
+            [this._loadSpineRes],
+            [this._loadPotRes],
+            [this._createObjs],
+            [this._gotoHeroSpot],
+            [this._showScene]
+        ]);
     }
 
     _createHomeScene(callNext: () => void, lastData: any) {
@@ -100,16 +100,22 @@ export default class GameCtrlr extends cc.Component {
         });
     }
 
+    _createFightScene(callNext: () => void, lastData: any) {
+        this.mapCtrlr.createFightScene(() => {
+            return callNext();
+        });
+    }
+
     _loadEnemyRes(callNext: () => void, lastData: any) {
-        this.enemyCtrlr.setSceneAndLoadRes(this.curScene, callNext);
+        this.enemyCtrlr.setSceneAndLoadRes(callNext);
     }
 
     _loadSpineRes(callNext: () => void, lastData: any) {
-        this.spineCtrlr.setSceneAndLoadRes(this.curScene, callNext);
+        this.spineCtrlr.setSceneAndLoadRes(callNext);
     }
 
     _loadPotRes(callNext: () => void, lastData: any) {
-        this.potCtrlr.setSceneAndLoadRes(this.curScene, callNext);
+        this.potCtrlr.setSceneAndLoadRes(callNext);
     }
 
     _createObjs(callNext: () => void, lastData: any) {
@@ -140,6 +146,12 @@ export default class GameCtrlr extends cc.Component {
 
     _showScene(callNext: () => void, lastData: any) {
         this.curtain.showScene();
+        return callNext();
+    }
+
+    _prepareFightSceneData(callNext: () => void, lastData: any) {
+        this.mapCtrlr.prepareFightSceneData([1]);
+        return callNext();
     }
 
     enterSideGate(gateGid: number, lastHeroPos: cc.Vec2) {
@@ -154,11 +166,13 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
-        this.mapCtrlr.changeArea(areaIndex);
+        this.curArea = areaIndex;
 
-        this.enemyCtrlr.changeArea(areaIndex);
-        this.spineCtrlr.changeArea(areaIndex);
-        this.potCtrlr.changeArea(areaIndex);
+        this.mapCtrlr.changeArea();
+
+        this.enemyCtrlr.changeArea();
+        this.spineCtrlr.changeArea();
+        this.potCtrlr.changeArea();
         this.itemCtrlr.clear();
 
         let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
@@ -228,5 +242,13 @@ export default class GameCtrlr extends cc.Component {
         } else {
             this.pause();
         }
+    }
+
+    getCurScene() {
+        return this.curScene;
+    }
+
+    getCurArea() {
+        return this.curArea;
     }
 }
