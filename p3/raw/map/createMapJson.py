@@ -413,29 +413,29 @@ def parse(string, areaIndex):
 
                         # 上下左右
                         if y - 1 >= 0 and noList[y - 1][x] in doorNotation:
-                            doorUp.append([x, y])
+                            doorUp.append({"x": x, "y": y})
 
                         if y + 3 < h - 1 and noList[y + 3][x] in doorNotation:
-                            doorDown.append([x, y + 2])
+                            doorDown.append({"x": x, "y": y + 2})
 
                         if x - 1 >= 1 and noList[y][x - 1] in doorNotation:
-                            doorLeft.append([x - 1, y])
+                            doorLeft.append({"x": x - 1, "y": y})
 
                         if x + 3 < w - 2 and noList[y][x + 3] in doorNotation:
-                            doorRight.append([x + 2, y])
+                            doorRight.append({"x": x + 2, "y": y})
 
                 door = []
                 door.append(doorUp)
                 door.append(doorDown)
                 door.append(doorLeft)
                 door.append(doorDown)
-                oneFi["d"] = door
+                oneFi["door"] = door
 
                 fi.append(oneFi)
 
 
-    data["r"] = rList
-    data["fi"] = fi
+    data["ra"] = rList
+    data["fis"] = fi
 
     return data
 

@@ -10,9 +10,9 @@ import MyComponent from "./MyComponent";
 import GameCtrlr from "./GameCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 
-// 随机前数据类 ========================================================
+import * as MapCheck from "../script_map/MapCheck";
 
-
+let scheduler = cc.director.getScheduler();
 
 // 已经形成的地形的类 ========================================================
 
@@ -24,15 +24,6 @@ export class GroundInfo {
     x: number;
     y: number;
     wide: boolean;
-}
-
-/** 一个区域的属性 */
-class AreaJson {
-    te: number[][];
-    co: number[][];
-    w: number;
-    h: number;
-    grounds: GroundInfo[];
 }
 
 /** 每个区域中触发点的属性 */
@@ -48,9 +39,52 @@ export class SceneAttri {
     cardIndexs: number[];
 }
 
+/** 一个区域的属性 */
+class AreaJson {
+    te: number[][];
+    co: number[][];
+    w: number;
+    h: number;
+    grounds: GroundInfo[];
+}
+
 /** 一个场景的属性 */
 class SceneJson {
     areas: AreaJson[];
+    heros: TriggerJson[];
+    gates: {[key: number]: {[key: number]: TriggerJson[];};};
+    spines: TriggerJson[][];
+    attri: SceneAttri;
+}
+
+// 模板类 ========================================================
+
+class FixedAreaTempJson {
+    w: number;
+    h: number;
+    x: number;
+    y: number;
+    te: number[][];
+    co: number[][];
+    door: {x: number, y: number}[][]; // 上下左右的门
+}
+
+class AreaTempJson {
+    w: number;
+    h: number;
+    noeps: number[]; // 不可有敌人的地面块
+    fis: FixedAreaTempJson[]; // 固定块
+    ra: number[][]; // 随机位置
+
+    static getNoEnemyPosFromNum(n: number): {x: number, y: number} {
+        let x = n % 1000;
+        let y = n - x;
+        return {x, y};
+    }
+}
+
+class SceneTempJson {
+    areaTemps: AreaTempJson[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
     spines: TriggerJson[][];
@@ -143,7 +177,7 @@ export class MapCtrlr extends MyComponent {
         let url = `map/scene${curScene}/terrain/area`;
         cc.loader.loadRes(url, cc.TextAsset, (err, data) => {
             if (err) {
-                cc.log(`Wrong in loadMapJson: ${err.message}`);
+                cc.error(`Wrong in loadMapJson: ${err.message}`);
                 return;
             }
 
@@ -162,7 +196,7 @@ export class MapCtrlr extends MyComponent {
         let url = `map/scene${curScene}/terrain/tiles`;
         cc.loader.loadRes(url, cc.SpriteFrame, (err, frame: cc.SpriteFrame) => {
             if (err) {
-                cc.log(`Wrong in loadTexture: ${err.message}`);
+                cc.error(`Wrong in loadTexture: ${err.message}`);
                 return;
             }
             this.frames[curScene] = frame;
@@ -252,18 +286,112 @@ export class MapCtrlr extends MyComponent {
 
     // ========================================================
 
-    /** 所需准备的场景索引列表 */
-    prepSceneIdxs: number[] = [];
-    /** 当前正在准备的场景索引 */
+    prepCallback: () => void = null;
+    /** 所需准备的场景列表，场景序号从1开始 */
+    prepScenes: number[] = [];
+    /** 当前正在准备的场景索引 从0开始*/
     curPrepSceneIdx: number = 0;
+    curPrepScene: number = 0;
+    /** 场景模板列表 */
+    sceneTempJsons: SceneTempJson[] = [];
 
+    curPrepAreaIdx: number = 0;
+    curAreaTempJsons: AreaTempJson[] = [];
+
+    /** 在下一帧执行当前类的函数 */
+    _callInNextFrame(func: () => void) {
+        scheduler.schedule(func.bind(this), this, 0, 0, 0, false);
+    }
 
     /**
      * 准备战斗场景的随机地图数据，
      * 考虑到可能比较慢，采用多线程异步创建，也就是在Home的时候就开始一张张创建了，然后本地保存
      * 进入战斗场景时，如果没创建完，则loading等待直到完成进入
      */
-    prepareFightSceneData(sceneIndexs: number[]) {
+    prepareFightSceneData(scenes: number[], callback: () => void) {
+        this.prepCallback = callback;
+        this.prepScenes = scenes;
+        this.curPrepSceneIdx = -1;
+
+        return this._manageSceneIdx();
+    }
+
+    _manageSceneIdx() {
+        this.curPrepSceneIdx++;
+        if (this.curPrepSceneIdx < this.prepScenes.length) {
+            this.curPrepScene = this.prepScenes[this.curPrepSceneIdx];
+            return this._checkFinishedDataAndLoad();
+        } else {
+            return this.prepCallback();
+        }
+    }
+
+    _checkFinishedDataAndLoad() {
+        this._loadSceneTempJson();
+    }
+
+    _loadSceneTempJson() {
+        if (this.sceneTempJsons[this.curPrepScene]) {
+            return this._initAreaPreparation();
+        }
+
+        let url = `map/scene${this.curPrepScene}/terrain/area`;
+        cc.loader.loadRes(url, cc.JsonAsset, (err, jsonData) => {
+            if (err) {
+                cc.error(`Wrong in _loadSceneTempJson: ${err.message}`);
+                return;
+            }
+
+            this.sceneTempJsons[this.curPrepScene] = jsonData.json;
+            return this._callInNextFrame(this._checkSceneTempJson);
+        });
+    }
+
+    checkTotal: number = 0;
+    _checkJsonNum(obj: Object) {
+        if (obj.constructor == Number) {
+            this.checkTotal += <number>obj;
+        } else if (obj instanceof Array) {
+            for (const iterator of obj) {
+                this._checkJsonNum(iterator);
+            }
+        } else if (obj instanceof Object) {
+            for (const key in obj) {
+                this._checkJsonNum(obj[key]);
+            }
+        }
+    }
+
+    _checkSceneTempJson() {
+        this.checkTotal = 0;
+        this._checkJsonNum(this.sceneTempJsons[this.curPrepScene]);
+        if (MapCheck[this.curPrepScene] != this.checkTotal) {
+            throw new Error("wrong num check");
+        }
+
+        return this._callInNextFrame(this._initAreaPreparation);
+    }
+
+    _initAreaPreparation() {
+        this.curAreaTempJsons = this.sceneTempJsons[this.curPrepScene].areaTemps;
+        this.curPrepAreaIdx = -1;
+        return this._manageAreaIdx();
+    }
+
+    _manageAreaIdx() {
+        this.curPrepAreaIdx++;
+        if (this.curPrepAreaIdx < this.curAreaTempJsons.length) {
+
+        } else {
+            return this._manageSceneIdx();
+        }
+    }
+
+    _sendDataToMapCreator() {
+
+    }
+
+    _executeMapCreate() {
 
     }
 

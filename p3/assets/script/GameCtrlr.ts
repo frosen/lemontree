@@ -77,7 +77,8 @@ export default class GameCtrlr extends cc.Component {
         callList(this, [
             [this._createHomeScene],
             [this._gotoHeroSpot],
-            [this._showScene]
+            [this._showScene],
+            [this._prepareFightSceneData]
         ]);
     }
 
@@ -107,15 +108,15 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _loadEnemyRes(callNext: () => void, lastData: any) {
-        this.enemyCtrlr.setSceneAndLoadRes(callNext);
+        return this.enemyCtrlr.setSceneAndLoadRes(callNext);
     }
 
     _loadSpineRes(callNext: () => void, lastData: any) {
-        this.spineCtrlr.setSceneAndLoadRes(callNext);
+        return this.spineCtrlr.setSceneAndLoadRes(callNext);
     }
 
     _loadPotRes(callNext: () => void, lastData: any) {
-        this.potCtrlr.setSceneAndLoadRes(callNext);
+        return this.potCtrlr.setSceneAndLoadRes(callNext);
     }
 
     _createObjs(callNext: () => void, lastData: any) {
@@ -150,8 +151,7 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _prepareFightSceneData(callNext: () => void, lastData: any) {
-        this.mapCtrlr.prepareFightSceneData([1]);
-        return callNext();
+        return this.mapCtrlr.prepareFightSceneData([1], callNext);
     }
 
     enterSideGate(gateGid: number, lastHeroPos: cc.Vec2) {
