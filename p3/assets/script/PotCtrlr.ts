@@ -105,7 +105,7 @@ export default class PotCtrlr extends MyComponent {
         this.infos[sceneIndex] = potInfos;
     }
 
-    setData(areaIndex: number, poss: {pos: cc.Vec2, ground: GroundInfo}[]) {
+    setData(areaIndex: number, poss: {pos: cc.Vec2, t: number}[]) {
         let curScene = this.gameCtrlr.getCurScene();
         let data = [];
         let potInfos = this.infos[curScene];

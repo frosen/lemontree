@@ -45,7 +45,23 @@ class AreaJson {
     co: number[][];
     w: number;
     h: number;
-    grounds: GroundInfo[];
+    groundInfo: number[];
+
+    getGroundInfoLen(): number {
+        return this.groundInfo.length / 3;
+    }
+
+    getGroundX(index: number): number {
+        return this.groundInfo[index];
+    }
+
+    getGroundY(index: number): number {
+        return this.groundInfo[index + 1];
+    }
+
+    getGroundType(index: number): number {
+        return this.groundInfo[index + 2];
+    }
 }
 
 /** 一个场景的属性 */
@@ -66,7 +82,7 @@ class FixedAreaTempJson {
     y: number;
     te: number[][];
     co: number[][];
-    door: {x: number, y: number}[][]; // 上下左右的门
+    door: number[][]; // 上下左右的门
 }
 
 class AreaTempJson {
@@ -75,12 +91,6 @@ class AreaTempJson {
     noeps: number[]; // 不可有敌人的地面块
     fis: FixedAreaTempJson[]; // 固定块
     ra: number[][]; // 随机位置
-
-    static getNoEnemyPosFromNum(n: number): {x: number, y: number} {
-        let x = n % 1000;
-        let y = n - x;
-        return {x, y};
-    }
 }
 
 class SceneTempJson {
@@ -326,6 +336,7 @@ export class MapCtrlr extends MyComponent {
         }
     }
 
+    /** 检测是否已经生成过了 */
     _checkFinishedDataAndLoad() {
         this._loadSceneTempJson();
     }
@@ -479,33 +490,35 @@ export class MapCtrlr extends MyComponent {
         return this.sceneJsons[curScene].attri;
     }
 
-    getGrounds(areaIndex: number): GroundInfo[] {
+    getAreaInfo(areaIndex: number): AreaJson {
         let curScene = this.gameCtrlr.getCurScene();
-        return this.sceneJsons[curScene].areas[areaIndex].grounds;
+        return this.sceneJsons[curScene].areas[areaIndex];
     }
 
     /**
      * 根据地图上的点，给每个地图生成随机位置，这些位置都在地面上
      */
-    createRandomGroundPoss(areaIndex: number): {pos: cc.Vec2, ground: GroundInfo}[] {
-        let grounds = this.getGrounds(areaIndex);
-        let count = Math.floor(grounds.length * 0.1);
+    createRandomGroundPoss(areaIndex: number): {pos: cc.Vec2, t: number}[] {
+        let areaInfo = this.getAreaInfo(areaIndex);
+        let len = areaInfo.getGroundInfoLen();
+        let count = Math.floor(len * 0.1);
 
-        let usingGroundPoss: {pos: cc.Vec2, ground: GroundInfo}[] = [];
+        let usingGroundPoss: {pos: cc.Vec2, t: number}[] = [];
         let usingStates = {};
 
         let tileNumHeight = this.getAreaData(areaIndex).h;
 
         do {
-            let k = Math.floor(Math.random() * grounds.length);
-            let ground = grounds[k];
+            let k = Math.floor(Math.random() * len);
+            let groundX = areaInfo.getGroundX(k);
+            let groundY = areaInfo.getGroundY(k);
 
-            let stKey = ground.x * 1000 + ground.y;
+            let stKey = groundX * 1000 + groundY;
             let state = usingStates[stKey];
 
             if (!state) {
-                let pos = this.terrainCtrlr.getPosFromTilePos(ground.x, ground.y - 1, tileNumHeight);
-                usingGroundPoss.push({pos, ground});
+                let pos = this.terrainCtrlr.getPosFromTilePos(groundX, groundY - 1, tileNumHeight);
+                usingGroundPoss.push({pos: pos, t: areaInfo.getGroundType(k)});
                 usingStates[stKey] = 1;
             } else {
                 // llytodo 如果有随机到重复的，在不过多增加计算量的基础上，让随机更平均

@@ -127,7 +127,7 @@ export default class GameCtrlr extends cc.Component {
             this.spineCtrlr.setData(index, spineInfo);
 
             // 生成敌人
-            let posInfos: {pos: cc.Vec2, ground: GroundInfo}[];
+            let posInfos: {pos: cc.Vec2, t: number}[];
             posInfos = this.mapCtrlr.createRandomGroundPoss(index);
             this.enemyCtrlr.setData(index, posInfos);
 

@@ -83,7 +83,7 @@ export default class EnemyCtrlr extends MyComponent {
         });
     }
 
-    setData(areaIndex: number, posInfos: {pos: cc.Vec2, ground: GroundInfo}[]) {
+    setData(areaIndex: number, posInfos: {pos: cc.Vec2, t: number}[]) {
         if (this.debugEnemyLevel > 0) return; // 开启测试，就不随机生成了
 
         let curScene = this.gameCtrlr.getCurScene();

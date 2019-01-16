@@ -69,7 +69,7 @@ sceneDoorData = {}
 sceneSpineData = []
 
 # area数据
-noEnemyPosData = {}
+noEnemyPosData = []
 doorIndexs = {} # 每个area中的door索引
 
 # 去掉碰撞层的影响
@@ -89,7 +89,7 @@ def parseNo(t, lineNum, colNum, w, h, area):
     
 
     if t == tileNoEnemy:
-        noEnemyPosData[colNum * 1000 + lineNum] = 1
+        noEnemyPosData.append(colNum * 1000 + lineNum)
 
     elif t == tileSpine:
         # spine
@@ -250,7 +250,7 @@ def parse(string, areaIndex):
     global noEnemyPosData
     global doorIndexs
 
-    noEnemyPosData = {}
+    noEnemyPosData = []
     doorIndexs = {}
 
     data = {}
@@ -399,11 +399,11 @@ def parse(string, areaIndex):
                 oneFi["te"] = fite
                 oneFi["co"] = fico
 
-                # 区域的门信息
-                doorUp = []
-                doorDown = []
-                doorLeft = []
-                doorRight = []
+                # 区域的门信息 
+                doorUp = [] #记录九宫格的左上角
+                doorDown = [] #记录九宫格的左下角
+                doorLeft = [] #记录九宫格的左上角
+                doorRight = [] #记录九宫格的右上角
 
                 doorNotation = tileDoors
                 for thumbY in xrange(rLineIndex, fiY + 1):
@@ -413,22 +413,27 @@ def parse(string, areaIndex):
 
                         # 上下左右
                         if y - 1 >= 0 and noList[y - 1][x] in doorNotation:
-                            doorUp.append({"x": x, "y": y})
+                            doorUp.append(x)
+                            doorUp.append(y)
 
                         if y + 3 < h - 1 and noList[y + 3][x] in doorNotation:
-                            doorDown.append({"x": x, "y": y + 2})
+                            doorDown.append(x)
+                            doorDown.append(y + 2)
 
                         if x - 1 >= 1 and noList[y][x - 1] in doorNotation:
-                            doorLeft.append({"x": x - 1, "y": y})
+                            doorLeft.append(x)
+                            doorLeft.append(y)
 
                         if x + 3 < w - 2 and noList[y][x + 3] in doorNotation:
-                            doorRight.append({"x": x + 2, "y": y})
+                            doorRight.append(x + 2)
+                            doorRight.append(y)
 
                 door = []
                 door.append(doorUp)
                 door.append(doorDown)
                 door.append(doorLeft)
-                door.append(doorDown)
+                door.append(doorRight)
+
                 oneFi["door"] = door
 
                 fi.append(oneFi)
