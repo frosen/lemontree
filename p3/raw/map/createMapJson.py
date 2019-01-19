@@ -260,8 +260,8 @@ def parse(string, areaIndex):
     hStr = re.findall(r" height=\"(.+?)\"", string)[0]
     w = int(wStr)
     h = int(hStr)
-    data["w"] = w
-    data["h"] = h
+    data["rW"] = w
+    data["rH"] = h
 
     # 从json string提取tile数据
     teList = getDataFromTileJson(string, "terrain") # 地形
@@ -358,7 +358,7 @@ def parse(string, areaIndex):
                 realXMax = (fiX + 1) * interval + 1
 
                 realW = realXMax - realX
-                realH = realYMax - realY
+                realH = realYMax - realY 
 
                 #靠边的块要加上边缘
                 if realX == 1:
@@ -374,10 +374,15 @@ def parse(string, areaIndex):
                 oneFi = {}
 
                 # 基础属性
-                oneFi["x"] = realX
-                oneFi["y"] = realY
-                oneFi["w"] = realW
-                oneFi["h"] = realH
+                oneFi["rX"] = realX
+                oneFi["rY"] = realY
+                oneFi["rW"] = realW
+                oneFi["rH"] = realH
+
+                oneFi["tX"] = rDataIndex
+                oneFi["tY"] = rLineIndex
+                oneFi["tW"] = fiX + 1 - rDataIndex
+                oneFi["tH"] = fiY + 1 - rLineIndex
 
                 # 区域的地形和碰撞
                 fite = []

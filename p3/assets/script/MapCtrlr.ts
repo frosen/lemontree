@@ -76,18 +76,22 @@ class SceneJson {
 // 模板类 ========================================================
 
 class FixedAreaTempJson {
-    w: number;
-    h: number;
-    x: number;
-    y: number;
+    rX: number;
+    rY: number;
+    rW: number;
+    rH: number;
+    tX: number;
+    tY: number;
+    tW: number;
+    tH: number;
     te: number[][];
     co: number[][];
     door: number[][]; // 上下左右的门
 }
 
 class AreaTempJson {
-    w: number;
-    h: number;
+    rW: number;
+    rH: number;
     noeps: number[]; // 不可有敌人的地面块
     fis: FixedAreaTempJson[]; // 固定块
     ra: number[][]; // 随机位置
