@@ -41,7 +41,7 @@ export enum GateType {
 }
 
 const GidTypeList = [
-    undefined,
+    CollisionType.none,
 
     CollisionType.entity,
     CollisionType.entity,
@@ -58,16 +58,10 @@ const GidTypeList = [
     CollisionType.entity,
     CollisionType.entity,
     CollisionType.entity,
-    CollisionType.none,
-    CollisionType.none,
+    CollisionType.slope,
+    CollisionType.slope,
 
     CollisionType.platform,
-    CollisionType.slope,
-    CollisionType.slope,
-    CollisionType.entity,
-    CollisionType.entity,
-    CollisionType.entity,
-    CollisionType.none
 ]
 
 @ccclass
@@ -121,16 +115,16 @@ export class TerrainCtrlr extends MyComponent {
     // id 转 数据========================================================
 
     /**
-     * 根据瓦片id，转换成所代表的碰撞类型
+     * 根据瓦片id，转换成所代表的碰撞类型 十位个位为碰撞类型，百位为key
      */
     _getTypeFromGid(gid: number): CollisionType {
-        return GidTypeList[gid] || CollisionType.none;
+        return GidTypeList[gid % 100];
     }
 
     _getSlopeDir(gid: number): number {
         switch (gid) {
-            case 18: return 1;
-            case 19: return -1;
+            case 15: return 1;
+            case 16: return -1;
             default: return null;
         }
     }
@@ -140,11 +134,14 @@ export class TerrainCtrlr extends MyComponent {
      * @returns ForcedMoveType
      */
     _getForcedMoveDir(gid: number): ForcedMoveType {
-        switch (gid) {
-            case 20: return ForcedMoveType.right;
-            case 21: return ForcedMoveType.left;
-            case 22: return ForcedMoveType.up;
-            case 23: return ForcedMoveType.flow;
+        if (Math.floor(gid / 100) % 10 != 2) return ForcedMoveType.none;
+
+        let moveKey = Math.floor(gid / 1000);
+        switch (moveKey) {
+            case 33: return ForcedMoveType.right;
+            case 34: return ForcedMoveType.left;
+            case 35: return ForcedMoveType.up;
+            case 36: return ForcedMoveType.flow;
             default: return ForcedMoveType.none;
         }
     }
@@ -153,21 +150,21 @@ export class TerrainCtrlr extends MyComponent {
      * 如果是门（边门，中门），则获得门的id，否则获得空
      */
     _getGateGid(gid: number): number {
-        if (Math.floor(gid / 100000) == 1) {
+        if (Math.floor(gid / 100) % 10 == 1) {
             return gid;
         } else return null;
     }
 
     getGateKey(gid: number): number {
-        return gid % 100;
-    }
-
-    getGateIndex(gid: number): number {
-        return Math.floor(gid / 100) % 100;
+        return Math.floor(gid / 100000);
     }
 
     getGateType(gid: number): GateType {
         return Math.floor(gid / 10000) % 10 == 5 ? GateType.mid : GateType.side;
+    }
+
+    getGateIndex(gid: number): number {
+        return Math.floor(gid / 1000) % 10;
     }
 
     // ==================================================================

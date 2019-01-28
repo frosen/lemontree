@@ -13,13 +13,24 @@ arrayMax = 20
 clsnSize = 256 #碰撞层瓦块的总数
 
 
-tileGateFrom = 33
-tileGateTo = 47
-tileRandom = 48
-tileDoors = [49, 50, 51, 52]
-tileNoEnemy = 53
-tileSpine = 65
-tileHero = 66
+tileGateFrom = 49
+tileGateTo = 63
+tileRandom = 24
+tileDoors = [25, 26, 27, 28]
+tileNoEnemy = 29
+
+tileMoveFrom = 33
+tileRightMove = 33
+tileLeftMove = 34
+tileJump = 35
+tileUpMove = 36
+tileMoveTo = 36
+
+tileSpineFrom = 37
+tileSpine = 37
+tileSpineTo = 47
+
+tileHero = 65
 
 
 # 所有map txm的数据，mapdata[场景(从0开始)][地图(从0开始)]
@@ -91,19 +102,6 @@ def parseNo(t, lineNum, colNum, w, h, area):
     if t == tileNoEnemy:
         noEnemyPosData.append(colNum * 1000 + lineNum)
 
-    elif t == tileSpine:
-        # spine
-        thisSpineData = {}
-        thisSpineData["x"] = colNum
-        thisSpineData["y"] = lineNum
-        thisSpineData["area"] = area
-        thisSpineData["id"] = t - tileSpine
-
-        if not sceneSpineData[area]:
-            sceneSpineData[area] = []
-
-        sceneSpineData[area].append(thisSpineData)
-
     elif t == tileHero:
         #hero pos
 
@@ -118,6 +116,8 @@ def parseCo(t, lineNum, colNum, w, h, area):
     global sceneDoorData
     global doorIndexs
 
+    keyDight = 100
+
     if tileGateFrom <= t and t <= tileGateTo:
         # 门
         key = 1
@@ -126,6 +126,8 @@ def parseCo(t, lineNum, colNum, w, h, area):
             doorIndexs[t] = 1
         else:
             doorIndexs[t] += 1
+            if doorIndexs[t] > 9:
+                raise Exception("door index couldn't more than 9!!")
 
         orient = 0
         if lineNum == 0:
@@ -139,7 +141,7 @@ def parseCo(t, lineNum, colNum, w, h, area):
         else:
             orient = 5 # 在中间的门
 
-        newT = key * 100000 + orient * 10000 + doorIndexs[t] * 100 + t
+        newT = t * 100000 + orient * 10000 + doorIndexs[t] * 1000 + key * keyDight + 0 # 门都是可通过的
 
         thisDoorData = {}
         thisDoorData["x"] = colNum
@@ -156,7 +158,42 @@ def parseCo(t, lineNum, colNum, w, h, area):
         sceneDoorData[t][doorIndexs[t]].append(thisDoorData)
 
         return newT
+    elif tileMoveFrom <= t and t <= tileMoveTo:
+        key = 2
+        realTile = 0
 
+        if t == tileRightMove:
+            realTile = 1 #lly todo 强制移动用spine实现
+
+        elif t == tileLeftMove:
+            realTile = 1
+
+        elif t == tileJump:
+            realTile = 1
+
+        elif t == tileUpMove:
+            realTile = 0
+
+        return t * 1000 + key + keyDight + realTile
+
+    elif tileSpineFrom <= t and t <= tileSpineTo:
+        key = 3
+        realTile = 0
+
+        if t == tileSpine:
+            # spine
+            thisSpineData = {}
+            thisSpineData["x"] = colNum
+            thisSpineData["y"] = lineNum
+            thisSpineData["area"] = area
+            thisSpineData["id"] = t - tileSpineFrom
+
+            if not sceneSpineData[area]:
+                sceneSpineData[area] = []
+
+            sceneSpineData[area].append(thisSpineData)
+
+        return t * 1000 + key + keyDight + realTile
     else:
         return None
 
@@ -455,7 +492,7 @@ def readAttriJson(sceneIndex):
     global attriJson
 
     if not attriJson:
-        with open("./mapAttri.json", 'r') as load_f:
+        with open("./map/mapAttri.json", 'r') as load_f:
             attriJson = json.load(load_f)
 
     return attriJson[sceneIndex]
@@ -595,9 +632,9 @@ def saveJsonAndImg(path, oldPath):
 # ================================================================================
 
 if '__main__' == __name__:
-    path = "./"
+    path = "./map/"
     # outPath = "../assets/resources/map/"
-    outPath = "./output/"
+    outPath = "./map/output/"
     getTMXFiles(path)
     parseData()
     saveEncryptInfo(outPath)

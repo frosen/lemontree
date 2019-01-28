@@ -13,10 +13,10 @@ def copyFile(fromF, toF):
     shutil.copyfile(fromF, toF)
 
 if '__main__' == __name__:
-    inputPath = "./output/"
+    inputPath = "./map/output/"
 
-    basePath = "../../assets/script_map/"
-    resPath = "../../assets/resources/map/"
+    basePath = "../assets/script_map/"
+    resPath = "../assets/resources/map/"
 
     # 复制到base
     copyFile(inputPath + "MapCheck.js", basePath + "MapCheck.js")
