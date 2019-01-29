@@ -174,7 +174,7 @@ def parseCo(t, lineNum, colNum, w, h, area):
         elif t == tileUpMove:
             realTile = 0
 
-        return t * 1000 + key + keyDight + realTile
+        return t * 1000 + key * keyDight + realTile
 
     elif tileSpineFrom <= t and t <= tileSpineTo:
         key = 3
@@ -193,7 +193,7 @@ def parseCo(t, lineNum, colNum, w, h, area):
 
             sceneSpineData[area].append(thisSpineData)
 
-        return t * 1000 + key + keyDight + realTile
+        return t * 1000 + key * keyDight + realTile
     else:
         return None
 
@@ -547,7 +547,7 @@ def parseData():
                 areaIndex = areaIndex + 1
 
             data = {}
-            data["areas"] = dataList
+            data["areaTemps"] = dataList
             data["heros"] = sceneHeroData
             data["gates"] = sceneDoorData
             data["spines"] = sceneSpineData
