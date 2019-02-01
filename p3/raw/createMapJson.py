@@ -33,8 +33,11 @@ tileSpineTo = 47
 tileHero = 65
 
 
-# 所有map txm的数据，mapdata[场景(从0开始)][地图(从0开始)]
+# 所有map txm的数据，mapdata[场景(从0开始，0是home)][地图(从0开始)]
 mapdata = [1] * arrayMax
+
+# 所有地图的类型 [场景(从0开始，0是home)][地图(从0开始)]
+mapType = [1] * arrayMax
 
 def readFile(filePath):
     fp = None
@@ -64,10 +67,15 @@ def getTMXFiles(path):
             indexs = fileInfos[0].split("_")
             i = int(indexs[1])
             j = int(indexs[2]) - 1
+
             if mapdata[i] == 1:
                 mapdata[i] = [1] * arrayMax
-
             mapdata[i][j] = d
+
+            if mapType[i] == 1:
+                mapType[i] = [0] * arrayMax
+            if len(indexs) == 4 and indexs[3] == "ad":
+                mapType[i][j] = 1
 
 # ================================================================================
 
@@ -446,29 +454,58 @@ def parse(string, areaIndex):
                 doorDown = [] #记录九宫格的左下角
                 doorLeft = [] #记录九宫格的左上角
                 doorRight = [] #记录九宫格的右上角
+                substitutes = [0, 1, 2, 3] # 不通方向的替代，默认0-3就是上下左右，也就是不用替代
 
                 doorNotation = tileDoors
+                FiY = -1
                 for thumbY in xrange(rLineIndex, fiY + 1):
+                    FiY += 1
                     y = thumbY * interval
+                    FiX = -1
                     for thumbX in xrange(rDataIndex, fiX + 1):
+                        FiX += 1
                         x = thumbX * interval + 1
 
                         # 上下左右
-                        if y - 1 >= 0 and noList[y - 1][x] in doorNotation:
-                            doorUp.append(x)
-                            doorUp.append(y)
+                        if y - 1 >= 0:
+                            c = noList[y - 1][x]
+                            if c in doorNotation:
+                                if c != doorNotation[0]:
+                                    substitutes[0] = doorNotation.index(c)
+                                    doorUp = []
 
-                        if y + 3 < h - 1 and noList[y + 3][x] in doorNotation:
-                            doorDown.append(x)
-                            doorDown.append(y + 2)
+                                if substitutes[0] == 0:
+                                    doorUp.append(FiX)
 
-                        if x - 1 >= 1 and noList[y][x - 1] in doorNotation:
-                            doorLeft.append(x)
-                            doorLeft.append(y)
+                        if y + 3 < h - 1:
+                            c = noList[y + 3][x]
+                            if c in doorNotation:
+                                if c != doorNotation[1]:
+                                    substitutes[1] = doorNotation.index(c)
+                                    doorDown = []
 
-                        if x + 3 < w - 2 and noList[y][x + 3] in doorNotation:
-                            doorRight.append(x + 2)
-                            doorRight.append(y)
+                                if substitutes[1] == 1:
+                                    doorDown.append(FiX)
+
+                        if x - 1 >= 1:
+                            c = noList[y][x - 1] 
+                            if c in doorNotation:
+                                if c != doorNotation[2]:
+                                    substitutes[2] = doorNotation.index(c)
+                                    doorLeft = []
+
+                                if substitutes[2] == 2:
+                                    doorLeft.append(FiY)
+
+                        if x + 3 < w - 2:
+                            c = noList[y][x + 3] 
+                            if c in doorNotation:
+                                if c != doorNotation[3]:
+                                    substitutes[3] = doorNotation.index(c)
+                                    doorRight = []
+
+                                if substitutes[3] == 3:
+                                    doorRight.append(FiY)
 
                 door = []
                 door.append(doorUp)
@@ -477,6 +514,7 @@ def parse(string, areaIndex):
                 door.append(doorRight)
 
                 oneFi["door"] = door
+                oneFi["substitutes"] = substitutes
 
                 fi.append(oneFi)
 
@@ -510,6 +548,7 @@ def parseData():
 
         if sceneIndex == 0:
             dataList = []
+            areaTypes = []
             sceneHeroData = []
             sceneDoorData = {}
 
@@ -521,10 +560,12 @@ def parseData():
                 print "parse home scene {} area {}".format(sceneIndex, areaIndex)
                 data = parseHome(areadata, areaIndex)
                 dataList.append(data)
+                areaTypes.append(mapType[sceneIndex][areaIndex - 1])
                 areaIndex = areaIndex + 1
 
             data = {}
             data["areas"] = dataList
+            data["areaTypes"] = areaTypes
             data["heros"] = sceneHeroData
             data["gates"] = sceneDoorData
 
@@ -532,6 +573,7 @@ def parseData():
 
         else:
             dataList = []
+            areaTypes = []
             sceneHeroData = []
             sceneDoorData = {}
             sceneSpineData = []
@@ -544,10 +586,12 @@ def parseData():
                 print "parse scene {} area {}".format(sceneIndex, areaIndex)
                 data = parse(areadata, areaIndex)
                 dataList.append(data)
+                areaTypes.append(mapType[sceneIndex][areaIndex - 1])
                 areaIndex = areaIndex + 1
 
             data = {}
             data["areaTemps"] = dataList
+            data["areaTypes"] = areaTypes
             data["heros"] = sceneHeroData
             data["gates"] = sceneDoorData
             data["spines"] = sceneSpineData

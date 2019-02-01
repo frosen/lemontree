@@ -39,6 +39,8 @@ export default class EnemyCtrlr extends MyComponent {
     prefabs: {[key: string]: cc.Prefab;}[] = [];
     /** 敌人名称列表 */
     prefabNames: string[][] = [];
+    /** 高级敌人名称列表 */
+    adPrefabNames: string[][] = [];
 
     /** 每个区域的敌人位置信息 */
     datas: EnemyData[][] = [];
@@ -70,32 +72,49 @@ export default class EnemyCtrlr extends MyComponent {
             cc.assert(prefabs.length > 0, "Wrong size of enemy prefab");
 
             let data = {};
+            let adNames = [];
             let names = [];
             for (const prefab of prefabs) {
                 data[prefab.name] = prefab;
-                names.push(prefab.name);
+                if (prefab.name.substring(prefab.name.length - 3, prefab.name.length) == "_ad") { // lly todo 还未测试
+                    adNames.push(prefab.name); // 高级敌人，只能在高级场景出现
+                } else {
+                    names.push(prefab.name);
+                }
             }
 
             this.prefabs[curScene] = data;
             this.prefabNames[curScene] = names;
+            this.adPrefabNames[curScene] = adNames;
 
             return finishCallback();
         });
     }
 
-    setData(areaIndex: number, posInfos: {pos: cc.Vec2, t: number}[]) {
+    setData(areaIndex: number, advance: boolean, posInfos: {pos: cc.Vec2, t: number}[]) {
         if (this.debugEnemyLevel > 0) return; // 开启测试，就不随机生成了
 
         let curScene = this.gameCtrlr.getCurScene();
         let data: EnemyData[] = [];
-        let names = this.prefabNames[curScene];
-        let len = names.length;
-        for (const posInfo of posInfos) {
-            let r = Math.random() * len;
-            let k = Math.floor(r);
 
-            let name = names[k];
-            data.push(new EnemyData(posInfo.pos, name, 1));
+        if (advance) {
+            let names = this.prefabNames[curScene];
+            let adNames = this.adPrefabNames[curScene];
+            let len = names.length;
+            let allLen = len + adNames.length;
+            for (const posInfo of posInfos) {
+                let k = Math.floor(Math.random() * allLen);
+                let name = k < len ? names[k] : adNames[k - len];
+                data.push(new EnemyData(posInfo.pos, name, 1));
+            }
+        } else {
+            let names = this.prefabNames[curScene];
+            let len = names.length;
+            for (const posInfo of posInfos) {
+                let k = Math.floor(Math.random() * len);
+                let name = names[k];
+                data.push(new EnemyData(posInfo.pos, name, 1));
+            }
         }
         this.datas[areaIndex] = data;
 

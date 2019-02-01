@@ -4,7 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {MapCtrlr, GroundInfo} from "./MapCtrlr";
+import {MapCtrlr, AreaType} from "./MapCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 import {Hero} from "./Hero";
 
@@ -129,7 +129,8 @@ export default class GameCtrlr extends cc.Component {
             // 生成敌人
             let posInfos: {pos: cc.Vec2, t: number}[];
             posInfos = this.mapCtrlr.createRandomGroundPoss(index);
-            this.enemyCtrlr.setData(index, posInfos);
+            let advance = this.mapCtrlr.getAreaType(index) == AreaType.advance;
+            this.enemyCtrlr.setData(index, advance, posInfos);
 
             // 生成pot
             posInfos = this.mapCtrlr.createRandomGroundPoss(index);

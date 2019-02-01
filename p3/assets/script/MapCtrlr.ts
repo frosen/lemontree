@@ -39,6 +39,11 @@ export class SceneAttri {
     cardIndexs: number[];
 }
 
+export enum AreaType {
+    normal = 0,
+    advance = 1, // scene有可能分两个部分，那么后一部分就是advance
+}
+
 /** 一个区域的属性 */
 class AreaJson {
     te: number[][];
@@ -67,6 +72,7 @@ class AreaJson {
 /** 一个场景的属性 */
 class SceneJson {
     areas: AreaJson[];
+    areaTypes: AreaType[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
     spines: TriggerJson[][];
@@ -87,6 +93,7 @@ class FixedAreaTempJson {
     te: number[][];
     co: number[][];
     door: number[][]; // 上下左右的门
+    substitutes: number[]; // 当一个方向不可有门时替代它的方向，0-3上下左右
 }
 
 class AreaTempJson {
@@ -99,6 +106,7 @@ class AreaTempJson {
 
 class SceneTempJson {
     areaTemps: AreaTempJson[];
+    areaTypes: AreaType[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
     spines: TriggerJson[][];
@@ -497,6 +505,11 @@ export class MapCtrlr extends MyComponent {
     getAreaInfo(areaIndex: number): AreaJson {
         let curScene = this.gameCtrlr.getCurScene();
         return this.sceneJsons[curScene].areas[areaIndex];
+    }
+
+    getAreaType(areaIndex: number): number {
+        let curScene = this.gameCtrlr.getCurScene();
+        return this.sceneJsons[curScene].areaTypes[areaIndex];
     }
 
     /**
