@@ -13,24 +13,24 @@ arrayMax = 20
 clsnSize = 256 #碰撞层瓦块的总数
 
 
-tileGateFrom = 49
-tileGateTo = 63
-tileRandom = 24
-tileDoors = [25, 26, 27, 28]
-tileNoEnemy = 29
+tileGateFrom = 65
+tileGateTo = 80
+tileRandom = 40
+tileDoors = [41, 42, 43, 44]
+tileNoEnemy = 45
 
-tileMoveFrom = 33
-tileRightMove = 33
-tileLeftMove = 34
-tileJump = 35
-tileUpMove = 36
-tileMoveTo = 36
+tileMoveFrom = 49
+tileRightMove = 49
+tileLeftMove = 50
+tileJump = 51
+tileUpMove = 52
+tileMoveTo = 52
 
-tileSpineFrom = 37
-tileSpine = 37
-tileSpineTo = 47
+tileSpineFrom = 53
+tileSpine = 53
+tileSpineTo = 64
 
-tileHero = 65
+tileHero = 81
 
 
 # 所有map txm的数据，mapdata[场景(从0开始，0是home)][地图(从0开始)]
@@ -65,6 +65,9 @@ def getTMXFiles(path):
         if fileInfos[1] == '.tmx':
             d = readFile(path + f)
             indexs = fileInfos[0].split("_")
+            if indexs[0] != "scene":
+                continue
+
             i = int(indexs[1])
             j = int(indexs[2]) - 1
 

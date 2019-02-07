@@ -62,6 +62,15 @@ const GidTypeList = [
     CollisionType.slope,
 
     CollisionType.platform,
+    CollisionType.platform,
+    CollisionType.platform,
+    CollisionType.platform,
+    CollisionType.none,
+    CollisionType.none,
+    CollisionType.none,
+    CollisionType.platform,
+
+    CollisionType.none,
 ]
 
 @ccclass
@@ -138,10 +147,10 @@ export class TerrainCtrlr extends MyComponent {
 
         let moveKey = Math.floor(gid / 1000);
         switch (moveKey) {
-            case 33: return ForcedMoveType.right;
-            case 34: return ForcedMoveType.left;
-            case 35: return ForcedMoveType.up;
-            case 36: return ForcedMoveType.flow;
+            case 49: return ForcedMoveType.right;
+            case 50: return ForcedMoveType.left;
+            case 51: return ForcedMoveType.up;
+            case 52: return ForcedMoveType.flow;
             default: return ForcedMoveType.none;
         }
     }
