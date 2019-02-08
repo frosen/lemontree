@@ -58,18 +58,20 @@ const GidTypeList = [
     CollisionType.entity,
     CollisionType.entity,
     CollisionType.entity,
+    CollisionType.entity,
+    CollisionType.entity,
+
     CollisionType.slope,
     CollisionType.slope,
+    CollisionType.platform,
+    CollisionType.platform,
+    CollisionType.platform,
+    CollisionType.platform,
+    CollisionType.none,
+    CollisionType.none,
 
-    CollisionType.platform,
-    CollisionType.platform,
-    CollisionType.platform,
-    CollisionType.platform,
-    CollisionType.none,
-    CollisionType.none,
     CollisionType.none,
     CollisionType.platform,
-
     CollisionType.none,
 ]
 
