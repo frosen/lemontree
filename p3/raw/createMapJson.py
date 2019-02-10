@@ -682,6 +682,9 @@ if '__main__' == __name__:
     path = "./map/"
     # outPath = "../assets/resources/map/"
     outPath = "./map/output/"
+
+    print "go to create map json"
+
     getTMXFiles(path)
     parseData()
     saveEncryptInfo(outPath)
