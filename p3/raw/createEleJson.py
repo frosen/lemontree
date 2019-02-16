@@ -102,12 +102,26 @@ def getDataFromTileJson(jsonStr, key):
 
     return tilelist
 
+def getSpine(noList):
+    spines = []
+    for line in noList:
+        for tile in line:
+            if spineFrom <= tile and tile <= spineTo:
+                if not tile in spines:
+                    spines.append(tile)
+
+    return spines
+
+
 def parseData():
 
     for eleData in eleDatas:
         # 从json string提取tile数据
         coList = getDataFromTileJson(eleData.d, "collision") # 碰撞
         noList = getDataFromTileJson(eleData.d, "notation") # 标记
+
+        spines = getSpine(noList)
+
 
         base = {}
         base["tW"] = eleData.w

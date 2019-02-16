@@ -34,6 +34,12 @@ class TriggerJson {
     id: number;
 }
 
+export class SpineJson {
+    x: number;
+    y: number;
+    id: number;
+}
+
 /** 场景属性，记录当前场景的一些数据 */
 export class SceneAttri {
     cardIndexs: number[];
@@ -75,7 +81,7 @@ class SceneJson {
     areaTypes: AreaType[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
-    spines: TriggerJson[][];
+    spines: SpineJson[][];
     attri: SceneAttri;
 }
 
@@ -109,7 +115,7 @@ class SceneTempJson {
     areaTypes: AreaType[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[];};};
-    spines: TriggerJson[][];
+    spines: SpineJson[][];
     attri: SceneAttri;
 }
 
@@ -187,6 +193,7 @@ export class MapCtrlr extends MyComponent {
         }
         this.sceneJsons[curScene] = this.homeMapJson.json;
         this.frames[curScene] = this.homeFrame;
+
         return callNext();
     }
 
@@ -483,15 +490,13 @@ export class MapCtrlr extends MyComponent {
         };
     }
 
-    getSpineInfo(areaIndex: number): {x: number, y: number, spineId: number}[] {
+    getSpineInfo(areaIndex: number): SpineJson[] {
         let curScene = this.gameCtrlr.getCurScene();
         let realAreaIndex = areaIndex - 1;
-        let spines = this.sceneJsons[curScene].spines[realAreaIndex];
-        let info: {x: number, y: number, spineId: number}[] = [];
-        let tileNumHeight = this.getAreaData(areaIndex).h;
+        let spines: SpineJson[] = this.sceneJsons[curScene].spines[realAreaIndex];
+        let info: SpineJson[] = [];
         for (const spine of spines) {
-            let pos = this.terrainCtrlr.getPosFromTilePos(spine.x, spine.y, tileNumHeight);
-            info.push({x: pos.x, y: pos.y, spineId: spine.id});
+            info.push(spine);
         }
         return info;
     }
@@ -523,8 +528,6 @@ export class MapCtrlr extends MyComponent {
         let usingGroundPoss: {pos: cc.Vec2, t: number}[] = [];
         let usingStates = {};
 
-        let tileNumHeight = this.getAreaData(areaIndex).h;
-
         do {
             let k = Math.floor(Math.random() * len);
             let groundX = areaInfo.getGroundX(k);
@@ -533,8 +536,8 @@ export class MapCtrlr extends MyComponent {
             let stKey = groundX * 1000 + groundY;
             let state = usingStates[stKey];
 
-            if (!state) {
-                let pos = this.terrainCtrlr.getPosFromTilePos(groundX, groundY - 1, tileNumHeight);
+            if (!state) { // lly todo ground都在c层生成，所以这里的逻辑后面就不要了
+                let pos = cc.v2(0, 0) //this.terrainCtrlr.getPosFromTilePos(groundX, groundY - 1, tileNumHeight);
                 usingGroundPoss.push({pos: pos, t: areaInfo.getGroundType(k)});
                 usingStates[stKey] = 1;
             } else {

@@ -93,14 +93,6 @@ export class TerrainCtrlr extends MyComponent {
     }
 
     /**
-     * 得到一个块的最下的中点
-     */
-    getPosFromTilePos(x: number, y: number, tileNumHeight: number = null): cc.Vec2 {
-        let h = tileNumHeight ? tileNumHeight * TileLength : this.terrainSize.height
-        return cc.v2(x * TileLength + TileLength * 0.5, h - y * TileLength - TileLength);
-    }
-
-    /**
      * 根据位置，获取图块索引值
      */
     _getTileIndex(x: number, y: number): {tileX: number, tileY: number} {
@@ -134,8 +126,8 @@ export class TerrainCtrlr extends MyComponent {
 
     _getSlopeDir(gid: number): number {
         switch (gid) {
-            case 15: return 1;
-            case 16: return -1;
+            case 17: return 1;
+            case 18: return -1;
             default: return null;
         }
     }

@@ -157,8 +157,7 @@ export default class GameCtrlr extends cc.Component {
 
     enterSideGate(gateGid: number, lastHeroPos: cc.Vec2) {
         let {thisX, thisY, otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
-        let lastGatePos = this.terrainCtrlr.getPosFromTilePos(thisX, thisY);
-        let diff = cc.pSub(lastHeroPos, lastGatePos);
+        let diff = cc.pSub(lastHeroPos, cc.v2(thisX, thisY));
         this._changeArea(otherArea, otherX, otherY, diff.x, diff.y);
     }
 
@@ -176,8 +175,7 @@ export default class GameCtrlr extends cc.Component {
         this.potCtrlr.changeArea();
         this.itemCtrlr.clear();
 
-        let heroPos = this.terrainCtrlr.getPosFromTilePos(x, y);
-        this.hero.movableObj.blink(heroPos.x + offsetX, heroPos.y + offsetY);
+        this.hero.movableObj.blink(x + offsetX, y + offsetY);
 
         this.hero.onChangeArea();
     }

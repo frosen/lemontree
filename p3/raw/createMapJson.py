@@ -101,14 +101,18 @@ def parseTe(t):
     else:
         return t
 
+# 得到一个块的最下的中点
+TileLength = 32
+def getPX(x):
+    return int(x * TileLength + TileLength * 0.5)
+def getPY(y, h):
+    return int(h - y - 1) * TileLength
+
 # 解析标记
 def parseNo(t, lineNum, colNum, w, h, area):
 
     global sceneHeroData
-    global sceneSpineData
-
     global noEnemyPosData
-    
 
     if t == tileNoEnemy:
         noEnemyPosData.append(colNum * 1000 + lineNum)
@@ -117,8 +121,8 @@ def parseNo(t, lineNum, colNum, w, h, area):
         #hero pos
 
         thisHeroData = {}
-        thisHeroData["x"] = colNum
-        thisHeroData["y"] = lineNum
+        thisHeroData["x"] = getPX(colNum)
+        thisHeroData["y"] = getPY(lineNum, h)
         thisHeroData["area"] = area
         thisHeroData["id"] = t
         sceneHeroData.append(thisHeroData)
@@ -126,6 +130,7 @@ def parseNo(t, lineNum, colNum, w, h, area):
 def parseCo(t, lineNum, colNum, w, h, area):
     global sceneDoorData
     global doorIndexs
+    global sceneSpineData
 
     keyDight = 100
 
@@ -155,8 +160,8 @@ def parseCo(t, lineNum, colNum, w, h, area):
         newT = t * 100000 + orient * 10000 + doorIndexs[t] * 1000 + key * keyDight + 0 # 门都是可通过的
 
         thisDoorData = {}
-        thisDoorData["x"] = colNum
-        thisDoorData["y"] = lineNum
+        thisDoorData["x"] = getPX(colNum)
+        thisDoorData["y"] = getPY(lineNum, h)
         thisDoorData["area"] = area
         thisDoorData["id"] = newT
 
@@ -194,9 +199,8 @@ def parseCo(t, lineNum, colNum, w, h, area):
         if t == tileSpine:
             # spine
             thisSpineData = {}
-            thisSpineData["x"] = colNum
-            thisSpineData["y"] = lineNum
-            thisSpineData["area"] = area
+            thisSpineData["x"] = getPX(colNum)
+            thisSpineData["y"] = getPY(lineNum, h)
             thisSpineData["id"] = t - tileSpineFrom
 
             if not sceneSpineData[area]:

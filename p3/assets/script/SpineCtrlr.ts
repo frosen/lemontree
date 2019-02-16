@@ -7,6 +7,7 @@ const {ccclass, property} = cc._decorator;
 import MyComponent from "./MyComponent";
 import GameCtrlr from "./GameCtrlr";
 import Spine from "./Spine";
+import {SpineJson} from "./MapCtrlr";
 
 class SpineData {
     pos: cc.Vec2;
@@ -66,10 +67,10 @@ export default class SpineCtrlr extends MyComponent {
         return "spine";
     }
 
-    setData(areaIndex: number, infos: {x: number, y: number, spineId: number}[]) {
+    setData(areaIndex: number, infos: SpineJson[]) {
         let datas: SpineData[] = [];
         for (const info of infos) {
-            let name = this.getSpineNameFromId(info.spineId);
+            let name = this.getSpineNameFromId(info.id);
             datas.push(new SpineData(cc.v2(info.x, info.y), name));
         }
         this.datas[areaIndex] = datas;
