@@ -12,7 +12,6 @@ arrayMax = 20
 
 clsnSize = 256 #碰撞层瓦块的总数
 
-
 tileGateFrom = 65
 tileGateTo = 80
 tileRandom = 40
@@ -31,7 +30,6 @@ tileSpine = 53
 tileSpineTo = 64
 
 tileHero = 81
-
 
 # 所有map txm的数据，mapdata[场景(从0开始，0是home)][地图(从0开始)]
 mapdata = [1] * arrayMax
@@ -56,7 +54,7 @@ def readFile(filePath):
         print("read " + filePath + " no res! ")
     return d
 
-# 先获取所有tmx的数据 
+# 先获取所有tmx的数据
 # 文件以scene_m_n.tmx的形式命名
 def getTMXFiles(path):
     fList = os.listdir(path)
@@ -170,6 +168,9 @@ def parseCo(t, lineNum, colNum, w, h, area):
 
         if not sceneDoorData[t].has_key(doorIndexs[t]):
             sceneDoorData[t][doorIndexs[t]] = []
+
+        if len(sceneDoorData[t][doorIndexs[t]]) >= 2:
+            raise Exception("door at ", colNum, lineNum, "wrong")
 
         sceneDoorData[t][doorIndexs[t]].append(thisDoorData)
 
@@ -297,7 +298,7 @@ def parse(string, areaIndex):
 
     global sceneHeroData
     global sceneDoorData
-    global sceneSpineData 
+    global sceneSpineData
 
     global noEnemyPosData
     global doorIndexs
@@ -410,7 +411,7 @@ def parse(string, areaIndex):
                 realXMax = (fiX + 1) * interval + 1
 
                 realW = realXMax - realX
-                realH = realYMax - realY 
+                realH = realYMax - realY
 
                 #靠边的块要加上边缘
                 if realX == 1:
@@ -456,7 +457,7 @@ def parse(string, areaIndex):
                 oneFi["te"] = fite
                 oneFi["co"] = fico
 
-                # 区域的门信息 
+                # 区域的门信息
                 doorUp = [] #记录九宫格的左上角
                 doorDown = [] #记录九宫格的左下角
                 doorLeft = [] #记录九宫格的左上角
@@ -495,7 +496,7 @@ def parse(string, areaIndex):
                                     doorDown.append(FiX)
 
                         if x - 1 >= 1:
-                            c = noList[y][x - 1] 
+                            c = noList[y][x - 1]
                             if c in doorNotation:
                                 if c != doorNotation[2]:
                                     substitutes[2] = doorNotation.index(c)
@@ -505,7 +506,7 @@ def parse(string, areaIndex):
                                     doorLeft.append(FiY)
 
                         if x + 3 < w - 2:
-                            c = noList[y][x + 3] 
+                            c = noList[y][x + 3]
                             if c in doorNotation:
                                 if c != doorNotation[3]:
                                     substitutes[3] = doorNotation.index(c)
@@ -625,11 +626,22 @@ def encrypt(obj):
     elif isinstance(obj, list):
         for sub in obj:
             encrypt(sub)
-    
+
+def saveFile(path, data):
+    fp = None
+    try:
+        fp = open(path, "w")
+        fp.write(data)
+
+    except Exception, e:
+        print("save " + path + " exception! " + str(Exception) + ":" + str(e))
+
+    finally:
+        if fp: fp.close()
 
 def saveEncryptInfo(path):
     global total
-    
+
     encryptTotal = []
     for jsonData in jsonDataList:
         total = 0
@@ -649,18 +661,6 @@ def saveEncryptInfo(path):
     saveFile(realFile, jsStr)
 
 # ================================================================================
-
-def saveFile(path, data):
-    fp = None
-    try:
-        fp = open(path, "w")
-        fp.write(data)
-
-    except Exception, e:
-        print("save " + path + " exception! " + str(Exception) + ":" + str(e))
-
-    finally:
-        if fp: fp.close()
 
 def saveJsonAndImg(path, oldPath):
     index = 0
@@ -694,8 +694,3 @@ if '__main__' == __name__:
     saveEncryptInfo(outPath)
     saveJsonAndImg(outPath, path)
     print "finish at: " + outPath
-
-
-
-
-
