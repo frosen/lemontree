@@ -995,6 +995,16 @@ def getEleDoorTypes(doorType):
         numList.append(n)
     return numList
 
+def setEleIntoList(ele, scenes):
+    global eleLists
+    eleDoorTypes = getEleDoorTypes(ele["doorType"])
+    for scene in scenes:
+        if not eleLists.has_key(scene):
+            eleLists[scene] = createEleList()
+
+        for t in eleDoorTypes:
+            eleLists[scene][ele["tW"] - 1][ele["tH"] - 1][t].append(len(eles) - 1)
+
 def parseEleData():
 
     global eleDatas
@@ -1083,10 +1093,13 @@ def parseEleData():
                     ele["tW"] = eleW
                     ele["tH"] = eleH
 
-                    ele["doorType"] = [[], [], [], []]
                     ele["spines"] = []
 
-                    need2Jump = False
+                    doorType = [[], [], [], []]
+                    doorType2Jump = [[], [], [], []]
+                    door2Jump = False # 如果这个标识为true，则会生成2个不同的ele，其中一个不包含某个门在第一关使用
+
+                    need2Jump = False # 如果这个标识为true，则当前的ele不能在第一关使用
                     if rowData["restrict"] == notationKey2Jump:
                         need2Jump = True
 
@@ -1121,21 +1134,37 @@ def parseEleData():
                             rightRe = noList[bY + 1][bX + 2]
 
                             if upRe == notationKey2Jump or downRe == notationKey2Jump or leftRe == notationKey2Jump or rightRe == notationKey2Jump:
-                                raise Exception("dir restrict can not use 2 jump keyr")
+                                door2Jump = True
 
                             rowKey = rowData["key"]
 
-                            if realJ == 0 and upNo > 0 and (upRe < notationKeyRowFrom or upRe <= rowKey):
-                                ele["doorType"][0].append(realI)
+                            if realJ == 0 and upNo > 0:
+                                if upRe == notationKey2Jump:
+                                    doorType2Jump[0].append(realI)
+                                elif upRe == 0 or upRe <= rowKey:
+                                    doorType[0].append(realI)
+                                    doorType2Jump[0].append(realI)
 
-                            if realJ == eleH - 1 and downNo > 0 and (downRe < notationKeyRowFrom or downRe <= rowKey):
-                                ele["doorType"][1].append(realI)
+                            if realJ == eleH - 1 and downNo > 0:
+                                if downRe == notationKey2Jump:
+                                    doorType2Jump[1].append(realI)
+                                elif downRe == 0 or downRe <= rowKey:
+                                    doorType[1].append(realI)
+                                    doorType2Jump[1].append(realI)
 
-                            if realI == 0 and leftNo > 0 and (leftRe < notationKeyRowFrom or leftRe <= rowKey):
-                                ele["doorType"][2].append(realJ)
+                            if realI == 0 and leftNo > 0:
+                                if leftRe == notationKey2Jump:
+                                    doorType2Jump[2].append(realJ)
+                                elif leftRe == 0 or leftRe <= rowKey:
+                                    doorType[2].append(realJ)
+                                    doorType2Jump[2].append(realJ)
 
-                            if realI == eleW - 1 and rightNo > 0 and (rightRe < notationKeyRowFrom or rightNo <= rowKey):
-                                ele["doorType"][3].append(realJ)
+                            if realI == eleW - 1 and rightNo > 0:
+                                if rightRe == notationKey2Jump:
+                                    doorType2Jump[3].append(realJ)
+                                elif rightRe == 0 or rightNo <= rowKey:
+                                    doorType[3].append(realJ)
+                                    doorType2Jump[3].append(realJ)
 
                             # spine list
                             sceneSpineData = []
@@ -1150,21 +1179,26 @@ def parseEleData():
                                 for spine in sceneSpineData[0]:
                                     ele["spines"].append(spine)
 
+                    ele["doorType"] = doorType
                     eles.append(ele)
 
-                    # ele放入对应的表中
                     scenes = coWithSpineData["scenes"]
+                    if need2Jump and 10 in scenes:
+                        scenes.remove(10)
 
-                    eleDoorTypes = getEleDoorTypes(ele["doorType"])
-                    for scene in scenes:
-                        if need2Jump and scene == 10: # 场景1的第一部分没有2段跳
-                            continue
+                    if door2Jump:
+                        ele2Jump = copy.deepcopy(ele)
+                        ele2Jump["doorType"] = doorType2Jump
+                        eles.append(ele2Jump)
 
-                        if not eleLists.has_key(scene):
-                            eleLists[scene] = createEleList()
-
-                        for t in eleDoorTypes:
-                            eleLists[scene][eleW - 1][eleH - 1][t].append(len(eles) - 1)
+                        if 10 in scenes:
+                            scenes.remove(10)
+                            setEleIntoList(ele2Jump, scenes)
+                            setEleIntoList(ele, [10])
+                        else:
+                            setEleIntoList(ele2Jump, scenes)
+                    else:
+                        setEleIntoList(ele, scenes)
 
             # 生成元素模板
             eleBase = {}
@@ -1191,10 +1225,10 @@ def parseEleData():
             print ele["baseIndex"], "---", ele["usingTXs"], ele["usingTYs"], "w,h:", ele["tW"], ele["tH"]
 
             print "      上", ele["doorType"][0]
-            print "      下", ele["doorType"][1]
-            print "      左", ele["doorType"][2]
-            print "      右", ele["doorType"][3]
-            print "      sp", ele["spines"]
+            # print "      下", ele["doorType"][1]
+            # print "      左", ele["doorType"][2]
+            # print "      右", ele["doorType"][3]
+            # print "      sp", ele["spines"]
 
 
             # print "/////"
