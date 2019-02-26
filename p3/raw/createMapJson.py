@@ -734,6 +734,10 @@ notationKey2Jump = clsnSize + 3
 notationKeyLineFrom = clsnSize + 9
 notationKeyRowFrom = clsnSize + 17
 
+MAX_R_TW = 6
+MAX_R_TH = 6
+MAX_DOOR_TYPE = 15
+
 # ================================================================================
 
 eleDatas = []
@@ -757,9 +761,6 @@ def getEleTMXFiles(path):
             if indexs[0] != "ele" or indexs[1] == "base":
                 continue
 
-            if indexs[1] != "66" or indexs[2] != "04": # for test
-                continue
-
             size = int(indexs[1])
             w = int(math.floor(size / 10))
             h = int(size % 10)
@@ -777,7 +778,7 @@ def handleNotationLine(noList):
     notationLine = []
     maxH = len(noList) - 1
     lastRestrict = 0
-    for x in xrange(0, 6):
+    for x in xrange(0, MAX_R_TW):
         key = notationKeyLineFrom + x
         noLineList = []
         restrict = 0 # 限制，只有竖行的数大于等于这个数时，才生成
@@ -828,7 +829,7 @@ def handleNotationRow(noList):
     # 这里从0到5意思是采用了tiled上的1到6
     # 肯定不会有6，因为不可能没有图，
     # 所以一定会出现hasNotation为false，此时增加一个所有的，key为0，意味着所有的restrict都会响应
-    for x in xrange(0, 6):
+    for x in xrange(0, MAX_R_TH):
         key = notationKeyRowFrom + x
         noRowList = []
         hasNotation = False
@@ -873,6 +874,22 @@ def handleNotationRow(noList):
 
     return notationRow
 
+# 除去边缘
+def handleCoList(coList):
+    newCoList = []
+    for y in xrange(0, len(coList)):
+        if y == len(coList) - 1:
+            continue
+        line = coList[y]
+        newLine = []
+        for x in xrange(0, len(line)):
+            if x == 0:
+                continue
+            data = line[x]
+            newLine.append(data)
+        newCoList.append(newLine)
+    return newCoList
+
 def getSpine(coList):
     spines = []
     for line in coList:
@@ -896,9 +913,6 @@ def getListCount(noList):
             k += 1
     return k
 
-MAX_R_TW = 6
-MAX_R_TH = 6
-MAX_DOOR_TYPE = 15
 def createEleList():
     elist = []
     for _ in xrange(0, MAX_R_TW):
@@ -1017,9 +1031,10 @@ def parseEleData():
 
         # 从json string提取tile数据
         coList = getDataFromTileJson(eleData["d"], "collision") # 碰撞
+        coList = handleCoList(coList)
         noList = getDataFromTileJson(eleData["d"], "notation") # 标记
 
-        if eleData["tW"] * 3 + 1 != len(coList[0]) or eleData["tH"] * 3 + 1 != len(coList):
+        if eleData["tW"] * 3 != len(coList[0]) or eleData["tH"] * 3 != len(coList):
             raise Exception("w or h error")
 
         # 解析标记
@@ -1053,6 +1068,8 @@ def parseEleData():
                 data["scenes"] = []
                 data["scenes"].append(key)
 
+                handledTPoss = {}
+
                 newCo = copy.deepcopy(coList)
 
                 for j in xrange(0, len(newCo)):
@@ -1062,6 +1079,10 @@ def parseEleData():
                         if coData in noUseList:
                             newData = spineDisableRule[coData]
                             newCo[j][i] = newData
+                            if newData != coData:
+                                posKey = math.floor(i / 3) * 1000 + math.floor(j / 3)
+                                handledTPoss[int(posKey)] = 1
+                data["handledTPoss"] = handledTPoss
 
                 data["co"] = newCo
                 coWithSpineDatas.append(data)
@@ -1081,8 +1102,28 @@ def parseEleData():
                     lineList = lineData["list"]
                     rowList = rowData["list"]
 
-                    ele = {}
+                    # 重复检测
+                    # 由于coWithSpine第一个一定是all spine，从第二个开始检测和第一个是否完全一致，一致则跳过
+                    # 通过所有元素和初始是否存在变化来测定
+                    if k >= 1:
+                        skip = True
+                        for x in xrange(0, len(lineList)):
+                            lineUseData = lineList[x]
+                            if lineUseData == 0:
+                                continue
+                            for y in xrange(0, len(rowList)):
+                                rowUseData = rowList[y]
+                                if rowUseData == 0: # 选择横竖限制中值为1的位置
+                                    continue
+                                if coWithSpineData["handledTPoss"].has_key(x * 1000 + y):
+                                    skip = False
+                                    break
+                            if not skip:
+                                break
+                        if skip:
+                            continue
 
+                    ele = {}
                     ele["baseIndex"] = k
                     ele["usingTXs"] = changeNotationListToNum(lineList)
                     ele["usingTYs"] = changeNotationListToNum(rowList)
@@ -1170,7 +1211,7 @@ def parseEleData():
                             sceneSpineData = []
                             for sX in xrange(0, 3):
                                 for sY in xrange(0, 3):
-                                    x = bX + sX
+                                    x = bX - 1 + sX # -1 是因为co已经处理过，去除了左下边缘
                                     y = bY + sY
                                     coData = rawCo[y][x]
                                     parseCo(coData, y, x, 0, eleH * 3, 0, -32)
@@ -1217,14 +1258,14 @@ def parseEleData():
 
             eleBases.append(eleBase)
 
-        index = 0
-        print ">>>>>>>>>>>>>------------------------------------------------------------------------------------"
-        for ele in eles:
-            index += 1
-            print index, "------------------------------------------------------------------------------------"
-            print ele["baseIndex"], "---", ele["usingTXs"], ele["usingTYs"], "w,h:", ele["tW"], ele["tH"]
+        # index = 0
+        # print ">>>>>>>>>>>>>------------------------------------------------------------------------------------"
+        # for ele in eles:
+        #     index += 1
+        #     print index, "------------------------------------------------------------------------------------"
+        #     print ele["baseIndex"], "---", ele["usingTXs"], ele["usingTYs"], "w,h:", ele["tW"], ele["tH"]
 
-            print "      上", ele["doorType"][0]
+        #     print "      上", ele["doorType"][0]
             # print "      下", ele["doorType"][1]
             # print "      左", ele["doorType"][2]
             # print "      右", ele["doorType"][3]
