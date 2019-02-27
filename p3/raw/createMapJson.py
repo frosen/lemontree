@@ -963,7 +963,7 @@ def getEleDoorTypes(doorType):
 
     dList = copy.deepcopy(doorTypeList)
 
-    if hasUp:
+    if not hasUp:
         removeList(dList, "lef")
         removeList(dList, "rig")
         removeList(dList, "bot")
@@ -973,7 +973,7 @@ def getEleDoorTypes(doorType):
         removeList(dList, "rig_bot")
         removeList(dList, "rig_bot_lef")
 
-    if hasDown:
+    if not hasDown:
         removeList(dList, "lef")
         removeList(dList, "rig")
         removeList(dList, "top")
@@ -983,7 +983,7 @@ def getEleDoorTypes(doorType):
         removeList(dList, "rig_top")
         removeList(dList, "lef_top_rig")
 
-    if hasLeft:
+    if not hasLeft:
         removeList(dList, "top")
         removeList(dList, "rig")
         removeList(dList, "bot")
@@ -993,7 +993,7 @@ def getEleDoorTypes(doorType):
         removeList(dList, "rig_bot")
         removeList(dList, "top_rig_bot")
 
-    if hasRight:
+    if not hasRight:
         removeList(dList, "lef")
         removeList(dList, "top")
         removeList(dList, "bot")
@@ -1220,6 +1220,8 @@ def parseEleData():
                                 for spine in sceneSpineData[0]:
                                     ele["spines"].append(spine)
 
+                    # 上或左右有门，进行一定的检测 todo
+
                     ele["doorType"] = doorType
                     eles.append(ele)
 
@@ -1258,22 +1260,8 @@ def parseEleData():
 
             eleBases.append(eleBase)
 
-        # index = 0
-        # print ">>>>>>>>>>>>>------------------------------------------------------------------------------------"
-        # for ele in eles:
-        #     index += 1
-        #     print index, "------------------------------------------------------------------------------------"
-        #     print ele["baseIndex"], "---", ele["usingTXs"], ele["usingTYs"], "w,h:", ele["tW"], ele["tH"]
+    # 检测elelist里面是否有空 todo
 
-        #     print "      上", ele["doorType"][0]
-            # print "      下", ele["doorType"][1]
-            # print "      左", ele["doorType"][2]
-            # print "      右", ele["doorType"][3]
-            # print "      sp", ele["spines"]
-
-
-            # print "/////"
-            # print eleLists
 
 
 # ================================================================================
