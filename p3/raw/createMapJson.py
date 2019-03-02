@@ -18,7 +18,11 @@ clsnSize = 256 #碰撞层瓦块的总数
 tileGateFrom = 65
 tileGateTo = 80
 tileRandom = 40
-tileDoors = [41, 42, 43, 44]
+tileDoorUp = 41
+tileDoorDown = 42
+tileDoorLeft = 43
+tileDoorRight = 44
+tileDoors = [tileDoorUp, tileDoorDown, tileDoorLeft, tileDoorRight]
 tileNoEnemy = 45
 
 tileMoveFrom = 49
@@ -1174,11 +1178,25 @@ def parseEleData():
                             leftRe = noList[bY + 1][bX]
                             rightRe = noList[bY + 1][bX + 2]
 
+                            # 检测门数据和限制数据
+                            if not upNo in [0, tileDoorUp] or not downNo in [0, tileDoorDown] or \
+                                not leftNo in [0, tileDoorLeft] or not rightNo in [0, tileDoorRight]:
+                                raise Exception("%d, %d 的大块方向有误" % (i, j))
+
+                            reRange = [
+                                0, notationKey2Jump,
+                                notationKeyRowFrom, notationKeyRowFrom + 1, notationKeyRowFrom + 2,
+                                notationKeyRowFrom + 3, notationKeyRowFrom + 4, notationKeyRowFrom + 5
+                            ]
+                            if not upRe in reRange or not downRe in reRange or not leftRe in reRange or not rightRe in reRange:
+                                raise Exception("%d, %d 的大块的方向限制有误" % (i, j))
+
+                            # 是否其中的门需要2连跳
                             if upRe == notationKey2Jump or downRe == notationKey2Jump or leftRe == notationKey2Jump or rightRe == notationKey2Jump:
                                 door2Jump = True
 
+                            # 获取门方向（如果门需要2连跳，则另外记录在一个list中）
                             rowKey = rowData["key"]
-
                             if realJ == 0 and upNo > 0:
                                 if upRe == notationKey2Jump:
                                     doorType2Jump[0].append(realI)
@@ -1222,13 +1240,16 @@ def parseEleData():
 
                     # 上或左右有门，进行一定的检测 todo
 
+                    # 门放入表格中后，把表格放入所有ele的list中
                     ele["doorType"] = doorType
                     eles.append(ele)
 
+                    # 取出此base ele对应的场景，如果需要2连跳，则免除其中的场景1-0
                     scenes = coWithSpineData["scenes"]
                     if need2Jump and 10 in scenes:
                         scenes.remove(10)
 
+                    # 如果门需要2连跳，则生成2个ele，另外一个的门数据改成需要2连跳的，分别放入场景1-0和其他场景
                     if door2Jump:
                         ele2Jump = copy.deepcopy(ele)
                         ele2Jump["doorType"] = doorType2Jump
@@ -1249,6 +1270,7 @@ def parseEleData():
             eleBase["tW"] = eleData["tW"]
             eleBase["tH"] = eleData["tH"]
 
+            # 模板中的有些数据会被解析时修改
             for j in xrange(0, len(rawCo)):
                     coLine = rawCo[j]
                     for i in xrange(0, len(coLine)):
@@ -1260,8 +1282,23 @@ def parseEleData():
 
             eleBases.append(eleBase)
 
-    # 检测elelist里面是否有空 todo
-
+    # 检测elelist里面是否有空
+    for key in eleLists:
+        eleListWHD = eleLists[key]
+        for i in xrange(0, len(eleListWHD)):
+            eleListHD = eleListWHD[i]
+            for j in xrange(0, len(eleListHD)):
+                eleListD = eleListHD[j]
+                for k in xrange(0, len(eleListD)):
+                    eleList = eleListD[k]
+                    if len(eleList) == 0:
+                        doorStr = ""
+                        for doorK in doorTypeList:
+                            d = doorTypeList[doorK]
+                            if d == k:
+                                doorStr = doorK
+                                break
+                        print("ele list empty: key: %2d, w %d, h %d, door %12s" % (key, i+1, j+1, doorStr))
 
 
 # ================================================================================
