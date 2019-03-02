@@ -738,7 +738,7 @@ notationKey2Jump = clsnSize + 3
 notationKeyLineFrom = clsnSize + 9
 notationKeyRowFrom = clsnSize + 17
 
-MAX_R_TW = 6
+MAX_R_TW = 7
 MAX_R_TH = 6
 MAX_DOOR_TYPE = 15
 
@@ -1076,6 +1076,7 @@ def parseEleData():
 
                 newCo = copy.deepcopy(coList)
 
+                # 有不可用的块，则把它变成其替代块；并且记录变化的位置，作为重复检测的依据
                 for j in xrange(0, len(newCo)):
                     coLine = newCo[j]
                     for i in xrange(0, len(coLine)):
