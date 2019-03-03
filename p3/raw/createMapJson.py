@@ -179,7 +179,7 @@ def addArray(array, length):
             break
 
 
-def parseCo(t, lineNum, colNum, w, h, area, xOffset = 0):
+def parseCo(t, lineNum, colNum, w, h, area, xOffset = 0, yOffset = 0):
     global sceneDoorData
     global doorIndexs
     global sceneSpineData
@@ -213,7 +213,7 @@ def parseCo(t, lineNum, colNum, w, h, area, xOffset = 0):
 
         thisDoorData = {}
         thisDoorData["x"] = getPX(colNum) + xOffset
-        thisDoorData["y"] = getPY(lineNum, h)
+        thisDoorData["y"] = getPY(lineNum, h) + yOffset
         thisDoorData["area"] = area
         thisDoorData["id"] = newT
 
@@ -255,16 +255,14 @@ def parseCo(t, lineNum, colNum, w, h, area, xOffset = 0):
             # spine
             thisSpineData = {}
             thisSpineData["x"] = getPX(colNum) + xOffset
-            thisSpineData["y"] = getPY(lineNum, h)
+            thisSpineData["y"] = getPY(lineNum, h) + yOffset
             thisSpineData["id"] = t - tileSpineFrom
-
             addArray(sceneSpineData, area)
-
             sceneSpineData[area].append(thisSpineData)
 
         return t * 1000 + key * keyDight + realTile
     else:
-        return None
+        return t
 
 
 
@@ -310,7 +308,7 @@ def parseHome(string, areaIndex):
         for i in xrange(0, len(coLine)):
             coData = coLine[i]
             newT = parseCo(coData, j, i, w, h, areaIndex)
-            if newT:
+            if newT != coData:
                 coList[j][i] = newT
 
     realTeList = []
@@ -370,7 +368,7 @@ def parse(string, areaIndex):
         for i in xrange(0, len(coLine)):
             coData = coLine[i]
             newT = parseCo(coData, j, i, w, h, areaIndex)
-            if newT:
+            if newT != coData:
                 coList[j][i] = newT
 
     # 遍历碰撞，获取随机区域和固定区域
@@ -752,12 +750,16 @@ eleLists = {}
 
 # 先获取所有tmx的数据
 # 文件以ele_xx_x_??.tmx的形式命名
-def getEleTMXFiles(path):
+def getEleTMXFiles(path, inputPath):
     global eleDatas
 
     fList = os.listdir(path)
     for f in fList:
         fileInfos = os.path.splitext(f)
+
+        if inputPath and inputPath != f:
+            continue
+
         if fileInfos[1] == '.tmx':
             d = readFile(path + f)
 
@@ -1226,6 +1228,10 @@ def parseEleData():
                                     doorType[3].append(realJ)
                                     doorType2Jump[3].append(realJ)
 
+                            # 计算除去的块数
+                            removeX = (realI - i) * 3 * 32
+                            removeY = (realJ - j) * 3 * 32
+
                             # spine list
                             sceneSpineData = []
                             for sX in xrange(0, 3):
@@ -1233,7 +1239,7 @@ def parseEleData():
                                     x = bX - 1 + sX # -1 是因为co已经处理过，去除了左下边缘
                                     y = bY + sY
                                     coData = rawCo[y][x]
-                                    parseCo(coData, y, x, 0, eleH * 3, 0, -32)
+                                    parseCo(coData, y, x, 0, eleH * 3, 0, removeX, -removeY)
 
                             if len(sceneSpineData) > 0:
                                 for spine in sceneSpineData[0]:
@@ -1277,7 +1283,7 @@ def parseEleData():
                     for i in xrange(0, len(coLine)):
                         coData = coLine[i]
                         newT = parseCo(coData, j, i, 0, 0, 0)
-                        if newT:
+                        if newT != coData:
                             rawCo[j][i] = newT
             eleBase["co"] = rawCo
 
@@ -1299,7 +1305,7 @@ def parseEleData():
                             if d == k:
                                 doorStr = doorK
                                 break
-                        print("ele list empty: key: %2d, w %d, h %d, door %12s" % (key, i+1, j+1, doorStr))
+                        # print("ele list empty: key: %2d, w %d, h %d, door %12s" % (key, i+1, j+1, doorStr))
 
 
 # ================================================================================
@@ -1336,13 +1342,13 @@ def createMap():
     saveJsonAndImg(outPath, path)
     print "finish at: " + outPath
 
-def createEle():
+def createEle(inputPath = None):
     path = "./map/"
     outPath = "./map/output/ele.js"
 
     print "go to create ELE"
 
-    getEleTMXFiles(path)
+    getEleTMXFiles(path, inputPath)
     parseEleData()
     saveEle(outPath)
     print "finish at: " + outPath
@@ -1353,7 +1359,10 @@ if '__main__' == __name__:
         if sys.argv[1] == "m":
             createMap()
         elif sys.argv[1] == "e":
-            createEle()
+            if len(sys.argv) >= 3:
+                createEle(sys.argv[2])
+            else:
+                createEle()
 
     else:
         createMap()
