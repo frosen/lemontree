@@ -36,10 +36,6 @@ tileSpineFrom = 53
 tileSpine = 53
 tileSpineTo = 64
 
-allSpines = []
-for x in xrange(tileMoveFrom, tileSpineTo + 1):
-    allSpines.append(x)
-
 tileHero = 81
 
 # 功能方法 ================================================================================
@@ -700,25 +696,6 @@ def saveJsonAndImg(path, oldPath):
 # ================================================================================
 # ================================================================================
 
-# 不可用的spine的替代品
-spineDisableRule = {
-    49: 1,
-    50: 1,
-    51: 1,
-    52: 0,
-
-    53: 0,
-}
-
-# 场景对应的可以用的spine
-sceneSpineRule = {
-    0 : allSpines,
-    10: [53],
-    11: [53],
-    20: [49, 50, 51, 53],
-    21: [49, 50, 51, 53],
-}
-
 platUpTile = 21
 platBgTile = 24
 
@@ -746,7 +723,7 @@ eleDatas = []
 
 eleBases = []
 eles = []
-eleLists = {}
+eleLists = None
 
 # 先获取所有tmx的数据
 # 文件以ele_xx_x_??.tmx的形式命名
@@ -896,15 +873,11 @@ def handleCoList(coList):
         newCoList.append(newLine)
     return newCoList
 
-def getSpine(coList):
-    spines = []
+def checkSpine(coList):
     for line in coList:
         for tile in line:
-            if tile in allSpines:
-                if not tile in spines:
-                    spines.append(tile)
-
-    return sorted(spines)
+            if tileMoveFrom <= tile and tile <= tileMoveTo:
+                raise Exception("wrong spine")
 
 def changeNotationListToNum(noList):
     k = 0
@@ -926,7 +899,7 @@ def createEleList():
         for _ in xrange(0, MAX_R_TH):
             hList = []
             for _ in xrange(0, MAX_DOOR_TYPE):
-                dList = []
+                dList = [[], []]
                 hList.append(dList)
             wList.append(hList)
         elist.append(wList)
@@ -1015,15 +988,19 @@ def getEleDoorTypes(doorType):
         numList.append(n)
     return numList
 
-def setEleIntoList(ele, scenes):
+def setEleIntoList(ele, index):
     global eleLists
     eleDoorTypes = getEleDoorTypes(ele["doorType"])
-    for scene in scenes:
-        if not eleLists.has_key(scene):
-            eleLists[scene] = createEleList()
 
-        for t in eleDoorTypes:
-            eleLists[scene][ele["tW"] - 1][ele["tH"] - 1][t].append(len(eles) - 1)
+    if not eleLists:
+        eleLists = createEleList()
+
+    for t in eleDoorTypes:
+        eleLists[ele["tW"] - 1][ele["tH"] - 1][t][index].append(len(eles) - 1)
+
+# 变成数组，减少数据量
+def getEleArray(ele):
+    return [ele["bi"], ele["tW"], ele["tH"], ele["uTX"], ele["uTY"], ele["doorType"], ele["sp"]]
 
 def parseEleData():
 
@@ -1033,6 +1010,7 @@ def parseEleData():
     global eleLists
     global sceneSpineData
 
+    k = -1
     for eleData in eleDatas:
 
         # 从json string提取tile数据
@@ -1047,265 +1025,197 @@ def parseEleData():
         notationLine = handleNotationLine(noList)
         notationRow = handleNotationRow(noList)
 
-        # 处理spine，根据不同场景能使用的spine类型，分成几个不同的地图
-        spines = getSpine(coList)
+        # 检测spine，不能是强制移动类
+        checkSpine(coList)
 
-        coWithSpineDatas = [] # noUseString scenes co
+        # 生成元素
+        k += 1
+        rawCo = coList
 
-        for key in sceneSpineRule:
-            noUseList = []
-            noUseString = ""
-            validSpines = sceneSpineRule[key] # 获取每一个场景可以用的spine
-            for s in spines:
-                if not s in validSpines:
-                    noUseList.append(s)
-                    noUseString = noUseString + str(s)
+        # 生成元素
+        for lineData in notationLine:
+            for rowData in notationRow:
+                if lineData["restrict"] >= notationKeyRowFrom and rowData["key"] < lineData["restrict"]:
+                    continue
 
-            hasData = False
-            for data in coWithSpineDatas:
-                if data["noUseString"] == noUseString:
-                    hasData = True
-                    data["scenes"].append(key)
-                    break
+                lineList = lineData["list"]
+                rowList = rowData["list"]
 
-            if not hasData:
-                data = {}
-                data["noUseString"] = noUseString
-                data["scenes"] = []
-                data["scenes"].append(key)
+                ele = {}
+                ele["bi"] = k
+                ele["uTX"] = changeNotationListToNum(lineList)
+                ele["uTY"] = changeNotationListToNum(rowList)
 
-                handledTPoss = {}
+                eleW = getListCount(lineList)
+                eleH = getListCount(rowList)
 
-                newCo = copy.deepcopy(coList)
+                ele["tW"] = eleW
+                ele["tH"] = eleH
 
-                # 有不可用的块，则把它变成其替代块；并且记录变化的位置，作为重复检测的依据
-                for j in xrange(0, len(newCo)):
-                    coLine = newCo[j]
-                    for i in xrange(0, len(coLine)):
-                        coData = coLine[i]
-                        if coData in noUseList:
-                            newData = spineDisableRule[coData]
-                            newCo[j][i] = newData
-                            if newData != coData:
-                                posKey = math.floor(i / 3) * 1000 + math.floor(j / 3)
-                                handledTPoss[int(posKey)] = 1
-                data["handledTPoss"] = handledTPoss
+                ele["sp"] = []
 
-                data["co"] = newCo
-                coWithSpineDatas.append(data)
+                doorTypeScene1 = [[], [], [], []]
+                doorType2Jump = [[], [], [], []]
+                door2Jump = False # 如果这个标识为true，则会生成2个不同的ele，其中一个不包含某个门在第一关使用
 
-        # 根据处理后的地图，生成元素
-        k = -1
-        for coWithSpineData in coWithSpineDatas:
-            k += 1
-            rawCo = coWithSpineData["co"]
+                need2Jump = False # 如果这个标识为true，则当前的ele不能在第一关使用
+                if rowData["restrict"] == notationKey2Jump:
+                    need2Jump = True
 
-            # 生成元素
-            for lineData in notationLine:
-                for rowData in notationRow:
-                    if lineData["restrict"] >= notationKeyRowFrom and rowData["key"] < lineData["restrict"]:
+                # 门和spine的位置
+                realI = -1
+                for i in xrange(0, len(lineList)):
+                    lineUseData = lineList[i]
+                    if lineUseData == 0:
                         continue
-
-                    lineList = lineData["list"]
-                    rowList = rowData["list"]
-
-                    # 重复检测
-                    # 由于coWithSpine第一个一定是all spine，从第二个开始检测和第一个是否完全一致，一致则跳过
-                    # 通过所有元素和初始是否存在变化来测定
-                    if k >= 1:
-                        skip = True
-                        for x in xrange(0, len(lineList)):
-                            lineUseData = lineList[x]
-                            if lineUseData == 0:
-                                continue
-                            for y in xrange(0, len(rowList)):
-                                rowUseData = rowList[y]
-                                if rowUseData == 0: # 选择横竖限制中值为1的位置
-                                    continue
-                                if coWithSpineData["handledTPoss"].has_key(x * 1000 + y):
-                                    skip = False
-                                    break
-                            if not skip:
-                                break
-                        if skip:
+                    realI += 1
+                    realJ = -1
+                    for j in xrange(0, len(rowList)):
+                        rowUseData = rowList[j]
+                        if rowUseData == 0: # 选择横竖限制中值为1的位置
                             continue
+                        realJ += 1
 
-                    ele = {}
-                    ele["baseIndex"] = k
-                    ele["usingTXs"] = changeNotationListToNum(lineList)
-                    ele["usingTYs"] = changeNotationListToNum(rowList)
+                        # 基础位置
+                        bX = i * 3 + 1
+                        bY = j * 3
 
-                    eleW = getListCount(lineList)
-                    eleH = getListCount(rowList)
+                        # 门数据
+                        upNo = noList[bY][bX]
+                        downNo = noList[bY + 2][bX + 2]
+                        leftNo = noList[bY + 2][bX]
+                        rightNo = noList[bY][bX + 2]
 
-                    ele["tW"] = eleW
-                    ele["tH"] = eleH
+                        # 门限制对于横竖选择的限制
+                        upRe = noList[bY][bX + 1]
+                        downRe = noList[bY + 2][bX + 1]
+                        leftRe = noList[bY + 1][bX]
+                        rightRe = noList[bY + 1][bX + 2]
 
-                    ele["spines"] = []
+                        # 检测门数据和限制数据
+                        if not upNo in [0, tileDoorUp] or not downNo in [0, tileDoorDown] or \
+                            not leftNo in [0, tileDoorLeft] or not rightNo in [0, tileDoorRight]:
+                            raise Exception("%d, %d 的大块方向有误" % (i, j))
 
-                    doorType = [[], [], [], []]
-                    doorType2Jump = [[], [], [], []]
-                    door2Jump = False # 如果这个标识为true，则会生成2个不同的ele，其中一个不包含某个门在第一关使用
+                        reRange = [
+                            0, notationKey2Jump,
+                            notationKeyRowFrom, notationKeyRowFrom + 1, notationKeyRowFrom + 2,
+                            notationKeyRowFrom + 3, notationKeyRowFrom + 4, notationKeyRowFrom + 5
+                        ]
+                        if not upRe in reRange or not downRe in reRange or not leftRe in reRange or not rightRe in reRange:
+                            raise Exception("%d, %d 的大块的方向限制有误" % (i, j))
 
-                    need2Jump = False # 如果这个标识为true，则当前的ele不能在第一关使用
-                    if rowData["restrict"] == notationKey2Jump:
-                        need2Jump = True
+                        # 是否其中的门需要2连跳
+                        if upRe == notationKey2Jump or downRe == notationKey2Jump or leftRe == notationKey2Jump or rightRe == notationKey2Jump:
+                            door2Jump = True
 
-                    # 门和spine的位置
-                    realI = -1
-                    for i in xrange(0, len(lineList)):
-                        lineUseData = lineList[i]
-                        if lineUseData == 0:
-                            continue
-                        realI += 1
-                        realJ = -1
-                        for j in xrange(0, len(rowList)):
-                            rowUseData = rowList[j]
-                            if rowUseData == 0: # 选择横竖限制中值为1的位置
-                                continue
-                            realJ += 1
+                        # 获取门方向（如果门需要2连跳，则另外记录在一个list中）
+                        rowKey = rowData["key"]
+                        if realJ == 0 and upNo > 0:
+                            if upRe == notationKey2Jump:
+                                doorType2Jump[0].append(realI)
+                            elif upRe == 0 or upRe <= rowKey:
+                                doorTypeScene1[0].append(realI)
+                                doorType2Jump[0].append(realI)
 
-                            # 基础位置
-                            bX = i * 3 + 1
-                            bY = j * 3
+                        if realJ == eleH - 1 and downNo > 0:
+                            if downRe == notationKey2Jump:
+                                doorType2Jump[1].append(realI)
+                            elif downRe == 0 or downRe <= rowKey:
+                                doorTypeScene1[1].append(realI)
+                                doorType2Jump[1].append(realI)
 
-                            # 门数据
-                            upNo = noList[bY][bX]
-                            downNo = noList[bY + 2][bX + 2]
-                            leftNo = noList[bY + 2][bX]
-                            rightNo = noList[bY][bX + 2]
+                        if realI == 0 and leftNo > 0:
+                            if leftRe == notationKey2Jump:
+                                doorType2Jump[2].append(realJ)
+                            elif leftRe == 0 or leftRe <= rowKey:
+                                doorTypeScene1[2].append(realJ)
+                                doorType2Jump[2].append(realJ)
 
-                            # 门限制对于横竖选择的限制
-                            upRe = noList[bY][bX + 1]
-                            downRe = noList[bY + 2][bX + 1]
-                            leftRe = noList[bY + 1][bX]
-                            rightRe = noList[bY + 1][bX + 2]
+                        if realI == eleW - 1 and rightNo > 0:
+                            if rightRe == notationKey2Jump:
+                                doorType2Jump[3].append(realJ)
+                            elif rightRe == 0 or rightNo <= rowKey:
+                                doorTypeScene1[3].append(realJ)
+                                doorType2Jump[3].append(realJ)
 
-                            # 检测门数据和限制数据
-                            if not upNo in [0, tileDoorUp] or not downNo in [0, tileDoorDown] or \
-                                not leftNo in [0, tileDoorLeft] or not rightNo in [0, tileDoorRight]:
-                                raise Exception("%d, %d 的大块方向有误" % (i, j))
+                        # 计算除去的块数
+                        removeX = (realI - i) * 3 * 32
+                        removeY = (realJ - j) * 3 * 32
 
-                            reRange = [
-                                0, notationKey2Jump,
-                                notationKeyRowFrom, notationKeyRowFrom + 1, notationKeyRowFrom + 2,
-                                notationKeyRowFrom + 3, notationKeyRowFrom + 4, notationKeyRowFrom + 5
-                            ]
-                            if not upRe in reRange or not downRe in reRange or not leftRe in reRange or not rightRe in reRange:
-                                raise Exception("%d, %d 的大块的方向限制有误" % (i, j))
+                        # spine list
+                        sceneSpineData = []
+                        for sX in xrange(0, 3):
+                            for sY in xrange(0, 3):
+                                x = bX - 1 + sX # -1 是因为co已经处理过，去除了左下边缘
+                                y = bY + sY
+                                coData = rawCo[y][x]
+                                parseCo(coData, y, x, 0, eleH * 3, 0, removeX, -removeY)
 
-                            # 是否其中的门需要2连跳
-                            if upRe == notationKey2Jump or downRe == notationKey2Jump or leftRe == notationKey2Jump or rightRe == notationKey2Jump:
-                                door2Jump = True
+                        if len(sceneSpineData) > 0:
+                            for spine in sceneSpineData[0]:
+                                ele["sp"].append(spine)
 
-                            # 获取门方向（如果门需要2连跳，则另外记录在一个list中）
-                            rowKey = rowData["key"]
-                            if realJ == 0 and upNo > 0:
-                                if upRe == notationKey2Jump:
-                                    doorType2Jump[0].append(realI)
-                                elif upRe == 0 or upRe <= rowKey:
-                                    doorType[0].append(realI)
-                                    doorType2Jump[0].append(realI)
+                # 上或左右有门，进行一定的检测 todo
 
-                            if realJ == eleH - 1 and downNo > 0:
-                                if downRe == notationKey2Jump:
-                                    doorType2Jump[1].append(realI)
-                                elif downRe == 0 or downRe <= rowKey:
-                                    doorType[1].append(realI)
-                                    doorType2Jump[1].append(realI)
+                # 门放入表格中后，把表格放入所有ele的list中
 
-                            if realI == 0 and leftNo > 0:
-                                if leftRe == notationKey2Jump:
-                                    doorType2Jump[2].append(realJ)
-                                elif leftRe == 0 or leftRe <= rowKey:
-                                    doorType[2].append(realJ)
-                                    doorType2Jump[2].append(realJ)
+                if need2Jump:
+                    ele["doorType"] = doorType2Jump
+                    eles.append(getEleArray(ele))
+                    setEleIntoList(ele, 1)
 
-                            if realI == eleW - 1 and rightNo > 0:
-                                if rightRe == notationKey2Jump:
-                                    doorType2Jump[3].append(realJ)
-                                elif rightRe == 0 or rightNo <= rowKey:
-                                    doorType[3].append(realJ)
-                                    doorType2Jump[3].append(realJ)
+                # 如果门需要2连跳，则生成2个ele，另外一个的门数据改成需要2连跳的，分别放入场景1-0和其他场景
+                elif door2Jump:
+                    ele["doorType"] = doorType2Jump
+                    eles.append(getEleArray(ele))
+                    setEleIntoList(ele, 1)
 
-                            # 计算除去的块数
-                            removeX = (realI - i) * 3 * 32
-                            removeY = (realJ - j) * 3 * 32
+                    eleScene1 = copy.deepcopy(ele)
+                    eleScene1["doorType"] = doorTypeScene1
+                    eles.append(getEleArray(eleScene1))
+                    setEleIntoList(eleScene1, 0)
+                else:
+                    ele["doorType"] = doorType2Jump
+                    eles.append(getEleArray(ele))
+                    setEleIntoList(ele, 0)
+                    setEleIntoList(ele, 1)
 
-                            # spine list
-                            sceneSpineData = []
-                            for sX in xrange(0, 3):
-                                for sY in xrange(0, 3):
-                                    x = bX - 1 + sX # -1 是因为co已经处理过，去除了左下边缘
-                                    y = bY + sY
-                                    coData = rawCo[y][x]
-                                    parseCo(coData, y, x, 0, eleH * 3, 0, removeX, -removeY)
+        # 生成元素模板
+        eleBase = {}
 
-                            if len(sceneSpineData) > 0:
-                                for spine in sceneSpineData[0]:
-                                    ele["spines"].append(spine)
+        eleBase["tW"] = eleData["tW"]
+        eleBase["tH"] = eleData["tH"]
 
-                    # 上或左右有门，进行一定的检测 todo
+        # 模板中的有些数据会被解析时修改
+        for j in xrange(0, len(rawCo)):
+                coLine = rawCo[j]
+                for i in xrange(0, len(coLine)):
+                    coData = coLine[i]
+                    newT = parseCo(coData, j, i, 0, 0, 0)
+                    if newT != coData:
+                        rawCo[j][i] = newT
+        eleBase["co"] = rawCo
 
-                    # 门放入表格中后，把表格放入所有ele的list中
-                    ele["doorType"] = doorType
-                    eles.append(ele)
-
-                    # 取出此base ele对应的场景，如果需要2连跳，则免除其中的场景1-0
-                    scenes = coWithSpineData["scenes"]
-                    if need2Jump and 10 in scenes:
-                        scenes.remove(10)
-
-                    # 如果门需要2连跳，则生成2个ele，另外一个的门数据改成需要2连跳的，分别放入场景1-0和其他场景
-                    if door2Jump:
-                        ele2Jump = copy.deepcopy(ele)
-                        ele2Jump["doorType"] = doorType2Jump
-                        eles.append(ele2Jump)
-
-                        if 10 in scenes:
-                            scenes.remove(10)
-                            setEleIntoList(ele2Jump, scenes)
-                            setEleIntoList(ele, [10])
-                        else:
-                            setEleIntoList(ele2Jump, scenes)
-                    else:
-                        setEleIntoList(ele, scenes)
-
-            # 生成元素模板
-            eleBase = {}
-
-            eleBase["tW"] = eleData["tW"]
-            eleBase["tH"] = eleData["tH"]
-
-            # 模板中的有些数据会被解析时修改
-            for j in xrange(0, len(rawCo)):
-                    coLine = rawCo[j]
-                    for i in xrange(0, len(coLine)):
-                        coData = coLine[i]
-                        newT = parseCo(coData, j, i, 0, 0, 0)
-                        if newT != coData:
-                            rawCo[j][i] = newT
-            eleBase["co"] = rawCo
-
-            eleBases.append(eleBase)
+        eleBases.append(eleBase)
 
     # 检测elelist里面是否有空
-    for key in eleLists:
-        eleListWHD = eleLists[key]
-        for i in xrange(0, len(eleListWHD)):
-            eleListHD = eleListWHD[i]
-            for j in xrange(0, len(eleListHD)):
-                eleListD = eleListHD[j]
-                for k in xrange(0, len(eleListD)):
-                    eleList = eleListD[k]
-                    if len(eleList) == 0:
-                        doorStr = ""
-                        for doorK in doorTypeList:
-                            d = doorTypeList[doorK]
-                            if d == k:
-                                doorStr = doorK
-                                break
-                        # print("ele list empty: key: %2d, w %d, h %d, door %12s" % (key, i+1, j+1, doorStr))
+    for i in xrange(0, len(eleLists)):
+        eleListHD = eleLists[i]
+        for j in xrange(0, len(eleListHD)):
+            eleListD = eleListHD[j]
+            for k in xrange(0, len(eleListD)):
+                eleList = eleListD[k]
+                len0 = len(eleList[0])
+                len1 = len(eleList[1])
+                if len0 == 0 or len1 == 0:
+                    doorStr = ""
+                    for doorK in doorTypeList:
+                        d = doorTypeList[doorK]
+                        if d == k:
+                            doorStr = doorK
+                            break
+                        print("ele list empty: w %d, h %d, door %12s ==> %d, %d" % (i+1, j+1, doorStr, len0, len1))
 
 
 # ================================================================================
