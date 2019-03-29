@@ -45,7 +45,7 @@ export default abstract class Destroyee extends MyComponent {
     // 碰撞回调 ------------------------------------------------------------
 
     /** 对于某种伤害上一次碰撞的时间（毫秒） */
-    invcTimeBegin: {[key: number]: number;} = {}
+    invcTimeBegin: {[key: number]: number;} = {};
 
     onCollision(collisionDatas: CollisionData[]) {
         for (const data of collisionDatas) {

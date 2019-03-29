@@ -21,7 +21,7 @@ export class SMMgr<SMObj> {
     }
 
     /** 状态列表，enum: SMForHero */
-    stateList: {[key: number]: SM<SMObj>;} = {}
+    stateList: {[key: number]: SM<SMObj>;} = {};
     /** 当前状态 */
     curState: number = null;
     /** 当前状态机 */
