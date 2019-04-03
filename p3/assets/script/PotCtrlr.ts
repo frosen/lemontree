@@ -144,7 +144,7 @@ export default class PotCtrlr extends MyComponent {
             this.datas[curArea][index].living = false;
             this.pool.reclaim(pot.node);
         } else { // 没有index说明不是从pool中生成的
-            pot.node.removeFromParent();
+            pot.node.destroy();
         }
     }
 
