@@ -943,44 +943,52 @@ def getEleDoorTypes(doorType):
     dList = copy.deepcopy(doorTypeList)
 
     if not hasUp:
-        removeList(dList, "lef")
-        removeList(dList, "rig")
-        removeList(dList, "bot")
+        removeList(dList, "top")
 
-        removeList(dList, "lef_rig")
-        removeList(dList, "lef_bot")
-        removeList(dList, "rig_bot")
-        removeList(dList, "rig_bot_lef")
+        removeList(dList, "lef_top")
+        removeList(dList, "rig_top")
+        removeList(dList, "top_bot")
+        removeList(dList, "lef_top_rig")
+        removeList(dList, "top_rig_bot")
+        removeList(dList, "bot_lef_top")
+
+        removeList(dList, "all")
 
     if not hasDown:
-        removeList(dList, "lef")
-        removeList(dList, "rig")
-        removeList(dList, "top")
+        removeList(dList, "bot")
 
-        removeList(dList, "lef_rig")
-        removeList(dList, "lef_top")
-        removeList(dList, "rig_top")
-        removeList(dList, "lef_top_rig")
+        removeList(dList, "lef_bot")
+        removeList(dList, "rig_bot")
+        removeList(dList, "top_bot")
+        removeList(dList, "top_rig_bot")
+        removeList(dList, "rig_bot_lef")
+        removeList(dList, "bot_lef_top")
+
+        removeList(dList, "all")
 
     if not hasLeft:
-        removeList(dList, "top")
-        removeList(dList, "rig")
-        removeList(dList, "bot")
-
-        removeList(dList, "top_bot")
-        removeList(dList, "rig_top")
-        removeList(dList, "rig_bot")
-        removeList(dList, "top_rig_bot")
-
-    if not hasRight:
         removeList(dList, "lef")
-        removeList(dList, "top")
-        removeList(dList, "bot")
 
-        removeList(dList, "top_bot")
         removeList(dList, "lef_top")
         removeList(dList, "lef_bot")
+        removeList(dList, "lef_rig")
+        removeList(dList, "lef_top_rig")
+        removeList(dList, "rig_bot_lef")
         removeList(dList, "bot_lef_top")
+
+        removeList(dList, "all")
+
+    if not hasRight:
+        removeList(dList, "rig")
+
+        removeList(dList, "rig_top")
+        removeList(dList, "rig_bot")
+        removeList(dList, "lef_rig")
+        removeList(dList, "lef_top_rig")
+        removeList(dList, "top_rig_bot")
+        removeList(dList, "rig_bot_lef")
+
+        removeList(dList, "all")
 
     numList = []
     for key in dList:
