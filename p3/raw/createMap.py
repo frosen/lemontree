@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#coding:utf-8
+# coding:utf-8
 
 import json
 import os
@@ -13,7 +13,7 @@ import sys
 
 arrayMax = 20
 
-clsnSize = 256 #碰撞层瓦块的总数
+clsnSize = 256  # 碰撞层瓦块的总数
 
 tileGateFrom = 65
 tileGateTo = 80
@@ -40,10 +40,11 @@ tileHero = 81
 
 thumbInterval = 3
 
-RThumb = 0 #随机大块
-FiThumb = 1 #固定大块
+RThumb = 0  # 随机大块
+FiThumb = 1  # 固定大块
 
 # 功能方法 ================================================================================
+
 
 def readFile(filePath):
     fp = None
@@ -53,14 +54,17 @@ def readFile(filePath):
         d = fp.read()
 
     except Exception, e:
-        print("read " + filePath + " exception! " + str(Exception) + ":" + str(e))
+        print("read " + filePath + " exception! " +
+              str(Exception) + ":" + str(e))
 
     finally:
-        if fp: fp.close()
+        if fp:
+            fp.close()
 
     if d == "":
         print("read " + filePath + " no res! ")
     return d
+
 
 def saveFile(path, data):
     fp = None
@@ -72,7 +76,9 @@ def saveFile(path, data):
         print("save " + path + " exception! " + str(Exception) + ":" + str(e))
 
     finally:
-        if fp: fp.close()
+        if fp:
+            fp.close()
+
 
 def addArray(array, length):
     while True:
@@ -81,12 +87,14 @@ def addArray(array, length):
         else:
             break
 
+
 def getWHFromTileJson(jsonStr):
     wStr = re.findall(r" width=\"(.+?)\"", jsonStr)[0]
     hStr = re.findall(r" height=\"(.+?)\"", jsonStr)[0]
     w = int(wStr)
     h = int(hStr)
     return w, h
+
 
 def getDataFromTileJson(jsonStr, key):
     k1 = "<layer name=\"" + key + r"\"([\s\S]*?)</layer>"
@@ -99,7 +107,8 @@ def getDataFromTileJson(jsonStr, key):
         tileData = line.split(",")
         tileLineList = []
         for tileStr in tileData:
-            if len(tileStr) < 1: continue
+            if len(tileStr) < 1:
+                continue
             tile = int(tileStr)
             tileLineList.append(tile)
 
@@ -107,12 +116,18 @@ def getDataFromTileJson(jsonStr, key):
 
     return tilelist
 
+
 # 得到一个块的最下的中点
 TileLength = 32
+
+
 def getPX(x):
     return int(x * TileLength + TileLength * 0.5)
+
+
 def getPY(y, h):
     return int(h - y - 1) * TileLength
+
 
 class MapCreator:
     def createMap(self):
@@ -125,7 +140,6 @@ class MapCreator:
         self.initMapStrData()
         self.getStrDataFromMapTMXFiles(path)
         self.parseMapStrData()
-        self.saveEncryptInfo(outPath)
         self.saveJsonAndImg(outPath, path)
         print "finish at: " + outPath
 
@@ -162,8 +176,9 @@ class MapCreator:
                 self.mapStrData[i][j] = d
 
                 if len(self.mapType[i]) == 0:
-                    self.mapType[i] = [0] * arrayMax # 普通类型为0
-                if len(indexs) == 4 and indexs[3] == "ad": # scene有可能分两个部分，那么后一部分就是advance 用1表示
+                    self.mapType[i] = [0] * arrayMax  # 普通类型为0
+                # scene有可能分两个部分，那么后一部分就是advance 用1表示
+                if len(indexs) == 4 and indexs[3] == "ad":
                     self.mapType[i][j] = 1
 
     # 解析mapData
@@ -171,6 +186,8 @@ class MapCreator:
 
         sceneIndex = 0
         for sceneStrData in self.mapStrData:
+            if (len(sceneStrData) == 0):
+                break
 
             finalData = {}
 
@@ -188,7 +205,7 @@ class MapCreator:
                     break
 
                 print "parse scene {} area {}".format(sceneIndex, areaIndex)
-                if sceneIndex == 0: # 0是home，要特殊处理
+                if sceneIndex == 0:  # 0是home，要特殊处理
                     areaData = self.parseHome(areaStrData, areaIndex)
                 else:
                     areaData = self.parse(areaStrData, areaIndex)
@@ -218,9 +235,9 @@ class MapCreator:
         w, h = getWHFromTileJson(string)
 
         # 从json string提取tile数据
-        teList = getDataFromTileJson(string, "terrain") # 地形
-        coList = getDataFromTileJson(string, "collision") # 碰撞
-        noList = getDataFromTileJson(string, "notation") # 标记
+        teList = getDataFromTileJson(string, "terrain")  # 地形
+        coList = getDataFromTileJson(string, "collision")  # 碰撞
+        noList = getDataFromTileJson(string, "notation")  # 标记
 
         # 遍历标记，获取门等信息
         for j in xrange(0, len(noList)):
@@ -265,9 +282,9 @@ class MapCreator:
         w, h = getWHFromTileJson(string)
 
         # 从json string提取tile数据
-        teList = getDataFromTileJson(string, "terrain") # 地形
-        coList = getDataFromTileJson(string, "collision") # 碰撞
-        noList = getDataFromTileJson(string, "notation") # 标记
+        teList = getDataFromTileJson(string, "terrain")  # 地形
+        coList = getDataFromTileJson(string, "collision")  # 碰撞
+        noList = getDataFromTileJson(string, "notation")  # 标记
 
         # 遍历标记，获取无敌人区域，spine等信息
         for j in xrange(0, len(noList)):
@@ -313,7 +330,7 @@ class MapCreator:
             self.noEnemyPosData.append(colNum * 1000 + lineNum)
 
         elif t == tileHero:
-            #hero pos
+            # hero pos
 
             thisHeroData = {}
             thisHeroData["x"] = getPX(colNum)
@@ -323,9 +340,9 @@ class MapCreator:
             self.sceneHeroData.append(thisHeroData)
 
     # 解析碰撞
-    def parseCo(self, t, lineNum, colNum, w, h, area, xOffset = 0, yOffset = 0):
+    def parseCo(self, t, lineNum, colNum, w, h, area, xOffset=0, yOffset=0):
 
-        keyDight = 100 #标记的数位
+        keyDight = 100  # 标记的数位
 
         if tileGateFrom <= t and t <= tileGateTo:
             # 门
@@ -348,10 +365,11 @@ class MapCreator:
             elif colNum == w - 1:
                 orient = 4
             else:
-                orient = 5 # 在中间的门
+                orient = 5  # 在中间的门
 
             # 新数据
-            newT = t * 100000 + orient * 10000 + self.doorIndexs[t] * 1000 + key * keyDight + 0 # 门都是可通过的
+            newT = t * 100000 + orient * 10000 + \
+                self.doorIndexs[t] * 1000 + key * keyDight + 0  # 门都是可通过的
 
             # 门数据记录到门的列表中
             thisDoorData = {}
@@ -379,7 +397,7 @@ class MapCreator:
             realTile = 0
 
             if t == tileRightMove:
-                realTile = 1 #lly todo 强制移动用spine实现
+                realTile = 1  # lly todo 强制移动用spine实现
 
             elif t == tileLeftMove:
                 realTile = 1
@@ -416,7 +434,7 @@ class MapCreator:
         xLast = w - 1
         yLast = h - 1
 
-        rList = [] # 随机区域标记
+        rList = []  # 随机区域标记
 
         while True:
             if ry >= yLast:
@@ -447,8 +465,8 @@ class MapCreator:
         return rList
 
     def parseFi(self, rList, w, h, teList, coList, noList):
-        fi = [] # [ {x y w h te co d[] } ]
-        used = {} # 已用过的区域
+        fi = []  # [ {x y w h te co d[] } ]
+        used = {}  # 已用过的区域
 
         rListLen = len(rList)
         for rLineIndex in xrange(0, rListLen):
@@ -456,146 +474,151 @@ class MapCreator:
             rLineLen = len(rLine)
             for rDataIndex in xrange(0, rLineLen):
                 rData = rLine[rDataIndex]
-                if rData == FiThumb and not used.has_key(self.getIndex(rDataIndex, rLineIndex)):
-                    # 查看大小
-                    fiY = rLineIndex
-                    fiX = rDataIndex
+                if rData != FiThumb:
+                    continue
+                if used.has_key(self.getIndex(rDataIndex, rLineIndex)):
+                    continue
 
-                    while True: # 看宽度
-                        if fiX + 1 >= rLineLen or rLine[fiX + 1] != FiThumb:
-                            break
-                        fiX += 1
+                # 查看大小
+                fiY = rLineIndex
+                fiX = rDataIndex
 
-                    while True: # 看高度
-                        if fiY + 1 >= rListLen or rList[fiY + 1][fiX] != FiThumb:
-                            break
-                        fiY += 1
+                while True:  # 看宽度
+                    if fiX + 1 >= rLineLen or rLine[fiX + 1] != FiThumb:
+                        break
+                    fiX += 1
 
-                    # 记录到“已用过的区域”
-                    for y in xrange(rLineIndex, fiY + 1):
-                        for x in xrange(rDataIndex, fiX + 1):
-                            used[self.getIndex(x, y)] = 1
+                while True:  # 看高度
+                    if fiY + 1 >= rListLen or rList[fiY + 1][fiX] != FiThumb:
+                        break
+                    fiY += 1
 
-                    realY = rLineIndex * thumbInterval
-                    realYMax = (fiY + 1) * thumbInterval
-                    realX = rDataIndex * thumbInterval + 1
-                    realXMax = (fiX + 1) * thumbInterval + 1
+                # 记录到“已用过的区域”
+                for y in xrange(rLineIndex, fiY):
+                    for x in xrange(rDataIndex, fiX):
+                        used[self.getIndex(x, y)] = 1
 
-                    realW = realXMax - realX
-                    realH = realYMax - realY
+                realY = rLineIndex * thumbInterval
+                realYMax = fiY * thumbInterval
+                realX = rDataIndex * thumbInterval + 1
+                realXMax = fiX * thumbInterval + 1
 
-                    #靠边的块要加上边缘
-                    if realX == 1:
-                        realX = 0
-                        realW += 1
+                realW = realXMax - realX
+                realH = realYMax - realY
 
-                    if realXMax == w - 1:
-                        realW += 1
+                # 靠边的块要加上边缘
+                if realX == 1:
+                    realX = 0
+                    realW += 1
 
-                    if realYMax == h - 1:
-                        realH += 1
+                if realXMax == w - 1:
+                    realW += 1
 
-                    oneFi = {}
+                if realYMax == h - 1:
+                    realH += 1
 
-                    # 基础属性
-                    oneFi["rX"] = realX
-                    oneFi["rY"] = realY
-                    oneFi["rW"] = realW
-                    oneFi["rH"] = realH
+                oneFi = {}
 
-                    oneFi["tX"] = rDataIndex
-                    oneFi["tY"] = rLineIndex
-                    oneFi["tW"] = fiX + 1 - rDataIndex
-                    oneFi["tH"] = fiY + 1 - rLineIndex
+                # 基础属性
+                oneFi["rX"] = realX
+                oneFi["rY"] = realY
+                oneFi["rW"] = realW
+                oneFi["rH"] = realH
 
-                    # 区域的地形和碰撞
-                    fite = []
-                    fico = []
+                oneFi["tX"] = rDataIndex
+                oneFi["tY"] = rLineIndex
+                oneFi["tW"] = fiX + 1 - rDataIndex
+                oneFi["tH"] = fiY + 1 - rLineIndex
 
-                    for y in xrange(realY, realY + realH):
-                        fiteLine = []
-                        ficoLine = []
+                # 区域的地形和碰撞
+                fite = []
+                fico = []
 
-                        for x in xrange(realX, realX + realW):
-                            fiteData = self.parseTe(teList[y][x])
-                            ficoData = coList[y][x]
-                            fiteLine.append(fiteData)
-                            ficoLine.append(ficoData)
+                for y in xrange(realY, realY + realH):
+                    fiteLine = []
+                    ficoLine = []
 
-                        fite.append(fiteLine)
-                        fico.append(ficoLine)
+                    for x in xrange(realX, realX + realW):
+                        te = teList[y][x]
+                        fiteData = self.parseTe(te)
+                        ficoData = coList[y][x]
+                        fiteLine.append(fiteData)
+                        ficoLine.append(ficoData)
 
-                    oneFi["te"] = fite
-                    oneFi["co"] = fico
+                    fite.append(fiteLine)
+                    fico.append(ficoLine)
 
-                    # 区域的门信息
-                    doorUp = [] #记录九宫格的左上角
-                    doorDown = [] #记录九宫格的左下角
-                    doorLeft = [] #记录九宫格的左上角
-                    doorRight = [] #记录九宫格的右上角
-                    substitutes = [0, 1, 2, 3] # 不通方向的替代，默认0-3就是上下左右，也就是不用替代
+                oneFi["te"] = fite
+                oneFi["co"] = fico
 
-                    doorNotation = tileDoors
-                    FiY = -1
-                    for thumbY in xrange(rLineIndex, fiY + 1):
-                        FiY += 1
-                        y = thumbY * thumbInterval
-                        FiX = -1
-                        for thumbX in xrange(rDataIndex, fiX + 1):
-                            FiX += 1
-                            x = thumbX * thumbInterval + 1
+                # 区域的门信息
+                doorUp = []  # 记录九宫格的左上角
+                doorDown = []  # 记录九宫格的左下角
+                doorLeft = []  # 记录九宫格的左上角
+                doorRight = []  # 记录九宫格的右上角
+                substitutes = [0, 1, 2, 3]  # 不通方向的替代，默认0-3就是上下左右，也就是不用替代
 
-                            # 上下左右
-                            if y - 1 >= 0:
-                                c = noList[y - 1][x]
-                                if c in doorNotation:
-                                    if c != doorNotation[0]:
-                                        substitutes[0] = doorNotation.index(c)
-                                        doorUp = []
+                doorNotation = tileDoors
+                FiY = -1
+                for thumbY in xrange(rLineIndex, fiY + 1):
+                    FiY += 1
+                    y = thumbY * thumbInterval
+                    FiX = -1
+                    for thumbX in xrange(rDataIndex, fiX + 1):
+                        FiX += 1
+                        x = thumbX * thumbInterval + 1
 
-                                    if substitutes[0] == 0:
-                                        doorUp.append(FiX)
+                        # 上下左右
+                        if y - 1 >= 0:
+                            c = noList[y - 1][x]
+                            if c in doorNotation:
+                                if c != doorNotation[0]:
+                                    substitutes[0] = doorNotation.index(c)
+                                    doorUp = []
 
-                            if y + 3 < h - 1:
-                                c = noList[y + 3][x]
-                                if c in doorNotation:
-                                    if c != doorNotation[1]:
-                                        substitutes[1] = doorNotation.index(c)
-                                        doorDown = []
+                                if substitutes[0] == 0:
+                                    doorUp.append(FiX)
 
-                                    if substitutes[1] == 1:
-                                        doorDown.append(FiX)
+                        if y + 3 < h - 1:
+                            c = noList[y + 3][x]
+                            if c in doorNotation:
+                                if c != doorNotation[1]:
+                                    substitutes[1] = doorNotation.index(c)
+                                    doorDown = []
 
-                            if x - 1 >= 1:
-                                c = noList[y][x - 1]
-                                if c in doorNotation:
-                                    if c != doorNotation[2]:
-                                        substitutes[2] = doorNotation.index(c)
-                                        doorLeft = []
+                                if substitutes[1] == 1:
+                                    doorDown.append(FiX)
 
-                                    if substitutes[2] == 2:
-                                        doorLeft.append(FiY)
+                        if x - 1 >= 1:
+                            c = noList[y][x - 1]
+                            if c in doorNotation:
+                                if c != doorNotation[2]:
+                                    substitutes[2] = doorNotation.index(c)
+                                    doorLeft = []
 
-                            if x + 3 < w - 2:
-                                c = noList[y][x + 3]
-                                if c in doorNotation:
-                                    if c != doorNotation[3]:
-                                        substitutes[3] = doorNotation.index(c)
-                                        doorRight = []
+                                if substitutes[2] == 2:
+                                    doorLeft.append(FiY)
 
-                                    if substitutes[3] == 3:
-                                        doorRight.append(FiY)
+                        if x + 3 < w - 2:
+                            c = noList[y][x + 3]
+                            if c in doorNotation:
+                                if c != doorNotation[3]:
+                                    substitutes[3] = doorNotation.index(c)
+                                    doorRight = []
 
-                    door = []
-                    door.append(doorUp)
-                    door.append(doorDown)
-                    door.append(doorLeft)
-                    door.append(doorRight)
+                                if substitutes[3] == 3:
+                                    doorRight.append(FiY)
 
-                    oneFi["door"] = door
-                    oneFi["substitutes"] = substitutes
+                door = []
+                door.append(doorUp)
+                door.append(doorDown)
+                door.append(doorLeft)
+                door.append(doorRight)
 
-                    fi.append(oneFi)
+                oneFi["door"] = door
+                oneFi["substitutes"] = substitutes
+
+                fi.append(oneFi)
         return fi
 
     def getIndex(self, x, y):
@@ -608,32 +631,29 @@ class MapCreator:
             with open("./map/mapAttri.json", 'r') as load_f:
                 self.attriJson = json.load(load_f)
 
-        return self.attriJson[sceneIndex]
+        if sceneIndex >= len(self.attriJson):
+            return {}
+        else:
+            return self.attriJson[sceneIndex]
 
-    def createEle(self, inputPath = None):
-        path = "./map/"
-        outPath = "./map/output/ele.js"
+    def saveJsonAndImg(self, path, oldPath):
+        index = 0
+        for jsonData in self.jsonDataList:
+            jsonStr = json.dumps(jsonData)
+            realPath = path + "scene" + str(index) + "/"
+            if not os.path.exists(realPath):
+                os.makedirs(realPath)
 
-        print "go to create ELE"
+            realFile = realPath + "area.json"
+            saveFile(realFile, jsonStr)
 
-        getEleTMXFiles(path, inputPath)
-        parseEleData()
-        saveEle(outPath)
-        print "finish at: " + outPath
+            oldImgName = oldPath + "scene_" + str(index) + ".png"
+            newImgName = realPath + "tiles.png"
+            shutil.copyfile(oldImgName, newImgName)
+
+            index += 1
+
 
 if '__main__' == __name__:
-
     creator = MapCreator()
-
-    if len(sys.argv) >= 2:
-        if sys.argv[1] == "m":
-            creator.createMap()
-        elif sys.argv[1] == "e":
-            if len(sys.argv) >= 3:
-                creator.createEle(sys.argv[2])
-            else:
-                creator.createEle()
-
-    else:
-        creator.createMap()
-        creator.createEle()
+    creator.createMap()
