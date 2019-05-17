@@ -431,7 +431,7 @@ class MapCreator:
     def parseRList(self, coList, w, h):
         rx = 1
         ry = 0
-        xLast = w - 1
+        xLast = w - 2
         yLast = h - 1
 
         rList = []  # 随机区域标记
@@ -484,24 +484,24 @@ class MapCreator:
                 fiX = rDataIndex
 
                 while True:  # 看宽度
-                    if fiX + 1 >= rLineLen or rLine[fiX + 1] != FiThumb:
+                    if fiX + 1 >= rLineLen or rLine[fiX + 1] != 1:
                         break
                     fiX += 1
 
                 while True:  # 看高度
-                    if fiY + 1 >= rListLen or rList[fiY + 1][fiX] != FiThumb:
+                    if fiY + 1 >= rListLen or rList[fiY + 1][fiX] != 1:
                         break
                     fiY += 1
 
                 # 记录到“已用过的区域”
-                for y in xrange(rLineIndex, fiY):
-                    for x in xrange(rDataIndex, fiX):
+                for y in xrange(rLineIndex, fiY + 1):
+                    for x in xrange(rDataIndex, fiX + 1):
                         used[self.getIndex(x, y)] = 1
 
                 realY = rLineIndex * thumbInterval
-                realYMax = fiY * thumbInterval
+                realYMax = (fiY + 1) * thumbInterval
                 realX = rDataIndex * thumbInterval + 1
-                realXMax = fiX * thumbInterval + 1
+                realXMax = (fiX + 1) * thumbInterval + 1
 
                 realW = realXMax - realX
                 realH = realYMax - realY
