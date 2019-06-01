@@ -16,16 +16,6 @@ let scheduler = cc.director.getScheduler();
 
 // 已经形成的地形的类 ========================================================
 
-/**
- * 地面信息，用于生成enemy或者pot时候使用，不同属性的地面可以生成的东西不一样
- * 凡是地面，那么其上面两格必定为空
- */
-export class GroundInfo {
-    x: number;
-    y: number;
-    wide: boolean;
-}
-
 /** 每个区域中触发点的属性 */
 class TriggerJson {
     x: number;
@@ -47,7 +37,16 @@ export class SceneAttri {
 
 export enum AreaType {
     normal = 0,
-    advance = 1, // scene有可能分两个部分，那么后一部分就是advance
+    advance = 1 // scene有可能分两个部分，那么后一部分就是advance
+}
+
+/**
+ * 地面信息，用于生成enemy或者pot时候使用，不同属性的地面可以生成的东西不一样
+ */
+export enum GroundType {
+    normal = 1, // 上面两格为空
+    wide = 2, // 自己和左右都是normal
+    high = 3 // 上面四格及以上为空
 }
 
 /** 一个区域的属性 */
@@ -63,15 +62,15 @@ class AreaJson {
     }
 
     getGroundX(index: number): number {
-        return this.groundInfo[index];
+        return this.groundInfo[Math.floor(index / 3)];
     }
 
     getGroundY(index: number): number {
-        return this.groundInfo[index + 1];
+        return this.groundInfo[Math.floor(index / 3) + 1];
     }
 
-    getGroundType(index: number): number {
-        return this.groundInfo[index + 2];
+    getGroundType(index: number): GroundType {
+        return this.groundInfo[Math.floor(index / 3) + 2];
     }
 }
 
