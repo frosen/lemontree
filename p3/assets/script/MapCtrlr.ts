@@ -35,15 +35,6 @@ export class SceneAttri {
     cardIndexs: number[];
 }
 
-/** 区域属性，只用于区域生成，所以不用export */
-class AreaTempAttri {
-    /** 区域中Hole的比例 */
-    holeRate: number;
-
-    /** 随机地图中tile随机替代 */
-    tileSubst: {origin: number, subst: number, ratio: number};
-}
-
 export enum AreaType {
     normal = 0,
     advance = 1 // scene有可能分两个部分，那么后一部分就是advance
@@ -96,34 +87,10 @@ class SceneJson {
 }
 
 // 模板类 ========================================================
-
-class FixedAreaTempJson {
-    rX: number;
-    rY: number;
-    rW: number;
-    rH: number;
-    tX: number;
-    tY: number;
-    tW: number;
-    tH: number;
-    te: number[][];
-    co: number[][];
-    door: number[][]; // 上下左右的门
-    substitutes: number[]; // 当一个方向不可有门时替代它的方向，0-3上下左右
-}
-
-class AreaTempJson {
-    rW: number;
-    rH: number;
-    noeps: number[]; // 不可有敌人的地面块
-    fis: FixedAreaTempJson[]; // 固定块
-    ra: number[][]; // 随机位置
-    spines: SpineJson[];
-    attri: AreaTempAttri;
-}
+// 不在js中使用的变量，用object表示
 
 class SceneTempJson {
-    areaTemps: AreaTempJson[];
+    areaTemps: object[];
     areaTypes: AreaType[];
     heros: TriggerJson[];
     gates: {[key: number]: {[key: number]: TriggerJson[]}};
@@ -336,7 +303,7 @@ export class MapCtrlr extends MyComponent {
     sceneTempJsons: SceneTempJson[] = [];
 
     curPrepAreaIdx: number = 0;
-    curAreaTempJsons: AreaTempJson[] = [];
+    curAreaTempJsons: object[] = [];
 
     /** 在下一帧执行当前类的函数 */
     _callInNextFrame(func: () => void) {
