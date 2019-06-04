@@ -126,15 +126,6 @@ def saveFile(path, data):
         if fp:
             fp.close()
 
-
-def addArray(array, length):
-    while True:
-        if len(array) <= length:
-            array.append([])
-        else:
-            break
-
-
 def getWHFromTileJson(jsonStr):
     wStr = re.findall(r" width=\"(.+?)\"", jsonStr)[0]
     hStr = re.findall(r" height=\"(.+?)\"", jsonStr)[0]
@@ -244,7 +235,6 @@ class MapCreator:
             # 场景数据
             self.sceneHeroData = []
             self.sceneDoorData = {}
-            self.sceneSpineData = []
 
             areaIndex = 0
             for areaStrData in sceneStrData:
@@ -253,9 +243,10 @@ class MapCreator:
 
                 print "parse scene {} area {}".format(sceneIndex, areaIndex)
                 if sceneIndex == 0:  # 0是home，要特殊处理
-                    areaData = self.parseHome(areaStrData, areaIndex)
+                    areaData = self.parseHome(areaStrData, areaIndex, sceneIndex)
                 else:
-                    areaData = self.parse(areaStrData, areaIndex)
+                    areaData = self.parse(areaStrData, areaIndex, sceneIndex)
+
                 areaDataList.append(areaData)
                 areaTypes.append(self.mapType[sceneIndex][areaIndex])
                 areaIndex = areaIndex + 1
@@ -264,8 +255,8 @@ class MapCreator:
             finalData["areaTypes"] = areaTypes
             finalData["heros"] = self.sceneHeroData
             finalData["gates"] = self.sceneDoorData
-            finalData["spines"] = self.sceneSpineData
-            finalData["attri"] = self.readAttriJson(sceneIndex)
+
+            finalData["attri"] = self.readAttriJson(sceneIndex).scene
 
             self.jsonDataList.append(finalData)
             sceneIndex += 1
@@ -274,9 +265,10 @@ class MapCreator:
     # 顺便解析了其他的数据：
     # param string 一个区域的数据文本
     # param areaIndex 区域索引 从0开始
-    def parseHome(self, string, areaIndex):
+    def parseHome(self, string, areaIndex, sceneIndex):
 
         self.doorIndexs = {}
+        self.areaSpineData = []
 
         # 获取宽高
         w, h = getWHFromTileJson(string)
@@ -314,16 +306,20 @@ class MapCreator:
         data["te"] = realTeList
         data["co"] = coList
 
+        data["spines"] = self.areaSpineData
+        data["attri"] = self.readAttriJson(sceneIndex).areas[areaIndex]
+
         return data
 
     # 解析对应的场景的区域 {w h noeps fi[ {x y w h te co d[] } ] r }
     # 顺便解析了其他的数据：
     # param string 一个区域的数据文本
     # param areaIndex 区域索引 从0开始
-    def parse(self, string, areaIndex):
+    def parse(self, string, areaIndex, sceneIndex):
 
         self.noEnemyPosData = []
         self.doorIndexs = {}
+        self.areaSpineData = []
 
         # 获取宽高
         w, h = getWHFromTileJson(string)
@@ -360,6 +356,9 @@ class MapCreator:
         data["noeps"] = self.noEnemyPosData
         data["ra"] = rList
         data["fis"] = fi
+
+        data["spines"] = self.areaSpineData
+        data["attri"] = self.readAttriJson(sceneIndex).areas[areaIndex]
 
         return data
 
@@ -467,8 +466,8 @@ class MapCreator:
                 thisSpineData["x"] = getPX(colNum) + xOffset
                 thisSpineData["y"] = getPY(lineNum, h) + yOffset
                 thisSpineData["id"] = t - tileSpineFrom
-                addArray(self.sceneSpineData, area)
-                self.sceneSpineData[area].append(thisSpineData)
+
+                self.areaSpineData.append(thisSpineData)
 
             return t * 1000 + key * keyDight + realTile
         else:
@@ -884,7 +883,7 @@ class EleCreator(MapCreator):
                             removeY = (realJ - j) * 3 * 32
 
                             # spine list
-                            self.sceneSpineData = []
+                            self.areaSpineData = []
                             for sX in xrange(0, 3):
                                 for sY in xrange(0, 3):
                                     x = bX - 1 + sX  # -1 是因为co已经处理过，去除了左下边缘
@@ -893,9 +892,8 @@ class EleCreator(MapCreator):
                                     self.parseCo(
                                         coData, y, x, 0, eleH * 3, 0, removeX, -removeY)
 
-                            if len(self.sceneSpineData) > 0:
-                                for spine in self.sceneSpineData[0]:
-                                    ele["sp"].append(spine)
+                            for spine in self.areaSpineData:
+                                ele["sp"].append(spine)
 
                     # 上或左右有门，进行一定的检测 todo
 

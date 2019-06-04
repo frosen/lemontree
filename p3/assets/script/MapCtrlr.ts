@@ -35,6 +35,15 @@ export class SceneAttri {
     cardIndexs: number[];
 }
 
+/** 区域属性，只用于区域生成，所以不用export */
+class AreaTempAttri {
+    /** 区域中Hole的比例 */
+    holeRate: number;
+
+    /** 随机地图中tile随机替代 */
+    tileSubst: {origin: number, subst: number, ratio: number};
+}
+
 export enum AreaType {
     normal = 0,
     advance = 1 // scene有可能分两个部分，那么后一部分就是advance
@@ -46,7 +55,8 @@ export enum AreaType {
 export enum GroundType {
     normal = 1, // 上面两格为空
     wide = 2, // 自己和左右都是normal
-    high = 3 // 上面四格及以上为空
+    high = 3, // 上面四格及以上为空
+    wihi = 4 // 又是wide又是high
 }
 
 /** 一个区域的属性 */
@@ -55,6 +65,8 @@ class AreaJson {
     co: number[][];
     w: number;
     h: number;
+
+    spines: SpineJson[];
     groundInfo: number[];
 
     getGroundInfoLen(): number {
@@ -79,8 +91,7 @@ class SceneJson {
     areas: AreaJson[];
     areaTypes: AreaType[];
     heros: TriggerJson[];
-    gates: {[key: number]: {[key: number]: TriggerJson[];};};
-    spines: SpineJson[][];
+    gates: {[key: number]: {[key: number]: TriggerJson[]}};
     attri: SceneAttri;
 }
 
@@ -107,14 +118,15 @@ class AreaTempJson {
     noeps: number[]; // 不可有敌人的地面块
     fis: FixedAreaTempJson[]; // 固定块
     ra: number[][]; // 随机位置
+    spines: SpineJson[];
+    attri: AreaTempAttri;
 }
 
 class SceneTempJson {
     areaTemps: AreaTempJson[];
     areaTypes: AreaType[];
     heros: TriggerJson[];
-    gates: {[key: number]: {[key: number]: TriggerJson[];};};
-    spines: SpineJson[][];
+    gates: {[key: number]: {[key: number]: TriggerJson[]}};
     attri: SceneAttri;
 }
 
@@ -440,7 +452,7 @@ export class MapCtrlr extends MyComponent {
         return areas[realIndex];
     }
 
-    getAreaSize(areaIndex: number): {w: number, h: number} {
+    getAreaSize(areaIndex: number): {w: number; h: number} {
         let areaData = this.getAreaData(areaIndex);
         return {w: areaData.w, h: areaData.h};
     }
@@ -450,7 +462,7 @@ export class MapCtrlr extends MyComponent {
         return areaData.co;
     }
 
-    getHeroPos(): {area: number, x: number, y: number} {
+    getHeroPos(): {area: number; x: number; y: number} {
         let curScene = this.gameCtrlr.getCurScene();
         let hero = this.sceneJsons[curScene].heros[0]; // llytodo 不知道以后一个场景里面有多少个hero pos
         return {
@@ -519,12 +531,12 @@ export class MapCtrlr extends MyComponent {
     /**
      * 根据地图上的点，给每个地图生成随机位置，这些位置都在地面上
      */
-    createRandomGroundPoss(areaIndex: number): {pos: cc.Vec2, t: number}[] {
+    createRandomGroundPoss(areaIndex: number): {pos: cc.Vec2; t: number}[] {
         let areaInfo = this.getAreaInfo(areaIndex);
         let len = areaInfo.getGroundInfoLen();
         let count = Math.floor(len * 0.1);
 
-        let usingGroundPoss: {pos: cc.Vec2, t: number}[] = [];
+        let usingGroundPoss: {pos: cc.Vec2; t: number}[] = [];
         let usingStates = {};
 
         do {

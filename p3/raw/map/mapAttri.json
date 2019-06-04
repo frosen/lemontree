@@ -1,6 +1,33 @@
 [
-    {},
     {
-        "cardIndexs": [1, 2, 3]
+        "areas": [
+            {
+                "holeRate": 0,
+                "tileSubst": []
+            }
+        ],
+        "scene": {}
+    },
+    {
+        "areas": [
+            {
+                "holeRate": 0.3,
+                "tileSubst": [
+                    {
+                        "origin": 1,
+                        "subst": [241, 242],
+                        "ratio": 0.1
+                    },
+                    {
+                        "origin": 3,
+                        "subst": [243],
+                        "ratio": 0.1
+                    }
+                ]
+            }
+        ],
+        "scene": {
+            "cardIndexs": [1, 2, 3]
+        }
     }
 ]
