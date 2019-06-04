@@ -256,7 +256,8 @@ class MapCreator:
             finalData["heros"] = self.sceneHeroData
             finalData["gates"] = self.sceneDoorData
 
-            finalData["attri"] = self.readAttriJson(sceneIndex).scene
+            attri = self.readAttriJson(sceneIndex)
+            finalData["attri"] = attri["scene"]
 
             self.jsonDataList.append(finalData)
             sceneIndex += 1
@@ -307,7 +308,8 @@ class MapCreator:
         data["co"] = coList
 
         data["spines"] = self.areaSpineData
-        data["attri"] = self.readAttriJson(sceneIndex).areas[areaIndex]
+        attri = self.readAttriJson(sceneIndex)
+        data["attri"] = attri["areas"][areaIndex]
 
         return data
 
@@ -358,7 +360,8 @@ class MapCreator:
         data["fis"] = fi
 
         data["spines"] = self.areaSpineData
-        data["attri"] = self.readAttriJson(sceneIndex).areas[areaIndex]
+        attri = self.readAttriJson(sceneIndex)
+        data["attri"] = attri["areas"][areaIndex]
 
         return data
 

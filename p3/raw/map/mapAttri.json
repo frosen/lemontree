@@ -2,7 +2,15 @@
     {
         "areas": [
             {
-                "holeRate": 0,
+                "holeRatio": 0,
+                "tileSubst": []
+            },
+            {
+                "holeRatio": 0,
+                "tileSubst": []
+            },
+            {
+                "holeRatio": 0,
                 "tileSubst": []
             }
         ],
@@ -11,17 +19,17 @@
     {
         "areas": [
             {
-                "holeRate": 0.3,
+                "holeRatio": 30,
                 "tileSubst": [
                     {
                         "origin": 1,
                         "subst": [241, 242],
-                        "ratio": 0.1
+                        "ratio": 10
                     },
                     {
                         "origin": 3,
                         "subst": [243],
-                        "ratio": 0.1
+                        "ratio": 10
                     }
                 ]
             }
