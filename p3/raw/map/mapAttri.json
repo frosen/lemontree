@@ -3,15 +3,15 @@
         "areas": [
             {
                 "holeRatio": 0,
-                "tileSubst": []
+                "tileSubsts": []
             },
             {
                 "holeRatio": 0,
-                "tileSubst": []
+                "tileSubsts": []
             },
             {
                 "holeRatio": 0,
-                "tileSubst": []
+                "tileSubsts": []
             }
         ],
         "scene": {}
@@ -20,15 +20,15 @@
         "areas": [
             {
                 "holeRatio": 30,
-                "tileSubst": [
+                "tileSubsts": [
                     {
                         "origin": 1,
-                        "subst": [241, 242],
+                        "substs": [241, 242],
                         "ratio": 10
                     },
                     {
                         "origin": 3,
-                        "subst": [243],
+                        "substs": [243],
                         "ratio": 10
                     }
                 ]
