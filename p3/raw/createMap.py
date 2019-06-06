@@ -207,7 +207,7 @@ class MapCreator:
                     continue
 
                 i = int(indexs[1])
-                j = int(indexs[2]) - 1
+                j = int(indexs[2])
 
                 if len(self.mapStrData[i]) == 0:
                     self.mapStrData[i] = [None] * arrayMax
