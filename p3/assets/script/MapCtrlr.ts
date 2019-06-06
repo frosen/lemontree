@@ -18,15 +18,15 @@ let scheduler = cc.director.getScheduler();
 
 /** 每个区域中触发点的属性 */
 class TriggerJson {
-    x: number;
-    y: number;
+    pX: number;
+    pY: number;
     area: number;
     id: number;
 }
 
 export class SpineJson {
-    x: number;
-    y: number;
+    pX: number;
+    pY: number;
     id: number;
 }
 
@@ -54,26 +54,26 @@ export enum GroundType {
 class AreaJson {
     te: number[][];
     co: number[][];
-    w: number;
-    h: number;
+    rW: number;
+    rH: number;
 
     spines: SpineJson[];
-    groundInfo: number[];
+    groundInfos: number[];
 
     getGroundInfoLen(): number {
-        return this.groundInfo.length / 3;
+        return this.groundInfos.length / 3;
     }
 
     getGroundX(index: number): number {
-        return this.groundInfo[Math.floor(index / 3)];
+        return this.groundInfos[Math.floor(index / 3)];
     }
 
     getGroundY(index: number): number {
-        return this.groundInfo[Math.floor(index / 3) + 1];
+        return this.groundInfos[Math.floor(index / 3) + 1];
     }
 
     getGroundType(index: number): GroundType {
-        return this.groundInfo[Math.floor(index / 3) + 2];
+        return this.groundInfos[Math.floor(index / 3) + 2];
     }
 }
 

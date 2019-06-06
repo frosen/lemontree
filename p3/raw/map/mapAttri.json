@@ -24,12 +24,12 @@
                     {
                         "origin": 1,
                         "substs": [241, 242],
-                        "ratio": 10
+                        "ratio": 8
                     },
                     {
                         "origin": 3,
                         "substs": [243],
-                        "ratio": 10
+                        "ratio": 15
                     }
                 ]
             }

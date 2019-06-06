@@ -302,8 +302,8 @@ class MapCreator:
             realTeList.append(realLine)
 
         data = {}
-        data["w"] = w
-        data["h"] = h
+        data["rW"] = w
+        data["rH"] = h
         data["te"] = realTeList
         data["co"] = coList
 
@@ -382,8 +382,8 @@ class MapCreator:
             # hero pos
 
             thisHeroData = {}
-            thisHeroData["x"] = getPX(colNum)
-            thisHeroData["y"] = getPY(lineNum, h)
+            thisHeroData["pX"] = getPX(colNum)
+            thisHeroData["pY"] = getPY(lineNum, h)
             thisHeroData["area"] = area
             thisHeroData["id"] = t
             self.sceneHeroData.append(thisHeroData)
@@ -422,8 +422,8 @@ class MapCreator:
 
             # 门数据记录到门的列表中
             thisDoorData = {}
-            thisDoorData["x"] = getPX(colNum) + xOffset
-            thisDoorData["y"] = getPY(lineNum, h) + yOffset
+            thisDoorData["pX"] = getPX(colNum) + xOffset
+            thisDoorData["pY"] = getPY(lineNum, h) + yOffset
             thisDoorData["area"] = area
             thisDoorData["id"] = newT
 
@@ -466,8 +466,8 @@ class MapCreator:
             if t == tileSpine:
                 # spine
                 thisSpineData = {}
-                thisSpineData["x"] = getPX(colNum) + xOffset
-                thisSpineData["y"] = getPY(lineNum, h) + yOffset
+                thisSpineData["pX"] = getPX(colNum) + xOffset
+                thisSpineData["pY"] = getPY(lineNum, h) + yOffset
                 thisSpineData["id"] = t - tileSpineFrom
 
                 self.areaSpineData.append(thisSpineData)
@@ -882,8 +882,8 @@ class EleCreator(MapCreator):
                                     doorType2Jump[3].append(realJ)
 
                             # 计算除去的块数
-                            removeX = (realI - i) * 3 * 32
-                            removeY = (realJ - j) * 3 * 32
+                            removeX = (realI - i) * 3 * TileLength
+                            removeY = (realJ - j) * 3 * TileLength
 
                             # spine list
                             self.areaSpineData = []
