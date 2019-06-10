@@ -395,7 +395,7 @@ class MapCreator:
 
         if tileGateFrom <= t and t <= tileGateTo:
             # 门
-            key = 1
+            key = 6 # 从6开始是考虑到512以下会是正常的tile
 
             if not self.doorIndexs.has_key(t):
                 self.doorIndexs[t] = 1
@@ -442,7 +442,7 @@ class MapCreator:
 
         elif tileMoveFrom <= t and t <= tileMoveTo:
             # 强制移动
-            key = 2
+            key = 7
             realTile = 0
 
             if t == tileRightMove:
@@ -460,7 +460,7 @@ class MapCreator:
             return t * 1000 + key * keyDight + realTile
 
         elif tileSpineFrom <= t and t <= tileSpineTo:
-            key = 3
+            key = 8
             realTile = 0
 
             if t == tileSpine:

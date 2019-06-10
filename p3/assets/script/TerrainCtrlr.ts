@@ -25,6 +25,13 @@ export enum CollisionType {
     entity = 3,
 }
 
+/** 特殊地形标记，从6开始是因为512以下是正常类型 */
+export enum SpecailTeMark {
+    gate = 6,
+    forcedMove = 7,
+    spine = 8
+}
+
 /** 强制移动类型 */
 export enum ForcedMoveType {
     none,
@@ -137,7 +144,7 @@ export class TerrainCtrlr extends MyComponent {
      * @returns ForcedMoveType
      */
     _getForcedMoveDir(gid: number): ForcedMoveType {
-        if (Math.floor(gid / 100) % 10 != 2) return ForcedMoveType.none;
+        if (Math.floor(gid / 100) % 10 != SpecailTeMark.forcedMove) return ForcedMoveType.none;
 
         let moveKey = Math.floor(gid / 1000);
         switch (moveKey) {
@@ -153,7 +160,7 @@ export class TerrainCtrlr extends MyComponent {
      * 如果是门（边门，中门），则获得门的id，否则获得空
      */
     _getGateGid(gid: number): number {
-        if (Math.floor(gid / 100) % 10 == 1) {
+        if (Math.floor(gid / 100) % 10 == SpecailTeMark.gate) {
             return gid;
         } else return null;
     }
