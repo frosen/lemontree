@@ -34,6 +34,18 @@ declare function getClassName(type: {new()}): string;
  */
 declare function curLineInfo(): string;
 
+declare module my {
+	export class MapCreator {
+		static getInstance(): MapCreator;
+
+		addMapEleBase(base: object): void;
+		addMapEle(ele: object): void;
+		addMapEleIndexs(w: number, h: number, d: number, type: number, value: number): void;
+		addAreaTemp(index: number, data: object): void;
+		createArea(index: number, callback: (data) => void): void;
+	}
+}
+
 // 补全 --------------------------------------------------------------------------------
 
 declare module cc {

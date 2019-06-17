@@ -75,7 +75,10 @@ export default class GameCtrlr extends cc.Component {
     changeToHomeScene() {
         this.curScene = 0;
         callList(this, [
-            [this._createHomeScene],
+            [this._loadScene],
+            [this._createScene],
+            [this._loadSpineRes],
+            [this._createObjs],
             [this._gotoHeroSpot],
             [this._showScene],
             [this._prepareFightSceneData]
@@ -95,16 +98,18 @@ export default class GameCtrlr extends cc.Component {
         ]);
     }
 
-    _createHomeScene(callNext: () => void, lastData: any) {
-        this.mapCtrlr.createHomeScene(() => {
+    _loadScene(callNext: () => void, lastData: any) {
+        this.mapCtrlr.loadSceneJson(() => {
             return callNext();
         });
     }
 
-    _createFightScene(callNext: () => void, lastData: any) {
-        this.mapCtrlr.createFightScene(() => {
-            return callNext();
-        });
+    _loadAreas(callNext: () => void, lastData: any) {
+
+    }
+
+    _createScene(callNext: () => void, lastData: any) {
+
     }
 
     _loadEnemyRes(callNext: () => void, lastData: any) {
