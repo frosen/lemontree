@@ -73,16 +73,16 @@ export default class PotCtrlr extends MyComponent {
     }
 
     setSceneAndLoadRes(finishCallback: () => void) {
-        let curScene = this.gameCtrlr.getCurScene();
-        if (this.infos[curScene]) return finishCallback();
+        let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
+        if (this.infos[curSceneIndex]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(`map/scene${curScene}/pot`, cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
+        cc.loader.loadResDir(`map/scene${curSceneIndex}/pot`, cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load res dir: ${error.message}`);
                 return;
             }
-            this._onGotFrames(curScene, frames);
+            this._onGotFrames(curSceneIndex, frames);
             return finishCallback();
         });
     }
@@ -106,9 +106,9 @@ export default class PotCtrlr extends MyComponent {
     }
 
     setData(areaIndex: number, groundInfos: GroundInfo[]) {
-        let curScene = this.gameCtrlr.getCurScene();
+        let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let data = [];
-        let potInfos = this.infos[curScene];
+        let potInfos = this.infos[curSceneIndex];
         let len = potInfos.length;
         for (const groundInfo of groundInfos) {
             let r = Math.random() * len;
@@ -119,8 +119,8 @@ export default class PotCtrlr extends MyComponent {
     }
 
     changeArea() {
-        let curArea = this.gameCtrlr.getCurArea();
-        let potDatas: PotData[] = this.datas[curArea];
+        let curAreaIndex = this.gameCtrlr.getCurAreaIndex();
+        let potDatas: PotData[] = this.datas[curAreaIndex];
         if (!potDatas) return;
 
         let index = 0;
@@ -138,10 +138,10 @@ export default class PotCtrlr extends MyComponent {
     }
 
     killPot(pot: Pot) {
-        let curArea = this.gameCtrlr.getCurArea();
+        let curAreaIndex = this.gameCtrlr.getCurAreaIndex();
         let index = pot.ctrlrIndex;
         if (index != null) {
-            this.datas[curArea][index].living = false;
+            this.datas[curAreaIndex][index].living = false;
             this.pool.reclaim(pot.node);
         } else { // 没有index说明不是从pool中生成的
             pot.node.destroy();
@@ -152,8 +152,8 @@ export default class PotCtrlr extends MyComponent {
      * 获取还存在的pot的数量
      */
     getPotRemainsCount(): number {
-        let curArea = this.gameCtrlr.getCurArea();
-        let datas = this.datas[curArea];
+        let curAreaIndex = this.gameCtrlr.getCurAreaIndex();
+        let datas = this.datas[curAreaIndex];
         let count: number = 0;
         for (const data of datas) {
             if (data.living) count++;

@@ -38,11 +38,11 @@ export default class SpineCtrlr extends MyComponent {
     }
 
     setSceneAndLoadRes(finishCallback: () => void) {
-        let curScene = this.gameCtrlr.getCurScene();
-        if (this.prefabs[curScene]) return finishCallback();
+        let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
+        if (this.prefabs[curSceneIndex]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(`map/scene${curScene}/spine`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
+        cc.loader.loadResDir(`map/scene${curSceneIndex}/spine`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load spine prefab res dir: ${error.message}`);
                 return;
@@ -55,7 +55,7 @@ export default class SpineCtrlr extends MyComponent {
                 data[prefab.name] = prefab;
             }
 
-            this.prefabs[curScene] = data;
+            this.prefabs[curSceneIndex] = data;
 
             return finishCallback();
 
@@ -71,7 +71,7 @@ export default class SpineCtrlr extends MyComponent {
         let datas: SpineData[] = [];
         for (const info of infos) {
             let name = this.getSpineNameFromId(info.id);
-            datas.push(new SpineData(cc.v2(info.x, info.y), name));
+            datas.push(new SpineData(cc.v2(info.pX, info.pY), name));
         }
         this.datas[areaIndex] = datas;
 
@@ -86,7 +86,7 @@ export default class SpineCtrlr extends MyComponent {
             }
         }
 
-        let prefabs = this.prefabs[this.gameCtrlr.getCurScene()];
+        let prefabs = this.prefabs[this.gameCtrlr.getCurSceneIndex()];
         let parent = this.node;
         for (const name in counts) {
             const count = counts[name];
@@ -110,8 +110,8 @@ export default class SpineCtrlr extends MyComponent {
     }
 
     changeArea() {
-        let curArea = this.gameCtrlr.getCurArea();
-        let datas: SpineData[] = this.datas[curArea];
+        let curAreaIndex = this.gameCtrlr.getCurAreaIndex();
+        let datas: SpineData[] = this.datas[curAreaIndex];
         if (!datas) return;
 
         let poolIndexs = {};

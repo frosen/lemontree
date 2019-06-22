@@ -48,8 +48,8 @@ export default class GameCtrlr extends cc.Component {
 
     gameMemory: GameMemory = null;
 
-    private curScene: number = 1; // 从1开始，0则为家
-    private curArea: number = 1; // 从1开始
+    private curSceneIndex: number = 1; // 从0开始，0则为家
+    private curAreaIndex: number = 1; // 从0开始
 
     gamePause: boolean = false;
 
@@ -73,20 +73,20 @@ export default class GameCtrlr extends cc.Component {
     }
 
     changeToHomeScene() {
-        this.curScene = 0;
+        this.curSceneIndex = 0;
         callList(this, [
             [this._loadScene],
             [this._createScene],
-            [this._loadSpineRes],
-            [this._createObjs],
+            // [this._loadSpineRes], llytodo 以后home会有spine的
+            // [this._createObjs],
             [this._gotoHeroSpot],
-            [this._prepareFightSceneData],
+            // [this._prepareFightSceneData],
             [this._showScene]
         ]);
     }
 
     changeToFightScene(index: number) {
-        this.curScene = index;
+        this.curSceneIndex = index;
         callList(this, [
             [this._loadScene],
             [this._loadAreas],
@@ -101,7 +101,9 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _loadScene(callNext: () => void, lastData: any) {
-        return this.mapCtrlr.loadSceneJson(callNext);
+        return this.mapCtrlr.loadSceneJson(() => {
+            this.mapCtrlr.loadTexture(callNext);
+        });
     }
 
     _loadAreas(callNext: () => void, lastData: any) {
@@ -189,7 +191,8 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
-        this.curArea = areaIndex;
+        cc.log(">>>>>change area", areaIndex);
+        this.curAreaIndex = areaIndex;
 
         this.mapCtrlr.changeArea();
 
@@ -266,11 +269,11 @@ export default class GameCtrlr extends cc.Component {
         }
     }
 
-    getCurScene() {
-        return this.curScene;
+    getCurSceneIndex() {
+        return this.curSceneIndex;
     }
 
-    getCurArea() {
-        return this.curArea;
+    getCurAreaIndex() {
+        return this.curAreaIndex;
     }
 }
