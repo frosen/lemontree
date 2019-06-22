@@ -251,7 +251,11 @@ class MapCreator:
                 areaTypes.append(self.mapType[sceneIndex][areaIndex])
                 areaIndex = areaIndex + 1
 
-            finalData["areaTemps"] = areaDataList
+            if sceneIndex == 0:
+                finalData["areas"] = areaDataList
+            else:
+                finalData["areaTemps"] = areaDataList
+
             finalData["areaTypes"] = areaTypes
             finalData["heros"] = self.sceneHeroData
             finalData["gates"] = self.sceneDoorData
@@ -689,12 +693,14 @@ class MapCreator:
         index = 0
         for jsonData in self.jsonDataList:
             jsonStr = json.dumps(jsonData)
+            jsStr = "module.exports = " + jsonStr + ";"
+
             realPath = path + "scene" + str(index) + "/"
             if not os.path.exists(realPath):
                 os.makedirs(realPath)
 
-            realFile = realPath + "area.json"
-            saveFile(realFile, jsonStr)
+            realFile = realPath + "scenedata_" + str(index) + ".js"
+            saveFile(realFile, jsStr)
 
             oldImgName = oldPath + "scene_" + str(index) + ".png"
             newImgName = realPath + "tiles.png"

@@ -19,12 +19,10 @@ if '__main__' == __name__:
     resPath = "../assets/resources/map/"
 
     # 复制到base
-    copyFile(inputPath + "MapCheck.js", basePath + "MapCheck.js")
-    copyFile(inputPath + "scene0/area.json", basePath + "area.json")
-    copyFile(inputPath + "scene0/tiles.png", basePath + "tiles.png")
+    copyFile(inputPath + "ele.js", basePath + "ele.js")
 
     # 复制到res
-    for x in xrange(1, 100):
+    for x in xrange(0, 100):
         oldResPath = inputPath + "scene" + str(x) + "/"
         if not os.path.exists(oldResPath):
             print("There is no scene " + str(x) + ", so return.")
@@ -35,7 +33,8 @@ if '__main__' == __name__:
             print("Create: " + newResPath)
             os.makedirs(newResPath)
 
-        copyFile(oldResPath + "area.json", newResPath + "area.json")
+        jsFileName = "scenedata_" + str(x) + ".js"
+        copyFile(oldResPath + jsFileName, basePath + jsFileName)
         copyFile(oldResPath + "tiles.png", newResPath + "tiles.png")
 
 

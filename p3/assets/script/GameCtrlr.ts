@@ -4,7 +4,7 @@
 
 const {ccclass, property} = cc._decorator;
 
-import {MapCtrlr, AreaType} from "./MapCtrlr";
+import {AreaType, GroundInfo, MapCtrlr} from "./MapCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 import {Hero} from "./Hero";
 
@@ -80,36 +80,44 @@ export default class GameCtrlr extends cc.Component {
             [this._loadSpineRes],
             [this._createObjs],
             [this._gotoHeroSpot],
-            [this._showScene],
-            [this._prepareFightSceneData]
+            [this._prepareFightSceneData],
+            [this._showScene]
         ]);
     }
 
     changeToFightScene(index: number) {
         this.curScene = index;
         callList(this, [
-            [this._createFightScene],
+            [this._loadScene],
+            [this._loadAreas],
             [this._loadEnemyRes],
             [this._loadSpineRes],
             [this._loadPotRes],
             [this._createObjs],
             [this._gotoHeroSpot],
+            [this._collectGarbage],
             [this._showScene]
         ]);
     }
 
     _loadScene(callNext: () => void, lastData: any) {
-        this.mapCtrlr.loadSceneJson(() => {
-            return callNext();
-        });
+        return this.mapCtrlr.loadSceneJson(callNext);
     }
 
     _loadAreas(callNext: () => void, lastData: any) {
+        let areaCount = this.mapCtrlr.getAreaCount();
+        for (let index = 0; index < areaCount; index++) {
+            this.mapCtrlr.resetAreaJson(index, (suc: boolean) => {
+                if (suc) {
 
+                }
+            })
+
+        }
     }
 
     _createScene(callNext: () => void, lastData: any) {
-
+        return this.mapCtrlr.createMapData(callNext)
     }
 
     _loadEnemyRes(callNext: () => void, lastData: any) {
@@ -132,21 +140,21 @@ export default class GameCtrlr extends cc.Component {
             this.spineCtrlr.setData(index, spineInfo);
 
             // 生成敌人
-            let posInfos: {pos: cc.Vec2, t: number}[];
-            posInfos = this.mapCtrlr.createRandomGroundPoss(index);
+            let groundInfos: GroundInfo[];
+            groundInfos = this.mapCtrlr.createRandomGroundInfos(index);
             let advance = this.mapCtrlr.getAreaType(index) == AreaType.advance;
-            this.enemyCtrlr.setData(index, advance, posInfos);
+            this.enemyCtrlr.setData(index, advance, groundInfos);
 
             // 生成pot
-            posInfos = this.mapCtrlr.createRandomGroundPoss(index);
-            this.potCtrlr.setData(index, posInfos);
+            groundInfos = this.mapCtrlr.createRandomGroundInfos(index);
+            this.potCtrlr.setData(index, groundInfos);
         }
         return callNext();
     }
 
     _gotoHeroSpot(callNext: () => void, lastData: any) {
-        let {area, x, y} = this.mapCtrlr.getHeroPos();
-        this._changeArea(area, x, y);
+        let {area, pX, pY} = this.mapCtrlr.getHeroPos();
+        this._changeArea(area, pX, pY);
         this.hero.resetHero(); // 切换场景时，重置hero
         return callNext();
     }
@@ -158,6 +166,16 @@ export default class GameCtrlr extends cc.Component {
 
     _prepareFightSceneData(callNext: () => void, lastData: any) {
         return this.mapCtrlr.prepareFightSceneData([1], callNext);
+    }
+
+    private firstCollect = true;
+    _collectGarbage(callNext: () => void, lastData: any) {
+        if (this.firstCollect) {
+            this.firstCollect = false; // 第一次不用回收
+        } else {
+            cc.sys.garbageCollect(); // 手动垃圾回收
+        }
+        return callNext();
     }
 
     enterSideGate(gateGid: number, lastHeroPos: cc.Vec2) {

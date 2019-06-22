@@ -91,7 +91,7 @@ export default class EnemyCtrlr extends MyComponent {
         });
     }
 
-    setData(areaIndex: number, advance: boolean, posInfos: {pos: cc.Vec2, t: number}[]) {
+    setData(areaIndex: number, advance: boolean, groundInfos: GroundInfo[]) {
         if (this.debugEnemyLevel > 0) return; // 开启测试，就不随机生成了
 
         let curScene = this.gameCtrlr.getCurScene();
@@ -102,18 +102,18 @@ export default class EnemyCtrlr extends MyComponent {
             let adNames = this.adPrefabNames[curScene];
             let len = names.length;
             let allLen = len + adNames.length;
-            for (const posInfo of posInfos) {
+            for (const groundInfo of groundInfos) {
                 let k = Math.floor(Math.random() * allLen);
                 let name = k < len ? names[k] : adNames[k - len];
-                data.push(new EnemyData(posInfo.pos, name, 1));
+                data.push(new EnemyData(cc.v2(groundInfo.pX, groundInfo.pY), name, 1));
             }
         } else {
             let names = this.prefabNames[curScene];
             let len = names.length;
-            for (const posInfo of posInfos) {
+            for (const groundInfo of groundInfos) {
                 let k = Math.floor(Math.random() * len);
                 let name = names[k];
-                data.push(new EnemyData(posInfo.pos, name, 1));
+                data.push(new EnemyData(cc.v2(groundInfo.pX, groundInfo.pY), name, 1));
             }
         }
         this.datas[areaIndex] = data;

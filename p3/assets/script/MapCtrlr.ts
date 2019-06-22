@@ -12,6 +12,9 @@ import {TerrainCtrlr} from "./TerrainCtrlr";
 
 import * as eleData from "../script_map/ele";
 
+import * as sceneDataHome from "../script_map/scenedata_0";
+import * as sceneData1 from "../script_map/scenedata_1";
+
 let scheduler = cc.director.getScheduler();
 
 // 已经形成的地形的类 ========================================================
@@ -40,14 +43,21 @@ export enum AreaType {
     advance = 1 // scene有可能分两个部分，那么后一部分就是advance
 }
 
-/**
- * 地面信息，用于生成enemy或者pot时候使用，不同属性的地面可以生成的东西不一样
- */
+/** 地面类型 */
 export enum GroundType {
     normal = 1, // 上面两格为空
     wide = 2, // 自己和左右都是normal
     high = 3, // 上面四格及以上为空
     wihi = 4 // 又是wide又是high
+}
+
+/**
+ * 地面信息，用于生成enemy或者pot时候使用，不同属性的地面可以生成的东西不一样
+ */
+export class GroundInfo {
+    pX: number;
+    pY: number;
+    groundType: GroundType;
 }
 
 /** 一个区域的属性 */
@@ -66,16 +76,12 @@ class AreaJson {
         return this.groundInfos.length / 3;
     }
 
-    getGroundX(index: number): number {
-        return this.groundInfos[Math.floor(index / 3)];
-    }
-
-    getGroundY(index: number): number {
-        return this.groundInfos[Math.floor(index / 3) + 1];
-    }
-
-    getGroundType(index: number): GroundType {
-        return this.groundInfos[Math.floor(index / 3) + 2];
+    getGroundInfo(index: number): GroundInfo {
+        let gInfo = new GroundInfo();
+        gInfo.pX = this.groundInfos[Math.floor(index / 3)];
+        gInfo.pY = this.groundInfos[Math.floor(index / 3) + 1];
+        gInfo.groundType = this.groundInfos[Math.floor(index / 3) + 2];
+        return gInfo;
     }
 }
 
@@ -106,11 +112,8 @@ export class MapCtrlr extends MyComponent {
     @property(TerrainCtrlr)
     terrainCtrlr: TerrainCtrlr = null;
 
-    /** 生成场景地图所用的json文件
-     * 场景0（家）是生成后的json
-     * 其他的是模板json
-     */
-    @property(cc.JsonAsset) sceneTempJson: cc.JsonAsset[] = [];
+    /** 生成场景地图所用的temp，0是home但是为空 */
+    sceneTempJsons: SceneTempJson[] = [];
 
     gameCtrlr: GameCtrlr = null;
 
@@ -139,11 +142,13 @@ export class MapCtrlr extends MyComponent {
             node.active = false;
         }
 
-        // home比较特殊，直接获取到内存
-        this.sceneJsons[0] = this.sceneTempJson[0].json;
+        // 读取各个场景的js，因为js会被打包加密，所以用js而不是json
+        this.sceneJsons[0] = sceneDataHome;
+
+        this.sceneTempJsons.push(null);
+        this.sceneTempJsons.push(sceneData1);
 
         // 读取生成地图所用元素
-
     }
 
     loadMapEles() {
@@ -154,7 +159,7 @@ export class MapCtrlr extends MyComponent {
         for (const ele of eleData.eles) {
             my.MapCreator.getInstance().addMapEle(ele);
         }
-        
+
         let list = eleData.list;
         for (let w = 0; w < list.length; w++) {
             const listHD = list[w];
@@ -178,7 +183,7 @@ export class MapCtrlr extends MyComponent {
             return finishCallback();
         }
 
-        let sceneTemp: SceneTempJson = this.sceneTempJson[curScene].json;
+        let sceneTemp: SceneTempJson = this.sceneTempJsons[curScene];
 
         let thisSceneJson = new SceneJson();
         thisSceneJson.areaTypes = sceneTemp.areaTypes;
@@ -188,7 +193,7 @@ export class MapCtrlr extends MyComponent {
         thisSceneJson.areas = [];
 
         this.sceneJsons[curScene] = thisSceneJson;
-        return finishCallback();        
+        return finishCallback();
     }
 
     resetAreaJson(areaIndex: number, finishCallback: (suc: boolean) => void) {
@@ -262,13 +267,12 @@ export class MapCtrlr extends MyComponent {
         });
     }
 
-    /** 根据读取的map信息，按照tilemap规则，生成对应的tilemap数据，然后生成tiledmap 
+    /** 根据读取的map信息，按照tilemap规则，生成对应的tilemap数据，然后生成tiledmap
      * 注：此处curAssets和mapPool不做清理，
      *     如果本次比上次生成的少，多的部分会保存在内存里，反正也不会用到
     */
     createMapData(finishCallback: () => void) {
         let curScene = this.gameCtrlr.getCurScene();
-
         let areaJsons = this.sceneJsons[curScene].areas;
         let frame = this.frames[curScene];
         for (let index = 0; index < areaJsons.length; index++) {
@@ -391,7 +395,7 @@ export class MapCtrlr extends MyComponent {
     }
 
     _initAreaPreparation() {
-        let tempJson: SceneTempJson = this.sceneTempJson[this.curPrepScene].json;
+        let tempJson: SceneTempJson = this.sceneTempJsons[this.curPrepScene];
         this.curPrepAreaTempJsons = tempJson.areaTemps;
         this.curPrepAreaIdx = -1;
         return this._manageAreaIdx();
@@ -410,9 +414,8 @@ export class MapCtrlr extends MyComponent {
         this._sendDataToMapCreator();
 
         my.MapCreator.getInstance().createArea(20, (data) => {
-            cc.log("xxxxx");
+            cc.log("finish map create");
             cc.log(JSON.stringify(data));
-
             this._manageAreaIdx();
         });
     }
@@ -423,318 +426,12 @@ export class MapCtrlr extends MyComponent {
         if (this.sendDataDoneList[index] == true) return;
         this.sendDataDoneList[index] = true;
 
-        let data = this.curPrepAreaTempJsons[this.curPrepAreaIdx];
-        my.MapCreator.getInstance().addAreaTemp(index, data);
+        let areaData = this.curPrepAreaTempJsons[this.curPrepAreaIdx];
+        my.MapCreator.getInstance().addAreaTemp(index, areaData);
     }
 
     _getPrepAreaIndex() {
         return this.curPrepScene * 100 + this.curPrepAreaIdx;
-    }
-}
-
-// ========================================================
-
-@ccclass
-export class MapCtrlr extends MyComponent {
-    @property(TerrainCtrlr)
-    terrainCtrlr: TerrainCtrlr = null;
-
-    gameCtrlr: GameCtrlr = null;
-
-    mapPool: cc.TiledMap[] = [];
-
-    sceneJsons: SceneJson[] = [];
-    frames: cc.SpriteFrame[] = [];
-
-    /** 当前场景中每个区域对应的地图的列表 */
-    curAssets: cc.TiledMapAsset[] = [];
-
-    /** 特殊场景（家） */
-    @property(cc.JsonAsset) homeMapJson: cc.JsonAsset = null;
-    @property(cc.SpriteFrame) homeFrame: cc.SpriteFrame = null;
-
-    onLoad() {
-        this.gameCtrlr = cc.find("main").getComponent(GameCtrlr);
-
-        // 生成多个map的节点池
-        for (let index = 0; index < 10; index++) {
-            let node = new cc.Node();
-            let map = node.addComponent(cc.TiledMap);
-            this.mapPool.push(map);
-
-            node.setAnchorPoint(0, 0);
-            node.setPosition(0, 0);
-
-            this.node.addChild(node);
-
-            node.active = false;
-        }
-
-        // 读取信息
-    }
-
-    // ========================================================
-
-    createHomeScene(finishCallback: () => void) {
-        callList(this, [
-            [this._loadHomeJsonAndTexture],
-            [this._createMapData],
-            [this._holdMapAsset],
-            [(callNext: () => void, lastData: any) => {
-                return finishCallback();
-            }]
-        ]);
-    }
-
-    createFightScene(finishCallback: () => void) {
-        callList(this, [
-            [this._loadMapJson],
-            [this._loadTexture],
-            [this._createMapData],
-            [this._holdMapAsset],
-            [(callNext: () => void, lastData: any) => {
-                return finishCallback();
-            }]
-        ]);
-    }
-
-    _loadHomeJsonAndTexture(callNext: () => void, lastData: any) {
-        let curScene = this.gameCtrlr.getCurScene();
-        if (this.sceneJsons[curScene]) {
-            return callNext();
-        }
-        this.sceneJsons[curScene] = this.homeMapJson.json;
-        this.frames[curScene] = this.homeFrame;
-
-        return callNext();
-    }
-
-    _loadMapJson(callNext: () => void, lastData: any) {
-        let curScene = this.gameCtrlr.getCurScene();
-        if (this.sceneJsons[curScene]) {
-            return callNext();
-        }
-
-        let url = `map/scene${curScene}/terrain/area`;
-        cc.loader.loadRes(url, cc.TextAsset, (err, data) => {
-            if (err) {
-                cc.error(`Wrong in loadMapJson: ${err.message}`);
-                return;
-            }
-
-            let decodeStr = "";
-            this.sceneJsons[curScene] = JSON.parse(decodeStr);
-            return callNext();
-        });
-    }
-
-    _loadTexture(callNext: () => void, lastData: any) {
-        let curScene = this.gameCtrlr.getCurScene();
-        if (this.frames[curScene]) {
-            return callNext();
-        }
-
-        let url = `map/scene${curScene}/terrain/tiles`;
-        cc.loader.loadRes(url, cc.SpriteFrame, (err, frame: cc.SpriteFrame) => {
-            if (err) {
-                cc.error(`Wrong in loadTexture: ${err.message}`);
-                return;
-            }
-            this.frames[curScene] = frame;
-            return callNext();
-        });
-    }
-
-    /** 根据读取的map信息，按照tilemap规则，生成对应的tilemap数据，然后生成tiledmap */
-    _createMapData(callNext: () => void, lastData: any) {
-        let curScene = this.gameCtrlr.getCurScene();
-        this.curAssets = [];
-
-        let areaJsons = this.sceneJsons[curScene].areas;
-        let frame = this.frames[curScene];
-        for (let index = 0; index < areaJsons.length; index++) {
-            let tmxStr = MapCtrlr._createTMXString(areaJsons[index]);
-
-            let ourmap = new cc.TiledMapAsset();
-            ourmap.tmxXmlStr = tmxStr;
-
-            ourmap.textureNames = ["tiles.png"];
-            ourmap.textures = [frame.getTexture()];
-
-            ourmap.tsxFileNames = ["tiles.tsx"];
-
-            let tsxData = new cc.TextAsset();
-            tsxData.text = MapCtrlr._createTSXString(frame.getOriginalSize());
-            ourmap.tsxFiles = [tsxData];
-
-            this.curAssets.push(ourmap);
-        }
-
-        return callNext();
-    }
-
-    /** 生成tiledmap所用的地图数据 */
-    static _createTMXString(json: AreaJson): string {
-        let w: number = json.w;
-        let h: number = json.h;
-
-        let terrainStrs = [];
-        for (const line of json.te) {
-            terrainStrs.push(line.toString() + ",");
-        }
-        let terrainStr = terrainStrs.join("\n");
-
-        let tmxStr: string = `
-            <?xml version="1.0" encoding="UTF-8"?>
-            <map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="${w}" height="${h}" tilewidth="32" tileheight="32" nextobjectid="0">
-                <tileset firstgid="1" source="tiles.tsx"/>
-                <layer name="terrain" width="${w}" height="${h}">
-                    <data encoding="csv">
-                        ${terrainStr}
-                    </data>
-                </layer>
-            </map>
-        `;
-
-        return tmxStr;
-    }
-
-    /** 生成tiledmap所用的地图块属性数据 */
-    static _createTSXString(size: cc.Size): string {
-        let tileLen = 32;
-        let {width: w, height: h} = size;
-
-        let col = w / tileLen;
-        let count = w * h;
-
-        let tsxStr: string = `
-            <?xml version="1.0" encoding="UTF-8"?>
-            <tileset name="tiles" tilewidth="${tileLen}" tileheight="${tileLen}" tilecount="${count}" columns="${col}">
-                <image source="tiles.png" width="${w}" height="${h}"/>
-            </tileset>
-        `;
-
-        return tsxStr;
-    }
-
-    _holdMapAsset(callNext: () => void, lastData: any) {
-        for (let index = 0; index < this.curAssets.length; index++) {
-            const asset = this.curAssets[index];
-            this.mapPool[index].tmxAsset = asset;
-        }
-        return callNext();
-    }
-
-    // ========================================================
-
-    prepFinishCallback: () => void = null;
-    /** 所需准备的场景列表，场景序号从1开始 */
-    prepScenes: number[] = [];
-    /** 当前正在准备的场景索引 从0开始*/
-    curPrepSceneIdx: number = 0;
-    curPrepScene: number = 0;
-    /** 场景模板列表 */
-    sceneTempJsons: SceneTempJson[] = [];
-
-    curPrepAreaIdx: number = 0;
-    curAreaTempJsons: object[] = [];
-
-    /** 在下一帧执行当前类的函数 */
-    _callInNextFrame(func: () => void) {
-        scheduler.schedule(func.bind(this), this, 0, 0, 0, false);
-    }
-
-    /**
-     * 准备战斗场景的随机地图数据，
-     * 考虑到可能比较慢，采用多线程异步创建，也就是在Home的时候就开始一张张创建了，然后本地保存
-     * 进入战斗场景时，如果没创建完，则loading等待直到完成进入
-     */
-    prepareFightSceneData(scenes: number[], callback: () => void) {
-        this.prepFinishCallback = callback;
-        this.prepScenes = scenes;
-        this.curPrepSceneIdx = -1;
-
-        return this._manageSceneIdx();
-    }
-
-    _manageSceneIdx() {
-        this.curPrepSceneIdx++;
-        if (this.curPrepSceneIdx < this.prepScenes.length) {
-            this.curPrepScene = this.prepScenes[this.curPrepSceneIdx];
-            return this._checkFinishedDataAndLoad();
-        } else {
-            return this.prepFinishCallback();
-        }
-    }
-
-    /** 检测是否已经生成过了 */
-    _checkFinishedDataAndLoad() {
-        this._loadSceneTempJson();
-    }
-
-    _loadSceneTempJson() {
-        if (this.sceneTempJsons[this.curPrepScene]) {
-            return this._initAreaPreparation();
-        }
-
-        let url = `map/scene${this.curPrepScene}/terrain/area`;
-        cc.loader.loadRes(url, cc.JsonAsset, (err, jsonData) => {
-            if (err) {
-                cc.error(`Wrong in _loadSceneTempJson: ${err.message}`);
-                return;
-            }
-
-            this.sceneTempJsons[this.curPrepScene] = jsonData.json;
-            return this._callInNextFrame(this._checkSceneTempJson);
-        });
-    }
-
-    checkTotal: number = 0;
-    _checkJsonNum(obj: Object) {
-        if (obj.constructor == Number) {
-            this.checkTotal += <number>obj;
-        } else if (obj instanceof Array) {
-            for (const iterator of obj) {
-                this._checkJsonNum(iterator);
-            }
-        } else if (obj instanceof Object) {
-            for (const key in obj) {
-                this._checkJsonNum(obj[key]);
-            }
-        }
-    }
-
-    _checkSceneTempJson() {
-        this.checkTotal = 0;
-        this._checkJsonNum(this.sceneTempJsons[this.curPrepScene]);
-        if (MapCheck[this.curPrepScene] != this.checkTotal) {
-            throw new Error("wrong num check");
-        }
-
-        return this._callInNextFrame(this._initAreaPreparation);
-    }
-
-    _initAreaPreparation() {
-        this.curAreaTempJsons = this.sceneTempJsons[this.curPrepScene].areaTemps;
-        this.curPrepAreaIdx = -1;
-        return this._manageAreaIdx();
-    }
-
-    _manageAreaIdx() {
-        this.curPrepAreaIdx++;
-        if (this.curPrepAreaIdx < this.curAreaTempJsons.length) {
-
-        } else {
-            return this._manageSceneIdx();
-        }
-    }
-
-    _sendDataToMapCreator() {
-
-    }
-
-    _executeMapCreate() {
-
     }
 
     // ========================================================
@@ -753,9 +450,9 @@ export class MapCtrlr extends MyComponent {
         return areas[realIndex];
     }
 
-    getAreaSize(areaIndex: number): {w: number; h: number} {
+    getAreaSize(areaIndex: number): {rW: number; rH: number} {
         let areaData = this.getAreaData(areaIndex);
-        return {w: areaData.w, h: areaData.h};
+        return {rW: areaData.rW, rH: areaData.rH};
     }
 
     getAreaCollisionData(areaIndex: number): number[][] {
@@ -763,13 +460,13 @@ export class MapCtrlr extends MyComponent {
         return areaData.co;
     }
 
-    getHeroPos(): {area: number; x: number; y: number} {
+    getHeroPos(): {area: number; pX: number; pY: number} {
         let curScene = this.gameCtrlr.getCurScene();
         let hero = this.sceneJsons[curScene].heros[0]; // llytodo 不知道以后一个场景里面有多少个hero pos
         return {
             area: hero.area,
-            x: hero.x,
-            y: hero.y
+            pX: hero.pX,
+            pY: hero.pY
         };
     }
 
@@ -794,23 +491,19 @@ export class MapCtrlr extends MyComponent {
 
         return {
             thisArea: thisGateData.area,
-            thisX: thisGateData.x,
-            thisY: thisGateData.y,
+            thisX: thisGateData.pX,
+            thisY: thisGateData.pY,
             otherArea: anotherGateData.area,
-            otherX: anotherGateData.x,
-            otherY: anotherGateData.y
+            otherX: anotherGateData.pX,
+            otherY: anotherGateData.pY
         };
     }
 
     getSpineInfo(areaIndex: number): SpineJson[] {
         let curScene = this.gameCtrlr.getCurScene();
         let realAreaIndex = areaIndex - 1;
-        let spines: SpineJson[] = this.sceneJsons[curScene].spines[realAreaIndex];
-        let info: SpineJson[] = [];
-        for (const spine of spines) {
-            info.push(spine);
-        }
-        return info;
+        let spines: SpineJson[] = this.sceneJsons[curScene].areas[realAreaIndex].spines;
+        return spines;
     }
 
     /** 获取当前场景属性 */
@@ -832,33 +525,35 @@ export class MapCtrlr extends MyComponent {
     /**
      * 根据地图上的点，给每个地图生成随机位置，这些位置都在地面上
      */
-    createRandomGroundPoss(areaIndex: number): {pos: cc.Vec2; t: number}[] {
+    createRandomGroundInfos(areaIndex: number): GroundInfo[] {
         let areaInfo = this.getAreaInfo(areaIndex);
         let len = areaInfo.getGroundInfoLen();
         let count = Math.floor(len * 0.1);
 
-        let usingGroundPoss: {pos: cc.Vec2; t: number}[] = [];
+        let usingGroundInfos: GroundInfo[] = [];
         let usingStates = {};
+        let leftR = 5;
 
         do {
-            let k = Math.floor(Math.random() * len);
-            let groundX = areaInfo.getGroundX(k);
-            let groundY = areaInfo.getGroundY(k);
+            let groundK = Math.floor(Math.random() * len);
+            let groundInfo = areaInfo.getGroundInfo(groundK);
+            let groundPX = groundInfo.pX
+            let groundPY = groundInfo.pY;
 
-            let stKey = groundX * 1000 + groundY;
+            let stKey = groundPX * 10000 + groundPY;
             let state = usingStates[stKey];
 
-            if (!state) { // lly todo ground都在c层生成，所以这里的逻辑后面就不要了
-                let pos = cc.v2(0, 0) //this.terrainCtrlr.getPosFromTilePos(groundX, groundY - 1, tileNumHeight);
-                usingGroundPoss.push({pos: pos, t: areaInfo.getGroundType(k)});
+            if (!state) {
+                usingGroundInfos.push(groundInfo);
                 usingStates[stKey] = 1;
             } else {
-                // llytodo 如果有随机到重复的，在不过多增加计算量的基础上，让随机更平均
+                leftR--;
+                if (leftR < 0) count--;
             }
 
-        } while (usingGroundPoss.length < count);
+        } while (usingGroundInfos.length < count);
 
-        return usingGroundPoss;
+        return usingGroundInfos;
     }
 
     // ========================================================
