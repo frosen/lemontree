@@ -187,7 +187,8 @@ export default class GameCtrlr extends cc.Component {
     }
 
     enterMidGate(gateGid: number) {
-
+        let {otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
+        this._changeArea(otherArea, otherX, otherY);
     }
 
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
