@@ -19,6 +19,8 @@ import {GameMemory} from "./GameMemory";
 
 import MyComponent from "./MyComponent";
 
+let scheduler = cc.director.getScheduler();
+
 @ccclass
 export default class GameCtrlr extends cc.Component {
 
@@ -107,15 +109,51 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _loadAreas(callNext: () => void, lastData: any) {
+        this._loadAreasAsync(callNext);
+    }
+
+    async _loadAreasAsync(callNext: () => void) {
         let areaCount = this.mapCtrlr.getAreaCount();
-        for (let index = 0; index < areaCount; index++) {
-            this.mapCtrlr.resetAreaJson(index, (suc: boolean) => {
-                if (suc) {
+        let index = 0;
+        while(index < areaCount) {
+            let suc = await this._loadAreaByIndexAsync(index);
+            if (suc) {
+                index++;
+            } else {
+                await this._sleep(500);
 
-                }
-            })
-
+                if
+            }
         }
+        callNext();
+    }
+
+    async _loadAreaByIndexAsync(index: number): Promise<boolean> {
+        if (!await this._resetAreaJson(index)) return false;
+        if (!await this._checkAreaJson(index)) return false;
+        return true;
+    }
+
+    _resetAreaJson(index): Promise<boolean> {
+        return new Promise((resolve) => {
+            this.mapCtrlr.resetAreaJson(index, (suc: boolean) => {
+                resolve(suc);
+            });
+        });
+    }
+
+    _checkAreaJson(index): Promise<boolean> {
+        return new Promise((resolve) => {
+            this.mapCtrlr.checkAreaJson(index, (suc: boolean) => {
+                resolve(suc);
+            });
+        });
+    }
+
+    _sleep(t): Promise<void> {
+        return new Promise((resolve) => {
+          setTimeout(() => resolve(), t);
+        });
     }
 
     _createScene(callNext: () => void, lastData: any) {
