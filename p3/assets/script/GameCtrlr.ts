@@ -60,6 +60,14 @@ export default class GameCtrlr extends cc.Component {
     /** 下次进入fight场景时都可能进入的场景序号 */
     needFightSceneIndexs: number[] = [];
 
+    __preload() {
+        // 关闭抗锯齿
+        cc.view.enableAntiAlias(false);
+
+        // cc.macro.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 1;
+        // cc.macro.FIX_ARTIFACTS_BY_STRECHING_TEXEL_TMX = 1;
+    }
+
     start() { // 所有默认直接onload的之后
         this.gameMemory = new GameMemory(this.onMemoryLoad.bind(this));
         this.gameMemory.load();
@@ -122,7 +130,7 @@ export default class GameCtrlr extends cc.Component {
             } else {
                 await this._sleep(500);
 
-                if
+                // if
             }
         }
         callNext();

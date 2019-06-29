@@ -22,8 +22,5 @@ export default class CanvasCtrlr extends MyComponent {
             canvas.fitHeight = false;
             canvas.fitWidth = true;
         }
-
-        // 关闭抗锯齿
-        cc.view.enableAntiAlias(false);
     }
 }

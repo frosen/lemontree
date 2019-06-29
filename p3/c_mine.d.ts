@@ -40,7 +40,7 @@ declare module my {
 
 		addMapEleBase(base: object): void;
 		addMapEle(ele: object): void;
-		addMapEleIndexs(w: number, h: number, d: number, type: number, value: number): void;
+		addMapEleIndexs(w: number, h: number, d: number, type: number, values: number[]): void;
 		addAreaTemp(index: number, data: object): void;
 		createArea(index: number, callback: (data) => void): void;
 	}
