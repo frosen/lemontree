@@ -235,6 +235,7 @@ class MapCreator:
             # 场景数据
             self.sceneHeroData = []
             self.sceneDoorData = {}
+            self.midDoors = {}
 
             areaIndex = 0
             for areaStrData in sceneStrData:
@@ -324,7 +325,6 @@ class MapCreator:
     def parse(self, string, areaIndex, sceneIndex):
 
         self.noEnemyPosData = []
-        self.doorIndexs = {}
         self.areaSpineData = []
 
         # 获取宽高
@@ -408,21 +408,27 @@ class MapCreator:
                 if self.doorIndexs[t] > 9:
                     raise Exception("door index couldn't more than 9!!")
 
-            orient = 0
+            direction = 0
             if lineNum == 0:
-                orient = 1
+                direction = 1
             elif lineNum == h - 1:
-                orient = 2
+                direction = 2
             elif colNum == 0:
-                orient = 3
+                direction = 3
             elif colNum == w - 1:
-                orient = 4
+                direction = 4
             else:
-                orient = 5  # 在中间的门
+                direction = 5  # 在中间的门
 
             # 新数据
-            newT = t * 100000 + orient * 10000 + \
+            newT = t * 100000 + direction * 10000 + \
                 self.doorIndexs[t] * 1000 + key * keyDight + 0  # 门都是可通过的
+
+            if direction == 5:
+                if not self.midDoors.has_key(newT):
+                    self.midDoors[newT] = True
+                else:
+                    newT += 10000 # 这句话的意思是把direction变成6，这样才不会重复
 
             # 门数据记录到门的列表中
             thisDoorData = {}

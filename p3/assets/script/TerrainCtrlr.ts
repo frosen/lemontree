@@ -47,6 +47,16 @@ export enum GateType {
     mid,
 }
 
+/** 门的朝向 */
+enum GateDir {
+    up = 1,
+    down = 2,
+    left = 3,
+    right = 4,
+    mid1 = 5,
+    mid2 = 6,
+}
+
 const GidTypeList = [
     CollisionType.none,
 
@@ -170,7 +180,8 @@ export class TerrainCtrlr extends MyComponent {
     }
 
     getGateType(gid: number): GateType {
-        return Math.floor(gid / 10000) % 10 == 5 ? GateType.mid : GateType.side;
+        let dir = Math.floor(gid / 10000) % 10;
+        return (dir == GateDir.mid1 || dir == GateDir.mid2) ? GateType.mid : GateType.side;
     }
 
     getGateIndex(gid: number): number {
