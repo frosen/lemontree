@@ -1,6 +1,15 @@
 // Global.js
-// 全局定义
+// 全局设置和定义
 // lly 2017.12.12
+
+// 全局设置========================================================
+
+cc.view.enableAntiAlias(false);
+
+// cc.macro.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 1;
+// cc.macro.FIX_ARTIFACTS_BY_STRECHING_TEXEL_TMX = 1;
+
+// 全局定义========================================================
 
 window.EXECUTION_ORDER = {
     MovableObject: 1,
