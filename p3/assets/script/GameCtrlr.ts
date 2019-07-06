@@ -115,14 +115,28 @@ export default class GameCtrlr extends cc.Component {
     async _loadAreasAsync(callNext: () => void) {
         let areaCount = this.mapCtrlr.getAreaCount();
         let index = 0;
+        let wrongTimes = 0;
         while(index < areaCount) {
             let suc = await this._loadAreaByIndexAsync(index);
             if (suc) {
                 index++;
             } else {
-                await this._sleep(500);
+                wrongTimes++;
+                
+                if (this.curSceneIndex == 0) { // 在家，删除重新创建
+                    if (wrongTimes >= 10 && this.mapCtrlr.preparing == false) {
+                        this.mapCtrlr.deleteSaveFile(this.curSceneIndex, this.curAreaIndex);
+                        this.mapCtrlr.prepareFightSceneData([this.curSceneIndex], () => {});
+                        wrongTimes = 0;
+                        await this._sleep(500);
+                    }
+                } else { // 战斗场景，直接返回家
+                    if (wrongTimes >= 2) {
+                        return this.enterHomeScene();
+                    }
+                }
 
-                // if
+                await this._sleep(500);
             }
         }
         callNext();

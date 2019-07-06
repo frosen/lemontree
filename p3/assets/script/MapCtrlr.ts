@@ -220,11 +220,9 @@ export class MapCtrlr extends MyComponent {
 
     resetAreaJson(areaIndex: number, finishCallback: (suc: boolean) => void) {
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
-        let writablePath = jsb.fileUtils.getWritablePath();
-
         let sceneKey = this.getSceneKey(curSceneIndex, areaIndex);
         let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey)
-        cc.loader.loadRes(writablePath + filePath, cc.JsonAsset, (err, data) => {
+        cc.loader.loadRes(filePath, cc.JsonAsset, (err, data) => {
             if (err) {
                 cc.error(`Wrong in loadMapJson: ${err.message}`);
                 return finishCallback(false);
@@ -435,6 +433,14 @@ export class MapCtrlr extends MyComponent {
 
         let areaData = this.curPrepAreaTempJsons[this.curPrepAreaIdx];
         my.MapCreator.getInstance().addAreaTemp(sceneKey, areaData);
+    }
+
+    deleteSaveFile(sceneIndex, areaIndex) {
+        let sceneKey = this.getSceneKey(sceneIndex, areaIndex);
+        let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey);
+        if (jsb.fileUtils.isFileExist(filePath)) {
+            jsb.fileUtils.removeFile(filePath)
+        }
     }
 
     // ========================================================
