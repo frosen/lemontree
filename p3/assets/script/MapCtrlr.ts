@@ -15,8 +15,6 @@ import * as eleData from "../script_map/ele";
 import * as sceneDataHome from "../script_map/scenedata_0";
 import * as sceneData1 from "../script_map/scenedata_1";
 
-let scheduler = cc.director.getScheduler();
-
 // 已经形成的地形的类 ========================================================
 
 /** 每个区域中触发点的属性 */
@@ -176,6 +174,13 @@ export class MapCtrlr extends MyComponent {
 
     // ========================================================
 
+    // 用一个数字表示area的信息
+    getSceneKey(sceneIndex, areaIndex) {
+        let sceneTemp = this.sceneTempJsons[sceneIndex];
+        let areaType = sceneTemp.areaTypes[areaIndex];
+        return sceneIndex * 10000 + areaIndex * 100 + areaType;
+    }
+
     /** 从本地读取已经生成的场景json */
     loadSceneJson(finishCallback: () => void) {
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
@@ -216,8 +221,10 @@ export class MapCtrlr extends MyComponent {
     resetAreaJson(areaIndex: number, finishCallback: (suc: boolean) => void) {
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let writablePath = jsb.fileUtils.getWritablePath();
-        let url = `lemontree/mapjson/scene_${curSceneIndex}_${areaIndex}`;
-        cc.loader.loadRes(writablePath + url, cc.JsonAsset, (err, data) => {
+
+        let sceneKey = this.getSceneKey(curSceneIndex, areaIndex);
+        let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey)
+        cc.loader.loadRes(writablePath + filePath, cc.JsonAsset, (err, data) => {
             if (err) {
                 cc.error(`Wrong in loadMapJson: ${err.message}`);
                 return finishCallback(false);
@@ -369,9 +376,7 @@ export class MapCtrlr extends MyComponent {
      */
     prepareFightSceneData(scenes: number[], callback: () => void) {
         if (this.preparing == true) {
-            scenes.forEach(scene => {
-                this.prepScenes.push();
-            });
+            cc.error("fight scene is preparing");
             return;
         }
 
@@ -411,27 +416,25 @@ export class MapCtrlr extends MyComponent {
     }
 
     _executeMapCreate() {
-        this._sendDataToMapCreator();
-
-        my.MapCreator.getInstance().createArea(20, (data) => {
-            cc.log("finish map create");
-            cc.log(JSON.stringify(data));
-            this._manageAreaIdx();
+        setTimeout(() => {
+            this._sendDataToMapCreator();
+    
+            let sceneKey = this.getSceneKey(this.curPrepScene, this.curPrepAreaIdx);
+            my.MapCreator.getInstance().createArea(sceneKey, (ret: number) => {
+                cc.log("map create result:", ret);
+                this._manageAreaIdx();
+            });
         });
     }
 
     _sendDataToMapCreator() {
-        let index = this._getPrepAreaIndex();
+        let sceneKey = this.getSceneKey(this.curPrepScene, this.curPrepAreaIdx);
 
-        if (this.sendDataDoneList[index] == true) return;
-        this.sendDataDoneList[index] = true;
+        if (this.sendDataDoneList[sceneKey] == true) return;
+        this.sendDataDoneList[sceneKey] = true;
 
         let areaData = this.curPrepAreaTempJsons[this.curPrepAreaIdx];
-        my.MapCreator.getInstance().addAreaTemp(index, areaData);
-    }
-
-    _getPrepAreaIndex() {
-        return this.curPrepScene * 100 + this.curPrepAreaIdx;
+        my.MapCreator.getInstance().addAreaTemp(sceneKey, areaData);
     }
 
     // ========================================================

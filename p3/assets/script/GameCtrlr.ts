@@ -55,7 +55,7 @@ export default class GameCtrlr extends cc.Component {
 
     gamePause: boolean = false;
 
-    // 游戏总数据 ----------
+    // 游戏总数据 ========================================================
 
     /** 下次进入fight场景时都可能进入的场景序号 */
     needFightSceneIndexs: number[] = [];
@@ -68,13 +68,13 @@ export default class GameCtrlr extends cc.Component {
     onMemoryLoad() {
         let sceneIndex = this.gameMemory.loadedData.curScene;
         if (sceneIndex == 0) {
-            this.changeToHomeScene();
+            this.createHomeScene();
         } else {
-            this.changeToFightScene(sceneIndex);
+            this.createFightScene(sceneIndex);
         }
     }
 
-    changeToHomeScene() {
+    createHomeScene() {
         this.curSceneIndex = 0;
         callList(this, [
             [this._loadScene],
@@ -87,7 +87,7 @@ export default class GameCtrlr extends cc.Component {
         ]);
     }
 
-    changeToFightScene(index: number) {
+    createFightScene(index: number) {
         this.curSceneIndex = index;
         callList(this, [
             [this._loadScene],
@@ -217,6 +217,18 @@ export default class GameCtrlr extends cc.Component {
         }
         return callNext();
     }
+
+    // ========================================================
+
+    enterHomeScene() {
+
+    }
+
+    enterFightScene(index: number) {
+        
+    }
+
+    // ========================================================
 
     enterSideGate(gateGid: number, lastHeroPos: cc.Vec2) {
         let {thisX, thisY, otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);

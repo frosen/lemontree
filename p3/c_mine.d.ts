@@ -42,7 +42,8 @@ declare module my {
 		addMapEle(ele: object): void;
 		addMapEleIndexs(w: number, h: number, d: number, type: number, values: number[]): void;
 		addAreaTemp(index: number, data: object): void;
-		createArea(index: number, callback: (data) => void): void;
+		createArea(index: number, callback: (ret: number) => void): void;
+		getSaveFilePath(key: number): string;
 	}
 }
 
