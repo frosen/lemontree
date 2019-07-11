@@ -445,6 +445,11 @@ export class MapCtrlr extends MyComponent {
 
     // ========================================================
 
+    getTempAreaCount(): number {
+        let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
+        return this.sceneTempJsons[curSceneIndex].areaTemps.length;
+    }
+
     getAreaCount(): number {
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         return this.sceneJsons[curSceneIndex].areas.length;

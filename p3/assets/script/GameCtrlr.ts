@@ -113,7 +113,7 @@ export default class GameCtrlr extends cc.Component {
     }
 
     async _loadAreasAsync(callNext: () => void) {
-        let areaCount = this.mapCtrlr.getAreaCount();
+        let areaCount = this.mapCtrlr.getTempAreaCount();
         let index = 0;
         let wrongTimes = 0;
         while(index < areaCount) {
