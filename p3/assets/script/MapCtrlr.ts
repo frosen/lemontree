@@ -70,15 +70,15 @@ class AreaJson {
 
     ak: number;
 
-    getGroundInfoLen(): number {
-        return this.groundInfos.length / 3;
+    static getGroundInfoLen(area: AreaJson): number {
+        return area.groundInfos.length / 3;
     }
 
-    getGroundInfo(index: number): GroundInfo {
+    static getGroundInfo(area: AreaJson, index: number): GroundInfo {
         let gInfo = new GroundInfo();
-        gInfo.pX = this.groundInfos[Math.floor(index / 3)];
-        gInfo.pY = this.groundInfos[Math.floor(index / 3) + 1];
-        gInfo.groundType = this.groundInfos[Math.floor(index / 3) + 2];
+        gInfo.pX = area.groundInfos[Math.floor(index / 3)];
+        gInfo.pY = area.groundInfos[Math.floor(index / 3) + 1];
+        gInfo.groundType = area.groundInfos[Math.floor(index / 3) + 2];
         return gInfo;
     }
 }
@@ -221,16 +221,23 @@ export class MapCtrlr extends MyComponent {
     resetAreaJson(areaIndex: number, finishCallback: (suc: boolean) => void) {
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let sceneKey = this.getSceneKey(curSceneIndex, areaIndex);
-        let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey)
-        cc.loader.loadRes(filePath, cc.JsonAsset, (err, data) => {
-            if (err) {
-                cc.error(`Wrong in loadMapJson: ${err.message}`);
-                return finishCallback(false);
-            }
+        
+        let filePath = "/Users/luyueyan/Documents/lemontree/mapjson/scene_1_0.json";
+        // let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey);
+        
+        let jsonStr: string = jsb.fileUtils.getStringFromFile(filePath);
+        if (!jsonStr) {
+            cc.error(`Wrong in resetAreaJson getStringFromFile: ${sceneKey}`);
+            return finishCallback(false); 
+        }
 
-            this.sceneJsons[curSceneIndex] = data;
+        try {
+            this.sceneJsons[curSceneIndex].areas[areaIndex] = JSON.parse(jsonStr);
             return finishCallback(true);
-        });
+        } catch (error) {
+            cc.error(`Wrong in resetAreaJson: ${sceneKey} ${error.message}`);
+            return finishCallback(false);
+        }
     }
 
     checkAreaJson(areaIndex: number, finishCallback: (suc: boolean) => void) {
@@ -263,7 +270,7 @@ export class MapCtrlr extends MyComponent {
             return finishCallback(realKey == key);
 
         } catch (error) {
-            cc.log("check area json error: ", error.message);
+            cc.log("check area json error: ", areaIndex, error.message);
             return finishCallback(false);
         }
     }
@@ -539,7 +546,7 @@ export class MapCtrlr extends MyComponent {
      */
     createRandomGroundInfos(areaIndex: number): GroundInfo[] {
         let areaInfo = this.getAreaInfo(areaIndex);
-        let len = areaInfo.getGroundInfoLen();
+        let len = AreaJson.getGroundInfoLen(areaInfo);
         let count = Math.floor(len * 0.1);
 
         let usingGroundInfos: GroundInfo[] = [];
@@ -548,7 +555,7 @@ export class MapCtrlr extends MyComponent {
 
         do {
             let groundK = Math.floor(Math.random() * len);
-            let groundInfo = areaInfo.getGroundInfo(groundK);
+            let groundInfo = AreaJson.getGroundInfo(areaInfo, groundK);
             let groundPX = groundInfo.pX
             let groundPY = groundInfo.pY;
 

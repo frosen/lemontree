@@ -50,8 +50,8 @@ export default class GameCtrlr extends cc.Component {
 
     gameMemory: GameMemory = null;
 
-    private curSceneIndex: number = 1; // 从0开始，0则为家
-    private curAreaIndex: number = 1; // 从0开始
+    private curSceneIndex: number = 0; // 从0开始，0则为家
+    private curAreaIndex: number = 0; // 从0开始
 
     gamePause: boolean = false;
 
@@ -118,6 +118,8 @@ export default class GameCtrlr extends cc.Component {
         let wrongTimes = 0;
         while(index < areaCount) {
             let suc = await this._loadAreaByIndexAsync(index);
+            cc.log('load area: ', index, suc);
+
             if (suc) {
                 index++;
             } else {
@@ -188,7 +190,7 @@ export default class GameCtrlr extends cc.Component {
 
     _createObjs(callNext: () => void, lastData: any) {
         let len = this.mapCtrlr.getAreaCount();
-        for (let index = 1; index <= len; index++) {
+        for (let index = 0; index < len; index++) {
             // 生成机关陷阱
             let spineInfo = this.mapCtrlr.getSpineInfo(index);
             this.spineCtrlr.setData(index, spineInfo);

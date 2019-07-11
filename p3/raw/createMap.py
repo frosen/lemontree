@@ -135,9 +135,9 @@ def getWHFromTileJson(jsonStr):
 
 
 def getDataFromTileJson(jsonStr, key):
-    k1 = "<layer name=\"" + key + r"\"([\s\S]*?)</layer>"
+    k1 = "<layer (id=\"\d\" )?name=\"" + key + r"\"([\s\S]*?)</layer>"
     k2 = r"<data encoding=\"csv\">\n([\s\S]*?)\n</data>"
-    subStr = re.findall(k1, jsonStr)[0]
+    subStr = re.findall(k1, jsonStr)[0][1]
     subStr = re.findall(k2, subStr)[0]
     lineStrs = subStr.split("\n")
     tilelist = []
