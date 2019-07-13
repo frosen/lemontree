@@ -76,9 +76,10 @@ class AreaJson {
 
     static getGroundInfo(area: AreaJson, index: number): GroundInfo {
         let gInfo = new GroundInfo();
-        gInfo.pX = area.groundInfos[Math.floor(index / 3)];
-        gInfo.pY = area.groundInfos[Math.floor(index / 3) + 1];
-        gInfo.groundType = area.groundInfos[Math.floor(index / 3) + 2];
+        let realIndex = index * 3;
+        gInfo.pX = area.groundInfos[realIndex];
+        gInfo.pY = area.groundInfos[realIndex + 1];
+        gInfo.groundType = area.groundInfos[realIndex + 2];
         return gInfo;
     }
 }

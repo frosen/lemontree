@@ -92,6 +92,7 @@ export default class GameCtrlr extends cc.Component {
         callList(this, [
             [this._loadScene],
             [this._loadAreas],
+            [this._createScene],
             [this._loadEnemyRes],
             [this._loadSpineRes],
             [this._loadPotRes],
