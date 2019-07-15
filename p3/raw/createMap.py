@@ -13,47 +13,47 @@ import sys
 
 arrayMax = 20
 
-clsnSize = 256  # 碰撞层瓦块的总数
+clsnSize = 225  # 碰撞层瓦块的总数
 
 # 平台
-platUpLefTile = 20
-platUpTile = 21
-platUpRigTile = 22
-platBgLefTile = 23
-platBgTile = 24
-platBgRigTile = 25
+platUpLefTile = 21
+platUpTile = 22
+platUpRigTile = 23
+platBgLefTile = 24
+platBgTile = 25
+platBgRigTile = 26
 
-platUpMidTile = 26
-platBgMidTile = 27
+platUpMidTile = 27
+platBgMidTile = 28
 
 platTiles = [platUpTile, platBgTile, platUpLefTile, platUpRigTile,
              platBgLefTile, platBgRigTile, platUpMidTile, platBgMidTile]
 
 # 门
-tileRandom = 40
-tileDoorUp = 41
-tileDoorDown = 42
-tileDoorLeft = 43
-tileDoorRight = 44
+tileRandom = 38
+tileDoorUp = 39
+tileDoorDown = 40
+tileDoorLeft = 41
+tileDoorRight = 42
 tileDoors = [tileDoorUp, tileDoorDown, tileDoorLeft, tileDoorRight]
 
-tileNoEnemy = 45
+tileNoEnemy = 43
 
-tileMoveFrom = 49
-tileRightMove = 49
-tileLeftMove = 50
-tileJump = 51
-tileUpMove = 52
-tileMoveTo = 52
+tileMoveFrom = 46
+tileRightMove = 46
+tileLeftMove = 47
+tileJump = 48
+tileUpMove = 49
+tileMoveTo = 49
 
-tileSpineFrom = 53
-tileSpine = 53
-tileSpineTo = 64
+tileSpineFrom = 50
+tileSpine = 50
+tileSpineTo = 60
 
-tileGateFrom = 65
-tileGateTo = 80
+tileGateFrom = 61
+tileGateTo = 75
 
-tileHero = 81
+tileHero = 76
 
 thumbInterval = 3  # 缩略图的宽度
 

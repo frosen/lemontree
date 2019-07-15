@@ -327,7 +327,7 @@ export class MapCtrlr extends MyComponent {
 
         let tmxStr: string = `
             <?xml version="1.0" encoding="UTF-8"?>
-            <map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="${rW}" height="${rH}" tilewidth="32" tileheight="32" nextobjectid="0">
+            <map version="1.0" tiledversion="1.0.0" orientation="orthogonal" renderorder="left-down" width="${rW}" height="${rH}" tilewidth="32" tileheight="32" nextobjectid="0">
                 <tileset firstgid="1" source="tiles.tsx"/>
                 <layer name="terrain" width="${rW}" height="${rH}">
                     <data encoding="csv">
@@ -345,12 +345,13 @@ export class MapCtrlr extends MyComponent {
         let tileLen = 32;
         let {width, height} = size;
 
-        let col = width / tileLen;
+        let col = width / (tileLen + 1); // 1为margin
         let count = width * height;
 
+        // 此处 margin="0" 与原tsx不一致，否则会有黑边
         let tsxStr: string = `
             <?xml version="1.0" encoding="UTF-8"?>
-            <tileset name="tiles" tilewidth="${tileLen}" tileheight="${tileLen}" tilecount="${count}" columns="${col}">
+            <tileset name="tiles" tilewidth="${tileLen}" tileheight="${tileLen}" spacing="1" margin="0" tilecount="${count}" columns="${col}">
                 <image source="tiles.png" width="${width}" height="${height}"/>
             </tileset>
         `;

@@ -75,6 +75,8 @@ const GidTypeList = [
     CollisionType.entity,
     CollisionType.entity,
     CollisionType.entity,
+    -1,
+
     CollisionType.entity,
     CollisionType.entity,
 
@@ -143,8 +145,8 @@ export class TerrainCtrlr extends MyComponent {
 
     _getSlopeDir(gid: number): number {
         switch (gid) {
-            case 17: return 1;
-            case 18: return -1;
+            case 18: return 1;
+            case 19: return -1;
             default: return null;
         }
     }
@@ -158,10 +160,10 @@ export class TerrainCtrlr extends MyComponent {
 
         let moveKey = Math.floor(gid / 1000);
         switch (moveKey) {
-            case 49: return ForcedMoveType.right;
-            case 50: return ForcedMoveType.left;
-            case 51: return ForcedMoveType.up;
-            case 52: return ForcedMoveType.flow;
+            case 46: return ForcedMoveType.right;
+            case 47: return ForcedMoveType.left;
+            case 48: return ForcedMoveType.up;
+            case 49: return ForcedMoveType.flow;
             default: return ForcedMoveType.none;
         }
     }
