@@ -30,30 +30,30 @@ platTiles = [platUpTile, platBgTile, platUpLefTile, platUpRigTile,
              platBgLefTile, platBgRigTile, platUpMidTile, platBgMidTile]
 
 # 门
-tileRandom = 38
-tileDoorUp = 39
-tileDoorDown = 40
-tileDoorLeft = 41
-tileDoorRight = 42
+tileRandom = 46
+tileDoorUp = 47
+tileDoorDown = 48
+tileDoorLeft = 49
+tileDoorRight = 50
 tileDoors = [tileDoorUp, tileDoorDown, tileDoorLeft, tileDoorRight]
 
-tileNoEnemy = 43
+tileNoEnemy = 51
 
-tileMoveFrom = 46
-tileRightMove = 46
-tileLeftMove = 47
-tileJump = 48
-tileUpMove = 49
-tileMoveTo = 49
+tileMoveFrom = 52
+tileRightMove = 52
+tileLeftMove = 53
+tileJump = 54
+tileUpMove = 55
+tileMoveTo = 55
 
-tileSpineFrom = 50
-tileSpine = 50
-tileSpineTo = 60
+tileSpineFrom = 61
+tileSpine = 61
+tileSpineTo = 75
 
-tileGateFrom = 61
-tileGateTo = 75
+tileGateFrom = 76
+tileGateTo = 90
 
-tileHero = 76
+tileHero = 106
 
 thumbInterval = 3  # 缩略图的宽度
 
