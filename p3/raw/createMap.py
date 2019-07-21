@@ -740,14 +740,14 @@ class EleCreator(MapCreator):
     def getEleTMXFiles(self, path, inputPath):
         fList = os.listdir(path)
         for f in fList:
-            fileInfos = os.path.splitext(f)
-
+            
             if inputPath and inputPath != f:
                 continue
 
-            if fileInfos[1] == '.tmx':
-                d = readFile(path + f)
+            fileInfos = os.path.splitext(f)
 
+            if fileInfos[1] == '.tmx':
+                
                 indexs = fileInfos[0].split("_")
                 if indexs[0] != "ele" or indexs[1] == "base":
                     continue
@@ -755,6 +755,7 @@ class EleCreator(MapCreator):
                 size = int(indexs[1])
                 w = int(math.floor(size / 10))
                 h = int(size % 10)
+                d = readFile(path + f)
 
                 data = {}
                 data["tW"] = w
@@ -773,7 +774,7 @@ class EleCreator(MapCreator):
             noList = getDataFromTileJson(eleData["d"], "notation")  # 标记
 
             if eleData["tW"] * 3 != len(coList[0]) or eleData["tH"] * 3 != len(coList):
-                raise Exception("w or h error")
+                raise Exception("w or h error") # 验证文件名上的宽高和实际是否一致
 
             # 解析标记
             notationLine = self.handleNotationLine(noList)
@@ -789,6 +790,7 @@ class EleCreator(MapCreator):
             # 生成元素
             for lineData in notationLine:
                 for rowData in notationRow:
+                    # 如果横着的限制为1，那么竖着得移除1以后的才能生成
                     if lineData["restrict"] >= notationKeyRowFrom and rowData["key"] < lineData["restrict"]:
                         continue
 
@@ -796,11 +798,11 @@ class EleCreator(MapCreator):
                     rowList = rowData["list"]
 
                     ele = {}
-                    ele["bi"] = k
-                    ele["uTX"] = self.changeNotationListToNum(lineList)
+                    ele["bi"] = k #表示基于哪个base
+                    ele["uTX"] = self.changeNotationListToNum(lineList) #用数字表示base中需要横着哪个
                     ele["uTY"] = self.changeNotationListToNum(rowList)
 
-                    eleW = self.getListCount(lineList)
+                    eleW = self.getListCount(lineList) 
                     eleH = self.getListCount(rowList)
 
                     ele["tW"] = eleW
@@ -812,9 +814,7 @@ class EleCreator(MapCreator):
                     doorType2Jump = [[], [], [], []]
                     door2Jump = False  # 如果这个标识为true，则会生成2个不同的ele，其中一个不包含某个门在第一关使用
 
-                    need2Jump = False  # 如果这个标识为true，则当前的ele不能在第一关使用
-                    if rowData["restrict"] == notationKey2Jump:
-                        need2Jump = True
+                    need2Jump = lineData["need2Jump"] or rowData["need2Jump"]  # 如果这个标识为true，则当前的ele不能在第一关使用
 
                     # 门和spine的位置
                     realI = -1
@@ -969,8 +969,8 @@ class EleCreator(MapCreator):
                             if d == k:
                                 doorStr = doorK
                                 break
-                            print("ele list empty: w %d, h %d, door %12s ==> %d, %d" % (
-                                i+1, j+1, doorStr, len0, len1))
+                        print("ele list empty: w %d, h %d, door %s ==========> scene1 length %d, other scene length %d" % (
+                            i+1, j+1, doorStr, len0, len1))
 
     # 根据map中的标识，处理元素生成数据，便于后面使用（最下面横着的一行数据）
     def handleNotationLine(self, noList):
@@ -978,44 +978,56 @@ class EleCreator(MapCreator):
         maxH = len(noList) - 1
         lastRestrict = 0
         for x in xrange(0, MAX_R_TW):
-            key = notationKeyLineFrom + x
+            key = notationKeyLineFrom + x # 小于等于这个key的话，则不用这个块
             noLineList = []
             restrict = 0  # 限制，只有竖行的数大于等于这个数时，才生成
+            jumpKey = 0 # 是否需要连跳
             hasNotation = False
             for i in xrange(2, len(noList[maxH]), 3):
                 noData = noList[maxH][i]
-                if noData <= 0:
+                if noData <= 0: # 始终会用的块
                     noLineList.append(1)
-                elif noData < key:
+                elif noData < key: # 不用的块
                     noLineList.append(0)
-                elif noData == key:
+                elif noData == key: # 不用这个块，并查看是否会受到列的限制
                     noLineList.append(0)
                     hasNotation = True
-                    natationRestrict = noList[maxH][i + 1]
-                    if natationRestrict > 0:
-                        restrict = natationRestrict
-                else:
+
+                    # 右边是对列的要求
+                    notationRestrict = noList[maxH][i + 1]
+                    if notationRestrict > 0:
+                        restrict = notationRestrict
+                        if restrict == notationKey2Jump:
+                            raise Exception("line right side must be notation restrict")
+
+                    # 左边是对连跳的要求
+                    jumpRestrict = noList[maxH][i - 1]
+                    if jumpRestrict > 0:
+                        jumpKey = jumpRestrict
+                        if jumpKey != notationKey2Jump:
+                            raise Exception("line left side must be jump restrict")
+
+                else: # 会用到的块
                     noLineList.append(1)
 
             if hasNotation:
-                if restrict == notationKey2Jump:
-                    raise Exception("line can not use 2 jump key")
                 if restrict < lastRestrict:
-                    raise Exception(
-                        "restrict must more and more big than ", lastRestrict, " in ", i)
+                    raise Exception("restrict must more and more big than ", lastRestrict, " in ", i)
                 lastRestrict = restrict
 
                 data = {}
                 data["list"] = noLineList
                 data["restrict"] = restrict
+                data["need2Jump"] = jumpKey > 0
                 notationLine.append(data)
 
-            else:
+            else: #最后把“全部用到”也算作一组数据
                 for x in xrange(0, len(noLineList)):
                     noLineList[x] = 1
                 data = {}
                 data["list"] = noLineList
                 data["restrict"] = restrict
+                data["need2Jump"] = False
                 notationLine.append(data)
                 break
 
@@ -1033,7 +1045,7 @@ class EleCreator(MapCreator):
             key = notationKeyRowFrom + x
             noRowList = []
             hasNotation = False
-            restrict = 0
+            jumpKey = 0
             for i in xrange(1, maxH, 3):
                 noData = noList[i][0]
                 if noData <= 0:
@@ -1043,11 +1055,18 @@ class EleCreator(MapCreator):
                 elif noData == key:
                     noRowList.append(0)
                     hasNotation = True
-                    natationRestrict = noList[i + 1][0]
-                    if natationRestrict > 0:
-                        restrict = natationRestrict
-                        if restrict != notationKey2Jump:
+
+                    # 限制
+                    jumpRestrict = noList[i + 1][0]
+                    if jumpRestrict > 0:
+                        jumpKey = jumpRestrict
+                        if jumpKey != notationKey2Jump:
                             raise Exception("row restrict only use 2 jump key")
+
+                    # 检测
+                    wrongRestrict = noList[i - 1][0]
+                    if wrongRestrict > 0:
+                        raise Exception("row restrict should under notation")
                 else:
                     noRowList.append(1)
 
@@ -1055,26 +1074,26 @@ class EleCreator(MapCreator):
                 data = {}
                 data["list"] = noRowList
                 data["key"] = key
-                data["restrict"] = restrict
+                data["need2Jump"] = jumpKey > 0
                 notationRow.append(data)
 
             else:
                 for x in xrange(0, len(noRowList)):
                     noRowList[x] = 1
 
-                restrict = noList[maxH][0]
-                if restrict > 0 and restrict != notationKey2Jump:
+                jumpKey = noList[maxH][0]
+                if jumpKey > 0 and jumpKey != notationKey2Jump:
                     raise Exception("row restrict only use 2 jump key")
                 data = {}
                 data["list"] = noRowList
                 data["key"] = 0
-                data["restrict"] = restrict
+                data["need2Jump"] = jumpKey > 0
                 notationRow.append(data)
                 break
 
         return notationRow
 
-    # 除去边缘
+    # 除去边缘（左边和下边的一行，只用于做标记）
     def handleCoList(self, coList):
         newCoList = []
         for y in xrange(0, len(coList)):
