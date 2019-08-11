@@ -348,7 +348,7 @@ export class MapCtrlr extends MyComponent {
         let col = width / (tileLen + 1); // 1为margin
         let count = width * height;
 
-        // 此处 margin="0" 与原tsx不一致，否则会有黑边
+        // 此处 spacing="1" 否则会有黑边
         let tsxStr: string = `
             <?xml version="1.0" encoding="UTF-8"?>
             <tileset name="tiles" tilewidth="${tileLen}" tileheight="${tileLen}" spacing="1" margin="0" tilecount="${count}" columns="${col}">

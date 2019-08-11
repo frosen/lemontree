@@ -19,7 +19,7 @@ import {GameMemory} from "./GameMemory";
 
 import MyComponent from "./MyComponent";
 
-let scheduler = cc.director.getScheduler();
+let sch = cc.director.getScheduler();
 
 @ccclass
 export default class GameCtrlr extends cc.Component {
@@ -259,7 +259,7 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
-        cc.log(">>>>>change area", areaIndex);
+        cc.log(">>>>> change area", areaIndex);
         this.curAreaIndex = areaIndex;
 
         this.mapCtrlr.changeArea();
@@ -283,7 +283,6 @@ export default class GameCtrlr extends cc.Component {
 
     // 遍历当前节点所有子节点，停止其action，animation，停止所有MyComponent下的update
     _pauseChildren(node: cc.Node) {
-        let sch = cc.director.getScheduler();
         for (const child of node.children) {
             child.pauseAllActions(); // 除此之外，不应该有pause action的地方
 
@@ -311,7 +310,6 @@ export default class GameCtrlr extends cc.Component {
     }
 
     _resumeChildren(node: cc.Node) {
-        let sch = cc.director.getScheduler();
         for (const child of node.children) {
             child.resumeAllActions(); // 除此之外，不应该有pause action的地方
             let anim = child.getComponent(cc.Animation);

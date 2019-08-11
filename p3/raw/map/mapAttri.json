@@ -23,12 +23,12 @@
                 "tileSubsts": [
                     {
                         "origin": 1,
-                        "substs": [241, 242],
+                        "substs": [211, 212],
                         "ratio": 8
                     },
                     {
                         "origin": 3,
-                        "substs": [243],
+                        "substs": [213],
                         "ratio": 15
                     }
                 ]

@@ -131,7 +131,6 @@ export default class PotCtrlr extends MyComponent {
             pot.node.setPosition(data.pos);
             let info = data.info;
             pot.setData(index, info.frame, info.c1, info.c2);
-
             index++;
         }
         this.pool.reclaimOtherFrom(index);

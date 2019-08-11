@@ -179,8 +179,8 @@ export default class EnemyCtrlr extends MyComponent {
 
             let node = enemy.node;
             node.active = true;
-            node.setPosition(data.pos);
 
+            node.setPosition(data.pos);
             dataIndex++;
         }
 
