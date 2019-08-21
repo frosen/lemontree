@@ -6,7 +6,7 @@
 const {ccclass, property} = cc._decorator;
 
 import TerrainColliderForCreature from "./TerrainColliderForCreature";
-import GameCtrlr from "./GameCtrlr";
+import {GameCtrlr} from "./GameCtrlr";
 
 @ccclass
 export default class TerrainColliderForHero extends TerrainColliderForCreature {

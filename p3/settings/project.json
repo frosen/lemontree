@@ -19,7 +19,6 @@
     "WebView",
     "Collider",
     "Graphics",
-    "DragonBones",
     "Physics",
     "StudioComponent",
     "Intersection"

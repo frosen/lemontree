@@ -5,7 +5,7 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
-import GameCtrlr from "./GameCtrlr";
+import {GameCtrlr} from "./GameCtrlr";
 import Pot from "./Pot";
 import MyNodePool from "./MyNodePool";
 import {GroundInfo} from "./MapCtrlr";

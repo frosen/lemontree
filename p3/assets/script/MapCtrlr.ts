@@ -7,7 +7,7 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
-import GameCtrlr from "./GameCtrlr";
+import {GameCtrlr} from "./GameCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 
 import * as eleData from "../script_map/ele";
@@ -148,9 +148,12 @@ export class MapCtrlr extends MyComponent {
         this.sceneTempJsons.push(sceneData1);
 
         // 读取生成地图所用元素
+        this.loadMapEles();
     }
 
     loadMapEles() {
+        if (!window.hasOwnProperty("my")) return;
+        
         for (const base of eleData.bases) {
             my.MapCreator.getInstance().addMapEleBase(base);
         }
@@ -223,8 +226,7 @@ export class MapCtrlr extends MyComponent {
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let sceneKey = this.getSceneKey(curSceneIndex, areaIndex);
         
-        let filePath = "/Users/luyueyan/Documents/lemontree/mapjson/scene_1_0.json";
-        // let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey);
+        let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey);
         
         let jsonStr: string = jsb.fileUtils.getStringFromFile(filePath);
         if (!jsonStr) {

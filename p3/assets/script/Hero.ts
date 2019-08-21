@@ -6,7 +6,7 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
-import GameCtrlr from "./GameCtrlr";
+import {GameCtrlr} from "./GameCtrlr";
 
 import {MovableObject} from "./MovableObject";
 import TerrainColliderForHero from "./TerrainColliderForHero";
@@ -38,8 +38,8 @@ import SwordWave from "../script_hero/SwordWave";
 export enum HeroUsingType {
     pickUp = 1,
     trigger,
-    jumpDown,
     midGate,
+    jumpDown,
 }
 
 @ccclass
@@ -126,8 +126,14 @@ export class Hero extends MyComponent {
         // 如果处于platform上，显示下跳按钮
         this.setUsingType(HeroUsingType.jumpDown, this.terrainCollider.curYCollisionType == CollisionType.platform);
 
-        let atMidGate = this.terrainCtrlr.getGateType(this.terrainCollider.gateGid) == GateType.mid;
-        this.setUsingType(HeroUsingType.midGate, atMidGate);
+        // 冲刺和跳跃时候不能进入门
+        let curState = this.sm.curState;
+        if ([ActState.stand, ActState.move].indexOf(curState) != -1) {
+            let atMidGate = this.terrainCtrlr.getGateType(this.terrainCollider.gateGid) == GateType.mid;
+            this.setUsingType(HeroUsingType.midGate, atMidGate);
+        } else {
+            this.setUsingType(HeroUsingType.midGate, false);
+        }
     }
 
     // 初始化 ========================================================
@@ -180,8 +186,8 @@ export class Hero extends MyComponent {
         switch (this.curUsingType) {
             case HeroUsingType.pickUp: this.pickUp(); break;
             case HeroUsingType.trigger: this.trigger(); break;
-            case HeroUsingType.jumpDown: this.jumpDown(); break;
             case HeroUsingType.midGate: this.midGate(); break;
+            case HeroUsingType.jumpDown: this.jumpDown(); break;
         }
     }
 
@@ -194,12 +200,12 @@ export class Hero extends MyComponent {
 
     }
 
-    jumpDown() {
-        this.node.y -= 2;
-    }
-
     midGate() {
         cc.find("main").getComponent(GameCtrlr).enterMidGate(this.terrainCollider.gateGid);
+    }
+
+    jumpDown() {
+        this.node.y -= 2;
     }
 
     setUsingType(t: HeroUsingType, b: boolean) {
@@ -209,10 +215,10 @@ export class Hero extends MyComponent {
             this.curUsingType = HeroUsingType.pickUp;
         } else if (this.curUsingTypeStates[HeroUsingType.trigger]) {
             this.curUsingType = HeroUsingType.trigger;
-        } else if (this.curUsingTypeStates[HeroUsingType.jumpDown]) {
-            this.curUsingType = HeroUsingType.jumpDown;
         } else if (this.curUsingTypeStates[HeroUsingType.midGate]) {
             this.curUsingType = HeroUsingType.midGate;
+        } else if (this.curUsingTypeStates[HeroUsingType.jumpDown]) {
+            this.curUsingType = HeroUsingType.jumpDown;
         } else {
             this.curUsingType = null;
         }
@@ -317,10 +323,18 @@ export class Hero extends MyComponent {
 
         if (this.watchedCollisionData) {
             let dir = enemyDir != 0 ? enemyDir : potDir;
-            this.looks.attack(dir);
+            this.enterAttackingState(dir);
         } else if (havingDataBefore) {
-            this.looks.endAttack();
+            this.stopAttackingState();
         }
+    }
+
+    enterAttackingState(dir: number) {
+        this.looks.attack(dir);
+    }
+
+    stopAttackingState() {
+        this.looks.endAttack();
     }
 
     /** 调用attack组件，进行一次攻击 */

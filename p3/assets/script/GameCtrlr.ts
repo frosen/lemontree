@@ -19,10 +19,18 @@ import {GameMemory} from "./GameMemory";
 
 import MyComponent from "./MyComponent";
 
+/** 播放状态 */
+export enum PlayState {
+    /** 游戏状态，可以操作 */
+    game = 1,
+    /** 剧情状态，不可以操作 */
+    story = 2,
+}
+
 let sch = cc.director.getScheduler();
 
 @ccclass
-export default class GameCtrlr extends cc.Component {
+export class GameCtrlr extends cc.Component {
 
     @property(MapCtrlr)
     mapCtrlr: MapCtrlr = null;
@@ -50,10 +58,15 @@ export default class GameCtrlr extends cc.Component {
 
     gameMemory: GameMemory = null;
 
-    private curSceneIndex: number = 0; // 从0开始，0则为家
-    private curAreaIndex: number = 0; // 从0开始
+    /** 从0开始，0则为家 */
+    private curSceneIndex: number = 0;
+    /** 从0开始 */
+    private curAreaIndex: number = 0;
 
     gamePause: boolean = false;
+
+    /** 播放状态，游戏还是剧情 */
+    playState: PlayState = PlayState.game;
 
     // 游戏总数据 ========================================================
 
@@ -341,5 +354,11 @@ export default class GameCtrlr extends cc.Component {
 
     getCurAreaIndex() {
         return this.curAreaIndex;
+    }
+
+    // ========================================================
+
+    turnPlayState(state: PlayState) {
+
     }
 }

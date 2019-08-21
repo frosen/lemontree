@@ -5,7 +5,7 @@
 const {ccclass, property} = cc._decorator;
 
 import MyComponent from "./MyComponent";
-import GameCtrlr from "./GameCtrlr";
+import {GameCtrlr} from "./GameCtrlr";
 import Spine from "./Spine";
 import {SpineJson} from "./MapCtrlr";
 
