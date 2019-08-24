@@ -195,6 +195,7 @@ export default class HeroOperator extends MyComponent {
     }
 
     onKeyDown (event) {
+        if (!this.enabled) return;
         switch(event.keyCode) {
             case cc.KEY.a:
             case cc.KEY.left:
@@ -220,10 +221,24 @@ export default class HeroOperator extends MyComponent {
                 let dir = this.hero.looks.xUIDir;
                 this.hero.movableObj.blink(this.hero.node.x + dir * 300, this.hero.node.y);
                 break;
+
+            case cc.KEY.t:
+                cc.find("main").getComponent("GameCtrlr").test1();
+                break;
+            case cc.KEY.y:
+                cc.find("main").getComponent("GameCtrlr").test2();
+                break;
+            case cc.KEY.u:
+                cc.find("main").getComponent("GameCtrlr").test3();
+                break;
+            case cc.KEY.i:
+                cc.find("main").getComponent("GameCtrlr").test4();
+                break;
         }
     }
 
     onKeyUp (event) {
+        if (!this.enabled) return;
         switch(event.keyCode) {
             case cc.KEY.a:
             case cc.KEY.left:

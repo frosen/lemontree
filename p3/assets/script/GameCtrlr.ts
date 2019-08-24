@@ -7,6 +7,7 @@ const {ccclass, property} = cc._decorator;
 import {AreaType, GroundInfo, MapCtrlr} from "./MapCtrlr";
 import {TerrainCtrlr} from "./TerrainCtrlr";
 import {Hero} from "./Hero";
+import HeroOperator from "./HeroOperator";
 
 import EnemyCtrlr from "./EnemyCtrlr";
 import SpineCtrlr from "./SpineCtrlr";
@@ -14,6 +15,7 @@ import PotCtrlr from "./PotCtrlr";
 
 import {ItemCtrlr} from "./ItemCtrlr";
 import Curtain from "./Curtain";
+import CameraCtrlr from "./CameraCtrlr";
 
 import {GameMemory} from "./GameMemory";
 
@@ -41,6 +43,9 @@ export class GameCtrlr extends cc.Component {
     @property(Hero)
     hero: Hero = null;
 
+    @property(HeroOperator)
+    operator: HeroOperator = null;
+
     @property(EnemyCtrlr)
     enemyCtrlr: EnemyCtrlr = null;
 
@@ -55,6 +60,9 @@ export class GameCtrlr extends cc.Component {
 
     @property(Curtain)
     curtain: Curtain = null;
+
+    @property(CameraCtrlr)
+    camera: CameraCtrlr = null;
 
     gameMemory: GameMemory = null;
 
@@ -87,7 +95,7 @@ export class GameCtrlr extends cc.Component {
         }
     }
 
-    createHomeScene() {
+    createHomeScene(callback = null) {
         this.curSceneIndex = 0;
         callList(this, [
             [this._loadScene],
@@ -96,11 +104,15 @@ export class GameCtrlr extends cc.Component {
             // [this._createObjs],
             [this._gotoHeroSpot],
             // [this._prepareFightSceneData],
-            [this._showScene]
+            [this._showScene],
+            [() => {
+                this.turnPlayState(PlayState.game);
+                if (callback) callback();
+            }]
         ]);
     }
 
-    createFightScene(index: number) {
+    createFightScene(index: number, callback = null) {
         this.curSceneIndex = index;
         callList(this, [
             [this._loadScene],
@@ -112,7 +124,11 @@ export class GameCtrlr extends cc.Component {
             [this._createObjs],
             [this._gotoHeroSpot],
             [this._collectGarbage],
-            [this._showScene]
+            [this._showScene],
+            [() => {
+                this.turnPlayState(PlayState.game);
+                if (callback) callback();
+            }]
         ]);
     }
 
@@ -230,8 +246,9 @@ export class GameCtrlr extends cc.Component {
     }
 
     _showScene(callNext: () => void, lastData: any) {
-        this.curtain.showScene();
-        return callNext();
+        this.curtain.showSceneBySquare(this.getHeroPosInView(), () => {
+            return callNext();
+        });
     }
 
     _prepareFightSceneData(callNext: () => void, lastData: any) {
@@ -358,7 +375,58 @@ export class GameCtrlr extends cc.Component {
 
     // ========================================================
 
+    /** 
+     * 能否操作，改变hero移动和攻击状态，hero失去被攻击范围和视野范围
+     */
     turnPlayState(state: PlayState) {
+        if (state == this.playState) return;
+        this.playState = state;
+        if (this.playState == PlayState.game) {
+            this.operator.enabled = true;
+            this.operator.node.resumeSystemEvents(false);
+            this.hero.objCollider.enabled = true;
+            this.hero.watchCollider.enabled = true;
+        } else {
+            this.operator.enabled = false;
+            this.operator.node.pauseSystemEvents(false);
+            this.hero.objCollider.enabled = false;
+            this.hero.watchCollider.enabled = false;
+        }
+    }
 
+    // ========================================================
+
+    getHeroPosInView(): cc.Vec2 {
+        let vSize = cc.view.getVisibleSize();
+        let heroPos = this.hero.node.position;
+        heroPos.addSelf(cc.v2(0, this.hero.node.height * 0.5));
+        let cameraPos = this.camera.node.position;
+        let subPos = heroPos.sub(cameraPos);
+        let p = subPos.add(cc.v2(vSize.width * 0.5, vSize.height * 0.5));
+        return p;
+    }
+
+    test1() {
+        // 测试
+        this.turnPlayState(PlayState.story);
+
+        // 帷幕
+        this.curtain.hideSceneBySquare(this.getHeroPosInView(), () => {
+            this.createFightScene(1, () => {
+                this.turnPlayState(PlayState.game);
+            });
+        });
+    }
+    
+    test2() {
+        // this.turnPlayState(PlayState.story);
+    }
+
+    test3() {
+        
+    }
+
+    test4() {
+        
     }
 }

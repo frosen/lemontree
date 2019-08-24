@@ -225,9 +225,8 @@ export class MapCtrlr extends MyComponent {
     resetAreaJson(areaIndex: number, finishCallback: (suc: boolean) => void) {
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let sceneKey = this.getSceneKey(curSceneIndex, areaIndex);
-        
-        let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey);
-        
+        // let filePath = my.MapCreator.getInstance().getSaveFilePath(sceneKey);
+        let filePath = "/Users/luyueyan/Documents/lemontree/mapjson/scene_1_0.json";
         let jsonStr: string = jsb.fileUtils.getStringFromFile(filePath);
         if (!jsonStr) {
             cc.error(`Wrong in resetAreaJson getStringFromFile: ${sceneKey}`);
