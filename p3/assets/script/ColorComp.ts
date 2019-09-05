@@ -2,17 +2,16 @@
 // 颜色控制组件，解决颜色冲突的问题，可以控制自己及子节点所有的精灵
 // lly 2018.8.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from './MyComponent';
 
 @ccclass
 export default class ColorComp extends MyComponent {
-
     /** 所有带有精灵的节点 */
     allSpNodes: cc.Node[] = [];
 
-    colorDict: {[key: string]: cc.Color} = {};
+    colorDict: { [key: string]: cc.Color } = {};
 
     resetSp() {
         // 获取精灵节点
@@ -23,7 +22,10 @@ export default class ColorComp extends MyComponent {
     }
 
     resetColor() {
-        let r = 0, g = 0, b = 0, l = 0;
+        let r = 0,
+            g = 0,
+            b = 0,
+            l = 0;
         for (const key in this.colorDict) {
             const color = this.colorDict[key];
             r += color.getR();

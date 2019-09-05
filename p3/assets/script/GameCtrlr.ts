@@ -2,24 +2,25 @@
 // 游戏控制器，负责一些游戏的整体控制，切换地图
 // lly 2018.5.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {AreaType, GroundInfo, MapCtrlr} from "./MapCtrlr";
-import {TerrainCtrlr} from "./TerrainCtrlr";
-import {Hero} from "./Hero";
-import HeroOperator from "./HeroOperator";
+import { AreaType, GroundInfo, MapCtrlr } from './MapCtrlr';
+import { TerrainCtrlr } from './TerrainCtrlr';
+import { Hero } from './Hero';
+import HeroOperator from './HeroOperator';
 
-import EnemyCtrlr from "./EnemyCtrlr";
-import SpineCtrlr from "./SpineCtrlr";
-import PotCtrlr from "./PotCtrlr";
+import EnemyCtrlr from './EnemyCtrlr';
+import SpineCtrlr from './SpineCtrlr';
+import PotCtrlr from './PotCtrlr';
 
-import {ItemCtrlr} from "./ItemCtrlr";
-import Curtain from "./Curtain";
-import CameraCtrlr from "./CameraCtrlr";
+import { ItemCtrlr } from './ItemCtrlr';
+import Curtain from './Curtain';
+import CameraCtrlr from './CameraCtrlr';
+import UICtrlr from './UICtrlr';
 
-import {GameMemory} from "./GameMemory";
+import { GameMemory } from './GameMemory';
 
-import MyComponent from "./MyComponent";
+import MyComponent from './MyComponent';
 
 /** 播放状态 */
 export enum PlayState {
@@ -29,11 +30,15 @@ export enum PlayState {
     story = 2,
 }
 
+enum TurningType {
+    fade = 1,
+    square = 2,
+}
+
 let sch = cc.director.getScheduler();
 
 @ccclass
 export class GameCtrlr extends cc.Component {
-
     @property(MapCtrlr)
     mapCtrlr: MapCtrlr = null;
 
@@ -64,6 +69,9 @@ export class GameCtrlr extends cc.Component {
     @property(CameraCtrlr)
     camera: CameraCtrlr = null;
 
+    @property(UICtrlr)
+    ui: UICtrlr = null;
+
     gameMemory: GameMemory = null;
 
     /** 从0开始，0则为家 */
@@ -76,12 +84,15 @@ export class GameCtrlr extends cc.Component {
     /** 播放状态，游戏还是剧情 */
     playState: PlayState = PlayState.game;
 
+    turningTypes: { hide: TurningType; show: TurningType } = { hide: TurningType.fade, show: TurningType.fade };
+
     // 游戏总数据 ========================================================
 
     /** 下次进入fight场景时都可能进入的场景序号 */
     needFightSceneIndexs: number[] = [];
 
-    start() { // 所有默认直接onload的之后
+    // 所有默认直接onload的之后
+    start() {
         this.gameMemory = new GameMemory(this.onMemoryLoad.bind(this));
         this.gameMemory.load();
     }
@@ -103,12 +114,14 @@ export class GameCtrlr extends cc.Component {
             // [this._loadSpineRes], llytodo 以后home会有spine的
             // [this._createObjs],
             [this._gotoHeroSpot],
-            // [this._prepareFightSceneData],
+            [this._prepareFightSceneData],
             [this._showScene],
-            [() => {
-                this.turnPlayState(PlayState.game);
-                if (callback) callback();
-            }]
+            [
+                () => {
+                    this._turnPlayState(PlayState.game);
+                    if (callback) callback();
+                },
+            ],
         ]);
     }
 
@@ -125,10 +138,12 @@ export class GameCtrlr extends cc.Component {
             [this._gotoHeroSpot],
             [this._collectGarbage],
             [this._showScene],
-            [() => {
-                this.turnPlayState(PlayState.game);
-                if (callback) callback();
-            }]
+            [
+                () => {
+                    this._turnPlayState(PlayState.game);
+                    if (callback) callback();
+                },
+            ],
         ]);
     }
 
@@ -146,7 +161,7 @@ export class GameCtrlr extends cc.Component {
         let areaCount = this.mapCtrlr.getTempAreaCount();
         let index = 0;
         let wrongTimes = 0;
-        while(index < areaCount) {
+        while (index < areaCount) {
             let suc = await this._loadAreaByIndexAsync(index);
             cc.log('load area: ', index, suc);
 
@@ -154,56 +169,58 @@ export class GameCtrlr extends cc.Component {
                 index++;
             } else {
                 wrongTimes++;
-                
-                if (this.curSceneIndex == 0) { // 在家，删除重新创建
+
+                if (this.curSceneIndex == 0) {
+                    // 在家，删除重新创建
                     if (wrongTimes >= 10 && this.mapCtrlr.preparing == false) {
                         this.mapCtrlr.deleteSaveFile(this.curSceneIndex, this.curAreaIndex);
                         this.mapCtrlr.prepareFightSceneData([this.curSceneIndex], () => {});
                         wrongTimes = 0;
-                        await this._sleep(500);
+                        await this._sleepSync(0.5);
                     }
-                } else { // 战斗场景，直接返回家
+                } else {
+                    // 战斗场景，直接返回家
                     if (wrongTimes >= 2) {
                         return this.enterHomeScene();
                     }
                 }
 
-                await this._sleep(500);
+                await this._sleepSync(0.5);
             }
         }
         callNext();
     }
 
     async _loadAreaByIndexAsync(index: number): Promise<boolean> {
-        if (!await this._resetAreaJson(index)) return false;
-        if (!await this._checkAreaJson(index)) return false;
+        if (!(await this._resetAreaJsonSync(index))) return false;
+        if (!(await this._checkAreaJsonSync(index))) return false;
         return true;
     }
 
-    _resetAreaJson(index): Promise<boolean> {
-        return new Promise((resolve) => {
+    _resetAreaJsonSync(index): Promise<boolean> {
+        return new Promise(resolve => {
             this.mapCtrlr.resetAreaJson(index, (suc: boolean) => {
                 resolve(suc);
             });
         });
     }
 
-    _checkAreaJson(index): Promise<boolean> {
-        return new Promise((resolve) => {
+    _checkAreaJsonSync(index): Promise<boolean> {
+        return new Promise(resolve => {
             this.mapCtrlr.checkAreaJson(index, (suc: boolean) => {
                 resolve(suc);
             });
         });
     }
 
-    _sleep(t): Promise<void> {
-        return new Promise((resolve) => {
-          setTimeout(() => resolve(), t);
+    _sleepSync(second: number): Promise<void> {
+        return new Promise(resolve => {
+            setTimeout(() => resolve(), second * 1000);
         });
     }
 
     _createScene(callNext: () => void, lastData: any) {
-        return this.mapCtrlr.createMapData(callNext)
+        return this.mapCtrlr.createMapData(callNext);
     }
 
     _loadEnemyRes(callNext: () => void, lastData: any) {
@@ -239,14 +256,14 @@ export class GameCtrlr extends cc.Component {
     }
 
     _gotoHeroSpot(callNext: () => void, lastData: any) {
-        let {area, pX, pY} = this.mapCtrlr.getHeroPos();
+        let { area, pX, pY } = this.mapCtrlr.getHeroPos();
         this._changeArea(area, pX, pY);
         this.hero.resetHero(); // 切换场景时，重置hero
         return callNext();
     }
 
     _showScene(callNext: () => void, lastData: any) {
-        this.curtain.showSceneBySquare(this.getHeroPosInView(), () => {
+        this.curtain.showSceneBySquare(this._getHeroPosInView(), () => {
             return callNext();
         });
     }
@@ -267,29 +284,48 @@ export class GameCtrlr extends cc.Component {
 
     // ========================================================
 
-    enterHomeScene() {
-
+    dead() {
+        this._deadAsync();
     }
 
-    enterFightScene(index: number) {
-        
+    async _deadAsync() {
+        this._turnPlayState(PlayState.story);
+        await this._beginSlowTimeSync(2.4);
+
+        this.curtain.hideSceneBySquare(this._getHeroPosInView(), () => {
+            this.createFightScene(1, () => {
+                this._turnPlayState(PlayState.game);
+            });
+        });
+    }
+
+    _hideSceneSync() {
+        return new Promise(resolve => {
+            let hideType = this.turningTypes.hide;
+            if (hideType == TurningType.fade) {
+                this.curtain.hideSceneByFade(() => {
+                    resolve();
+                });
+            } else {
+            }
+        });
     }
 
     // ========================================================
 
     enterSideGate(gateGid: number, lastHeroPos: cc.Vec2) {
-        let {thisX, thisY, otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
+        let { thisX, thisY, otherArea, otherX, otherY } = this.mapCtrlr.getGatePos(gateGid);
         let diff = cc.pSub(lastHeroPos, cc.v2(thisX, thisY));
         this._changeArea(otherArea, otherX, otherY, diff.x, diff.y);
     }
 
     enterMidGate(gateGid: number) {
-        let {otherArea, otherX, otherY} = this.mapCtrlr.getGatePos(gateGid);
+        let { otherArea, otherX, otherY } = this.mapCtrlr.getGatePos(gateGid);
         this._changeArea(otherArea, otherX, otherY);
     }
 
     _changeArea(areaIndex: number, x: number, y: number, offsetX: number = 0, offsetY: number = 0) {
-        cc.log(">>>>> change area", areaIndex);
+        cc.log('>>>>> change area', areaIndex);
         this.curAreaIndex = areaIndex;
 
         this.mapCtrlr.changeArea();
@@ -375,10 +411,10 @@ export class GameCtrlr extends cc.Component {
 
     // ========================================================
 
-    /** 
+    /**
      * 能否操作，改变hero移动和攻击状态，hero失去被攻击范围和视野范围
      */
-    turnPlayState(state: PlayState) {
+    _turnPlayState(state: PlayState) {
         if (state == this.playState) return;
         this.playState = state;
         if (this.playState == PlayState.game) {
@@ -386,17 +422,42 @@ export class GameCtrlr extends cc.Component {
             this.operator.node.resumeSystemEvents(false);
             this.hero.objCollider.enabled = true;
             this.hero.watchCollider.enabled = true;
+            this.ui.setUsingBtnEnabled(true);
+            this.ui.setPauseBtnEnabled(true);
         } else {
             this.operator.enabled = false;
             this.operator.node.pauseSystemEvents(false);
             this.hero.objCollider.enabled = false;
             this.hero.watchCollider.enabled = false;
+            this.ui.setUsingBtnEnabled(false);
+            this.ui.setPauseBtnEnabled(false);
         }
     }
 
-    // ========================================================
+    endSlowCallId: number = null;
 
-    getHeroPosInView(): cc.Vec2 {
+    _beginSlowTime(second: number, callback: () => void) {
+        if (this.endSlowCallId != null) {
+            clearTimeout(this.endSlowCallId);
+        } else {
+            cc.game.setFrameRate(10);
+        }
+        this.endSlowCallId = setTimeout(() => {
+            cc.game.setFrameRate(60);
+            callback();
+            this.endSlowCallId = null;
+        }, second * 1000);
+    }
+
+    _beginSlowTimeSync(second: number): Promise<void> {
+        return new Promise(resolve => {
+            this._beginSlowTime(second, () => {
+                resolve();
+            });
+        });
+    }
+
+    _getHeroPosInView(): cc.Vec2 {
         let vSize = cc.view.getVisibleSize();
         let heroPos = this.hero.node.position;
         heroPos.addSelf(cc.v2(0, this.hero.node.height * 0.5));
@@ -406,27 +467,25 @@ export class GameCtrlr extends cc.Component {
         return p;
     }
 
+    // ========================================================
+
     test1() {
         // 测试
-        this.turnPlayState(PlayState.story);
+        this._turnPlayState(PlayState.story);
 
         // 帷幕
-        this.curtain.hideSceneBySquare(this.getHeroPosInView(), () => {
+        this.curtain.hideSceneBySquare(this._getHeroPosInView(), () => {
             this.createFightScene(1, () => {
-                this.turnPlayState(PlayState.game);
+                this._turnPlayState(PlayState.game);
             });
         });
     }
-    
+
     test2() {
         // this.turnPlayState(PlayState.story);
     }
 
-    test3() {
-        
-    }
+    test3() {}
 
-    test4() {
-        
-    }
+    test4() {}
 }

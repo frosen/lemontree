@@ -3,16 +3,15 @@
 //
 // lly 2018.9.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTNode, BTResult} from "./BTNode";
-import BTComp from "./BTComp";
+import { BTNode, BTResult } from './BTNode';
+import BTComp from './BTComp';
 
 @ccclass
 export default class BTCtrlr extends cc.Component {
-
     // 行为树字典，每种行为树记录一份
-    btDict: {[key: string]: BTNode} = {};
+    btDict: { [key: string]: BTNode } = {};
 
     setBT(comp: BTComp, name: string, btPrefab: cc.Prefab) {
         let topBtNode = this.btDict[name];

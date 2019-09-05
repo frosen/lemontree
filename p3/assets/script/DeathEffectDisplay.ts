@@ -2,30 +2,34 @@
 // Enemy死亡时候，在相应的地方展示死亡效果
 // lly 2018.3.25
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import MyNodePool from "./MyNodePool";
+import MyComponent from './MyComponent';
+import MyNodePool from './MyNodePool';
 
 @ccclass
 export default class DeathEffectDisplay extends MyComponent {
-
     @property(cc.Prefab)
     deathPrefab: cc.Prefab = null;
 
     pool: MyNodePool = null;
 
     onLoad() {
-        this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
-            let labelNode = this.creatDeathNode(); // 创建节点
-            return labelNode;
-        }, 20, "DeathEffect", this.node);
+        this.pool = new MyNodePool(
+            (_: MyNodePool): cc.Node => {
+                let labelNode = this.creatDeathNode(); // 创建节点
+                return labelNode;
+            },
+            20,
+            'DeathEffect',
+            this.node,
+        );
     }
 
     creatDeathNode(): cc.Node {
         let labelNode = cc.instantiate(this.deathPrefab); // 创建节点
         let anim = labelNode.getComponent(cc.Animation);
-        anim.on("finished", (event: Event) => {
+        anim.on('finished', (event: Event) => {
             this.pool.reclaim(labelNode);
         });
 

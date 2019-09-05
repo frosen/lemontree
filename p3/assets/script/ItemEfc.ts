@@ -2,27 +2,27 @@
 // 效果道具：
 // lly 2018.4.12
 
-import Item from "./Item";
-import AttriForHero from "./AttriForHero";
-import {MapCtrlr, SceneAttri} from "./MapCtrlr";
-import {Hero} from "./Hero";
+import Item from './Item';
+import AttriForHero from './AttriForHero';
+import { MapCtrlr, SceneAttri } from './MapCtrlr';
+import { Hero } from './Hero';
 
 export abstract class ItemEfc extends Item {
-    isMagnetic(): boolean {return false};
+    isMagnetic(): boolean {
+        return false;
+    }
 }
 
 // 特殊道具 获取后的UI显示和普通不一样========================================================
 
 /** 恢复已损失血量的20% */
 class ItemHealthPot extends ItemEfc {
-    getFrameInfos(): {frameName: string, time: number}[] {
-        return [
-            {frameName: "ItemHealthPot_1", time: 1000},
-        ];
+    getFrameInfos(): { frameName: string; time: number }[] {
+        return [{ frameName: 'ItemHealthPot_1', time: 1000 }];
     }
 
     doEffect() {
-        let attri: AttriForHero = cc.find("main/hero_layer/s_hero").getComponent("AttriForHero");
+        let attri: AttriForHero = cc.find('main/hero_layer/s_hero').getComponent('AttriForHero');
         let hpLoss = attri.maxHp.get() - attri.hp.get();
         attri.hp.add(hpLoss * 0.2);
     }
@@ -31,14 +31,12 @@ class ItemHealthPot extends ItemEfc {
 /** 根据当前场景和拥有卡片的程度，随机获取一张卡片 */
 /** 注意：卡片效果只能在下一次使用 */
 class ItemCard extends ItemEfc {
-    getFrameInfos(): {frameName: string, time: number}[] {
-        return [
-            {frameName: "ItemCard_1", time: 1000},
-        ];
+    getFrameInfos(): { frameName: string; time: number }[] {
+        return [{ frameName: 'ItemCard_1', time: 1000 }];
     }
 
     doEffect() {
-        let hero: Hero = cc.find("main/hero_layer/s_hero").getComponent("Hero");
+        let hero: Hero = cc.find('main/hero_layer/s_hero').getComponent('Hero');
         let attri: AttriForHero = hero.attri;
         let noObtCards = attri.getNoObtainedCards();
 
@@ -48,7 +46,7 @@ class ItemCard extends ItemEfc {
             return;
         }
 
-        let mapCtrlr: MapCtrlr = cc.find("main/map").getComponent("MapCtrlr");
+        let mapCtrlr: MapCtrlr = cc.find('main/map').getComponent('MapCtrlr');
         let sceneAttri: SceneAttri = mapCtrlr.getCurSceneAttri();
         let sceneCards: number[] = sceneAttri.cardIndexs;
 
@@ -86,7 +84,6 @@ class ItemCard extends ItemEfc {
 
 /** 和卡片一样的效果的道具的基类 */
 abstract class ItemNormalEffectBase extends ItemEfc {
-
     doEffect() {
         this._doEffect();
 
@@ -99,9 +96,8 @@ abstract class ItemNormalEffectBase extends ItemEfc {
 
 /** 和卡片一样的效果的道具的基类 */
 abstract class ItemCardEffectBase extends ItemNormalEffectBase {
-
     _doEffect() {
-        let hero: Hero = cc.find("main/hero_layer/s_hero").getComponent("Hero");
+        let hero: Hero = cc.find('main/hero_layer/s_hero').getComponent('Hero');
         let attri: AttriForHero = hero.attri;
         let name = this._getCardName();
         let index = attri.cardNames.indexOf(name);
@@ -109,7 +105,8 @@ abstract class ItemCardEffectBase extends ItemNormalEffectBase {
         let card: number = attri[name];
         if (card < max) {
             attri[name] = card + 1;
-            if (max == 3) { // 有三级的是主动能力卡片
+            if (max == 3) {
+                // 有三级的是主动能力卡片
                 hero.resetCardAbility();
             }
         }
@@ -119,38 +116,32 @@ abstract class ItemCardEffectBase extends ItemNormalEffectBase {
 }
 
 class ItemCardSwordWave extends ItemCardEffectBase {
-    getFrameInfos(): {frameName: string, time: number}[] {
-        return [
-            {frameName: "ItemSword_1", time: 1000},
-        ];
+    getFrameInfos(): { frameName: string; time: number }[] {
+        return [{ frameName: 'ItemSword_1', time: 1000 }];
     }
 
     _getCardName(): string {
-        return "swordWave";
+        return 'swordWave';
     }
 }
 
 class ItemCardFlameSprite extends ItemCardEffectBase {
-    getFrameInfos(): {frameName: string, time: number}[] {
-        return [
-            {frameName: "ItemFlame_1", time: 1000},
-        ];
+    getFrameInfos(): { frameName: string; time: number }[] {
+        return [{ frameName: 'ItemFlame_1', time: 1000 }];
     }
 
     _getCardName(): string {
-        return "flameSprite";
+        return 'flameSprite';
     }
 }
 
 class ItemCriticalSword extends ItemNormalEffectBase {
-    getFrameInfos(): {frameName: string, time: number}[] {
-        return [
-            {frameName: "ItemSword_1", time: 1000},
-        ];
+    getFrameInfos(): { frameName: string; time: number }[] {
+        return [{ frameName: 'ItemSword_1', time: 1000 }];
     }
 
     _doEffect() {
-        let attri: AttriForHero = cc.find("main/hero_layer/s_hero").getComponent("AttriForHero");
+        let attri: AttriForHero = cc.find('main/hero_layer/s_hero').getComponent('AttriForHero');
         attri.critRate.add(0.2);
     }
 }
@@ -160,5 +151,5 @@ export const ItemEfcDict = {
     ItemCard: ItemCard,
     ItemCardSwordWave: ItemCardSwordWave,
     ItemCardFlameSprite: ItemCardFlameSprite,
-    ItemCriticalSword: ItemCriticalSword
-}
+    ItemCriticalSword: ItemCriticalSword,
+};

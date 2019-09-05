@@ -2,19 +2,18 @@
 // 可以带减损效果的组件，转为hero使用
 // lly 2018.12.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import DebuffComp from "./DebuffComp";
-import {Debuff} from "./Debuff";
-import AttriForHero from "./AttriForHero";
+import DebuffComp from './DebuffComp';
+import { Debuff } from './Debuff';
+import AttriForHero from './AttriForHero';
 
 @ccclass
 export default class DebuffCompForHero extends DebuffComp {
-
     attri: AttriForHero = null;
 
     onLoad() {
-        this.attri = cc.find("main/hero_layer/s_hero").getComponent("AttriForHero");
+        this.attri = cc.find('main/hero_layer/s_hero').getComponent('AttriForHero');
     }
 
     setDebuff(debuff: Debuff) {

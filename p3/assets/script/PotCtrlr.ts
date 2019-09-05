@@ -2,13 +2,13 @@
 // 水罐管理器，水罐就是场景中的可破坏物：
 // lly 2018.5.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {GameCtrlr} from "./GameCtrlr";
-import Pot from "./Pot";
-import MyNodePool from "./MyNodePool";
-import {GroundInfo} from "./MapCtrlr";
+import MyComponent from './MyComponent';
+import { GameCtrlr } from './GameCtrlr';
+import Pot from './Pot';
+import MyNodePool from './MyNodePool';
+import { GroundInfo } from './MapCtrlr';
 
 class PotInfo {
     frame: cc.SpriteFrame;
@@ -30,7 +30,6 @@ class PotData {
 
 @ccclass
 export default class PotCtrlr extends MyComponent {
-
     @property([cc.Node])
     showingPots: cc.Node[] = [];
 
@@ -44,16 +43,22 @@ export default class PotCtrlr extends MyComponent {
     datas: PotData[][] = [];
 
     onLoad() {
-        this.gameCtrlr = cc.find("main").getComponent(GameCtrlr);
+        this.gameCtrlr = cc.find('main').getComponent(GameCtrlr);
 
         // 生成节点池
-        this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
-            let node = new cc.Node();
-            node.name = "pot";
-            node.addComponent(Pot);
-            node.setAnchorPoint(0.5, 0);
-            return node;
-        }, 30, "pot", this.node, Pot);
+        this.pool = new MyNodePool(
+            (_: MyNodePool): cc.Node => {
+                let node = new cc.Node();
+                node.name = 'pot';
+                node.addComponent(Pot);
+                node.setAnchorPoint(0.5, 0);
+                return node;
+            },
+            30,
+            'pot',
+            this.node,
+            Pot,
+        );
 
         this._createShowingPots();
     }
@@ -66,7 +71,7 @@ export default class PotCtrlr extends MyComponent {
             let sp = node.getComponent(cc.Sprite);
             let frame = sp.spriteFrame;
             let name = frame.name;
-            let datas = name.split("_");
+            let datas = name.split('_');
 
             pot.setData(null, frame, cc.hexToColor(datas[1]), cc.hexToColor(datas[2]));
         }
@@ -77,14 +82,18 @@ export default class PotCtrlr extends MyComponent {
         if (this.infos[curSceneIndex]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(`map/scene${curSceneIndex}/pot`, cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
-            if (error) {
-                cc.log(`Wrong in load res dir: ${error.message}`);
-                return;
-            }
-            this._onGotFrames(curSceneIndex, frames);
-            return finishCallback();
-        });
+        cc.loader.loadResDir(
+            `map/scene${curSceneIndex}/pot`,
+            cc.SpriteFrame,
+            (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
+                if (error) {
+                    cc.log(`Wrong in load res dir: ${error.message}`);
+                    return;
+                }
+                this._onGotFrames(curSceneIndex, frames);
+                return finishCallback();
+            },
+        );
     }
 
     /**
@@ -94,7 +103,7 @@ export default class PotCtrlr extends MyComponent {
         let potInfos = [];
         for (const frame of frames) {
             let name = frame.name;
-            let datas = name.split("_");
+            let datas = name.split('_');
             let info = new PotInfo();
             info.frame = frame;
             info.c1 = cc.hexToColor(datas[1]);
@@ -142,7 +151,8 @@ export default class PotCtrlr extends MyComponent {
         if (index != null) {
             this.datas[curAreaIndex][index].living = false;
             this.pool.reclaim(pot.node);
-        } else { // 没有index说明不是从pool中生成的
+        } else {
+            // 没有index说明不是从pool中生成的
             pot.node.destroy();
         }
     }

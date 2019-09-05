@@ -3,11 +3,11 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property, executeInEditMode, disallowMultiple} = cc._decorator;
+const { ccclass, property, executeInEditMode, disallowMultiple } = cc._decorator;
 
-import MyComponent from "../script/MyComponent";
-import BTComp from "./BTComp";
-import BTCtrlr from "./BTCtrlr";
+import MyComponent from '../script/MyComponent';
+import BTComp from './BTComp';
+import BTCtrlr from './BTCtrlr';
 
 /** 行为返回的结果 */
 export enum BTResult {
@@ -25,11 +25,10 @@ export enum BTResult {
 @executeInEditMode
 @disallowMultiple
 export abstract class BTNode extends MyComponent {
-
     /** 行为树节点唯一索引值生成数 */
     static btIndexCount: number = 0;
     /** 行为树节点唯一索引值 */
-    btIndex: string = "";
+    btIndex: string = '';
 
     onLoad() {
         BTNode.btIndexCount++;
@@ -37,11 +36,11 @@ export abstract class BTNode extends MyComponent {
     }
 
     /** 类型名称，用于在层级管理器中显示 */
-    typeString: string = "";
+    typeString: string = '';
 
     update(_: number) {
         if (!CC_EDITOR) return;
-        this.node.name = this.typeString + ": " + this.getBTName();
+        this.node.name = this.typeString + ': ' + this.getBTName();
     }
 
     abstract getBTName(): string;
@@ -64,19 +63,15 @@ export abstract class BTNode extends MyComponent {
     /**
      * 执行每个节点的行动（只有running时有行动）
      */
-    doAction(comp: BTComp) {
-
-    }
+    doAction(comp: BTComp) {}
 
     isRunning(comp: BTComp): boolean {
         return false;
     }
 
-    endRunning(comp: BTComp) {
-
-    }
+    endRunning(comp: BTComp) {}
 
     static getBTCtrlr(): BTCtrlr {
-        return cc.find("bt").getComponent(BTCtrlr);
+        return cc.find('bt').getComponent(BTCtrlr);
     }
 }

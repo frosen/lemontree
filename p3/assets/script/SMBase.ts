@@ -6,7 +6,6 @@
 const StateBeginuNmber: number = 1173000;
 
 export class SMMgr<SMObj> {
-
     /** 生成状态机的状态，避免重复 */
     static _newestStateNumber: number = StateBeginuNmber;
     static createSMState() {
@@ -17,11 +16,11 @@ export class SMMgr<SMObj> {
     /** 检测状态数字是否正确 */
     static checkSMState(st: number) {
         let n = st - StateBeginuNmber;
-        cc.assert(0 < n && n < StateBeginuNmber, "wrong sm st");
+        cc.assert(0 < n && n < StateBeginuNmber, 'wrong sm st');
     }
 
     /** 状态列表，enum: SMForHero */
-    stateList: {[key: number]: SM<SMObj>;} = {};
+    stateList: { [key: number]: SM<SMObj> } = {};
     /** 当前状态 */
     curState: number = null;
     /** 当前状态机 */

@@ -5,11 +5,11 @@
 // 此组件放在控制层上，知道Hero类并给其发消息
 // lly 2017.12.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {Hero} from "./Hero";
-import CameraCtrlr from "./CameraCtrlr";
+import MyComponent from './MyComponent';
+import { Hero } from './Hero';
+import CameraCtrlr from './CameraCtrlr';
 
 const DisForMove: number = 7;
 const MinMoveBegin: number = 30;
@@ -19,7 +19,6 @@ const CameraBackP: number = 1;
 
 @ccclass
 export default class HeroOperator extends MyComponent {
-
     /** 所控制的英雄 */
     @property(Hero)
     hero: Hero = null;
@@ -104,7 +103,6 @@ export default class HeroOperator extends MyComponent {
                     this.watchBeginPos = touchPos;
                 }
             }
-
         } else if (this.jumpX <= touchPos.x) {
             if (touchPos.y < this.jumpH) {
                 this.jumpTouchId = event.getID();
@@ -135,9 +133,8 @@ export default class HeroOperator extends MyComponent {
                 }
             }
             this.hero.move(this.moveDir);
-
         } else if (event.getID() == this.watchTouchId) {
-            let {x, y} = event.getLocation();
+            let { x, y } = event.getLocation();
             x -= this.watchBeginPos.x;
             y -= this.watchBeginPos.y;
             x = Math.min(x, 100);
@@ -155,7 +152,6 @@ export default class HeroOperator extends MyComponent {
             this.moveBeginPos = null;
             this.moveDir = 0;
             this.hero.move(this.moveDir);
-
         } else if (id == this.watchTouchId) {
             this.watchTouchId = null;
             if (this.watchOffset.x != 0 || this.watchOffset.y != 0) {
@@ -163,7 +159,6 @@ export default class HeroOperator extends MyComponent {
                 this.cameraBackDir.x = this.watchOffset.x < 0 ? 1 : -1;
                 this.cameraBackDir.y = this.watchOffset.y < 0 ? 1 : -1;
             }
-
         } else if (id == this.jumpTouchId) {
             this.jumpTouchId = null;
             this.hero.jump(false);
@@ -176,8 +171,8 @@ export default class HeroOperator extends MyComponent {
         let right = this.cameraBackDir.x == 1;
         let up = this.cameraBackDir.y == 1;
 
-        this.watchOffset.x = this.watchOffset.x * CameraBackC + (CameraBackP * (right ? 1 : -1));
-        this.watchOffset.y = this.watchOffset.y * CameraBackC + (CameraBackP * (up ? 1 : -1));
+        this.watchOffset.x = this.watchOffset.x * CameraBackC + CameraBackP * (right ? 1 : -1);
+        this.watchOffset.y = this.watchOffset.y * CameraBackC + CameraBackP * (up ? 1 : -1);
 
         this.watchOffset.x = right ? Math.min(this.watchOffset.x, 0) : Math.max(this.watchOffset.x, 0);
         this.watchOffset.y = up ? Math.min(this.watchOffset.y, 0) : Math.max(this.watchOffset.y, 0);
@@ -194,9 +189,9 @@ export default class HeroOperator extends MyComponent {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     }
 
-    onKeyDown (event) {
+    onKeyDown(event) {
         if (!this.enabled) return;
-        switch(event.keyCode) {
+        switch (event.keyCode) {
             case cc.KEY.a:
             case cc.KEY.left:
                 this.hero.move(-1);
@@ -223,23 +218,31 @@ export default class HeroOperator extends MyComponent {
                 break;
 
             case cc.KEY.t:
-                cc.find("main").getComponent("GameCtrlr").test1();
+                cc.find('main')
+                    .getComponent('GameCtrlr')
+                    .test1();
                 break;
             case cc.KEY.y:
-                cc.find("main").getComponent("GameCtrlr").test2();
+                cc.find('main')
+                    .getComponent('GameCtrlr')
+                    .test2();
                 break;
             case cc.KEY.u:
-                cc.find("main").getComponent("GameCtrlr").test3();
+                cc.find('main')
+                    .getComponent('GameCtrlr')
+                    .test3();
                 break;
             case cc.KEY.i:
-                cc.find("main").getComponent("GameCtrlr").test4();
+                cc.find('main')
+                    .getComponent('GameCtrlr')
+                    .test4();
                 break;
         }
     }
 
-    onKeyUp (event) {
+    onKeyUp(event) {
         if (!this.enabled) return;
-        switch(event.keyCode) {
+        switch (event.keyCode) {
             case cc.KEY.a:
             case cc.KEY.left:
                 if (this.hero.xMoveDir < 0) {

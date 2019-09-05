@@ -3,15 +3,14 @@
 // 自己本身也可以是英雄/敌人，也可以仅仅是子弹
 // lly 2018.10.7
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {Attri} from "./Attri";
-import Attack from "./Attack";
-import MyNodePool from "./MyNodePool";
+import { Attri } from './Attri';
+import Attack from './Attack';
+import MyNodePool from './MyNodePool';
 
 @ccclass
 export default class Bullet extends cc.Component {
-
     /** 子敌人（子弹什么的） */
     @property([cc.Prefab]) bulletPrefabs: cc.Prefab[] = [];
     /** 子敌人的最大数量 */
@@ -19,16 +18,14 @@ export default class Bullet extends cc.Component {
     /** 子敌人能否自动生成 */
     @property([cc.Boolean]) bulletsAutoCreate: boolean[] = [];
     /** 子敌人 */
-    bullets: {[name: string]: MyNodePool;} = {};
+    bullets: { [name: string]: MyNodePool } = {};
 
     needInitAttri: boolean = true;
 
     parent: cc.Node = null;
     thisPool: MyNodePool = null;
 
-    onLoad() {
-
-    }
+    onLoad() {}
 
     init(parent: cc.Node, pool: MyNodePool, attri: Attri, data: any) {
         this.parent = parent;
@@ -59,12 +56,18 @@ export default class Bullet extends cc.Component {
             let prefab = this.bulletPrefabs[index];
             let maxCount = this.bulletsMaxCount[index];
             let name = prefab.name;
-            let pool = new MyNodePool((p: MyNodePool): cc.Node => {
-                let node = cc.instantiate(prefab);
-                let bullet = node.getComponent(Bullet);
-                bullet.init(this.parent, p, attri, data);
-                return node;
-            }, maxCount, this.name + "sub", this.parent, Bullet);
+            let pool = new MyNodePool(
+                (p: MyNodePool): cc.Node => {
+                    let node = cc.instantiate(prefab);
+                    let bullet = node.getComponent(Bullet);
+                    bullet.init(this.parent, p, attri, data);
+                    return node;
+                },
+                maxCount,
+                this.name + 'sub',
+                this.parent,
+                Bullet,
+            );
             pool.autoCreate = this.bulletsAutoCreate[index];
             this.bullets[name] = pool;
         }

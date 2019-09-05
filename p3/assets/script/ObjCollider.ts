@@ -3,9 +3,9 @@
 // 对象碰撞就是英雄，敌人以及相应武器法术之间的碰撞
 // lly 2018.1.13
 
-const {ccclass, property, executeInEditMode} = cc._decorator;
+const { ccclass, property, executeInEditMode } = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from './MyComponent';
 
 export class CollisionData {
     cldr: ObjCollider = null;
@@ -18,7 +18,6 @@ export class CollisionData {
 @ccclass
 @executeInEditMode
 export class ObjCollider extends MyComponent {
-
     /** 回调函数 */
     callback: (collisionDatas: CollisionData[]) => void = null;
 
@@ -79,8 +78,7 @@ export class ObjCollider extends MyComponent {
      * @param 父碰撞对象，只有次级碰撞对象有，默认为空
      * @returns 获取最大最小x，y
      */
-    getMaxMinXY(parentCollider: ObjCollider = null): {minX: number, maxX: number, minY: number, maxY: number} {
-
+    getMaxMinXY(parentCollider: ObjCollider = null): { minX: number; maxX: number; minY: number; maxY: number } {
         let node = this.node;
         let w = this.osize.width > 0 ? this.osize.width : node.width;
         let h = this.osize.height > 0 ? this.osize.height : node.height;
@@ -95,7 +93,7 @@ export class ObjCollider extends MyComponent {
                 minX: minX + node.x,
                 maxX: maxX + node.x,
                 minY: minY + node.y,
-                maxY: maxY + node.y
+                maxY: maxY + node.y,
             };
         }
 
@@ -116,7 +114,7 @@ export class ObjCollider extends MyComponent {
         minY = Math.min(wp0.y, wp1.y, wp2.y, wp3.y);
         maxY = Math.max(wp0.y, wp1.y, wp2.y, wp3.y);
 
-        return {minX, maxX, minY, maxY};
+        return { minX, maxX, minY, maxY };
     }
 
     /**

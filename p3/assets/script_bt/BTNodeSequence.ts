@@ -3,18 +3,17 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTResult} from "./BTNode";
-import BTNodeGroup from "./BTNodeGroup";
-import BTComp from "./BTComp";
+import { BTResult } from './BTNode';
+import BTNodeGroup from './BTNodeGroup';
+import BTComp from './BTComp';
 
-export const CurRunningNodeKey: string = "CurRunningNode";
+export const CurRunningNodeKey: string = 'CurRunningNode';
 
 @ccclass
 export class BTNodeSequence extends BTNodeGroup {
-
-    typeString: string = "Sequence";
+    typeString: string = 'Sequence';
 
     /** 运行时，是否检测运行节点之前其他节点 */
     @property
@@ -30,7 +29,7 @@ export class BTNodeSequence extends BTNodeGroup {
     }
 
     getCheckingAheadInRunningStr(): string {
-        return this.checkingAheadInRunning ? " -- CheckAhead" : "";
+        return this.checkingAheadInRunning ? ' -- CheckAhead' : '';
     }
 
     execute(comp: BTComp): BTResult {
@@ -57,7 +56,6 @@ export class BTNodeSequence extends BTNodeGroup {
             if (result == BTResult.fail) {
                 finalresult = BTResult.fail; // 一旦有失败则直接返回而不往后执行
                 break;
-
             } else if (result == BTResult.running) {
                 comp.setValue(this.btIndex, CurRunningNodeKey, btNode);
                 finalresult = BTResult.running; // 一旦进入运行状态，也不往后执行了
@@ -79,7 +77,6 @@ export class BTNodeSequence extends BTNodeGroup {
                 if (result == BTResult.fail) {
                     this.endRunning(comp);
                     return BTResult.fail; // 一旦有失败则直接返回而不往后执行
-
                 } else if (result == BTResult.running) {
                     this.endRunning(comp);
                     comp.setValue(this.btIndex, CurRunningNodeKey, btNode);
@@ -88,15 +85,12 @@ export class BTNodeSequence extends BTNodeGroup {
             }
         }
 
-
         let result = curRunningBTNode.execute(comp);
         if (result == BTResult.running) {
             return BTResult.running;
-
         } else if (result == BTResult.fail) {
             comp.setValue(this.btIndex, CurRunningNodeKey, null);
             return BTResult.fail;
-
         } else {
             let nextIndex = this.btNodes.indexOf(curRunningBTNode) + 1;
             comp.setValue(this.btIndex, CurRunningNodeKey, null);

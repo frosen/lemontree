@@ -2,20 +2,20 @@
 // 道具控制器，负责持有和生成道具：
 // lly 2018.4.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import AttriForHero from "./AttriForHero";
-import EnemyCtrlr from "./EnemyCtrlr";
-import PotCtrlr from "./PotCtrlr";
+import MyComponent from './MyComponent';
+import AttriForHero from './AttriForHero';
+import EnemyCtrlr from './EnemyCtrlr';
+import PotCtrlr from './PotCtrlr';
 
-import MyNodePool from "./MyNodePool";
+import MyNodePool from './MyNodePool';
 
-import ItemComp from "./ItemComp";
-import Item from "./Item";
+import ItemComp from './ItemComp';
+import Item from './Item';
 
-import {ItemExp, ItemExp1} from "./ItemExp";
-import {ItemEfc, ItemEfcDict} from "./ItemEfc";
+import { ItemExp, ItemExp1 } from './ItemExp';
+import { ItemEfc, ItemEfcDict } from './ItemEfc';
 
 class ItemInfo {
     item: Item = null;
@@ -35,12 +35,11 @@ class ItemInfo {
 
 export enum ItemSource {
     enemy,
-    pot
+    pot,
 }
 
 @ccclass
 export class ItemCtrlr extends MyComponent {
-
     @property([cc.Node])
     showingItems: cc.Node[] = [];
 
@@ -50,7 +49,7 @@ export class ItemCtrlr extends MyComponent {
 
     pool: MyNodePool = null;
 
-    itemInfos: {[key: string]: ItemInfo;} = {};
+    itemInfos: { [key: string]: ItemInfo } = {};
 
     // ========================================================
 
@@ -75,18 +74,24 @@ export class ItemCtrlr extends MyComponent {
     efcList: ItemEfc[] = [];
 
     onLoad() {
-        this.heroAttri = cc.find("main/hero_layer/s_hero").getComponent("Hero").attri;
-        this.enemyCtrlr = cc.find("main/enemy_layer").getComponent(EnemyCtrlr);
-        this.potCtrlr = cc.find("main/pot_layer").getComponent(PotCtrlr);
+        this.heroAttri = cc.find('main/hero_layer/s_hero').getComponent('Hero').attri;
+        this.enemyCtrlr = cc.find('main/enemy_layer').getComponent(EnemyCtrlr);
+        this.potCtrlr = cc.find('main/pot_layer').getComponent(PotCtrlr);
 
         // 生成节点池
-        this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
-            let node = new cc.Node();
-            node.name = "item";
-            let itemComp = node.addComponent(ItemComp);
-            itemComp.itemCtrlr = this;
-            return node;
-        }, 20, "item", this.node, ItemComp);
+        this.pool = new MyNodePool(
+            (_: MyNodePool): cc.Node => {
+                let node = new cc.Node();
+                node.name = 'item';
+                let itemComp = node.addComponent(ItemComp);
+                itemComp.itemCtrlr = this;
+                return node;
+            },
+            20,
+            'item',
+            this.node,
+            ItemComp,
+        );
 
         // 加载所有经验掉落 （按照经验从高到低的顺序）
         this._pushExpItemIntoInfo(ItemExp1);
@@ -100,10 +105,8 @@ export class ItemCtrlr extends MyComponent {
 
         this._pushEfcItemIntoInfo(ItemEfcDict.ItemCriticalSword);
 
-
-
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir("items", cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
+        cc.loader.loadResDir('items', cc.SpriteFrame, (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
             if (error) {
                 cc.log(`Wrong in load res dir: ${error.message}`);
                 return;
@@ -123,18 +126,18 @@ export class ItemCtrlr extends MyComponent {
         this.curAdMfRate = 0.11;
     }
 
-    _pushExpItemIntoInfo(itemType: {new()}) {
+    _pushExpItemIntoInfo(itemType: { new () }) {
         let item: ItemExp = new itemType();
         this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
         this.expList.push(item);
     }
 
-    _pushExtraEfcItemIntoInfo(itemType: {new()}) {
+    _pushExtraEfcItemIntoInfo(itemType: { new () }) {
         let item: ItemEfc = new itemType();
         this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
     }
 
-    _pushEfcItemIntoInfo(itemType: {new()}) {
+    _pushEfcItemIntoInfo(itemType: { new () }) {
         let item: ItemEfc = new itemType();
         this.itemInfos[getClassName(itemType)] = new ItemInfo(item);
         this.efcList.push(item);
@@ -157,7 +160,7 @@ export class ItemCtrlr extends MyComponent {
                 }
             }
 
-            cc.assert(itemInfo.frames.length == itemInfo.times.length, "maybe wrong item name in png");
+            cc.assert(itemInfo.frames.length == itemInfo.times.length, 'maybe wrong item name in png');
         }
 
         // 如果有需要直接安置的item，在此生成
@@ -165,7 +168,7 @@ export class ItemCtrlr extends MyComponent {
             let itemComp = itemNode.addComponent(ItemComp);
             itemComp.itemCtrlr = this;
 
-            let {item, frames, times} = this.itemInfos[itemNode.name];
+            let { item, frames, times } = this.itemInfos[itemNode.name];
             itemComp.setData(item, frames, times);
         }
     }
@@ -173,7 +176,7 @@ export class ItemCtrlr extends MyComponent {
     _beginItemNode(itemName: new () => any, pos: cc.Vec2, moveX: number, moveY: number) {
         let itemComp: ItemComp = this.pool.getComp();
 
-        let {item, frames, times, magnetic} = this.itemInfos[getClassName(itemName)];
+        let { item, frames, times, magnetic } = this.itemInfos[getClassName(itemName)];
         itemComp.setData(item, frames, times);
         itemComp.watching = magnetic && this.heroAttri.magnetic > 0;
 
@@ -311,7 +314,8 @@ export class ItemCtrlr extends MyComponent {
     }
 
     _getExpItem(): (new () => any)[] {
-        if (this.expPool < 1) { // 50%留 50%放基数
+        if (this.expPool < 1) {
+            // 50%留 50%放基数
             if (Math.random() < 0.5) {
                 this.expPool += this.expBase;
                 return null;
@@ -319,7 +323,8 @@ export class ItemCtrlr extends MyComponent {
                 this.expPool += this.expBase - this.expMin.getExp();
                 return [this.expMin.constructor as (new () => any)];
             }
-        } else if (this.expPool < this.expMin.getExp() * 7) { // 20%留 50%放基数 15%全放 15%加倍全放
+        } else if (this.expPool < this.expMin.getExp() * 7) {
+            // 20%留 50%放基数 15%全放 15%加倍全放
             let r = Math.random();
             if (r < 0.2) {
                 this.expPool += this.expBase;
@@ -353,7 +358,7 @@ export class ItemCtrlr extends MyComponent {
         let exp = this.expBase * (6 + Math.floor(Math.random() * 3));
         let expItems = this._createExpItems(exp);
 
-        let minExpCount = (4 + Math.floor(Math.random() * 3));
+        let minExpCount = 4 + Math.floor(Math.random() * 3);
         for (let _ = 0; _ < minExpCount; _++) {
             expItems.push(this.expMin.constructor as (new () => any));
         }
@@ -362,7 +367,7 @@ export class ItemCtrlr extends MyComponent {
 
     _createExpItems(exp: number): (new () => any)[] {
         let expItems: (new () => any)[] = [];
-        for (let index = 0; index < this.expList.length;) {
+        for (let index = 0; index < this.expList.length; ) {
             const expItem = this.expList[index];
             if (exp >= expItem.getExp()) {
                 expItems.push(expItem.constructor as (new () => any));

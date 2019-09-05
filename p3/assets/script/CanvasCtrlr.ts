@@ -2,13 +2,12 @@
 // 主要用于适配不同的分辨率
 // lly 2018.1.1
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from './MyComponent';
 
 @ccclass
 export default class CanvasCtrlr extends MyComponent {
-
     onLoad() {
         let canvas: cc.Canvas = this.getComponent(cc.Canvas);
         let resolution = canvas.designResolution;

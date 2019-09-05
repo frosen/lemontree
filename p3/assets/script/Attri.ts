@@ -2,9 +2,9 @@
 // 属性
 // lly 2018.3.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from './MyComponent';
 
 const MagicNum = Math.floor(Math.random() * 10000);
 
@@ -24,7 +24,7 @@ export class EcNumber {
 
     get(): number {
         if (MagicNum - this._v != this._vForCheck) {
-            throw new Error("number check wrong!");
+            throw new Error('number check wrong!');
         }
         return this._v;
     }

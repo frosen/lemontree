@@ -2,17 +2,16 @@
 // hero剑气 物理攻击 攻击id和普通攻击一致并且触发时间一定在hero后面 可以享受到普攻的一些特性但不增加energy
 // lly 2018.11.7
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import BulletForEffect from "../script/BulletForEffect";
-import {MovableObject} from "../script/MovableObject";
-import Attack from "../script/Attack";
+import BulletForEffect from '../script/BulletForEffect';
+import { MovableObject } from '../script/MovableObject';
+import Attack from '../script/Attack';
 
 const Speed: number = 3;
 
 @ccclass
 export default class SwordWave extends BulletForEffect {
-
     mobj: MovableObject = null;
     atk: Attack = null;
 

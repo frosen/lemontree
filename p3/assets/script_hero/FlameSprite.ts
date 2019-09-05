@@ -2,18 +2,17 @@
 // 围绕hero的火球
 // lly 2018.11.7
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import Bullet from "../script/Bullet";
-import {MovableObject} from "../script/MovableObject";
-import Attack from "../script/Attack";
-import { Hero } from "../script/Hero";
+import Bullet from '../script/Bullet';
+import { MovableObject } from '../script/MovableObject';
+import Attack from '../script/Attack';
+import { Hero } from '../script/Hero';
 
 const EnergyCost: number = 1;
 
 @ccclass
 export default class FlameSprite extends Bullet {
-
     hero: Hero = null;
     mobj: MovableObject = null;
     flames: cc.Node[] = [];
@@ -23,7 +22,7 @@ export default class FlameSprite extends Bullet {
         this.mobj = this.getComponent(MovableObject);
 
         for (let index = 0; index < 4; index++) {
-            let flame = this.node.getChildByName("flame" + index.toString());
+            let flame = this.node.getChildByName('flame' + index.toString());
             this.flames.push(flame);
 
             let atk = flame.getComponent(Attack);
@@ -36,18 +35,17 @@ export default class FlameSprite extends Bullet {
         this.node.rotation += 1.3;
     }
 
-    reset(data: {level: number, hero: Hero}) {
+    reset(data: { level: number; hero: Hero }) {
         super.reset(null);
         this.hero = data.hero;
 
         if (data.level > 0) {
             this.useThisBullet();
 
-            this.flames[0].active = (data.level == 2);
+            this.flames[0].active = data.level == 2;
 
-            this.flames[2].active = (data.level == 3);
-            this.flames[3].active = (data.level == 3);
-
+            this.flames[2].active = data.level == 3;
+            this.flames[3].active = data.level == 3;
         } else {
             this.reclaimThisBullet();
         }

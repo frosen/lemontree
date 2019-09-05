@@ -4,9 +4,9 @@
 // x和y有一定的差异，请注意
 // lly 2017.12.12
 
-const {ccclass, property, executionOrder} = cc._decorator;
+const { ccclass, property, executionOrder } = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from './MyComponent';
 
 /** 速度最大值（必为正数）不得超过一个tile的宽度 */
 export const VelocityMax: number = 15;
@@ -14,7 +14,6 @@ export const VelocityMax: number = 15;
 @ccclass
 @executionOrder(EXECUTION_ORDER.MovableObject)
 export class MovableObject extends MyComponent {
-
     /** 当前y加速度 */
     yAccel: number = 0;
 
@@ -61,7 +60,7 @@ export class MovableObject extends MyComponent {
      * 获取速度方向
      * @return xDir 1向右 -1向左 0停止；yDir 1向上 -1向下 0停止
      */
-    getDir(): {xDir: number, yDir: number} {
+    getDir(): { xDir: number; yDir: number } {
         let xDir = 0;
         if (this.xFinalVelocity > 0.001) xDir = 1;
         else if (this.xFinalVelocity < -0.001) xDir = -1;
@@ -70,7 +69,7 @@ export class MovableObject extends MyComponent {
         if (this.yVelocity > 0.001) yDir = 1;
         else if (this.yVelocity < -0.001) yDir = -1;
 
-        return {xDir, yDir};
+        return { xDir, yDir };
     }
 
     /**

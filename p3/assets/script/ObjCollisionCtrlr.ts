@@ -3,10 +3,10 @@
 // 效率高于BoxCollider
 // lly 2018.1.13
 
-const {ccclass, property, executionOrder} = cc._decorator;
+const { ccclass, property, executionOrder } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {ObjCollider, CollisionData} from "./ObjCollider";
+import MyComponent from './MyComponent';
+import { ObjCollider, CollisionData } from './ObjCollider';
 
 /** 检测容器最大容量 */
 const CollisionDataMaxLength: number = 1000;
@@ -14,14 +14,13 @@ const CollisionDataMaxLength: number = 1000;
 @ccclass
 @executionOrder(EXECUTION_ORDER.ObjCollider) // 在地形碰撞后在检测
 export default class ObjCollisionCtrlr extends MyComponent {
-
     /** 被检测的层 */
     @property([cc.Node])
     checkedLayers: cc.Node[] = [];
 
     /** 检测策略文本 */
     @property
-    checkingTacticsString: string = "";
+    checkingTacticsString: string = '';
     /** 检测策略 */
     checkingTactics: number[][] = [];
 
@@ -32,16 +31,16 @@ export default class ObjCollisionCtrlr extends MyComponent {
 
     onLoad() {
         // 根据string 生成策略
-        let strs: string[] = this.checkingTacticsString.split(";");
+        let strs: string[] = this.checkingTacticsString.split(';');
         for (const str of strs) {
-            let layerIdStrs: string[] = str.split("-");
+            let layerIdStrs: string[] = str.split('-');
 
             let layerId1 = Number(layerIdStrs[0]);
             let layerId2 = Number(layerIdStrs[1]);
 
-            cc.assert(typeof(layerId1) == "number" && typeof(layerId2) == "number", "layer id must be number");
-            cc.assert(0 <= layerId1 && layerId1 < this.checkedLayers.length, "layer id 1 wrong");
-            cc.assert(0 <= layerId2 && layerId2 < this.checkedLayers.length, "layer id 2 wrong");
+            cc.assert(typeof layerId1 == 'number' && typeof layerId2 == 'number', 'layer id must be number');
+            cc.assert(0 <= layerId1 && layerId1 < this.checkedLayers.length, 'layer id 1 wrong');
+            cc.assert(0 <= layerId2 && layerId2 < this.checkedLayers.length, 'layer id 2 wrong');
 
             this.checkingTactics.push([layerId1, layerId2]);
         }
@@ -74,12 +73,10 @@ export default class ObjCollisionCtrlr extends MyComponent {
                 if (!child.activeInHierarchy) continue;
                 let colliders: ObjCollider[] = child.getComponents(ObjCollider);
                 for (const collider of colliders) {
-                    if (collider.enabled) 
-                        this.saveCollsionDataAndResetObj(collider, null, i);
+                    if (collider.enabled) this.saveCollsionDataAndResetObj(collider, null, i);
 
                     for (const subCollider of collider.subColliders) {
-                        if (subCollider.enabledInHierarchy)
-                            this.saveCollsionDataAndResetObj(subCollider, collider, i);
+                        if (subCollider.enabledInHierarchy) this.saveCollsionDataAndResetObj(subCollider, collider, i);
                     }
                 }
             }
@@ -87,7 +84,7 @@ export default class ObjCollisionCtrlr extends MyComponent {
     }
 
     saveCollsionDataAndResetObj(collider: ObjCollider, parentCollider: ObjCollider, i: number) {
-        let {minX, maxX, minY, maxY}= collider.getMaxMinXY(parentCollider);
+        let { minX, maxX, minY, maxY } = collider.getMaxMinXY(parentCollider);
         let data = this.collisionDatas[i][this.collisionDataLengths[i]];
         data.cldr = collider;
         data.minX = minX;
@@ -105,8 +102,12 @@ export default class ObjCollisionCtrlr extends MyComponent {
         for (const checkingIndexs of this.checkingTactics) {
             let index0 = checkingIndexs[0];
             let index1 = checkingIndexs[1];
-            this.check(this.collisionDatas[index0], this.collisionDataLengths[index0],
-                this.collisionDatas[index1], this.collisionDataLengths[index1]);
+            this.check(
+                this.collisionDatas[index0],
+                this.collisionDataLengths[index0],
+                this.collisionDatas[index1],
+                this.collisionDataLengths[index1],
+            );
         }
     }
 

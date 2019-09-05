@@ -4,7 +4,6 @@
 // 第二是为了直接获取pool进行遍历，而原来的并没有接口
 
 export default class MyNodePool {
-
     /** 节点池 */
     pool: cc.Node[] = [];
     /** 组件池，为了省去获得节点后再查找组件的过程 */
@@ -13,11 +12,11 @@ export default class MyNodePool {
     /** 节点生成函数 */
     nodeCreateFunc: (pool: MyNodePool) => cc.Node = null;
     /** 名称 */
-    name: string = "";
+    name: string = '';
     /** 父节点 */
     parent: cc.Node = null;
     /** 要获得的组件类型 */
-    compType: {prototype: cc.Component} = null;
+    compType: { prototype: cc.Component } = null;
     /** 初始化以后，是否允许自动增加新节点 */
     autoCreate: boolean = true;
 
@@ -28,9 +27,13 @@ export default class MyNodePool {
      * @param 节点池名称 可为空
      * @param 节点的父节点 可空
      */
-    constructor(nodeCreateFunc: (pool: MyNodePool) => cc.Node, nodeCount: number, name: string = "",
-        parent: cc.Node = null, compType: {prototype: cc.Component} = null) {
-
+    constructor(
+        nodeCreateFunc: (pool: MyNodePool) => cc.Node,
+        nodeCount: number,
+        name: string = '',
+        parent: cc.Node = null,
+        compType: { prototype: cc.Component } = null,
+    ) {
         this.nodeCreateFunc = nodeCreateFunc;
         this.name = name;
         this.parent = parent;
@@ -91,7 +94,7 @@ export default class MyNodePool {
 
             return n;
         } else {
-            cc.error("this pool can not create new node");
+            cc.error('this pool can not create new node');
             return null;
         }
     }
@@ -111,7 +114,7 @@ export default class MyNodePool {
             this._put(n, true);
             return n.getComponent(this.compType);
         } else {
-            cc.error("this pool can not create new node");
+            cc.error('this pool can not create new node');
             return null;
         }
     }
@@ -136,7 +139,7 @@ export default class MyNodePool {
             }
             return n;
         } else {
-            cc.error("this pool can not create new node");
+            cc.error('this pool can not create new node');
             return null;
         }
     }
@@ -155,7 +158,7 @@ export default class MyNodePool {
             }
             return n.getComponent(this.compType);
         } else {
-            cc.error("this pool can not create new node");
+            cc.error('this pool can not create new node');
             return null;
         }
     }

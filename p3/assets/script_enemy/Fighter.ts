@@ -2,17 +2,16 @@
 // 战士：
 // lly 2018.3.27
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import Enemy from "../script/Enemy";
+import Enemy from '../script/Enemy';
 
-import {MovableObject} from "../script/MovableObject";
-import TerrainColliderClsn from "../script/TerrainColliderClsn";
-import {CollisionType} from "../script/TerrainCtrlr";
+import { MovableObject } from '../script/MovableObject';
+import TerrainColliderClsn from '../script/TerrainColliderClsn';
+import { CollisionType } from '../script/TerrainCtrlr';
 
 @ccclass
 export default class Fighter extends Enemy {
-
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */

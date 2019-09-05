@@ -2,20 +2,21 @@
 // 减损效果
 // lly 2018.8.12
 
-import DebuffComp from "./DebuffComp";
-import FigureDisplay from "./FigureDisplay";
-import {Attri} from "./Attri";
-import ColorComp from "./ColorComp";
+import DebuffComp from './DebuffComp';
+import FigureDisplay from './FigureDisplay';
+import { Attri } from './Attri';
+import ColorComp from './ColorComp';
 
 export class Debuff {
-
     duration: number;
 
     constructor(duration: number) {
         this.duration = duration;
     }
 
-    begin(comp: DebuffComp): {} {return null}
+    begin(comp: DebuffComp): {} {
+        return null;
+    }
 
     update(comp: DebuffComp) {}
 
@@ -25,23 +26,20 @@ export class Debuff {
 
     changeColor(color: cc.Color, comp: DebuffComp) {
         let colorComp: ColorComp = comp.getComponent(ColorComp);
-        if (color)
-            colorComp.setColor("debuff", color);
-        else
-            colorComp.removeColor("debuff");
+        if (color) colorComp.setColor('debuff', color);
+        else colorComp.removeColor('debuff');
     }
 }
 
 /** 中毒效果 */
 export class Poisoning extends Debuff {
-
     damage: number;
     figureDisplay: FigureDisplay;
 
     constructor(damage: number, duration: number) {
         super(duration);
         this.damage = damage;
-        this.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
+        this.figureDisplay = cc.find('main/figure_layer').getComponent(FigureDisplay);
     }
 
     begin(comp: DebuffComp): {} {
@@ -67,7 +65,6 @@ export class Poisoning extends Debuff {
 
 /** 冰冻效果 */
 export class Frozen extends Debuff {
-
     begin(comp: DebuffComp): {} {
         this.changeColor(cc.color(150, 80, 255, 255), comp);
         let attri = comp.getComponent(Attri);
@@ -77,11 +74,11 @@ export class Frozen extends Debuff {
         attri.ySpeed.sub(yDeduction);
         return {
             x: xDeduction,
-            y: yDeduction
+            y: yDeduction,
         };
     }
 
-    end(comp: DebuffComp, deduction: {x: number, y: number}) {
+    end(comp: DebuffComp, deduction: { x: number; y: number }) {
         super.end(comp, deduction);
         let attri = comp.getComponent(Attri);
         attri.xSpeed.add(deduction.x);
@@ -101,11 +98,11 @@ export class Curse extends Debuff {
         attri.magicDmg.sub(mDeduction);
         return {
             a: aDeduction,
-            m: mDeduction
+            m: mDeduction,
         };
     }
 
-    end(comp: DebuffComp, deduction: {a: number, m: number}) {
+    end(comp: DebuffComp, deduction: { a: number; m: number }) {
         super.end(comp, deduction);
         let attri = comp.getComponent(Attri);
         attri.atkDmg.sub(deduction.a);

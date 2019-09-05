@@ -3,19 +3,18 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTResult} from "./BTNode";
-import {BTNodeWithFunc} from "./BTNodeWithFunc";
-import BTComp from "./BTComp";
+import { BTResult } from './BTNode';
+import { BTNodeWithFunc } from './BTNodeWithFunc';
+import BTComp from './BTComp';
 
 @ccclass
 export default abstract class BTNodeCdtion<FUNC_TYPE> extends BTNodeWithFunc<FUNC_TYPE> {
-
-    typeString: string = "IF";
+    typeString: string = 'IF';
 
     getBTName(): string {
-        return this.executeString + " is " + this.getExecuteResStr();
+        return this.executeString + ' is ' + this.getExecuteResStr();
     }
 
     abstract getExecuteResStr(): string;

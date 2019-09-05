@@ -2,12 +2,11 @@
 // 英雄属性
 // lly 2017.4.4
 
-const {ccclass, property} = cc._decorator;
-import {Attri} from "./Attri";
+const { ccclass, property } = cc._decorator;
+import { Attri } from './Attri';
 
 @ccclass
 export default class AttriForEnemy extends Attri {
-
     onLoad() {
         this.hp.set(100);
         this.maxHp.set(100);
@@ -30,7 +29,8 @@ export default class AttriForEnemy extends Attri {
         this.hp.set(this.maxHp.get());
     }
 
-    resetVar(lv: number) { // llytodo enemy的reset如何进行（根据lv）
+    resetVar(lv: number) {
+        // llytodo enemy的reset如何进行（根据lv）
         this._resetVar();
     }
 }

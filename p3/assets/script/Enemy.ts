@@ -2,28 +2,27 @@
 // 敌人类：
 // lly 2018.1.27
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import Destroyee from "./Destroyee";
-import EnemyCtrlr from "./EnemyCtrlr";
-import {ItemCtrlr, ItemSource} from "./ItemCtrlr";
+import Destroyee from './Destroyee';
+import EnemyCtrlr from './EnemyCtrlr';
+import { ItemCtrlr, ItemSource } from './ItemCtrlr';
 
-import AttriForEnemy from "./AttriForEnemy";
-import Attack from "./Attack";
-import DebuffComp from "./DebuffComp";
-import {CollisionData} from "./ObjCollider";
-import ObjColliderForWatch from "./ObjColliderForWatch";
+import AttriForEnemy from './AttriForEnemy';
+import Attack from './Attack';
+import DebuffComp from './DebuffComp';
+import { CollisionData } from './ObjCollider';
+import ObjColliderForWatch from './ObjColliderForWatch';
 
-import BTComp from "../script_bt/BTComp";
+import BTComp from '../script_bt/BTComp';
 
-import {Hero} from "./Hero";
-import FigureDisplay from "./FigureDisplay";
-import DeathEffectDisplay from "./DeathEffectDisplay";
-import Bullet from "./Bullet";
+import { Hero } from './Hero';
+import FigureDisplay from './FigureDisplay';
+import DeathEffectDisplay from './DeathEffectDisplay';
+import Bullet from './Bullet';
 
 @ccclass
 export default class Enemy extends Destroyee {
-
     static ctrlr: EnemyCtrlr = null;
     static itemCtrlr: ItemCtrlr = null;
     static figureDisplay: FigureDisplay = null;
@@ -59,14 +58,10 @@ export default class Enemy extends Destroyee {
 
         if (CC_EDITOR) return;
 
-        if (!Enemy.ctrlr)
-            Enemy.ctrlr = cc.find("main/enemy_layer").getComponent(EnemyCtrlr);
-        if (!Enemy.itemCtrlr)
-            Enemy.itemCtrlr = cc.find("main/item_layer").getComponent(ItemCtrlr);
-        if (!Enemy.figureDisplay)
-            Enemy.figureDisplay = cc.find("main/figure_layer").getComponent(FigureDisplay);
-        if (!Enemy.deathDisplay)
-            Enemy.deathDisplay = cc.find("main/death_effect_layer").getComponent(DeathEffectDisplay);
+        if (!Enemy.ctrlr) Enemy.ctrlr = cc.find('main/enemy_layer').getComponent(EnemyCtrlr);
+        if (!Enemy.itemCtrlr) Enemy.itemCtrlr = cc.find('main/item_layer').getComponent(ItemCtrlr);
+        if (!Enemy.figureDisplay) Enemy.figureDisplay = cc.find('main/figure_layer').getComponent(FigureDisplay);
+        if (!Enemy.deathDisplay) Enemy.deathDisplay = cc.find('main/death_effect_layer').getComponent(DeathEffectDisplay);
     }
 
     start() {
@@ -91,7 +86,7 @@ export default class Enemy extends Destroyee {
     reset(index: number, lv: number) {
         this.ctrlrIndex = index;
         this.attri.resetVar(lv);
-        this.bullet.reset({lv: lv, enemy: this});
+        this.bullet.reset({ lv: lv, enemy: this });
     }
 
     /** 切换场景时候隐藏 */
@@ -107,10 +102,10 @@ export default class Enemy extends Destroyee {
 
     // 碰撞回调 ------------------------------------------------------------
 
-    _calcHurt(atk: Attack): {death: boolean, dmg: number, crit: boolean} {
-        let {death, dmg, crit} = atk.handleDamage(this.attri);
+    _calcHurt(atk: Attack): { death: boolean; dmg: number; crit: boolean } {
+        let { death, dmg, crit } = atk.handleDamage(this.attri);
         if (!death && atk.debuff) this.debuff.setDebuff(atk.debuff);
-        return {death, dmg, crit};
+        return { death, dmg, crit };
     }
 
     _hurt(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
@@ -121,9 +116,7 @@ export default class Enemy extends Destroyee {
     }
 
     // 用于子类
-    onHurtCallback(hurtDir: number, dmg: number, crit: boolean) {
-
-    }
+    onHurtCallback(hurtDir: number, dmg: number, crit: boolean) {}
 
     _dead(pos: cc.Vec2, hurtDir: number, atk: Attack, dmg: number, crit: boolean) {
         if (atk) Enemy.figureDisplay.showFigure(pos, hurtDir, dmg, crit, atk.getAttackColor());
@@ -146,7 +139,7 @@ export default class Enemy extends Destroyee {
         for (const collisionData of collisionDatas) {
             let cldr = collisionData.cldr;
             if (cldr.constructor == ObjColliderForWatch) continue;
-            let hero = cldr.getComponent("Hero");
+            let hero = cldr.getComponent('Hero');
             if (hero) {
                 if (!this.aim) {
                     this.aim = hero;

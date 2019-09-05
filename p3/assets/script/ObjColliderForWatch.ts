@@ -3,9 +3,9 @@
 // 继承出一个新的类便于管理和引用，debug框的颜色与原有区别
 // lly 2018.1.13
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {ObjCollider} from "./ObjCollider";
+import { ObjCollider } from './ObjCollider';
 
 @ccclass
 export default class ObjColliderForWatch extends ObjCollider {

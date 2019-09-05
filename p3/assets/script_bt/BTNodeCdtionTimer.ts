@@ -2,26 +2,25 @@
 // 计时器，只能作为until使用，因为需要注册父action的action begin事件
 // lly 2018.4.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTNode, BTResult} from "./BTNode";
-import {BTNodeAction, ActionBeginKey} from "./BTNodeAction";
-import BTComp from "./BTComp";
+import { BTNode, BTResult } from './BTNode';
+import { BTNodeAction, ActionBeginKey } from './BTNodeAction';
+import BTComp from './BTComp';
 
-const CurTimeKey: string = "CurTime";
+const CurTimeKey: string = 'CurTime';
 const MaxTime: number = 999999;
 
 @ccclass
 export default class BTNodeCdtionTimer extends BTNode {
-
-    typeString: string = "AFTER";
+    typeString: string = 'AFTER';
 
     /** 持续的时间 （秒） */
     @property
     untilTime: number = 1;
 
     getBTName(): string {
-        return this.untilTime.toString() + " seconds ago";
+        return this.untilTime.toString() + ' seconds ago';
     }
 
     init(comp: BTComp) {
@@ -42,7 +41,7 @@ export default class BTNodeCdtionTimer extends BTNode {
         let actNode: BTNodeAction = null;
         while (true) {
             if (!p || p instanceof cc.Scene) break;
-            let mayActNode = p.getComponent(BTNodeAction)
+            let mayActNode = p.getComponent(BTNodeAction);
             if (mayActNode) {
                 actNode = mayActNode;
                 break;
@@ -50,7 +49,7 @@ export default class BTNodeCdtionTimer extends BTNode {
             p = p.parent;
         }
 
-        cc.assert(actNode, "BTNodeCdtionTimer need BTNodeAction");
+        cc.assert(actNode, 'BTNodeCdtionTimer need BTNodeAction');
 
         comp.on(actNode.btIndex, ActionBeginKey, this.onTimerBegin.bind(this));
     }

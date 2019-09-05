@@ -2,15 +2,14 @@
 // 在屏幕中显示出控制区域，对测试也很有用
 // lly 2017.12.30
 
-const {ccclass, property, executeInEditMode} = cc._decorator;
+const { ccclass, property, executeInEditMode } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import HeroOperator from "./HeroOperator";
+import MyComponent from './MyComponent';
+import HeroOperator from './HeroOperator';
 
 @ccclass
 @executeInEditMode
 export default class ShowCtrlArea extends MyComponent {
-
     @property(HeroOperator)
     operator: HeroOperator = null;
 
@@ -27,7 +26,7 @@ export default class ShowCtrlArea extends MyComponent {
     dashArea: cc.Node = null;
 
     onLoad() {
-        let size = cc.find("canvas").getContentSize();
+        let size = cc.find('canvas').getContentSize();
 
         this.moveArea.setPosition(0, 0);
         this.moveArea.setContentSize(size.width * this.operator.moveWRate, size.height * this.operator.moveHRate);

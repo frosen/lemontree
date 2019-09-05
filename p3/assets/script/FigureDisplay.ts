@@ -4,20 +4,16 @@
 // 伤害暴击有特殊效果，不同类型伤害有不同颜色
 // lly 2018.3.25
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import MyNodePool from "./MyNodePool";
+import MyComponent from './MyComponent';
+import MyNodePool from './MyNodePool';
 
-const LblActParams: number[][] = [
-    [17, 16], [3, 21], [23, 6], [11, 19],
-    [22, 29], [2, 27], [20, 8], [13, 26]
-];
+const LblActParams: number[][] = [[17, 16], [3, 21], [23, 6], [11, 19], [22, 29], [2, 27], [20, 8], [13, 26]];
 let actParamsIndex: number = 0;
 
 @ccclass
 export default class FigureDisplay extends MyComponent {
-
     @property(cc.Prefab)
     labelPrefab: cc.Prefab = null;
 
@@ -26,9 +22,14 @@ export default class FigureDisplay extends MyComponent {
     z: number = 1;
 
     onLoad() {
-        this.pool = new MyNodePool((_: MyNodePool): cc.Node => {
-            return cc.instantiate(this.labelPrefab);
-        }, 20, "FigureDisplay", this.node);
+        this.pool = new MyNodePool(
+            (_: MyNodePool): cc.Node => {
+                return cc.instantiate(this.labelPrefab);
+            },
+            20,
+            'FigureDisplay',
+            this.node,
+        );
     }
 
     showFigure(pos: cc.Vec2, hurtDir: number, figure: number, crit: boolean, color: cc.Color) {
@@ -39,11 +40,7 @@ export default class FigureDisplay extends MyComponent {
 
         // 配置属性
         labelNode.position = pos;
-        this._resetLabel(
-            labelNode,
-            color,
-            Math.floor(figure).toString() + (crit ? "!" : "")
-        )
+        this._resetLabel(labelNode, color, Math.floor(figure).toString() + (crit ? '!' : ''));
 
         // 执行动画
         this._doAction(labelNode, hurtDir * -1);
@@ -54,11 +51,7 @@ export default class FigureDisplay extends MyComponent {
         let labelNode: cc.Node = this.pool.get();
 
         labelNode.position = pos;
-        this._resetLabel(
-            labelNode,
-            cc.Color.BLUE,
-            "Evade"
-        );
+        this._resetLabel(labelNode, cc.Color.BLUE, 'Evade');
 
         this._doAction(labelNode, 0);
     }
@@ -80,23 +73,22 @@ export default class FigureDisplay extends MyComponent {
         actParamsIndex++;
         if (actParamsIndex >= LblActParams.length) actParamsIndex = 0;
 
-        let p = cc.v2((50 + params[0])  * dir, 0);
+        let p = cc.v2((50 + params[0]) * dir, 0);
         let h = 30 + params[1];
         labelNode.runAction(cc.jumpBy(1, p, h, 1).easing(cc.easeSineOut()));
-        labelNode.runAction(cc.sequence(
-            cc.delayTime(0.6),
-            cc.fadeOut(0.1),
-            cc.callFunc(() => {
-                labelNode.stopAllActions();
-                this.pool.reclaim(labelNode);
-            })
-        ));
+        labelNode.runAction(
+            cc.sequence(
+                cc.delayTime(0.6),
+                cc.fadeOut(0.1),
+                cc.callFunc(() => {
+                    labelNode.stopAllActions();
+                    this.pool.reclaim(labelNode);
+                }),
+            ),
+        );
     }
 
     _doCritAction(labelNode: cc.Node) {
-        labelNode.runAction(cc.sequence(
-            cc.scaleTo(0.1, 1.7),
-            cc.scaleTo(0.1, 1.3)
-        ));
+        labelNode.runAction(cc.sequence(cc.scaleTo(0.1, 1.7), cc.scaleTo(0.1, 1.3)));
     }
 }

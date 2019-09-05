@@ -3,15 +3,14 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import BTNodeCdtion from "./BTNodeCdtion";
-import {ExecuteFuncKey} from "./BTNodeWithFunc";
-import BTComp from "./BTComp";
+import BTNodeCdtion from './BTNodeCdtion';
+import { ExecuteFuncKey } from './BTNodeWithFunc';
+import BTComp from './BTComp';
 
 @ccclass
 export default class BTNodeCdtionBool extends BTNodeCdtion<() => boolean> {
-
     /** executeFunc的返回结果为什么值表示成功 */
     @property
     checkingTrue: boolean = true;
@@ -22,6 +21,6 @@ export default class BTNodeCdtionBool extends BTNodeCdtion<() => boolean> {
     }
 
     getExecuteResStr(): string {
-        return this.checkingTrue ? "True" : "False";
+        return this.checkingTrue ? 'True' : 'False';
     }
 }

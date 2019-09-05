@@ -3,17 +3,16 @@
 //
 // lly 2018.9.5
 
-const {ccclass, property, executionOrder} = cc._decorator;
+const { ccclass, property, executionOrder } = cc._decorator;
 
-import MyComponent from "../script/MyComponent";
-import BTCtrlr from "./BTCtrlr";
+import MyComponent from '../script/MyComponent';
+import BTCtrlr from './BTCtrlr';
 
-const UpdateKey: string = "Update";
+const UpdateKey: string = 'Update';
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.BehaviorTree)
 export default class BTComp extends MyComponent {
-
     @property(cc.Prefab)
     btPrefab: cc.Prefab = null;
 
@@ -24,12 +23,12 @@ export default class BTComp extends MyComponent {
     name: string = null;
 
     /** 记录所有对应的行为树中的值 */
-    valueDict: {[key: string]: any;} = {};
+    valueDict: { [key: string]: any } = {};
 
-    callDict: {[key: string]: any[];} = {};
+    callDict: { [key: string]: any[] } = {};
 
     onLoad() {
-        this.ctrlr = cc.find("bt").getComponent(BTCtrlr);
+        this.ctrlr = cc.find('bt').getComponent(BTCtrlr);
         let name = this.btPrefab.name;
         this.ctrlr.setBT(this, name, this.btPrefab);
         this.name = name;

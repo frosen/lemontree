@@ -2,14 +2,13 @@
 // 可以带减损效果的组件
 // lly 2018.8.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {Debuff} from "./Debuff";
+import MyComponent from './MyComponent';
+import { Debuff } from './Debuff';
 
 @ccclass
 export default class DebuffComp extends MyComponent {
-
     /** 当前减损效果，每个单位同一时间只能有一个减损效果 */
     curDebuff: Debuff = null;
     curDuration: number = 0;

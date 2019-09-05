@@ -2,14 +2,13 @@
 // 控制指示：显示控制器的位置标识和状态
 // lly 2017.12.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import HeroOperator from "./HeroOperator";
+import MyComponent from './MyComponent';
+import HeroOperator from './HeroOperator';
 
 @ccclass
 export default class OperatorIndicator extends MyComponent {
-
     /** 英雄控制器 */
     @property(HeroOperator)
     operator: HeroOperator = null;

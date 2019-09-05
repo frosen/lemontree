@@ -2,15 +2,14 @@
 // 镜头控制器
 // lly 2017.12.30
 
-const {ccclass, property, executionOrder} = cc._decorator;
+const { ccclass, property, executionOrder } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {TerrainCtrlr} from "./TerrainCtrlr";
+import MyComponent from './MyComponent';
+import { TerrainCtrlr } from './TerrainCtrlr';
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.CameraCtrlr)
 export default class CameraCtrlr extends MyComponent {
-
     @property(cc.Camera)
     camera: cc.Camera = null;
 
@@ -31,13 +30,12 @@ export default class CameraCtrlr extends MyComponent {
     offset: cc.Vec2 = cc.v2(0, 0);
 
     update(_: number) {
-
         // 设置镜头的移动范围
         let newMapSize = this.map.terrainSize;
         if (newMapSize.width != this.mapSize.width || newMapSize.height != this.mapSize.height) {
             this.mapSize = newMapSize;
 
-            let canvas: cc.Node = cc.find("canvas");
+            let canvas: cc.Node = cc.find('canvas');
             let viewSize = canvas.getContentSize();
 
             let rate = 0.5;

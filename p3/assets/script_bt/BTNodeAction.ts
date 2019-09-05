@@ -8,25 +8,24 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTNode, BTResult} from "./BTNode";
-import {BTNodeWithFunc, ExecuteFuncKey} from "./BTNodeWithFunc";
-import BTNodeActionUntil from "./BTNodeActionUntil";
-import BTNodeActionEnd from "./BTNodeActionEnd";
-import BTComp from "./BTComp";
+import { BTNode, BTResult } from './BTNode';
+import { BTNodeWithFunc, ExecuteFuncKey } from './BTNodeWithFunc';
+import BTNodeActionUntil from './BTNodeActionUntil';
+import BTNodeActionEnd from './BTNodeActionEnd';
+import BTComp from './BTComp';
 
-export const RunningKey: string = "running";
-export const GoActionKey: string = "goAction";
+export const RunningKey: string = 'running';
+export const GoActionKey: string = 'goAction';
 
-export const ActionBeginKey: string = "actionBegin";
-export const ActionEndKey: string = "actionEnd";
+export const ActionBeginKey: string = 'actionBegin';
+export const ActionEndKey: string = 'actionEnd';
 
 @ccclass
 export class BTNodeAction extends BTNodeWithFunc<() => void> {
-
     /** 类型名称，用于在层级管理器中显示 */
-    typeString: string = "DO";
+    typeString: string = 'DO';
 
     /** 直到函数组，遍历其子until节点获得 */
     untilFuncs: ((comp: BTComp) => BTResult)[] = [];
@@ -45,18 +44,18 @@ export class BTNodeAction extends BTNodeWithFunc<() => void> {
                 for (const untilChild of child.children) {
                     if (untilChild.active == false) continue;
                     let btNode = untilChild.getComponent(BTNode);
-                    let func = btNode["execute"].bind(btNode);
+                    let func = btNode['execute'].bind(btNode);
                     this.untilFuncs.push(func);
                 }
             } else if (child.getComponent(BTNodeActionEnd)) {
                 for (const endChild of child.children) {
                     if (endChild.active == false) continue;
                     let btNode = endChild.getComponent(BTNode);
-                    let func = btNode["execute"].bind(btNode);
+                    let func = btNode['execute'].bind(btNode);
                     this.endFuncs.push(func);
                 }
             } else {
-                cc.error("wrong child in action");
+                cc.error('wrong child in action');
             }
         }
     }
@@ -68,7 +67,7 @@ export class BTNodeAction extends BTNodeWithFunc<() => void> {
     }
 
     execute(comp: BTComp): BTResult {
-        let result: BTResult
+        let result: BTResult;
         if (!this.isRunning(comp)) {
             comp.setValue(this.btIndex, RunningKey, true);
             comp.setValue(this.btIndex, GoActionKey, true);

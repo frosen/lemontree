@@ -3,15 +3,14 @@
 // 拥有此组件的单位会进行与地形形成碰撞
 // lly 2017.12.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import TerrainColliderClsn from "./TerrainColliderClsn";
-import {CollisionType} from "./TerrainCtrlr";
-import {VelocityMax} from "./MovableObject";
+import TerrainColliderClsn from './TerrainColliderClsn';
+import { CollisionType } from './TerrainCtrlr';
+import { VelocityMax } from './MovableObject';
 
 @ccclass
 export default class TerrainColliderForCreature extends TerrainColliderClsn {
-
     update(_: number) {
         this._checkCollision();
         this._checkOutOfRange();
@@ -21,9 +20,11 @@ export default class TerrainColliderForCreature extends TerrainColliderClsn {
 
     // 超级重力为了让对象可以沿着斜坡行进
     _checkSuperGravityForSlope() {
-        if (this.curYCollisionType == CollisionType.slope ||
+        if (
+            this.curYCollisionType == CollisionType.slope ||
             this.edgeType == CollisionType.slope ||
-            this.backEdgeType == CollisionType.slope) {
+            this.backEdgeType == CollisionType.slope
+        ) {
             this.movableObj.yVelocity = -VelocityMax;
         }
     }

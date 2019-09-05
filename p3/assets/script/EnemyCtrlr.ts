@@ -2,12 +2,12 @@
 // 敌人控制器
 // lly 2018.6.27
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {GameCtrlr} from "./GameCtrlr";
-import Enemy from "./Enemy";
-import {GroundInfo} from "./MapCtrlr";
+import MyComponent from './MyComponent';
+import { GameCtrlr } from './GameCtrlr';
+import Enemy from './Enemy';
+import { GroundInfo } from './MapCtrlr';
 
 class EnemyData {
     pos: cc.Vec2;
@@ -25,7 +25,6 @@ class EnemyData {
 
 @ccclass
 export default class EnemyCtrlr extends MyComponent {
-
     /** 测试使用 */
     @property
     debugEnemyLevel: number = 0;
@@ -33,10 +32,10 @@ export default class EnemyCtrlr extends MyComponent {
     gameCtrlr: GameCtrlr = null;
 
     /** 敌人名称对应的节点的对象池 */
-    pool: {[key: string]: Enemy[];} = {};
+    pool: { [key: string]: Enemy[] } = {};
 
     /** 敌人资源名称对应的资源 */
-    prefabs: {[key: string]: cc.Prefab;}[] = [];
+    prefabs: { [key: string]: cc.Prefab }[] = [];
     /** 敌人名称列表 */
     prefabNames: string[][] = [];
     /** 高级敌人名称列表 */
@@ -46,10 +45,11 @@ export default class EnemyCtrlr extends MyComponent {
     datas: EnemyData[][] = [];
 
     onLoad() {
-        this.gameCtrlr = cc.find("main").getComponent(GameCtrlr);
+        this.gameCtrlr = cc.find('main').getComponent(GameCtrlr);
     }
 
-    start() { // 在enemy的onload后
+    start() {
+        // 在enemy的onload后
         if (this.debugEnemyLevel > 0) {
             for (const child of this.node.children) {
                 let enemy: Enemy = child.getComponent(Enemy);
@@ -63,32 +63,37 @@ export default class EnemyCtrlr extends MyComponent {
         if (this.prefabs[curSceneIndex]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(`map/scene${curSceneIndex}/enemy`, cc.Prefab, (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
-            if (error) {
-                cc.log(`Wrong in load enemy prefab res dir: ${error.message}`);
-                return;
-            }
-
-            cc.assert(prefabs.length > 0, "Wrong size of enemy prefab");
-
-            let data = {};
-            let adNames = [];
-            let names = [];
-            for (const prefab of prefabs) {
-                data[prefab.name] = prefab;
-                if (prefab.name.substring(prefab.name.length - 3, prefab.name.length) == "_ad") { // lly todo 还未测试
-                    adNames.push(prefab.name); // 高级敌人，只能在高级场景出现
-                } else {
-                    names.push(prefab.name);
+        cc.loader.loadResDir(
+            `map/scene${curSceneIndex}/enemy`,
+            cc.Prefab,
+            (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
+                if (error) {
+                    cc.log(`Wrong in load enemy prefab res dir: ${error.message}`);
+                    return;
                 }
-            }
 
-            this.prefabs[curSceneIndex] = data;
-            this.prefabNames[curSceneIndex] = names;
-            this.adPrefabNames[curSceneIndex] = adNames;
+                cc.assert(prefabs.length > 0, 'Wrong size of enemy prefab');
 
-            return finishCallback();
-        });
+                let data = {};
+                let adNames = [];
+                let names = [];
+                for (const prefab of prefabs) {
+                    data[prefab.name] = prefab;
+                    if (prefab.name.substring(prefab.name.length - 3, prefab.name.length) == '_ad') {
+                        // lly todo 还未测试
+                        adNames.push(prefab.name); // 高级敌人，只能在高级场景出现
+                    } else {
+                        names.push(prefab.name);
+                    }
+                }
+
+                this.prefabs[curSceneIndex] = data;
+                this.prefabNames[curSceneIndex] = names;
+                this.adPrefabNames[curSceneIndex] = adNames;
+
+                return finishCallback();
+            },
+        );
     }
 
     setData(areaIndex: number, advance: boolean, groundInfos: GroundInfo[]) {
@@ -120,7 +125,8 @@ export default class EnemyCtrlr extends MyComponent {
 
         // 预生成节点
         let counts = {};
-        for (const enemyData of data) { // 每种类型敌人的数量
+        for (const enemyData of data) {
+            // 每种类型敌人的数量
             let name = enemyData.name;
             if (!counts[name]) {
                 counts[name] = 1;
@@ -139,7 +145,8 @@ export default class EnemyCtrlr extends MyComponent {
                 nodes = this.pool[name];
             }
             let len = count - nodes.length;
-            if (len > 0) { // 当前场景中敌人数量，大于容器中已有的数量，所以生成新的
+            if (len > 0) {
+                // 当前场景中敌人数量，大于容器中已有的数量，所以生成新的
                 let prefab = prefabs[name];
                 for (let index = 0; index < len; index++) {
                     let node = cc.instantiate(prefab);
@@ -188,13 +195,14 @@ export default class EnemyCtrlr extends MyComponent {
         for (const name in this.pool) {
             const enemys: Enemy[] = this.pool[name];
             let index = poolIndexs[name];
-            if (index == undefined) { // 全都没用到，全隐藏
+            if (index == undefined) {
+                // 全都没用到，全隐藏
                 for (const enemy of enemys) {
                     enemy.onHide();
                     enemy.node.active = false;
                 }
             } else {
-                for (let i = 1 + index; i < enemys.length; i++){
+                for (let i = 1 + index; i < enemys.length; i++) {
                     const enemy = enemys[i];
                     enemy.onHide();
                     enemy.node.active = false;
@@ -209,7 +217,8 @@ export default class EnemyCtrlr extends MyComponent {
         if (index != null && index >= 0) {
             this.datas[curAreaIndex][index].living = false;
             enemy.node.active = false;
-        } else { // 没有index说明不是从pool中生成的
+        } else {
+            // 没有index说明不是从pool中生成的
             enemy.node.removeFromParent();
         }
     }

@@ -2,19 +2,18 @@
 // 带有回调的节点，需要继承
 // lly 2018.4.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTNode} from "./BTNode";
-import BTComp from "./BTComp";
-import BTNodeGroup from "./BTNodeGroup";
+import { BTNode } from './BTNode';
+import BTComp from './BTComp';
+import BTNodeGroup from './BTNodeGroup';
 
-export const ExecuteFuncKey: string = "executeFunc";
+export const ExecuteFuncKey: string = 'executeFunc';
 
 @ccclass
 export abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
-
     /** 执行函数名称 用于在编辑器中设置executeFunc，func可以有返回值 */
-    @property executeString: string = "";
+    @property executeString: string = '';
 
     update(dt: number) {
         if (!CC_EDITOR) return;
@@ -24,11 +23,10 @@ export abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
 
     _checkExecuteString() {
         // 去空格
-        this.executeString = this.executeString.replace(/\s*/g,"");
+        this.executeString = this.executeString.replace(/\s*/g, '');
 
         // 补上":"
-        if (this.executeString.indexOf(":") < 0)
-            this.executeString = ":" + this.executeString;
+        if (this.executeString.indexOf(':') < 0) this.executeString = ':' + this.executeString;
 
         // 检测comp名
         let p: cc.Node = this.node;
@@ -45,11 +43,11 @@ export abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
         if (!groupNode) return;
 
         let desc = groupNode.desc;
-        let index = desc.indexOf("==>");
+        let index = desc.indexOf('==>');
         if (index < 0) return;
 
-        let data = this.executeString.split(":");
-        this.executeString = desc.substr(index + 4) + ":" + data[1];
+        let data = this.executeString.split(':');
+        this.executeString = desc.substr(index + 4) + ':' + data[1];
     }
 
     init(comp: BTComp) {
@@ -59,11 +57,11 @@ export abstract class BTNodeWithFunc<FUNC_TYPE> extends BTNode {
     }
 
     _getFuncFromString(node: cc.Node, str: string): any {
-        let strings = str.split(":");
+        let strings = str.split(':');
         let comp = node.getComponent(strings[0]);
-        cc.assert(comp, "When get func: " + node.name + " wrong component: " + strings[0] + " at " + this.name);
+        cc.assert(comp, 'When get func: ' + node.name + ' wrong component: ' + strings[0] + ' at ' + this.name);
         let func = comp[strings[1]];
-        cc.assert(func && typeof(func) == "function", strings[0] + " wrong comp func: " + strings[1] + " at " + this.name);
+        cc.assert(func && typeof func == 'function', strings[0] + ' wrong comp func: ' + strings[1] + ' at ' + this.name);
         return func.bind(comp);
-    };
+    }
 }

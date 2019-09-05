@@ -2,22 +2,21 @@
 // 道具组件，因为item为道具核心，所以组件叫做道具组件：
 // lly 2018.4.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import Item from "./Item";
-import {ItemCtrlr} from "./ItemCtrlr";
+import MyComponent from './MyComponent';
+import Item from './Item';
+import { ItemCtrlr } from './ItemCtrlr';
 
-import {MovableObject} from "./MovableObject";
-import TerrainColliderClsn from "./TerrainColliderClsn";
-import {CollisionType} from "./TerrainCtrlr";
-import {ObjCollider, CollisionData} from "./ObjCollider";
-import ObjColliderForWatch from "./ObjColliderForWatch";
-import Gravity from "./Gravity";
+import { MovableObject } from './MovableObject';
+import TerrainColliderClsn from './TerrainColliderClsn';
+import { CollisionType } from './TerrainCtrlr';
+import { ObjCollider, CollisionData } from './ObjCollider';
+import ObjColliderForWatch from './ObjColliderForWatch';
+import Gravity from './Gravity';
 
 @ccclass
 export default class ItemComp extends MyComponent {
-
     itemCore: Item = null;
 
     itemCtrlr: ItemCtrlr = null;
@@ -65,7 +64,7 @@ export default class ItemComp extends MyComponent {
         this.watchCollider.callback = this.onWatching.bind(this);
     }
 
-    _createComp<T extends cc.Component>(type: {new(): T}): T {
+    _createComp<T extends cc.Component>(type: { new (): T }): T {
         let comp = this.getComponent(type);
         if (comp) {
             return comp;
@@ -93,20 +92,22 @@ export default class ItemComp extends MyComponent {
         }
 
         if (!this.jumping) return;
-        if (this.terrainCollider.curYCollisionType != CollisionType.none &&
-            this.movableObj.getDir().yDir <= 0 && this.movableObj.yLastVelocity <= 0) {
-
+        if (
+            this.terrainCollider.curYCollisionType != CollisionType.none &&
+            this.movableObj.getDir().yDir <= 0 &&
+            this.movableObj.yLastVelocity <= 0
+        ) {
             // 反弹
             let yV = this.movableObj.yLastVelocity;
             if (yV < -1) {
-                this.movableObj.yVelocity = this.movableObj.yLastVelocity * (-0.5);
+                this.movableObj.yVelocity = this.movableObj.yLastVelocity * -0.5;
             } else {
                 this.movableObj.xVelocity = 0;
                 this.jumping = false;
             }
 
             // 斜面
-            if (this.terrainCollider.edgeType== CollisionType.slope) {
+            if (this.terrainCollider.edgeType == CollisionType.slope) {
                 this.movableObj.xVelocity /= 2;
             }
         }
@@ -152,17 +153,19 @@ export default class ItemComp extends MyComponent {
         this.watchCollider.enabled = false;
 
         this.node.stopAllActions();
-        this.node.runAction(cc.sequence(
-            cc.delayTime(0.5),
-            cc.callFunc(() => {
-                this.objCollider.enabled = true;
+        this.node.runAction(
+            cc.sequence(
+                cc.delayTime(0.5),
+                cc.callFunc(() => {
+                    this.objCollider.enabled = true;
 
-                // 检测是否需要观察
-                if (this.watching) {
-                    this.watchCollider.enabled = true;
-                }
-            })
-        ));
+                    // 检测是否需要观察
+                    if (this.watching) {
+                        this.watchCollider.enabled = true;
+                    }
+                }),
+            ),
+        );
     }
 
     onCollision() {
@@ -175,13 +178,15 @@ export default class ItemComp extends MyComponent {
 
         // 动效
         this.node.stopAllActions();
-        this.node.runAction(cc.sequence(
-            cc.moveBy(0.3, 0, 100).easing(cc.easeSineOut()),
-            cc.delayTime(0.5),
-            cc.callFunc(() => {
-                this.itemCtrlr.removeItem(this);
-            })
-        ));
+        this.node.runAction(
+            cc.sequence(
+                cc.moveBy(0.3, 0, 100).easing(cc.easeSineOut()),
+                cc.delayTime(0.5),
+                cc.callFunc(() => {
+                    this.itemCtrlr.removeItem(this);
+                }),
+            ),
+        );
 
         // 效果
         this.itemCore.doEffect();
@@ -193,7 +198,7 @@ export default class ItemComp extends MyComponent {
             for (const collisionData of collisionDatas) {
                 let cldr = collisionData.cldr;
                 if (cldr.constructor == ObjColliderForWatch) continue;
-                let hero = cldr.getComponent("Hero");
+                let hero = cldr.getComponent('Hero');
                 if (hero) {
                     this.aim = cldr.node;
                     this.flySpeed = 1;

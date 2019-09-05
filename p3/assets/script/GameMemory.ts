@@ -7,9 +7,8 @@ export class MemoryData {
 }
 
 export class GameMemory {
-
     /** 读取后的回调，new的时候执行读取 */
-    loadCall: () => void
+    loadCall: () => void;
 
     loadedData: MemoryData = null;
 
@@ -23,7 +22,5 @@ export class GameMemory {
         this.loadCall();
     }
 
-    save() {
-
-    }
+    save() {}
 }

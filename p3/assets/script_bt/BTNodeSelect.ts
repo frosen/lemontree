@@ -3,22 +3,21 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTResult} from "./BTNode";
-import {BTNodeSequence, CurRunningNodeKey} from "./BTNodeSequence";
-import BTComp from "./BTComp";
+import { BTResult } from './BTNode';
+import { BTNodeSequence, CurRunningNodeKey } from './BTNodeSequence';
+import BTComp from './BTComp';
 
 @ccclass
 export default class BTNodeSelect extends BTNodeSequence {
-
-    typeString: string = "Select";
+    typeString: string = 'Select';
 
     /** 运行时，是否检测运行节点之前其他节点，和sequence不一样的是，select默认为true */
     checkingAheadInRunning: boolean = true;
 
     getCheckingAheadInRunningStr(): string {
-        return this.checkingAheadInRunning ? "" : " -- No!CheckAhead";
+        return this.checkingAheadInRunning ? '' : ' -- No!CheckAhead';
     }
 
     executeInNormal(comp: BTComp, inputIndex: number = 0): BTResult {
@@ -30,7 +29,6 @@ export default class BTNodeSelect extends BTNodeSequence {
             if (result == BTResult.suc) {
                 finalresult = BTResult.suc; // 一旦成功则直接返回而不往后执行
                 break;
-
             } else if (result == BTResult.running) {
                 comp.setValue(this.btIndex, CurRunningNodeKey, btNode);
                 finalresult = BTResult.running; // 一旦进入运行状态，也不往后执行了
@@ -52,7 +50,6 @@ export default class BTNodeSelect extends BTNodeSequence {
                 if (result == BTResult.suc) {
                     this.endRunning(comp);
                     return BTResult.suc; // 一旦成功则直接返回而不往后执行
-
                 } else if (result == BTResult.running) {
                     this.endRunning(comp);
                     comp.setValue(this.btIndex, CurRunningNodeKey, btNode);
@@ -64,11 +61,9 @@ export default class BTNodeSelect extends BTNodeSequence {
         let result = curRunningBTNode.execute(comp);
         if (result == BTResult.running) {
             return BTResult.running;
-
         } else if (result == BTResult.suc) {
             comp.setValue(this.btIndex, CurRunningNodeKey, null);
             return BTResult.suc;
-
         } else {
             let nextIndex = this.btNodes.indexOf(curRunningBTNode) + 1;
             comp.setValue(this.btIndex, CurRunningNodeKey, null);

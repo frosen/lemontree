@@ -2,16 +2,15 @@
 // 监听Hero的相关属性，控制整个UI界面的显示
 // lly 2018.4.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {GameCtrlr} from "./GameCtrlr";
-import {Hero, HeroUsingType} from "./Hero";
-import AttriForHero from "./AttriForHero";
+import MyComponent from './MyComponent';
+import { GameCtrlr } from './GameCtrlr';
+import { Hero, HeroUsingType } from './Hero';
+import AttriForHero from './AttriForHero';
 
 @ccclass
 export default class UICtrlr extends MyComponent {
-
     /** 游戏控制器 */
     game: GameCtrlr = null;
 
@@ -38,9 +37,12 @@ export default class UICtrlr extends MyComponent {
 
     curUsingType: HeroUsingType = null;
 
+    usingBtnEnabled: boolean = true;
+    pauseBtnEnabled: boolean = true;
+
     onLoad() {
-        this.game = cc.find("main").getComponent(GameCtrlr);
-        this.hero = cc.find("main/hero_layer/s_hero").getComponent(Hero);
+        this.game = cc.find('main').getComponent(GameCtrlr);
+        this.hero = cc.find('main/hero_layer/s_hero').getComponent(Hero);
 
         this.attri = this.hero.attri;
     }
@@ -60,6 +62,7 @@ export default class UICtrlr extends MyComponent {
     }
 
     showUsingButton(t: HeroUsingType) {
+        if (!this.usingBtnEnabled) return;
         if (this.curUsingType == t) return;
 
         if (this.curUsingType != null) {
@@ -79,21 +82,38 @@ export default class UICtrlr extends MyComponent {
 
     _getUsingBtnByType(t: HeroUsingType): cc.Button {
         switch (t) {
-            case HeroUsingType.pickUp: return this.pickUpBtn;
-            case HeroUsingType.trigger: return this.triggerBtn;
-            case HeroUsingType.jumpDown: return this.jumpDownBtn;
-            case HeroUsingType.midGate: return this.midGateBtn;
+            case HeroUsingType.pickUp:
+                return this.pickUpBtn;
+            case HeroUsingType.trigger:
+                return this.triggerBtn;
+            case HeroUsingType.jumpDown:
+                return this.jumpDownBtn;
+            case HeroUsingType.midGate:
+                return this.midGateBtn;
         }
         return null;
+    }
+
+    setUsingBtnEnabled(b: boolean) {
+        if (!b) {
+            this.showUsingButton(null);
+        }
+        this.usingBtnEnabled = b;
+    }
+
+    setPauseBtnEnabled(b: boolean) {
+        this.pauseBtnEnabled = b;
     }
 
     // 按钮回调
 
     use() {
+        if (!this.usingBtnEnabled) return;
         this.hero.use();
     }
 
     pause() {
+        if (!this.pauseBtnEnabled) return;
         this.game.pauseOrResume();
     }
 }

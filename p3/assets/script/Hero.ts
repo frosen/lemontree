@@ -3,37 +3,37 @@
 // 英雄的主类，进行多个组件的交互
 // lly 2017.12.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {GameCtrlr} from "./GameCtrlr";
+import MyComponent from './MyComponent';
+import { GameCtrlr } from './GameCtrlr';
 
-import {MovableObject} from "./MovableObject";
-import TerrainColliderForHero from "./TerrainColliderForHero";
-import {TerrainCtrlr, CollisionType, GateType} from "./TerrainCtrlr";
-import {ObjCollider, CollisionData} from "./ObjCollider";
-import ObjColliderForWatch from "./ObjColliderForWatch";
-import {HeroLooks, HeroDirLv} from "./HeroLooks";
-import DebuffComp from "./DebuffComp";
-import ColorComp from "./ColorComp";
-import Bullet from "./Bullet";
+import { MovableObject } from './MovableObject';
+import TerrainColliderForHero from './TerrainColliderForHero';
+import { TerrainCtrlr, CollisionType, GateType } from './TerrainCtrlr';
+import { ObjCollider, CollisionData } from './ObjCollider';
+import ObjColliderForWatch from './ObjColliderForWatch';
+import { HeroLooks, HeroDirLv } from './HeroLooks';
+import DebuffComp from './DebuffComp';
+import ColorComp from './ColorComp';
+import Bullet from './Bullet';
 
-import AttriForHero from "./AttriForHero";
-import {ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr} from "./SMForHero";
+import AttriForHero from './AttriForHero';
+import { ActState, SMForHeroMgr, InvcState, SMForHeroInvcMgr } from './SMForHero';
 
-import UICtrlr from "./UICtrlr";
+import UICtrlr from './UICtrlr';
 
-import Attack from "./Attack";
-import Destroyee from "./Destroyee";
-import Enemy from "./Enemy";
-import Pot from "./Pot";
+import Attack from './Attack';
+import Destroyee from './Destroyee';
+import Enemy from './Enemy';
+import Pot from './Pot';
 
-import ItemComp from "./ItemComp";
-import Item from "./Item";
-import {ItemExp} from "./ItemExp";
-import {ItemEfc} from "./ItemEfc";
+import ItemComp from './ItemComp';
+import Item from './Item';
+import { ItemExp } from './ItemExp';
+import { ItemEfc } from './ItemEfc';
 
-import SwordWave from "../script_hero/SwordWave";
+import SwordWave from '../script_hero/SwordWave';
 
 export enum HeroUsingType {
     pickUp = 1,
@@ -44,7 +44,6 @@ export enum HeroUsingType {
 
 @ccclass
 export class Hero extends MyComponent {
-
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地形碰撞组件 */
@@ -85,7 +84,7 @@ export class Hero extends MyComponent {
 
         this.movableObj = this.getComponent(MovableObject);
         this.terrainCollider = this.getComponent(TerrainColliderForHero);
-        this.terrainCtrlr = cc.find("main/map").getComponent(TerrainCtrlr);
+        this.terrainCtrlr = cc.find('main/map').getComponent(TerrainCtrlr);
         this.objCollider = this.getComponent(ObjCollider);
         this.watchCollider = this.getComponent(ObjColliderForWatch);
 
@@ -103,7 +102,7 @@ export class Hero extends MyComponent {
         this.sm = new SMForHeroMgr(this).begin(ActState.stand);
         this.smInvc = new SMForHeroInvcMgr(this);
 
-        this.ui = cc.find("canvas/ui").getComponent(UICtrlr);
+        this.ui = cc.find('canvas/ui').getComponent(UICtrlr);
 
         // 回调
         this.objCollider.callback = this.onCollision.bind(this);
@@ -111,7 +110,8 @@ export class Hero extends MyComponent {
         this.attack.hitCallback = this.onHitEnemy.bind(this);
     }
 
-    start() { // 在所有子节点（sprite）onLoad完成后
+    start() {
+        // 在所有子节点（sprite）onLoad完成后
         this.colorComp.resetSp();
     }
 
@@ -175,8 +175,7 @@ export class Hero extends MyComponent {
     }
 
     /** 当前点击使用按钮会触发的类型 */
-    curUsingTypeStates: [boolean, boolean, boolean, boolean, boolean] =
-        [false, false, false, false, false];
+    curUsingTypeStates: [boolean, boolean, boolean, boolean, boolean] = [false, false, false, false, false];
     curUsingType: HeroUsingType = null;
 
     /**
@@ -184,10 +183,18 @@ export class Hero extends MyComponent {
      */
     use() {
         switch (this.curUsingType) {
-            case HeroUsingType.pickUp: this.pickUp(); break;
-            case HeroUsingType.trigger: this.trigger(); break;
-            case HeroUsingType.midGate: this.midGate(); break;
-            case HeroUsingType.jumpDown: this.jumpDown(); break;
+            case HeroUsingType.pickUp:
+                this.pickUp();
+                break;
+            case HeroUsingType.trigger:
+                this.trigger();
+                break;
+            case HeroUsingType.midGate:
+                this.midGate();
+                break;
+            case HeroUsingType.jumpDown:
+                this.jumpDown();
+                break;
         }
     }
 
@@ -196,12 +203,12 @@ export class Hero extends MyComponent {
         comp.onCollision();
     }
 
-    trigger() {
-
-    }
+    trigger() {}
 
     midGate() {
-        cc.find("main").getComponent(GameCtrlr).enterMidGate(this.terrainCollider.gateGid);
+        cc.find('main')
+            .getComponent(GameCtrlr)
+            .enterMidGate(this.terrainCollider.gateGid);
     }
 
     jumpDown() {
@@ -238,7 +245,6 @@ export class Hero extends MyComponent {
      * @param collisionDatas: 当前帧碰撞到的对象的碰撞数据
      */
     onCollision(collisionDatas: CollisionData[]) {
-
         this.hurtCollisionData = null;
         this.efcItemComps = [];
 
@@ -246,7 +252,8 @@ export class Hero extends MyComponent {
             if (data.cldr.constructor != ObjCollider) continue; // 避免碰撞到视野
 
             let atk = data.cldr.getComponent(Attack);
-            if (atk && atk.enabled) { // 如果碰撞对象带有攻击性
+            if (atk && atk.enabled) {
+                // 如果碰撞对象带有攻击性
                 this.hurtCollisionData = data;
             }
 
@@ -257,8 +264,8 @@ export class Hero extends MyComponent {
                     let exp = (<ItemExp>item).getExp();
                     this.attri.exp.add(exp);
                     itemComp.onCollision();
-
-                } else { // 不是exp就是efc
+                } else {
+                    // 不是exp就是efc
                     this.efcItemComps.push(itemComp);
                 }
             }
@@ -295,7 +302,7 @@ export class Hero extends MyComponent {
     onWatching(collisionDatas: CollisionData[]) {
         if (this.noAtkState) return;
 
-        let havingDataBefore: boolean = (this.watchedCollisionData != null);
+        let havingDataBefore: boolean = this.watchedCollisionData != null;
 
         // 以移动方向的目标作为主目标
         let curDir: number = this.looks.xUIDirs[HeroDirLv.move];
@@ -311,11 +318,11 @@ export class Hero extends MyComponent {
 
                 if (destroyee instanceof Enemy) {
                     if (enemyDir != curDir) {
-                        enemyDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
+                        enemyDir = (data.minX + data.maxX) * 0.5 >= this.node.x ? 1 : -1;
                     }
                 } else {
                     if (potDir != curDir) {
-                        potDir = ((data.minX + data.maxX) * 0.5 >= this.node.x) ? 1 : -1;
+                        potDir = (data.minX + data.maxX) * 0.5 >= this.node.x ? 1 : -1;
                     }
                 }
             }
@@ -400,6 +407,12 @@ export class Hero extends MyComponent {
         this.looks.endAttackAtOnce();
     }
 
+    onDead() {
+        cc.find('main')
+            .getComponent(GameCtrlr)
+            .dead();
+    }
+
     // 能力 ======================================================
 
     getSubBullet(name: string): Bullet {
@@ -413,14 +426,18 @@ export class Hero extends MyComponent {
     resetCardAbility() {
         let attri = this.attri;
 
-        this.eachBullet("a_swordWave", (b, _) => {b.reset(attri.swordWave);});
-        this.eachBullet("a_flameSprite", (b, _) => {b.reset({level: attri.flameSprite, hero: this});});
+        this.eachBullet('a_swordWave', (b, _) => {
+            b.reset(attri.swordWave);
+        });
+        this.eachBullet('a_flameSprite', (b, _) => {
+            b.reset({ level: attri.flameSprite, hero: this });
+        });
     }
 
     doSwordWave() {
         if (this.attri.swordWave == 0) return;
 
-        let sw: SwordWave = this.getSubBullet("a_swordWave") as SwordWave;
+        let sw: SwordWave = this.getSubBullet('a_swordWave') as SwordWave;
         let p = this.node.position;
         let dir = this.node.scaleX;
         sw.node.setPosition(p.x + dir * 65, p.y + 15);

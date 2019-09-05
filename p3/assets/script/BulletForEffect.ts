@@ -2,19 +2,18 @@
 // 这是一个和英雄或敌人放在同一层的节点，又英雄/敌人生成
 // lly 2018.10.17
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import Bullet from "./Bullet";
+import Bullet from './Bullet';
 
 @ccclass
 export default class BulletForEffect extends Bullet {
-
     anim: cc.Animation = null;
 
     onLoad() {
         super.onLoad();
         this.anim = this.getComponent(cc.Animation);
-        this.anim.on("finished", this._onFinished, this);
+        this.anim.on('finished', this._onFinished, this);
     }
 
     _onFinished() {

@@ -2,13 +2,12 @@
 // 帷幕，切换场景时候用的遮罩
 // lly 2018.5.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
+import MyComponent from './MyComponent';
 
 @ccclass
 export default class Curtain extends MyComponent {
-
     @property(cc.Mask)
     mask: cc.Mask = null;
 
@@ -46,6 +45,8 @@ export default class Curtain extends MyComponent {
         };
         cc.director.getScheduler().schedule(schFunc, this, 0, false);
     }
+
+    hideSceneByFade(callback) {}
 
     hideSceneBySquare(pos: cc.Vec2, callback) {
         this.node.active = true;

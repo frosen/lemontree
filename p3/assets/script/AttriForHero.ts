@@ -2,15 +2,14 @@
 // 英雄属性
 // lly 2017.12.12
 
-const {ccclass, property} = cc._decorator;
-import {EcNumber, Attri} from "./Attri";
+const { ccclass, property } = cc._decorator;
+import { EcNumber, Attri } from './Attri';
 
 /** 起跳速度 像素/帧 */
 const JumpVelocity: number = 4.5;
 
 @ccclass
 export default class AttriForHero extends Attri {
-
     /** 经验值 */
     exp: EcNumber = new EcNumber(0);
 
@@ -64,42 +63,42 @@ export default class AttriForHero extends Attri {
     cardListForCheck: number[] = [];
 
     cardNames: string[] = [
-        "doubleJump",
-        "superDash",
-        "jumpingByWall",
-        "magnetic",
-        "enemyDisplay",
-        "fastHitRecovery",
-        "trapDefence",
-        "energyGettingByEnemy",
-        "energyGettingByPot",
-        "energyGettingByArea",
-        "extraMaxHp",
-        "magicPower",
-        "itemKeeping",
-        "bossSlowing",
-        "fullHpPower",
-        "nearDeathPower",
-        "hpRecoveryPower",
-        "extraSpace",
-        "learningAbility",
-        "debuffResistent",
-        "extraAtk",
-        "extraMagicAtk",
-        "executePower",
-        "defence",
-        "swordWave",
-        "flameSprite",
-        "cannon",
-        "beeBomb",
-        "soulStorage",
-        "followMe",
-        "rottenApple",
-        "burstingArmor",
-        "bootsOfSpeed",
-        "proofOfStrength",
-        "godOfFrost",
-        "illusion",
+        'doubleJump',
+        'superDash',
+        'jumpingByWall',
+        'magnetic',
+        'enemyDisplay',
+        'fastHitRecovery',
+        'trapDefence',
+        'energyGettingByEnemy',
+        'energyGettingByPot',
+        'energyGettingByArea',
+        'extraMaxHp',
+        'magicPower',
+        'itemKeeping',
+        'bossSlowing',
+        'fullHpPower',
+        'nearDeathPower',
+        'hpRecoveryPower',
+        'extraSpace',
+        'learningAbility',
+        'debuffResistent',
+        'extraAtk',
+        'extraMagicAtk',
+        'executePower',
+        'defence',
+        'swordWave',
+        'flameSprite',
+        'cannon',
+        'beeBomb',
+        'soulStorage',
+        'followMe',
+        'rottenApple',
+        'burstingArmor',
+        'bootsOfSpeed',
+        'proofOfStrength',
+        'godOfFrost',
+        'illusion',
     ];
 
     /** 增加卡片 */
@@ -245,12 +244,82 @@ export default class AttriForHero extends Attri {
 
     _reset() {
         // test
-        this.cardList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        this.cardListForCheck = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.cardList = [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ];
+        this.cardListForCheck = [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ];
 
         this._resetToOrigin();
         this._resetByAbility();
@@ -302,8 +371,9 @@ export default class AttriForHero extends Attri {
     _resetByCard() {
         for (let index = 0; index < this.cardList.length; index++) {
             let card = this.cardList[index];
-            if (this.cardListForCheck[index] != card) { // 检测
-                throw new Error("card check wrong!");
+            if (this.cardListForCheck[index] != card) {
+                // 检测
+                throw new Error('card check wrong!');
             }
             let cardName = this.cardNames[index];
             this[cardName] = card;

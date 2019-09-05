@@ -3,16 +3,15 @@
 // 检测，但不响应碰撞
 // lly 2018.10.12
 
-const {ccclass, property, executionOrder} = cc._decorator;
+const { ccclass, property, executionOrder } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {MovableObject} from "./MovableObject";
-import {TerrainCtrlr, CollisionType} from "./TerrainCtrlr";
+import MyComponent from './MyComponent';
+import { MovableObject } from './MovableObject';
+import { TerrainCtrlr, CollisionType } from './TerrainCtrlr';
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.TerrainCollider)
 export default class TerrainCollider extends MyComponent {
-
     /** 可移动对象组件 */
     movableObj: MovableObject = null;
     /** 地图的碰撞检测 */
@@ -34,7 +33,7 @@ export default class TerrainCollider extends MyComponent {
         requireComponents(this, [MovableObject]);
 
         this.movableObj = this.getComponent(MovableObject);
-        this.terrainCtrlr = cc.find("main/map").getComponent(TerrainCtrlr);
+        this.terrainCtrlr = cc.find('main/map').getComponent(TerrainCtrlr);
     }
 
     update(_: number) {
@@ -42,8 +41,9 @@ export default class TerrainCollider extends MyComponent {
         this._checkOutOfRange();
     }
 
-    _checkCollision() { // 不考虑旋转，不应该有旋转，或者旋转的节点不应该宽高不一致
-        let {xDir, yDir} = this.movableObj.getDir(); // 获取方向
+    _checkCollision() {
+        // 不考虑旋转，不应该有旋转，或者旋转的节点不应该宽高不一致
+        let { xDir, yDir } = this.movableObj.getDir(); // 获取方向
         let size = this.tsize || this.node.getContentSize();
         let anchor = this.node.getAnchorPoint();
         let anchorW = size.width * anchor.x;

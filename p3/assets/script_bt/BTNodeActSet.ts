@@ -3,16 +3,15 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTResult} from "./BTNode";
-import {BTNodeWithFunc, ExecuteFuncKey} from "./BTNodeWithFunc";
-import BTComp from "./BTComp";
+import { BTResult } from './BTNode';
+import { BTNodeWithFunc, ExecuteFuncKey } from './BTNodeWithFunc';
+import BTComp from './BTComp';
 
 @ccclass
 export default class BTNodeActSet extends BTNodeWithFunc<() => void> {
-
-    typeString: string = "SET";
+    typeString: string = 'SET';
 
     getBTName(): string {
         return this.executeString;

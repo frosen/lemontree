@@ -2,19 +2,18 @@
 // 表示有伤害的对象：
 // lly 2018.1.27
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {Attri} from "./Attri";
-import {Debuff} from "./Debuff";
+import MyComponent from './MyComponent';
+import { Attri } from './Attri';
+import { Debuff } from './Debuff';
 
 @ccclass
 export default class Attack extends MyComponent {
-
     /** 索引，用于区分不同的攻击
      * 目前只是对敌人的攻击需要，同种攻击在一定时间内不会伤害第二次，
      * 对hero的攻击有无敌时间所以不需要
-    */
+     */
     @property
     index: number = 0;
 
@@ -30,7 +29,7 @@ export default class Attack extends MyComponent {
     magicAttack: boolean = false;
 
     @property
-    hidingAtBeginning : boolean = false;
+    hidingAtBeginning: boolean = false;
 
     /** 本次攻击会引起的减损状态 */
     debuff: Debuff = null;
@@ -42,7 +41,8 @@ export default class Attack extends MyComponent {
         if (this.hidingAtBeginning) this.enabled = false;
     }
 
-    start() { // 可能会在onload后再设置attri
+    start() {
+        // 可能会在onload后再设置attri
         if (this.attri == null) {
             let n = this.node;
             while (true) {
@@ -55,11 +55,11 @@ export default class Attack extends MyComponent {
                 }
             }
         }
-        cc.assert(this.attri != null, "attack need attri");
+        cc.assert(this.attri != null, 'attack need attri');
     }
 
     // 计算基础伤害
-    getDamage(): {dmg: number, crit: boolean} {
+    getDamage(): { dmg: number; crit: boolean } {
         let dmg: number;
         let crit: boolean = false;
         if (this.magicAttack) {
@@ -85,7 +85,7 @@ export default class Attack extends MyComponent {
         // 乘以系数
         dmg *= this.rate;
 
-        return {dmg, crit};
+        return { dmg, crit };
     }
 
     handleHp(attri: Attri, dmg: number): boolean {
@@ -94,10 +94,10 @@ export default class Attack extends MyComponent {
         return hp <= 0;
     }
 
-    handleDamage(attri: Attri): {death: boolean, dmg: number, crit: boolean} {
-        let {dmg, crit} = this.getDamage();
+    handleDamage(attri: Attri): { death: boolean; dmg: number; crit: boolean } {
+        let { dmg, crit } = this.getDamage();
         let death = this.handleHp(attri, dmg);
-        return {death, dmg, crit};
+        return { death, dmg, crit };
     }
 
     changeIndex() {

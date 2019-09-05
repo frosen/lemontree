@@ -3,21 +3,20 @@
 // 拥有此组件的单位会进行与地形形成碰撞
 // lly 2017.12.12
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import TerrainColliderForCreature from "./TerrainColliderForCreature";
-import {GameCtrlr} from "./GameCtrlr";
+import TerrainColliderForCreature from './TerrainColliderForCreature';
+import { GameCtrlr } from './GameCtrlr';
 
 @ccclass
 export default class TerrainColliderForHero extends TerrainColliderForCreature {
-
     gameCtrlr: GameCtrlr = null;
 
     gateGid: number = null;
 
     onLoad() {
         super.onLoad();
-        this.gameCtrlr = cc.find("main").getComponent(GameCtrlr);
+        this.gameCtrlr = cc.find('main').getComponent(GameCtrlr);
     }
 
     update(_: number) {
@@ -37,11 +36,9 @@ export default class TerrainColliderForHero extends TerrainColliderForCreature {
 
         if (this.xOutRangeDir == 0 && this.yOutRangeDir == 0) {
             this.gateGid = gateGid; // 记录gate，边门在出界时候用，中门在点击时候用
-
         } else {
             if (this.gateGid == null) {
                 this._handleOutOfRange();
-
             } else {
                 this.gameCtrlr.enterSideGate(this.gateGid, this.node.position);
             }

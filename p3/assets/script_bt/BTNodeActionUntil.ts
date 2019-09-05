@@ -5,28 +5,27 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTNode, BTResult} from "./BTNode";
-import {BTNodeAction} from "./BTNodeAction";
-import BTComp from "./BTComp";
+import { BTNode, BTResult } from './BTNode';
+import { BTNodeAction } from './BTNodeAction';
+import BTComp from './BTComp';
 
 @ccclass
 export default class BTNodeActionUntil extends BTNode {
-
-    typeString: string = "Until";
+    typeString: string = 'Until';
 
     onLoad() {
         // 检测父节点，子节点正确性
-        cc.assert(this.node.parent.getComponent(BTNodeAction), "BTNodeActionEnd need action parent");
+        cc.assert(this.node.parent.getComponent(BTNodeAction), 'BTNodeActionEnd need action parent');
     }
 
     getBTName(): string {
-        return "";
+        return '';
     }
 
     execute(comp: BTComp): BTResult {
-        cc.error("never use");
+        cc.error('never use');
         return BTResult.running;
     }
 }

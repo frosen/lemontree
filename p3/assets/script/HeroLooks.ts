@@ -2,10 +2,10 @@
 // 表现hero动作UI的类
 // lly 2018.1.7
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {Hero} from "./Hero";
+import MyComponent from './MyComponent';
+import { Hero } from './Hero';
 
 /** 控制UI方向的三个指标 */
 export enum HeroDirLv {
@@ -16,7 +16,6 @@ export enum HeroDirLv {
 
 @ccclass
 export class HeroLooks extends MyComponent {
-
     @property(cc.Sprite)
     body: cc.Sprite = null;
 
@@ -26,13 +25,13 @@ export class HeroLooks extends MyComponent {
     hero: Hero = null;
 
     /** 方向列表 */
-    xUIDirs: {[key: number]: number;} = {};
+    xUIDirs: { [key: number]: number } = {};
 
     /** 攻击动画 */
     atkAnim: cc.Animation = null;
 
     onLoad() {
-        this.hero = this.getComponent("Hero");
+        this.hero = this.getComponent('Hero');
 
         this.xUIDirs[HeroDirLv.move] = 1;
         this.xUIDirs[HeroDirLv.attack] = 0;
@@ -83,9 +82,7 @@ export class HeroLooks extends MyComponent {
         this.body.node.skewY = 0;
     }
 
-    endStand() {
-
-    }
+    endStand() {}
 
     jumpUp() {
         // cc.log("ui -------> jumpUp");
@@ -95,9 +92,7 @@ export class HeroLooks extends MyComponent {
         // 根据
     }
 
-    endJumpUp() {
-
-    }
+    endJumpUp() {}
 
     jumpDown() {
         // cc.log("ui -------> jumpDown");
@@ -105,9 +100,7 @@ export class HeroLooks extends MyComponent {
         this.body.node.skewY = -5;
     }
 
-    endJumpDown() {
-
-    }
+    endJumpDown() {}
 
     move() {
         // cc.log("ui -------> move");
@@ -115,9 +108,7 @@ export class HeroLooks extends MyComponent {
         this.body.node.skewY = 0;
     }
 
-    endMove() {
-
-    }
+    endMove() {}
 
     dash() {
         // cc.log("ui -------> dash");
@@ -125,9 +116,7 @@ export class HeroLooks extends MyComponent {
         this.body.node.skewY = 0;
     }
 
-    endDash() {
-
-    }
+    endDash() {}
 
     hurt() {
         // cc.log("ui -------> hurt");
@@ -140,6 +129,10 @@ export class HeroLooks extends MyComponent {
         this.setInvincibleEnabled(false);
     }
 
+    dead() {
+        cc.log('ui -------> dead');
+    }
+
     // ---------------
 
     setInvincibleEnabled(on: boolean) {
@@ -149,19 +142,13 @@ export class HeroLooks extends MyComponent {
     // ---------------
 
     /** 跳跃时候的反向气流 */
-    showJumpingAirFlow() {
-
-    }
+    showJumpingAirFlow() {}
 
     /** 反墙跳跃时候的反向气流 */
-    showJumpingByWallAirFlow() {
-
-    }
+    showJumpingByWallAirFlow() {}
 
     /** 快速硬直恢复时候的闪光 */
-    showHitRecovery() {
-
-    }
+    showHitRecovery() {}
 
     //========================================================
 

@@ -3,16 +3,15 @@
 //
 // lly 2018.2.5
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {BTResult} from "./BTNode";
-import BTNodeGroup from "./BTNodeGroup";
-import BTComp from "./BTComp";
+import { BTResult } from './BTNode';
+import BTNodeGroup from './BTNodeGroup';
+import BTComp from './BTComp';
 
 @ccclass
 export default class BTNodeParallel extends BTNodeGroup {
-
-    typeString: string = "Parallel";
+    typeString: string = 'Parallel';
 
     execute(comp: BTComp): BTResult {
         for (const btNode of this.btNodes) {

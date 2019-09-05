@@ -2,15 +2,14 @@
 // 背景控制器
 // lly 2018.6.20
 
-const {ccclass, property, executionOrder} = cc._decorator;
+const { ccclass, property, executionOrder } = cc._decorator;
 
-import MyComponent from "./MyComponent";
-import {TerrainCtrlr} from "./TerrainCtrlr";
+import MyComponent from './MyComponent';
+import { TerrainCtrlr } from './TerrainCtrlr';
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.BGCtrlr)
 export default class BGCtrlr extends MyComponent {
-
     @property(cc.Node)
     target: cc.Node = null;
 
@@ -25,14 +24,14 @@ export default class BGCtrlr extends MyComponent {
     onLoad() {
         requireComponents(this, [cc.Sprite]);
 
-        let canvas: cc.Node = cc.find("canvas");
+        let canvas: cc.Node = cc.find('canvas');
         this.viewWidth = canvas.getContentSize().width;
         this.viewHeight = canvas.getContentSize().height;
 
         this.sp = this.getComponent(cc.Sprite);
     }
 
-    update (_: number) {
+    update(_: number) {
         let size = this.terrain.terrainSize;
         if (size.width < 1 || size.height < 1) return;
 

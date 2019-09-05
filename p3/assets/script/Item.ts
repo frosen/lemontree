@@ -3,7 +3,7 @@
 // lly 2018.4.12
 
 export default abstract class Item {
-    abstract getFrameInfos(): {frameName: string, time: number}[];
+    abstract getFrameInfos(): { frameName: string; time: number }[];
     abstract doEffect();
     abstract isMagnetic(): boolean;
 }
