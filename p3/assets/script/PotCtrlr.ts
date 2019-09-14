@@ -145,6 +145,11 @@ export default class PotCtrlr extends MyComponent {
         this.pool.reclaimOtherFrom(index);
     }
 
+    clear() {
+        this.pool.reclaimAll();
+        this.datas = [];
+    }
+
     killPot(pot: Pot) {
         let curAreaIndex = this.gameCtrlr.getCurAreaIndex();
         let index = pot.ctrlrIndex;

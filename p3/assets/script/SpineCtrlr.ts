@@ -157,4 +157,10 @@ export default class SpineCtrlr extends MyComponent {
             }
         }
     }
+
+    clear() {
+        this.pool = {};
+        this.datas = [];
+        this.node.removeAllChildren();
+    }
 }

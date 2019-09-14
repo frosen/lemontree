@@ -13,16 +13,15 @@ import { SMMgr, SM } from './SMBase';
 import Spine from './Spine';
 
 /** 行动状态 */
-export class ActState {
-    static stand: number = SMMgr.createSMState();
-    static jumpAccelerating: number = SMMgr.createSMState();
-    static jump: number = SMMgr.createSMState();
-    static move: number = SMMgr.createSMState();
-    static dash: number = SMMgr.createSMState();
-    static hurt: number = SMMgr.createSMState();
-    static dead: number = SMMgr.createSMState();
-
-    static jumpByWall: number = SMMgr.createSMState();
+export enum ActState {
+    stand = SMMgr.createSMState(),
+    jumpAccelerating = SMMgr.createSMState(),
+    jump = SMMgr.createSMState(),
+    move = SMMgr.createSMState(),
+    dash = SMMgr.createSMState(),
+    hurt = SMMgr.createSMState(),
+    dead = SMMgr.createSMState(),
+    jumpByWall = SMMgr.createSMState(),
 }
 
 export class SMForHeroMgr extends SMMgr<Hero> {
@@ -412,10 +411,6 @@ class SMForHeroInHurt extends SMForHero {
 }
 
 class SMForHeroInDead extends SMForHeroInHurt {
-    can() {
-        return true;
-    }
-
     begin(mgr: SMForHeroMgr) {
         cc.log('you dead');
 

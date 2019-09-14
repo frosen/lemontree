@@ -143,6 +143,10 @@ export class Hero extends MyComponent {
         this.resetCardAbility();
     }
 
+    setActState(actState: ActState) {
+        this.sm.changeStateTo(actState, true);
+    }
+
     // 动作 被控制器调用 -------------------------------------------------
 
     /**

@@ -63,37 +63,33 @@ export default class EnemyCtrlr extends MyComponent {
         if (this.prefabs[curSceneIndex]) return finishCallback();
 
         // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(
-            `map/scene${curSceneIndex}/enemy`,
-            cc.Prefab,
-            (error: Error, prefabs: cc.Prefab[], urls: string[]) => {
-                if (error) {
-                    cc.log(`Wrong in load enemy prefab res dir: ${error.message}`);
-                    return;
+        cc.loader.loadResDir(`map/scene${curSceneIndex}/enemy`, cc.Prefab, (error: Error, prefabs: cc.Prefab[]) => {
+            if (error) {
+                cc.log(`Wrong in load enemy prefab res dir: ${error.message}`);
+                return;
+            }
+
+            cc.assert(prefabs.length > 0, 'Wrong size of enemy prefab');
+
+            let data = {};
+            let adNames = [];
+            let names = [];
+            for (const prefab of prefabs) {
+                data[prefab.name] = prefab;
+                if (prefab.name.substring(prefab.name.length - 3, prefab.name.length) == '_ad') {
+                    // lly todo 还未测试
+                    adNames.push(prefab.name); // 高级敌人，只能在高级场景出现
+                } else {
+                    names.push(prefab.name);
                 }
+            }
 
-                cc.assert(prefabs.length > 0, 'Wrong size of enemy prefab');
+            this.prefabs[curSceneIndex] = data;
+            this.prefabNames[curSceneIndex] = names;
+            this.adPrefabNames[curSceneIndex] = adNames;
 
-                let data = {};
-                let adNames = [];
-                let names = [];
-                for (const prefab of prefabs) {
-                    data[prefab.name] = prefab;
-                    if (prefab.name.substring(prefab.name.length - 3, prefab.name.length) == '_ad') {
-                        // lly todo 还未测试
-                        adNames.push(prefab.name); // 高级敌人，只能在高级场景出现
-                    } else {
-                        names.push(prefab.name);
-                    }
-                }
-
-                this.prefabs[curSceneIndex] = data;
-                this.prefabNames[curSceneIndex] = names;
-                this.adPrefabNames[curSceneIndex] = adNames;
-
-                return finishCallback();
-            },
-        );
+            return finishCallback();
+        });
     }
 
     setData(areaIndex: number, advance: boolean, groundInfos: GroundInfo[]) {
@@ -209,6 +205,12 @@ export default class EnemyCtrlr extends MyComponent {
                 }
             }
         }
+    }
+
+    clear() {
+        this.pool = {};
+        this.datas = [];
+        this.node.removeAllChildren();
     }
 
     killEnemy(enemy: Enemy) {

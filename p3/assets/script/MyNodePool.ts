@@ -123,6 +123,21 @@ export default class MyNodePool {
         this._setNodeUsing(node, false);
     }
 
+    reclaimOtherFrom(index: number) {
+        let i = index;
+        while (i < this.pool.length) {
+            let node = this.pool[i];
+            this._setNodeUsing(node, false);
+            i++;
+        }
+    }
+
+    reclaimAll() {
+        for (let index = 0; index < this.pool.length; index++) {
+            this._setNodeUsing(this.pool[index], false);
+        }
+    }
+
     //========================================================
 
     getByIndex(index: number): cc.Node {
@@ -160,15 +175,6 @@ export default class MyNodePool {
         } else {
             cc.error('this pool can not create new node');
             return null;
-        }
-    }
-
-    reclaimOtherFrom(index: number) {
-        let i = index;
-        while (i < this.pool.length) {
-            let node = this.pool[i];
-            node.active = false;
-            i++;
         }
     }
 

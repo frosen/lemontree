@@ -7,6 +7,7 @@ const { ccclass, property } = cc._decorator;
 import { AreaType, GroundInfo, MapCtrlr } from './MapCtrlr';
 import { TerrainCtrlr } from './TerrainCtrlr';
 import { Hero } from './Hero';
+import { ActState } from './SMForHero';
 import HeroOperator from './HeroOperator';
 
 import EnemyCtrlr from './EnemyCtrlr';
@@ -100,13 +101,13 @@ export class GameCtrlr extends cc.Component {
     onMemoryLoad() {
         let sceneIndex = this.gameMemory.loadedData.curScene;
         if (sceneIndex == 0) {
-            this.createHomeScene();
+            this.enterHomeScene();
         } else {
-            this.createFightScene(sceneIndex);
+            this.enterFightScene(sceneIndex);
         }
     }
 
-    createHomeScene(callback = null) {
+    enterHomeScene(callback = null) {
         this.curSceneIndex = 0;
         callList(this, [
             [this._loadScene],
@@ -115,17 +116,17 @@ export class GameCtrlr extends cc.Component {
             // [this._createObjs],
             [this._gotoHeroSpot],
             [this._prepareFightSceneData],
+            [this._resetHeroState],
             [this._showScene],
             [
                 () => {
-                    this._turnPlayState(PlayState.game);
                     if (callback) callback();
                 },
             ],
         ]);
     }
 
-    createFightScene(index: number, callback = null) {
+    enterFightScene(index: number, callback = null) {
         this.curSceneIndex = index;
         callList(this, [
             [this._loadScene],
@@ -137,10 +138,10 @@ export class GameCtrlr extends cc.Component {
             [this._createObjs],
             [this._gotoHeroSpot],
             [this._collectGarbage],
+            [this._resetHeroState],
             [this._showScene],
             [
                 () => {
-                    this._turnPlayState(PlayState.game);
                     if (callback) callback();
                 },
             ],
@@ -262,10 +263,16 @@ export class GameCtrlr extends cc.Component {
         return callNext();
     }
 
-    _showScene(callNext: () => void, lastData: any) {
-        this.curtain.showSceneBySquare(this._getHeroPosInView(), () => {
-            return callNext();
-        });
+    _resetHeroState(callNext: () => void, lastData: any) {
+        this._turnPlayState(PlayState.game);
+        this.hero.setActState(ActState.stand);
+        this.hero.move(0);
+        return callNext();
+    }
+
+    async _showScene(callNext: () => void, lastData: any) {
+        await this._showSceneSync();
+        return callNext();
     }
 
     _prepareFightSceneData(callNext: () => void, lastData: any) {
@@ -292,23 +299,55 @@ export class GameCtrlr extends cc.Component {
         this._turnPlayState(PlayState.story);
         await this._beginSlowTimeSync(2.4);
 
-        this.curtain.hideSceneBySquare(this._getHeroPosInView(), () => {
-            this.createFightScene(1, () => {
-                this._turnPlayState(PlayState.game);
-            });
-        });
+        this.turningTypes = {
+            hide: TurningType.fade,
+            show: TurningType.fade,
+        };
+
+        await this._hideSceneSync();
+
+        this.enemyCtrlr.clear();
+        this.spineCtrlr.clear();
+        this.potCtrlr.clear();
+        this.itemCtrlr.clear();
+
+        await this._sleepSync(2);
+
+        this.enterHomeScene();
     }
 
     _hideSceneSync() {
         return new Promise(resolve => {
             let hideType = this.turningTypes.hide;
+            let pos = this._getHeroPosInView();
             if (hideType == TurningType.fade) {
-                this.curtain.hideSceneByFade(() => {
-                    resolve();
-                });
+                this.curtain.hideSceneByFade(pos, resolve);
             } else {
+                this.curtain.hideSceneBySquare(pos, resolve);
             }
         });
+    }
+
+    _showSceneSync() {
+        return new Promise(resolve => {
+            let hideType = this.turningTypes.hide;
+            let pos = this._getHeroPosInView();
+            if (hideType == TurningType.fade) {
+                this.curtain.showSceneByFade(pos, resolve);
+            } else {
+                this.curtain.showSceneBySquare(pos, resolve);
+            }
+        });
+    }
+
+    _getHeroPosInView(): cc.Vec2 {
+        let vSize = cc.view.getVisibleSize();
+        let heroPos = this.hero.node.position;
+        heroPos.addSelf(cc.v2(0, this.hero.node.height * 0.5));
+        let cameraPos = this.camera.node.position;
+        let subPos = heroPos.sub(cameraPos);
+        let p = subPos.add(cc.v2(vSize.width * 0.5, vSize.height * 0.5));
+        return p;
     }
 
     // ========================================================
@@ -457,32 +496,39 @@ export class GameCtrlr extends cc.Component {
         });
     }
 
-    _getHeroPosInView(): cc.Vec2 {
-        let vSize = cc.view.getVisibleSize();
-        let heroPos = this.hero.node.position;
-        heroPos.addSelf(cc.v2(0, this.hero.node.height * 0.5));
-        let cameraPos = this.camera.node.position;
-        let subPos = heroPos.sub(cameraPos);
-        let p = subPos.add(cc.v2(vSize.width * 0.5, vSize.height * 0.5));
-        return p;
-    }
-
     // ========================================================
 
-    test1() {
-        // 测试
+    async test1() {
+        // // 测试
         this._turnPlayState(PlayState.story);
 
+        this.hero.setActState(ActState.stand);
+
+        this.turningTypes = {
+            hide: TurningType.square,
+            show: TurningType.square,
+        };
+
+        await this._hideSceneSync();
+
+        this.enterFightScene(1);
+    }
+
+    async test1Async() {
+        this._turnPlayState(PlayState.story);
+
+        this.turningTypes = {
+            hide: TurningType.square,
+            show: TurningType.square,
+        };
+
         // 帷幕
-        this.curtain.hideSceneBySquare(this._getHeroPosInView(), () => {
-            this.createFightScene(1, () => {
-                this._turnPlayState(PlayState.game);
-            });
-        });
+        await this._hideSceneSync();
+        this.enterFightScene(1);
     }
 
     test2() {
-        // this.turnPlayState(PlayState.story);
+        this.enemyCtrlr.clear();
     }
 
     test3() {}
