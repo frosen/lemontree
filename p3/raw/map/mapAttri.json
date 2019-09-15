@@ -24,6 +24,36 @@
                     {
                         "origin": 1,
                         "substs": [211, 212],
+                        "ratio": 3
+                    },
+                    {
+                        "origin": 3,
+                        "substs": [213],
+                        "ratio": 10
+                    }
+                ]
+            },
+            {
+                "holeRatio": 30,
+                "tileSubsts": [
+                    {
+                        "origin": 1,
+                        "substs": [211, 212],
+                        "ratio": 5
+                    },
+                    {
+                        "origin": 3,
+                        "substs": [213],
+                        "ratio": 12
+                    }
+                ]
+            },
+            {
+                "holeRatio": 30,
+                "tileSubsts": [
+                    {
+                        "origin": 1,
+                        "substs": [211, 212],
                         "ratio": 8
                     },
                     {

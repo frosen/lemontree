@@ -1,0 +1,20 @@
+{
+    "maps": [
+        {
+            "fileName": "scene_1_0.tmx",
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "scene_1_1.tmx",
+            "x": 2368,
+            "y": 576
+        },
+        {
+            "fileName": "scene_1_2.tmx",
+            "x": 2048,
+            "y": -1952
+        }
+    ],
+    "type": "world"
+}

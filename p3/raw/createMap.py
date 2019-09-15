@@ -246,7 +246,7 @@ class MapCreator:
                 if sceneIndex == 0:  # 0是home，要特殊处理
                     areaData = self.parseHome(areaStrData, areaIndex, sceneIndex)
                 else:
-                    areaData = self.parse(areaStrData, areaIndex, sceneIndex)
+                    areaData = self.parseFight(areaStrData, areaIndex, sceneIndex)
 
                 areaDataList.append(areaData)
                 areaTypes.append(self.mapType[sceneIndex][areaIndex])
@@ -272,7 +272,7 @@ class MapCreator:
     # param string 一个区域的数据文本
     # param areaIndex 区域索引 从0开始
     def parseHome(self, string, areaIndex, sceneIndex):
-
+        print('parse home')
         self.doorIndexs = {}
         self.areaSpineData = []
 
@@ -322,9 +322,10 @@ class MapCreator:
     # 顺便解析了其他的数据：
     # param string 一个区域的数据文本
     # param areaIndex 区域索引 从0开始
-    def parse(self, string, areaIndex, sceneIndex):
-
+    def parseFight(self, string, areaIndex, sceneIndex):
+        print('parse fight')
         self.noEnemyPosData = []
+        self.doorIndexs = {}
         self.areaSpineData = []
 
         # 获取宽高
