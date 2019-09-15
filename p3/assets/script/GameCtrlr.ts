@@ -6,6 +6,7 @@ const { ccclass, property } = cc._decorator;
 
 import { AreaType, GroundInfo, MapCtrlr } from './MapCtrlr';
 import { TerrainCtrlr } from './TerrainCtrlr';
+
 import { Hero } from './Hero';
 import { ActState } from './SMForHero';
 import HeroOperator from './HeroOperator';

@@ -178,8 +178,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1000,
-      "height": 500
+      "width": 625,
+      "height": 352
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -231,11 +231,8 @@
       "__id__": 3
     },
     "_enabled": true,
-    "target": {
+    "cameraNode": {
       "__id__": 6
-    },
-    "terrain": {
-      "__id__": 47
     }
   },
   {

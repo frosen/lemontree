@@ -5,43 +5,28 @@
 const { ccclass, property, executionOrder } = cc._decorator;
 
 import MyComponent from './MyComponent';
-import { TerrainCtrlr } from './TerrainCtrlr';
 
 @ccclass
 @executionOrder(EXECUTION_ORDER.BGCtrlr)
 export default class BGCtrlr extends MyComponent {
     @property(cc.Node)
-    target: cc.Node = null;
+    cameraNode: cc.Node = null;
 
-    @property(TerrainCtrlr)
-    terrain: TerrainCtrlr = null;
-
-    sp: cc.Sprite = null;
-
-    viewWidth: number = null;
-    viewHeight: number = null;
+    /** 相对镜头移动背景的比例 */
+    rate: number = 0.5;
+    /** 背景初始位置的偏移量 */
+    offset: number = -1000;
 
     onLoad() {
         requireComponents(this, [cc.Sprite]);
 
         let canvas: cc.Node = cc.find('canvas');
-        this.viewWidth = canvas.getContentSize().width;
-        this.viewHeight = canvas.getContentSize().height;
-
-        this.sp = this.getComponent(cc.Sprite);
+        this.node.width = canvas.getContentSize().width * 50;
+        this.node.height = canvas.getContentSize().height * 50;
     }
 
     update(_: number) {
-        let size = this.terrain.terrainSize;
-        if (size.width < 1 || size.height < 1) return;
-
-        let rateX = (this.target.x - this.viewWidth / 2) / (size.width - this.viewWidth);
-        let rateY = (this.target.y - this.viewHeight / 2) / (size.height - this.viewHeight);
-
-        let x = (size.width - this.node.width) * rateX;
-        let y = (size.height - this.node.height) * rateY;
-
-        this.node.x = x;
-        this.node.y = y;
+        this.node.x = this.cameraNode.x * this.rate + this.offset;
+        this.node.y = this.cameraNode.y * this.rate + this.offset;
     }
 }
