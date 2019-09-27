@@ -126,6 +126,7 @@ def saveFile(path, data):
         if fp:
             fp.close()
 
+
 def getWHFromTileJson(jsonStr):
     wStr = re.findall(r" width=\"(.+?)\"", jsonStr)[0]
     hStr = re.findall(r" height=\"(.+?)\"", jsonStr)[0]
@@ -244,9 +245,11 @@ class MapCreator:
 
                 print "parse scene {} area {}".format(sceneIndex, areaIndex)
                 if sceneIndex == 0:  # 0是home，要特殊处理
-                    areaData = self.parseHome(areaStrData, areaIndex, sceneIndex)
+                    areaData = self.parseHome(
+                        areaStrData, areaIndex, sceneIndex)
                 else:
-                    areaData = self.parseFight(areaStrData, areaIndex, sceneIndex)
+                    areaData = self.parseFight(
+                        areaStrData, areaIndex, sceneIndex)
 
                 areaDataList.append(areaData)
                 areaTypes.append(self.mapType[sceneIndex][areaIndex])
@@ -318,12 +321,15 @@ class MapCreator:
 
         return data
 
+    def checkHomeMapData(self, teList, coList, noList):
+        pass
+
     # 解析对应的场景的区域 {w h noeps fi[ {x y w h te co d[] } ] r }
     # 顺便解析了其他的数据：
     # param string 一个区域的数据文本
     # param areaIndex 区域索引 从0开始
     def parseFight(self, string, areaIndex, sceneIndex):
-        print('parse fight')
+        print('parse fight area %d, scene %d' % (areaIndex, sceneIndex))
         self.noEnemyPosData = []
         self.doorIndexs = {}
         self.areaSpineData = []
@@ -335,6 +341,8 @@ class MapCreator:
         teList = getDataFromTileJson(string, "terrain")  # 地形
         coList = getDataFromTileJson(string, "collision")  # 碰撞
         noList = getDataFromTileJson(string, "notation")  # 标记
+
+        self.checkFightMapData(teList, coList, noList, w, h)
 
         # 遍历标记，获取无敌人区域，spine等信息
         for j in xrange(0, len(noList)):
@@ -370,6 +378,111 @@ class MapCreator:
 
         return data
 
+    # 检测战斗地图
+    def checkFightMapData(self, teList, coList, noList, w, h):
+        if w % 3 != 2:
+            raise Exception("当前area的w不标准")
+
+        if h % 3 != 1:
+            raise Exception("当前area的h不标准")
+
+        errorList = []
+        for lineIndex in xrange(0, len(teList)):
+            line = teList[lineIndex]
+            for index in xrange(0, len(line)):
+                data = line[index]
+                if data == 0:
+                    continue
+                if data <= clsnSize:
+                    errorList.append("错误的地形块%d在%d, %d位置" %
+                                     (data, index, lineIndex))
+
+        noDatas = [tileDoorUp, tileDoorDown,
+                   tileDoorLeft, tileDoorRight, tileNoEnemy, tileHero]
+        for lineIndex in xrange(0, len(coList)):
+            line = coList[lineIndex]
+            for index in xrange(0, len(line)):
+                data = line[index]
+                if data == 0:
+                    continue
+                if data > clsnSize:
+                    errorList.append("错误的碰撞块%d在%d, %d位置，不应该是地形块" %
+                                     (data, index, lineIndex))
+                elif data in noDatas:
+                    errorList.append("错误的碰撞块%d在%d, %d位置，不应该是标记块" %
+                                     (data, index, lineIndex))
+
+        def up(x, y):
+            pos = (x % 3 == 1 and y % 3 == 2)
+            data = coList[y][x] == tileRandom
+            side = coList[y + 1][x] != tileRandom
+            return pos and data and side
+
+        def down(x, y):
+            pos = (x % 3 == 1 and y % 3 == 0)
+            data = coList[y][x] == tileRandom
+            side = coList[y - 1][x] != tileRandom
+            return pos and data and side
+
+        def left(x, y):
+            pos = (x % 3 == 0 and y % 3 == 0)
+            data = coList[y][x] == tileRandom
+            side = coList[y][x + 1] != tileRandom
+            return pos and data and side
+
+        def right(x, y):
+            pos = (x % 3 == 1 and y % 3 == 0)
+            data = coList[y][x] == tileRandom
+            side = coList[y][x - 1] != tileRandom
+            return pos and data and side
+
+        for lineIndex in xrange(0, len(noList)):
+            line = noList[lineIndex]
+            for index in xrange(0, len(line)):
+                data = line[index]
+                if data == 0:
+                    continue
+                if not data in noDatas:
+                    errorList.append("错误的标记块%d在%d, %d位置，请使用正确标记" %
+                                     (data, index, lineIndex))
+                    continue
+
+                correct = True
+                if data == tileDoorUp:
+                    if up(index, lineIndex) or left(index, lineIndex) or right(index, lineIndex):
+                        pass
+                    else:
+                        correct = False
+
+                elif data == tileDoorDown:
+                    if down(index, lineIndex) or left(index, lineIndex) or right(index, lineIndex):
+                        pass
+                    else:
+                        correct = False
+
+                elif data == tileDoorLeft:
+                    if left(index, lineIndex) or up(index, lineIndex) or down(index, lineIndex):
+                        pass
+                    else:
+                        correct = False
+
+                elif data == tileDoorRight:
+                    if right(index, lineIndex) or up(index, lineIndex) or down(index, lineIndex):
+                        pass
+                    else:
+                        correct = False
+
+                if correct == False:
+                    print("错误的标记块%d在%d, %d位置" %
+                          (data, index, lineIndex))
+                    errorList.append("错误的标记块%d在%d, %d位置" %
+                                     (data, index, lineIndex))
+                    errorList.append(
+                        "--->方向标记只能在固定块外圈一层，下方向标记只能在下（靠左），或者左右（靠上）")
+
+        if len(errorList) > 0:
+            raise Exception(("\n").join(errorList))
+
     # 去掉碰撞层的影响
     def parseTe(self, t):
         if t > clsnSize:
@@ -400,7 +513,7 @@ class MapCreator:
 
         if tileGateFrom <= t and t <= tileGateTo:
             # 门
-            key = 6 # 从6开始是考虑到512以下会是正常的tile
+            key = 6  # 从6开始是考虑到512以下会是正常的tile
 
             if not self.doorIndexs.has_key(t):
                 self.doorIndexs[t] = 1
@@ -429,7 +542,7 @@ class MapCreator:
                 if not self.midDoors.has_key(newT):
                     self.midDoors[newT] = True
                 else:
-                    newT += 10000 # 这句话的意思是把direction变成6，这样才不会重复
+                    newT += 10000  # 这句话的意思是把direction变成6，这样才不会重复
 
             # 门数据记录到门的列表中
             thisDoorData = {}
@@ -445,7 +558,7 @@ class MapCreator:
                 self.sceneDoorData[t][self.doorIndexs[t]] = []
 
             if len(self.sceneDoorData[t][self.doorIndexs[t]]) >= 2:
-                raise Exception("door at ", colNum, lineNum, "wrong")
+                raise Exception("整个场景中，同一种门只能是2个，但是出错", area, colNum, lineNum)
 
             self.sceneDoorData[t][self.doorIndexs[t]].append(thisDoorData)
 
@@ -566,6 +679,8 @@ class MapCreator:
                 realW = realXMax - realX
                 realH = realYMax - realY
 
+                self.checkFiData(realW, realH)
+
                 # 靠边的块要加上边缘
                 if realX == 1:
                     realX = 0
@@ -576,6 +691,9 @@ class MapCreator:
 
                 if realYMax == h - 1:
                     realH += 1
+
+                print("fi: xy %d, %d  wh %d, %d" %
+                      (realX, realY, realW, realH))
 
                 oneFi = {}
 
@@ -677,9 +795,49 @@ class MapCreator:
 
                 oneFi["door"] = door
                 oneFi["substitutes"] = substitutes
+                print(door)
+                self.checkOneFiDoor(oneFi, w, h)
 
                 fi.append(oneFi)
         return fi
+
+    def checkFiData(self, w, h):
+        if w % 3 != 0:
+            raise Exception("这个固定块宽度不对")
+
+        if h % 3 != 0:
+            raise Exception("这个固定块高度不对")
+
+    # 每个fi都要有门，如果一个不靠边的方向没有门，则需要有替代方向
+    def checkOneFiDoor(self, oneFi, w, h):
+        doorIndex = -1  # 0123表示上下左右
+        for door in oneFi["door"]:
+            doorIndex += 1
+
+            # 有门，则ok
+            if len(door) > 0:
+                continue
+
+            # 没有门，有代替，也ok
+            if oneFi["substitutes"][doorIndex] != doorIndex:
+                continue
+
+            # 也没有代替，但是靠边，也ok
+            if doorIndex == 0:
+                if oneFi["rY"] == 0:
+                    continue
+            elif doorIndex == 1:
+                if oneFi["rY"] + oneFi["rH"] == h:
+                    continue
+            elif doorIndex == 2:
+                if oneFi["rX"] == 0:
+                    continue
+            else:
+                if oneFi["rX"] + oneFi["rW"] == w:
+                    continue
+
+            raise Exception("固定块：xy wh %d, %d, %d, %d 方向：%d上没有门，也没有取代方向" % (
+                oneFi["rX"], oneFi["rY"], oneFi["rW"], oneFi["rH"], doorIndex))
 
     def getIndex(self, x, y):
         return x * 1000 + y
@@ -741,14 +899,14 @@ class EleCreator(MapCreator):
     def getEleTMXFiles(self, path, inputPath):
         fList = os.listdir(path)
         for f in fList:
-            
+
             if inputPath and inputPath != f:
                 continue
 
             fileInfos = os.path.splitext(f)
 
             if fileInfos[1] == '.tmx':
-                
+
                 indexs = fileInfos[0].split("_")
                 if indexs[0] != "ele" or indexs[1] == "base":
                     continue
@@ -762,20 +920,107 @@ class EleCreator(MapCreator):
                 data["tW"] = w
                 data["tH"] = h
                 data["d"] = d
+                data["name"] = f
                 self.eleDatas.append(data)
+
+    def checkEleData(self, coList, noList):
+        errorList = []
+        for lineIndex in xrange(0, len(coList)):
+            line = coList[lineIndex]
+            for index in xrange(0, len(line)):
+                data = line[index]
+                if data > 75:
+                    errorList.append("错误的元素碰撞块%d在%d, %d位置，不应该是碰撞块" %
+                                     (data, index, lineIndex))
+                    continue
+                if data in [tileDoorUp, tileDoorDown, tileDoorLeft, tileDoorRight]:
+                    errorList.append("错误的元素碰撞块%d在%d, %d位置，不应该是方向块" %
+                                     (data, index, lineIndex))
+
+        doors = [tileDoorUp, tileDoorDown, tileDoorLeft, tileDoorRight]
+        for lineIndex in xrange(0, len(noList)):
+            line = noList[lineIndex]
+            for index in xrange(0, len(line)):
+                data = line[index]
+                if data != 0 and data <= clsnSize and not (data in doors):
+                    errorList.append("错误的元素标记块%d在%d, %d位置，不应该是碰撞块" %
+                                     (data, index, lineIndex))
+                    continue
+
+                if data in doors:
+                    if data == tileDoorUp and index % 3 == 1 and lineIndex % 3 == 0:
+                        pass
+                    elif data == tileDoorDown and index % 3 == 0 and lineIndex % 3 == 2:
+                        pass
+                    elif data == tileDoorLeft and index % 3 == 1 and lineIndex % 3 == 2:
+                        pass
+                    elif data == tileDoorRight and index % 3 == 0 and lineIndex % 3 == 0:
+                        pass
+                    else:
+                        errorList.append("错误的元素方向标记块%d在%d, %d位置，上右下左分别在左上,右上,右下,左下" %
+                                         (data, index, lineIndex))
+                elif notationKeyLineFrom <= data and data < notationKeyLineFrom + 7:
+                    if not (index % 3 == 2 and lineIndex == len(noList) - 1):
+                        errorList.append("错误的横向标记块%d在%d, %d位置，只能在最下行并在3格的中间位置" %
+                                         (data, index, lineIndex))
+                elif notationKeyRowFrom <= data and data < notationKeyRowFrom + 6:
+                    if index == 0 and lineIndex % 3 == 1:
+                        pass
+                    elif index % 3 == 0 and lineIndex == len(noList) - 1:
+                        pass
+
+                    elif index % 3 == 2 and lineIndex % 3 == 0:
+                        if noList[lineIndex][index - 1] != tileDoorUp:
+                            errorList.append("错误的纵向标记块%d在%d, %d位置，要在上块的右边" %
+                                             (data, index, lineIndex))
+                    elif index % 3 == 2 and lineIndex % 3 == 2:
+                        if noList[lineIndex][index + 1] != tileDoorDown:
+                            errorList.append("错误的纵向标记块%d在%d, %d位置，要在下块的左边" %
+                                             (data, index, lineIndex))
+                    elif index % 3 == 1 and lineIndex % 3 == 1:
+                        if noList[lineIndex + 1][index] != tileDoorLeft:
+                            errorList.append("错误的纵向标记块%d在%d, %d位置，要在左块的上边" %
+                                             (data, index, lineIndex))
+                    elif index % 3 == 0 and lineIndex % 3 == 1:
+                        if noList[lineIndex - 1][index] != tileDoorDown:
+                            errorList.append("错误的纵向标记块%d在%d, %d位置，要在右块的下边" %
+                                             (data, index, lineIndex))
+
+                    else:
+                        errorList.append("错误的纵向标记块%d在%d, %d位置，只能在最左行并在3格的中间位置，或者横向块的右边，或方向块的边上" %
+                                         (data, index, lineIndex))
+                elif data == notationKey2Jump:
+                    if index == 0 and lineIndex == len(noList) - 1:
+                        pass
+                    elif index % 3 == 1 and lineIndex == len(noList) - 1:
+                        pass
+                    elif index == 0 and lineIndex % 3 == 2:
+                        pass
+                    else:
+                        errorList.append("错误的双跳标记块%d在%d, %d位置，只能在左下角，或者横向块的左边，纵块的下边" %
+                                         (data, index, lineIndex))
+
+        if len(errorList) > 0:
+            raise Exception(("\n").join(errorList))
 
     def parseEleData(self):
 
         k = -1
         for eleData in self.eleDatas:
+            print("parse ele: ", eleData["name"])
 
             # 从json string提取tile数据
             coList = getDataFromTileJson(eleData["d"], "collision")  # 碰撞
-            coList = self.handleCoList(coList)
             noList = getDataFromTileJson(eleData["d"], "notation")  # 标记
+            self.checkEleData(coList, noList)
+
+            coList = self.handleCoList(coList)
+
+            if len(coList[0]) % 3 != 0 or len(coList) % 3 != 0:
+                raise Exception("元素的宽度或者高度错误，需要为3的倍数加1")
 
             if eleData["tW"] * 3 != len(coList[0]) or eleData["tH"] * 3 != len(coList):
-                raise Exception("w or h error") # 验证文件名上的宽高和实际是否一致
+                raise Exception("文件名上的宽高和实际不一致")
 
             # 解析标记
             notationLine = self.handleNotationLine(noList)
@@ -799,11 +1044,12 @@ class EleCreator(MapCreator):
                     rowList = rowData["list"]
 
                     ele = {}
-                    ele["bi"] = k #表示基于哪个base
-                    ele["uTX"] = self.changeNotationListToNum(lineList) #用数字表示base中需要横着哪个
+                    ele["bi"] = k  # 表示基于哪个base
+                    ele["uTX"] = self.changeNotationListToNum(
+                        lineList)  # 用数字表示base中需要横着哪个
                     ele["uTY"] = self.changeNotationListToNum(rowList)
 
-                    eleW = self.getListCount(lineList) 
+                    eleW = self.getListCount(lineList)
                     eleH = self.getListCount(rowList)
 
                     ele["tW"] = eleW
@@ -815,7 +1061,8 @@ class EleCreator(MapCreator):
                     doorType2Jump = [[], [], [], []]
                     door2Jump = False  # 如果这个标识为true，则会生成2个不同的ele，其中一个不包含某个门在第一关使用
 
-                    need2Jump = lineData["need2Jump"] or rowData["need2Jump"]  # 如果这个标识为true，则当前的ele不能在第一关使用
+                    # 如果这个标识为true，则当前的ele不能在第一关使用
+                    need2Jump = lineData["need2Jump"] or rowData["need2Jump"]
 
                     # 门和spine的位置
                     realI = -1
@@ -954,7 +1201,10 @@ class EleCreator(MapCreator):
 
             self.eleBases.append(eleBase)
 
-        # 检测elelist里面是否有空
+        self.checkEleLists()
+
+    # 检测elelist里面是否有空
+    def checkEleLists(self):
         for i in xrange(0, len(self.eleLists)):
             eleListHD = self.eleLists[i]
             for j in xrange(0, len(eleListHD)):
@@ -979,18 +1229,18 @@ class EleCreator(MapCreator):
         maxH = len(noList) - 1
         lastRestrict = 0
         for x in xrange(0, MAX_R_TW):
-            key = notationKeyLineFrom + x # 小于等于这个key的话，则不用这个块
+            key = notationKeyLineFrom + x  # 小于等于这个key的话，则不用这个块
             noLineList = []
             restrict = 0  # 限制，只有竖行的数大于等于这个数时，才生成
-            jumpKey = 0 # 是否需要连跳
+            jumpKey = 0  # 是否需要连跳
             hasNotation = False
             for i in xrange(2, len(noList[maxH]), 3):
                 noData = noList[maxH][i]
-                if noData <= 0: # 始终会用的块
+                if noData <= 0:  # 始终会用的块
                     noLineList.append(1)
-                elif noData < key: # 不用的块
+                elif noData < key:  # 不用的块
                     noLineList.append(0)
-                elif noData == key: # 不用这个块，并查看是否会受到列的限制
+                elif noData == key:  # 不用这个块，并查看是否会受到列的限制
                     noLineList.append(0)
                     hasNotation = True
 
@@ -999,21 +1249,24 @@ class EleCreator(MapCreator):
                     if notationRestrict > 0:
                         restrict = notationRestrict
                         if restrict == notationKey2Jump:
-                            raise Exception("line right side must be notation restrict")
+                            raise Exception(
+                                "line right side must be notation restrict")
 
                     # 左边是对连跳的要求
                     jumpRestrict = noList[maxH][i - 1]
                     if jumpRestrict > 0:
                         jumpKey = jumpRestrict
                         if jumpKey != notationKey2Jump:
-                            raise Exception("line left side must be jump restrict")
+                            raise Exception(
+                                "line left side must be jump restrict")
 
-                else: # 会用到的块
+                else:  # 会用到的块
                     noLineList.append(1)
 
             if hasNotation:
                 if restrict < lastRestrict:
-                    raise Exception("restrict must more and more big than ", lastRestrict, " in ", i)
+                    raise Exception(
+                        "restrict must more and more big than ", lastRestrict, " in ", i)
                 lastRestrict = restrict
 
                 data = {}
@@ -1022,7 +1275,7 @@ class EleCreator(MapCreator):
                 data["need2Jump"] = jumpKey > 0
                 notationLine.append(data)
 
-            else: #最后把“全部用到”也算作一组数据
+            else:  # 最后把“全部用到”也算作一组数据
                 for x in xrange(0, len(noLineList)):
                     noLineList[x] = 1
                 data = {}
