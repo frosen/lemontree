@@ -115,6 +115,8 @@ export default class PotCtrlr extends MyComponent {
     }
 
     setData(areaIndex: number, groundInfos: GroundInfo[]) {
+        if (groundInfos.length == 0) return;
+
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let data = [];
         let potInfos = this.infos[curSceneIndex];

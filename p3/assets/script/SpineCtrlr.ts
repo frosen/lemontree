@@ -50,7 +50,7 @@ export default class SpineCtrlr extends MyComponent {
                     return;
                 }
 
-                cc.assert(prefabs.length > 0, 'Wrong size of spine prefab');
+                cc.log('spine size: ', prefabs.length);
 
                 let data = {};
                 for (const prefab of prefabs) {
@@ -60,8 +60,6 @@ export default class SpineCtrlr extends MyComponent {
                 this.prefabs[curSceneIndex] = data;
 
                 return finishCallback();
-
-                console.log;
             },
         );
     }

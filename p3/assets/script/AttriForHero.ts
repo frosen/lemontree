@@ -23,7 +23,7 @@ export default class AttriForHero extends Attri {
     durability: EcNumber = new EcNumber(0);
     /** 敏捷 物理攻击闪躲率 0.004 * 小等级 / 冲刺时候额外获得闪躲 0.03 * 大等级 闪躲成功后无敌0.3s */
     agility: EcNumber = new EcNumber(0);
-    /** 精神 魔法攻击力 */
+    /** 精神 魔法攻击力 / 魔法上限 */
     mentality: EcNumber = new EcNumber(0);
     /** 决心 消灭敌人回复HP/地图破坏物回复HP (*) 1~100；1~10 fc */
     determination: EcNumber = new EcNumber(0);
@@ -207,7 +207,7 @@ export default class AttriForHero extends Attri {
     /** 大真理之剑 */
     swordWave: number = 0;
 
-    /** 烈焰经理 */
+    /** 烈焰精灵 */
     flameSprite: number = 0;
 
     /** 加农炮 */

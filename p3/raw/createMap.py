@@ -47,7 +47,6 @@ tileUpMove = 55
 tileMoveTo = 55
 
 tileSpineFrom = 61
-tileSpine = 61
 tileSpineTo = 75
 
 tileGateFrom = 76
@@ -567,34 +566,43 @@ class MapCreator:
         elif tileMoveFrom <= t and t <= tileMoveTo:
             # 强制移动
             key = 7
-            realTile = 0
+            realTiles = [1, 1, 1, 0]  # 每种强制移动对应的碰撞
+            realTile = realTiles[t - tileMoveFrom]
 
-            if t == tileRightMove:
-                realTile = 1  # lly todo 强制移动用spine实现
+            # 强制移动用spine表示
+            thisMoveData = {}
+            thisMoveData["pX"] = getPX(colNum) + xOffset
+            thisMoveData["pY"] = getPY(lineNum, h) + yOffset
+
+            if t == tileRightMove:  # todo lly 区分最左最右和中间
+                thisMoveData["id"] = 1010
 
             elif t == tileLeftMove:
-                realTile = 1
+                thisMoveData["id"] = 1010
 
             elif t == tileJump:
-                realTile = 1
+                thisMoveData["id"] = 1010
 
             elif t == tileUpMove:
-                realTile = 0
+                thisMoveData["id"] = 1010
+
+            self.areaSpineData.append(thisMoveData)
 
             return t * 1000 + key * keyDight + realTile
 
         elif tileSpineFrom <= t and t <= tileSpineTo:
             key = 8
-            realTile = 0
 
-            if t == tileSpine:
-                # spine
-                thisSpineData = {}
-                thisSpineData["pX"] = getPX(colNum) + xOffset
-                thisSpineData["pY"] = getPY(lineNum, h) + yOffset
-                thisSpineData["id"] = t - tileSpineFrom
+            spineId = t - tileSpineFrom
+            realtiles = [0, 0, 0, 0, 1, 1, 1, 1, 1, 20, 0]  # 每种spine对应的碰撞
+            realTile = realtiles[spineId]
 
-                self.areaSpineData.append(thisSpineData)
+            thisSpineData = {}
+            thisSpineData["pX"] = getPX(colNum) + xOffset
+            thisSpineData["pY"] = getPY(lineNum, h) + yOffset
+            thisSpineData["id"] = spineId
+
+            self.areaSpineData.append(thisSpineData)
 
             return t * 1000 + key * keyDight + realTile
         else:

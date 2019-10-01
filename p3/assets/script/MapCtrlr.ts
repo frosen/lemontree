@@ -548,6 +548,8 @@ export class MapCtrlr extends MyComponent {
      */
     createRandomGroundInfos(areaIndex: number): GroundInfo[] {
         let areaInfo = this.getAreaInfo(areaIndex);
+        if (!areaInfo.groundInfos) return [];
+
         let len = AreaJson.getGroundInfoLen(areaInfo);
         let count = Math.floor(len * 0.1);
 

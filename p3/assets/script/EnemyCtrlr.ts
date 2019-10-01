@@ -95,6 +95,8 @@ export default class EnemyCtrlr extends MyComponent {
     setData(areaIndex: number, advance: boolean, groundInfos: GroundInfo[]) {
         if (this.debugEnemyLevel > 0) return; // 开启测试，就不随机生成了
 
+        if (groundInfos.length == 0) return;
+
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let data: EnemyData[] = [];
 

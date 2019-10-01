@@ -113,8 +113,8 @@ export class GameCtrlr extends cc.Component {
         callList(this, [
             [this._loadScene],
             [this._createScene],
-            // [this._loadSpineRes], llytodo 以后home会有spine的
-            // [this._createObjs],
+            [this._loadSpineRes],
+            [this._createObjs],
             [this._gotoHeroSpot],
             [this._prepareFightSceneData],
             [this._resetHeroState],
