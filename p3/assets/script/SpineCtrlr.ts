@@ -9,6 +9,17 @@ import { GameCtrlr } from './GameCtrlr';
 import Spine from './Spine';
 import { SpineJson } from './MapCtrlr';
 
+const SpineDict = {
+    0: 'spine_up',
+    1: 'spine_down',
+    2: 'spine_left',
+    3: 'spine_right',
+    4: 'gun_up',
+    5: 'gun_down',
+    6: 'gun_left',
+    7: 'gun_right',
+};
+
 class SpineData {
     pos: cc.Vec2;
     name: string;
@@ -65,7 +76,7 @@ export default class SpineCtrlr extends MyComponent {
     }
 
     getSpineNameFromId(id: number): string {
-        return 'spine';
+        return SpineDict[id];
     }
 
     setData(areaIndex: number, infos: SpineJson[]) {
@@ -101,6 +112,7 @@ export default class SpineCtrlr extends MyComponent {
             if (len > 0) {
                 // 当前场景中敌人数量，大于容器中已有的数量，所以生成新的
                 let prefab = prefabs[name];
+                if (!prefab) cc.error('没有spine的prefab：', name);
                 for (let index = 0; index < len; index++) {
                     let node = cc.instantiate(prefab);
                     parent.addChild(node);
