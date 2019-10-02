@@ -111,6 +111,7 @@ export class GameCtrlr extends cc.Component {
     enterHomeScene(callback = null) {
         this.curSceneIndex = 0;
         callList(this, [
+            [this._clearAllData],
             [this._loadScene],
             [this._createScene],
             [this._loadSpineRes],
@@ -130,6 +131,7 @@ export class GameCtrlr extends cc.Component {
     enterFightScene(index: number, callback = null) {
         this.curSceneIndex = index;
         callList(this, [
+            [this._clearAllData],
             [this._loadScene],
             [this._loadAreas],
             [this._createScene],
@@ -147,6 +149,14 @@ export class GameCtrlr extends cc.Component {
                 },
             ],
         ]);
+    }
+
+    _clearAllData(callNext: () => void, lastData: any) {
+        this.enemyCtrlr.clear();
+        this.spineCtrlr.clear();
+        this.potCtrlr.clear();
+        this.itemCtrlr.clear();
+        return callNext();
     }
 
     _loadScene(callNext: () => void, lastData: any) {
@@ -306,12 +316,6 @@ export class GameCtrlr extends cc.Component {
         };
 
         await this._hideSceneSync();
-
-        this.enemyCtrlr.clear();
-        this.spineCtrlr.clear();
-        this.potCtrlr.clear();
-        this.itemCtrlr.clear();
-
         await this._sleepSync(2);
 
         this.enterHomeScene();
