@@ -69,7 +69,7 @@ export default class EnemyCtrlr extends MyComponent {
                 return;
             }
 
-            cc.assert(prefabs.length > 0, 'Wrong size of enemy prefab');
+            cc.log('enemy size: ', prefabs.length);
 
             let data = {};
             let adNames = [];

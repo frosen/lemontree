@@ -34,10 +34,10 @@ class SpineData {
 export default class SpineCtrlr extends MyComponent {
     gameCtrlr: GameCtrlr = null;
 
-    /** 敌人名称对应的节点的对象池 */
+    /** spine名称对应的节点的对象池 */
     pool: { [key: string]: Spine[] } = {};
 
-    /** 敌人资源名称对应的资源 */
+    /** spine资源名称对应的资源 */
     prefabs: { [key: string]: cc.Prefab }[] = [];
 
     /** 每个区域的尖刺位置信息 */

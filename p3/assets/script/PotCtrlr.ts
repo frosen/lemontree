@@ -2,7 +2,7 @@
 // 水罐管理器，水罐就是场景中的可破坏物：
 // lly 2018.5.12
 
-const { ccclass, property } = cc._decorator;
+const { ccclass, property, executeInEditMode } = cc._decorator;
 
 import MyComponent from './MyComponent';
 import { GameCtrlr } from './GameCtrlr';
@@ -10,11 +10,44 @@ import Pot from './Pot';
 import MyNodePool from './MyNodePool';
 import { GroundInfo } from './MapCtrlr';
 
-class PotInfo {
-    frame: cc.SpriteFrame;
-    c1: cc.Color;
-    c2: cc.Color;
-}
+const PotInfo = cc.Class({
+    name: 'PotInfo',
+    properties: {
+        frame: {
+            type: cc.SpriteFrame,
+            default: null,
+            displayName: '纹理',
+        },
+        c1: {
+            default: cc.Color.WHITE,
+            displayName: '颜色1',
+        },
+        c2: {
+            default: cc.Color.WHITE,
+            displayName: '颜色2',
+        },
+    },
+});
+
+type PotInfo = { frame: cc.SpriteFrame; c1: cc.Color; c2: cc.Color };
+
+const PotInfos = cc.Class({
+    name: 'PotInfos',
+    properties: {
+        sceneIndex: {
+            default: 0,
+            displayName: '场景序号',
+            readonly: true,
+        },
+        infos: {
+            type: PotInfo,
+            default: [],
+            displayName: '本场景罐数据',
+        },
+    },
+});
+
+type PotInfos = { sceneIndex: number; infos: PotInfo[] };
 
 class PotData {
     pos: cc.Vec2;
@@ -29,20 +62,24 @@ class PotData {
 }
 
 @ccclass
+@executeInEditMode
 export default class PotCtrlr extends MyComponent {
-    @property([cc.Node])
-    showingPots: cc.Node[] = [];
+    @property({
+        type: [PotInfos],
+        displayName: '罐数据',
+    })
+    infos: PotInfos[] = [];
 
     gameCtrlr: GameCtrlr = null;
 
     pool: MyNodePool = null;
 
-    infos: PotInfo[][] = [];
-
     /** 每个区域的水罐位置 */
     datas: PotData[][] = [];
 
     onLoad() {
+        if (CC_EDITOR) return;
+
         this.gameCtrlr = cc.find('main').getComponent(GameCtrlr);
 
         // 生成节点池
@@ -59,59 +96,12 @@ export default class PotCtrlr extends MyComponent {
             this.node,
             Pot,
         );
-
-        this._createShowingPots();
     }
 
-    _createShowingPots() {
-        for (const node of this.showingPots) {
-            if (node.active == false) continue;
-            node.setAnchorPoint(0.5, 0);
-            let pot = node.addComponent(Pot);
-            let sp = node.getComponent(cc.Sprite);
-            let frame = sp.spriteFrame;
-            let name = frame.name;
-            let datas = name.split('_');
-
-            pot.setData(null, frame, cc.hexToColor(datas[1]), cc.hexToColor(datas[2]));
+    update() {
+        if (CC_EDITOR) {
+            this.check();
         }
-    }
-
-    setSceneAndLoadRes(finishCallback: () => void) {
-        let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
-        if (this.infos[curSceneIndex]) return finishCallback();
-
-        // 异步加载道具纹理，生成列表
-        cc.loader.loadResDir(
-            `map/scene${curSceneIndex}/pot`,
-            cc.SpriteFrame,
-            (error: Error, frames: cc.SpriteFrame[], urls: string[]) => {
-                if (error) {
-                    cc.log(`Wrong in load res dir: ${error.message}`);
-                    return;
-                }
-                this._onGotFrames(curSceneIndex, frames);
-                return finishCallback();
-            },
-        );
-    }
-
-    /**
-     * 获得纹理后，进行解析
-     */
-    _onGotFrames(sceneIndex: number, frames: cc.SpriteFrame[]) {
-        let potInfos = [];
-        for (const frame of frames) {
-            let name = frame.name;
-            let datas = name.split('_');
-            let info = new PotInfo();
-            info.frame = frame;
-            info.c1 = cc.hexToColor(datas[1]);
-            info.c2 = cc.hexToColor(datas[2]);
-            potInfos.push(info);
-        }
-
-        this.infos[sceneIndex] = potInfos;
     }
 
     setData(areaIndex: number, groundInfos: GroundInfo[]) {
@@ -119,7 +109,7 @@ export default class PotCtrlr extends MyComponent {
 
         let curSceneIndex = this.gameCtrlr.getCurSceneIndex();
         let data = [];
-        let potInfos = this.infos[curSceneIndex];
+        let potInfos = this.infos[curSceneIndex].infos;
         let len = potInfos.length;
         for (const groundInfo of groundInfos) {
             let r = Math.random() * len;
@@ -175,5 +165,24 @@ export default class PotCtrlr extends MyComponent {
             if (data.living) count++;
         }
         return count;
+    }
+
+    // ========================================================
+
+    @property({
+        visible: false,
+        editorOnly: true,
+    })
+    _ct: number = 0;
+
+    check() {
+        this._ct++;
+        if (this._ct > 10) {
+            this._ct = 0;
+            for (let index = 0; index < this.infos.length; index++) {
+                const info = this.infos[index];
+                info.sceneIndex = index;
+            }
+        }
     }
 }

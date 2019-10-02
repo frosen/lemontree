@@ -137,7 +137,6 @@ export class GameCtrlr extends cc.Component {
             [this._createScene],
             [this._loadEnemyRes],
             [this._loadSpineRes],
-            [this._loadPotRes],
             [this._createObjs],
             [this._gotoHeroSpot],
             [this._collectGarbage],
@@ -241,10 +240,6 @@ export class GameCtrlr extends cc.Component {
 
     _loadSpineRes(callNext: () => void, lastData: any) {
         return this.spineCtrlr.setSceneAndLoadRes(callNext);
-    }
-
-    _loadPotRes(callNext: () => void, lastData: any) {
-        return this.potCtrlr.setSceneAndLoadRes(callNext);
     }
 
     _createObjs(callNext: () => void, lastData: any) {
